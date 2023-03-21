@@ -25,10 +25,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "fillers": "^2.0.1",
+    "hedges": "^2.0.1",
     "openai": "^3.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-quill": "^2.0.0"
+    "react-quill": "^2.0.0",
+    "syllable": "^5.0.1"
   },
   "scripts": {
     "start": "node server.js",

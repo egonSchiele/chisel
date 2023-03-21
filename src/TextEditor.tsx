@@ -1,8 +1,17 @@
 //@ts-nocheck
+import { syllable } from "syllable";
+
 import React, { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { TextField, Button, Box, Tooltip } from "@material-ui/core";
+import {
+  TextField,
+  Button,
+  Box,
+  Tooltip,
+  Paper,
+  Typography,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import openai from "./openai";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
@@ -29,6 +38,8 @@ const TextEditor = () => {
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [selectedWord, setSelectedWord] = useState({ index: 0, length: 0 });
+  const [selectedSyllables, setSelectedSyllables] = useState(0);
+
   const quillRef = useRef();
 
   const handleSynonymClick = (synonym) => {
@@ -37,6 +48,15 @@ const TextEditor = () => {
     quill.insertText(selectedWord.index, synonym);
     setText(quill.getContents());
     setTooltipOpen(false);
+  };
+
+  const countSyllables = (text: string) => {
+    try {
+      return syllable(text);
+    } catch (error) {
+      console.error("Error counting syllables:", error);
+      return 0;
+    }
   };
 
   const handleClickAway = () => {
@@ -100,49 +120,72 @@ const TextEditor = () => {
         setTooltipPosition({ top: bounds.top, left: bounds.left });
         setTooltipOpen(true);
       }
+    } else {
+      const quill = quillRef.current.getEditor();
+      const range = quill.getSelection();
+      if (range && range.length > 0) {
+        const text = quill.getText(range.index, range.length); //.trim();
+        setSelectedSyllables(countSyllables(text));
+      } else {
+        setSelectedSyllables(0);
+      }
     }
   };
   return (
-    <Box>
-      <TextField
-        label="OpenAI API Key"
-        variant="outlined"
-        fullWidth
-        value={apiKey}
-        onChange={handleApiKeyChange}
-      />
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <div onClick={onClickEditor}>
-          <ReactQuill ref={quillRef} value={text} onChange={handleTextChange} />
-        </div>
-      </ClickAwayListener>
-      <Tooltip
-        open={tooltipOpen}
-        title={synonyms.map((synonym, index) => (
-          <div
-            key={index}
-            className={classes.tooltip}
-            onClick={() => handleSynonymClick(synonym)}
-          >
-            {synonym}
-            {index !== synonyms.length - 1 && <SwapHoriz />}
+    <Box display="flex">
+      <Box flexGrow={1}>
+        <TextField
+          label="OpenAI API Key"
+          variant="outlined"
+          fullWidth
+          value={apiKey}
+          onChange={handleApiKeyChange}
+        />
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <div onClick={onClickEditor}>
+            <ReactQuill
+              ref={quillRef}
+              value={text}
+              onChange={handleTextChange}
+            />
           </div>
-        ))}
-        PopperProps={{
-          style: {
-            top: tooltipPosition.top,
-            left: tooltipPosition.left,
-            zIndex: 9999,
-          },
-        }}
-        interactive
-      >
-        <div />
-      </Tooltip>
+        </ClickAwayListener>
+        <Tooltip
+          open={tooltipOpen}
+          title={synonyms.map((synonym, index) => (
+            <div
+              key={index}
+              className={classes.tooltip}
+              onClick={() => handleSynonymClick(synonym)}
+            >
+              {synonym}
+              {index !== synonyms.length - 1 && <SwapHoriz />}
+            </div>
+          ))}
+          PopperProps={{
+            style: {
+              top: tooltipPosition.top,
+              left: tooltipPosition.left,
+              zIndex: 9999,
+            },
+          }}
+          interactive
+        >
+          <div />
+        </Tooltip>
 
-      <Button variant="contained" color="primary" onClick={handleExpand}>
-        Expand
-      </Button>
+        <Button variant="contained" color="primary" onClick={handleExpand}>
+          Expand
+        </Button>
+      </Box>
+      <Box>
+        <Paper elevation={3}>
+          <Box p={2}>
+            <Typography variant="h6">Syllable Count</Typography>
+            <Typography variant="h4">{selectedSyllables}</Typography>
+          </Box>
+        </Paper>
+      </Box>
     </Box>
   );
 };
