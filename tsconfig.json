@@ -9,6 +9,5 @@
     "allowJs": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true
-
   }
 }

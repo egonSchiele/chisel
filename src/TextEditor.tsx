@@ -16,21 +16,15 @@ const TextEditor = () => {
   };
 
   const handleExpand = async () => {
-    fetch("https://api.openai.com/v1/completions", {
+    fetch("/api/expand", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
       body: JSON.stringify({
         prompt: `${text}\n\nContinue the story:`,
-        max_tokens: 50,
-        model: "gpt-3.5-turbo",
       }),
     }).then((res) => {
       console.log({ res });
       res.json().then((data) => {
-        const generatedText = data.data.choices[0].text;
+        const generatedText = data.choices[0].text;
         setText(`${text}${generatedText}`);
       });
     });
