@@ -1,4 +1,5 @@
 node_modules/*
 dist/*
 makefile
-kustomize.yaml
+kustomization.yaml
+pod*.yaml
