@@ -10,6 +10,8 @@ app.use(express.json());
 app.use(express.static("dist"));
 
 app.post("/api/expand", async (req, res) => {
+  console.log({ body: req.body });
+  //console.log({ prompt: JSON.parse(req.body) });
   fetch("https://api.openai.com/v1/completions", {
     method: "POST",
     headers: {

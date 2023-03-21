@@ -52,11 +52,16 @@ const TextEditor = () => {
   };
 
   const handleExpand = async () => {
+    const body = JSON.stringify({
+      prompt: `${text}. Write another paragraph:`,
+    });
+    console.log({ body });
     fetch("/api/expand", {
       method: "POST",
-      body: JSON.stringify({
-        prompt: `${text}\n\nContinue the story:`,
-      }),
+      body,
+      headers: {
+        "Content-Type": "application/json",
+      },
     }).then((res) => {
       console.log({ res });
       res.json().then((data) => {
