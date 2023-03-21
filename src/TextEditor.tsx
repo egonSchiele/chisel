@@ -1,5 +1,6 @@
 //@ts-nocheck
 import { syllable } from "syllable";
+import { fillers } from "fillers";
 
 import React, { useState, useRef } from "react";
 import ReactQuill from "react-quill";
@@ -48,6 +49,35 @@ const TextEditor = () => {
     quill.insertText(selectedWord.index, synonym);
     setText(quill.getContents());
     setTooltipOpen(false);
+  };
+
+  const highlightFillerWords = () => {
+    if (!quillRef.current) return;
+    const quill = quillRef.current.getEditor();
+    const text = quill.getText();
+
+    const words = text.split(" ");
+
+    let idx = 0;
+    words.forEach((word) => {
+      word = word.toLowerCase();
+      word = word.trim();
+      const start = idx;
+      const end = idx + word.length;
+      const isFiller = fillers.includes(word);
+      console.log({ word, start, end, isFiller });
+
+      if (isFiller) {
+        quill.formatText(start, word.length, {
+          background: "yellow",
+        });
+      } else {
+        quill.formatText(start, word.length, {
+          background: "white",
+        });
+      }
+      idx = end + 1;
+    });
   };
 
   const countSyllables = (text: string) => {
@@ -176,6 +206,14 @@ const TextEditor = () => {
 
         <Button variant="contained" color="primary" onClick={handleExpand}>
           Expand
+        </Button>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={highlightFillerWords}
+        >
+          Highlight Filler Words
         </Button>
       </Box>
       <Box>
