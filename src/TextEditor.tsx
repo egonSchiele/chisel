@@ -5,19 +5,13 @@ import { fillers } from "fillers";
 import React, { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import {
-  TextField,
-  Button,
-  Box,
-  Tooltip,
-  Paper,
-  Typography,
-} from "@material-ui/core";
+import "./globals.css";
+import { Box, Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import openai from "./openai";
+
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import { SwapHoriz } from "@material-ui/icons";
 import axios from "axios";
+import Button from "./components/Button";
 const useStyles = makeStyles({
   generatedText: {
     animation: "$fadeIn 5s",
@@ -31,54 +25,8 @@ const useStyles = makeStyles({
   },
 });
 
-type State = {
-  text: string;
-  synonyms: string[];
-  tooltipPosition: { top: number; left: number };
-  tooltipOpen: boolean;
-  selectedWord: { index: number; length: number; contents: string };
-  // selectedSyllables: number;
-};
-const initialState: State = {
-  text: "Once upon a time,",
-  synonyms: [],
-  tooltipPosition: { top: 0, left: 0 },
-  tooltipOpen: false,
-  selectedWord: { index: 0, length: 0 },
-};
-
-const reducer = (state: State, action: any): State => {
-  switch (action.type) {
-    case "setText":
-      return { ...state, text: action.payload };
-    case "setSynonyms":
-      return { ...state, synonyms: action.payload };
-    case "clearSynonyms":
-      return { ...state, synonyms: [] };
-    case "setTooltipPosition":
-      return { ...state, tooltipPosition: action.payload };
-    case "openTooltip":
-      return { ...state, tooltipOpen: true };
-    case "closeTooltip":
-      return { ...state, tooltipOpen: false };
-    case "setSelectedWord":
-      return { ...state, selectedWord: action.payload };
-    case "synonymSelected":
-      return { ...state, text: action.payload, tooltipOpen: false };
-  }
-};
-
-const TextEditor = () => {
+const TextEditor = ({ dispatch, state }) => {
   const classes = useStyles();
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  /* const [text, setText] = useState("Once upon a time,");
-  //const [apiKey, setApiKey] = useState("");
-  const [synonyms, setSynonyms] = useState([]);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const [selectedWord, setSelectedWord] = useState({ index: 0, length: 0 });
-  const [selectedSyllables, setSelectedSyllables] = useState(0);
- */
   const quillRef = useRef();
 
   const handleSynonymClick = (synonym) => {
@@ -153,7 +101,7 @@ const TextEditor = () => {
       console.log({ res });
       res.json().then((data) => {
         const generatedText = data.choices[0].text;
-        dispatch({ type: "setText", payload: `${text}${generatedText}` });
+        dispatch({ type: "setText", payload: `${state.text}${generatedText}` });
       });
     });
   };
@@ -196,10 +144,12 @@ const TextEditor = () => {
     }
   };
 
-  const selectedSyllables = countSyllables(state.selectedWord.contents);
+  let selectedSyllables = 0;
+
+  countSyllables(state.selectedWord.contents);
 
   return (
-    <Box display="flex">
+    <div className="">
       <Box flexGrow={1}>
         {/*         <TextField
           label="OpenAI API Key"
@@ -218,7 +168,7 @@ const TextEditor = () => {
             />
           </div>
         </ClickAwayListener>
-        <Tooltip
+        {/* <Tooltip
           open={state.tooltipOpen}
           title={state.synonyms.map((synonym, index) => (
             <div
@@ -240,19 +190,13 @@ const TextEditor = () => {
           interactive
         >
           <div />
-        </Tooltip>
-        <Button variant="contained" color="primary" onClick={handleExpand}>
-          Expand
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={highlightFillerWords}
-        >
+        </Tooltip> */}
+        <Button onClick={handleExpand}>Expand</Button>
+        <Button onClick={highlightFillerWords} className="ml-2">
           Highlight Filler Words
         </Button>
       </Box>
-      <Box>
+      {/*       <Box>
         <Paper elevation={3}>
           <Box p={2}>
             <Typography variant="h6">Syllable Count</Typography>
@@ -260,7 +204,8 @@ const TextEditor = () => {
           </Box>
         </Paper>
       </Box>
-    </Box>
+ */}{" "}
+    </div>
   );
 };
 

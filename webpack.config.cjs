@@ -14,9 +14,18 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        //include: ["index.css", path.resolve(__dirname, "src")],
+        //include: path.resolve(__dirname, "src"),
+
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+
       {
         test: /\.(svg|png|jpg|jpeg|ico|gif)$/i,
         type: "asset/resource",
@@ -25,11 +34,6 @@ module.exports = {
         test: /\.jsx?$/,
         loader: "babel-loader",
         exclude: [/node_modules/, /public/],
-      },
-      {
-        test: /\.tsx?$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
       },
     ],
   },
