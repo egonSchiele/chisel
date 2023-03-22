@@ -31,24 +31,61 @@ const useStyles = makeStyles({
   },
 });
 
+type State = {
+  text: string;
+  synonyms: string[];
+  tooltipPosition: { top: number; left: number };
+  tooltipOpen: boolean;
+  selectedWord: { index: number; length: number; contents: string };
+  // selectedSyllables: number;
+};
+const initialState: State = {
+  text: "Once upon a time,",
+  synonyms: [],
+  tooltipPosition: { top: 0, left: 0 },
+  tooltipOpen: false,
+  selectedWord: { index: 0, length: 0 },
+};
+
+const reducer = (state: State, action: any): State => {
+  switch (action.type) {
+    case "setText":
+      return { ...state, text: action.payload };
+    case "setSynonyms":
+      return { ...state, synonyms: action.payload };
+    case "clearSynonyms":
+      return { ...state, synonyms: [] };
+    case "setTooltipPosition":
+      return { ...state, tooltipPosition: action.payload };
+    case "openTooltip":
+      return { ...state, tooltipOpen: true };
+    case "closeTooltip":
+      return { ...state, tooltipOpen: false };
+    case "setSelectedWord":
+      return { ...state, selectedWord: action.payload };
+    case "synonymSelected":
+      return { ...state, text: action.payload, tooltipOpen: false };
+  }
+};
+
 const TextEditor = () => {
   const classes = useStyles();
-  const [text, setText] = useState("hi there darling");
-  const [apiKey, setApiKey] = useState("");
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  /* const [text, setText] = useState("Once upon a time,");
+  //const [apiKey, setApiKey] = useState("");
   const [synonyms, setSynonyms] = useState([]);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [selectedWord, setSelectedWord] = useState({ index: 0, length: 0 });
   const [selectedSyllables, setSelectedSyllables] = useState(0);
-
+ */
   const quillRef = useRef();
 
   const handleSynonymClick = (synonym) => {
     const quill = quillRef.current.getEditor();
     quill.deleteText(selectedWord.index, selectedWord.length);
     quill.insertText(selectedWord.index, synonym);
-    setText(quill.getContents());
-    setTooltipOpen(false);
+    dispatch({ type: "synonymSelected", payload: quill.getContents() });
   };
 
   const highlightFillerWords = () => {
@@ -90,20 +127,20 @@ const TextEditor = () => {
   };
 
   const handleClickAway = () => {
-    setTooltipOpen(false);
+    dispatch({ type: "closeTooltip" });
   };
 
   const handleTextChange = (value) => {
-    setText(value);
+    dispatch({ type: "setText", payload: value });
   };
 
-  const handleApiKeyChange = (event) => {
+  /*   const handleApiKeyChange = (event) => {
     setApiKey(event.target.value);
-  };
+  }; */
 
   const handleExpand = async () => {
     const body = JSON.stringify({
-      prompt: `${text}. Write another paragraph:`,
+      prompt: `${state.text}. Write another paragraph:`,
     });
     console.log({ body });
     fetch("/api/expand", {
@@ -116,7 +153,7 @@ const TextEditor = () => {
       console.log({ res });
       res.json().then((data) => {
         const generatedText = data.choices[0].text;
-        setText(`${text}${generatedText}`);
+        dispatch({ type: "setText", payload: `${text}${generatedText}` });
       });
     });
   };
@@ -126,76 +163,77 @@ const TextEditor = () => {
       const response = await axios.get(
         `https://api.datamuse.com/words?ml=${word}&max=10`
       );
-      console.log("fetchSynonyms");
-      console.log({ response });
-      setSynonyms(response.data.map((item) => item.word));
+      const synonyms = response.data.map((item) => item.word);
+      dispatch({ type: "setSynonyms", payload: synonyms });
     } catch (error) {
       console.error("Error fetching synonyms:", error);
-      setSynonyms([]);
+      dispatch({ type: "clearSynonyms" });
     }
   };
 
   const onClickEditor = (event) => {
-    console.log("click");
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    console.log({ range });
+    if (range && range.length > 0) {
+      const word = quill.getText(range.index, range.length).trim();
+      dispatch({
+        type: "setSelectedWord",
+        payload: { index: range.index, length: range.length, contents: word },
+      });
+    }
     if (event.metaKey || event.ctrlKey) {
       console.log("metaKey");
-      const quill = quillRef.current.getEditor();
-      const range = quill.getSelection();
-      console.log({ range });
       if (range && range.length > 0) {
-        const word = quill.getText(range.index, range.length).trim();
         fetchSynonyms(word);
-        setSelectedWord({ index: range.index, length: range.length });
         const bounds = quill.getBounds(range.index);
-        setTooltipPosition({ top: bounds.top, left: bounds.left });
-        setTooltipOpen(true);
-      }
-    } else {
-      const quill = quillRef.current.getEditor();
-      const range = quill.getSelection();
-      if (range && range.length > 0) {
-        const text = quill.getText(range.index, range.length); //.trim();
-        setSelectedSyllables(countSyllables(text));
-      } else {
-        setSelectedSyllables(0);
+        dispatch({
+          type: "setTooltipPosition",
+          payload: { top: bounds.top, left: bounds.left },
+        });
+        dispatch({ type: "openTooltip" });
       }
     }
   };
+
+  const selectedSyllables = countSyllables(state.selectedWord.contents);
+
   return (
     <Box display="flex">
       <Box flexGrow={1}>
-        <TextField
+        {/*         <TextField
           label="OpenAI API Key"
           variant="outlined"
           fullWidth
           value={apiKey}
           onChange={handleApiKeyChange}
         />
+ */}{" "}
         <ClickAwayListener onClickAway={handleClickAway}>
           <div onClick={onClickEditor}>
             <ReactQuill
               ref={quillRef}
-              value={text}
+              value={state.text}
               onChange={handleTextChange}
             />
           </div>
         </ClickAwayListener>
         <Tooltip
-          open={tooltipOpen}
-          title={synonyms.map((synonym, index) => (
+          open={state.tooltipOpen}
+          title={state.synonyms.map((synonym, index) => (
             <div
               key={index}
               className={classes.tooltip}
               onClick={() => handleSynonymClick(synonym)}
             >
               {synonym}
-              {index !== synonyms.length - 1 && <SwapHoriz />}
+              {index !== state.synonyms.length - 1 && <SwapHoriz />}
             </div>
           ))}
           PopperProps={{
             style: {
-              top: tooltipPosition.top,
-              left: tooltipPosition.left,
+              top: state.tooltipPosition.top,
+              left: state.tooltipPosition.left,
               zIndex: 9999,
             },
           }}
@@ -203,11 +241,9 @@ const TextEditor = () => {
         >
           <div />
         </Tooltip>
-
         <Button variant="contained" color="primary" onClick={handleExpand}>
           Expand
         </Button>
-
         <Button
           variant="contained"
           color="primary"
