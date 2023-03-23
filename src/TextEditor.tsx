@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { syllable } from "syllable";
+
 import { fillers } from "fillers";
 
 import React, { useState, useRef } from "react";
@@ -26,6 +26,7 @@ const useStyles = makeStyles({
 });
 
 const TextEditor = ({ dispatch, state }) => {
+  console.log("rerender", { state }, state.text);
   const classes = useStyles();
   const quillRef = useRef();
 
@@ -65,20 +66,15 @@ const TextEditor = ({ dispatch, state }) => {
     });
   };
 
-  const countSyllables = (text: string) => {
-    try {
-      return syllable(text);
-    } catch (error) {
-      console.error("Error counting syllables:", error);
-      return 0;
-    }
-  };
-
   const handleClickAway = () => {
     dispatch({ type: "closeTooltip" });
   };
 
   const handleTextChange = (value) => {
+    console.log("set text", { value });
+    if (value === "<p><br></p>") {
+      throw new Error("empty");
+    }
     dispatch({ type: "setText", payload: value });
   };
 
@@ -119,17 +115,21 @@ const TextEditor = ({ dispatch, state }) => {
     }
   };
 
-  const onClickEditor = (event) => {
+  const setSelection = () => {
+    if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
     console.log({ range });
-    if (range && range.length > 0) {
+    if (range) {
       const word = quill.getText(range.index, range.length).trim();
       dispatch({
         type: "setSelectedWord",
         payload: { index: range.index, length: range.length, contents: word },
       });
     }
+  };
+  const onClickEditor = (event) => {
+    setSelection();
     if (event.metaKey || event.ctrlKey) {
       console.log("metaKey");
       if (range && range.length > 0) {
@@ -144,9 +144,10 @@ const TextEditor = ({ dispatch, state }) => {
     }
   };
 
-  let selectedSyllables = 0;
-
-  countSyllables(state.selectedWord.contents);
+  const handleKeyDown = (event) => {
+    console.log("keydown");
+    setSelection();
+  };
 
   return (
     <div className="">
@@ -165,6 +166,8 @@ const TextEditor = ({ dispatch, state }) => {
               ref={quillRef}
               value={state.text}
               onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
+              onChangeSelection={setSelection}
             />
           </div>
         </ClickAwayListener>

@@ -1,8 +1,10 @@
-import React, { useState, useRef, useReducer } from "react";
+import { syllable } from "syllable";
+import React, { useState, useRef, useReducer, useEffect } from "react";
 import produce from "immer";
 import "./globals.css";
 import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
+import InfoPanel from "./InfoPanel";
 type EditorState = {
   text: string;
   tooltipPosition: { top: number; left: number };
@@ -11,9 +13,14 @@ type EditorState = {
   // selectedSyllables: number;
 };
 
+type InfoPanelState = {
+  syllables: number;
+};
+
 type State = {
   editor: EditorState;
   synonyms: string[];
+  infoPanel: InfoPanelState;
 };
 
 const initialEditorState: EditorState = {
@@ -26,6 +33,7 @@ const initialEditorState: EditorState = {
 const initialState: State = {
   editor: initialEditorState,
   synonyms: [],
+  infoPanel: { syllables: 0 },
 };
 
 let reducer = (state: State, action: any): State => {
@@ -51,7 +59,7 @@ let reducer = (state: State, action: any): State => {
     case "setSelectedWord":
       state.editor.selectedWord = action.payload;
     case "synonymSelected":
-      state.editor.text = action.payload;
+      state.editor.selectedWord = action.payload;
       state.editor.tooltipOpen = false;
       break;
   }
@@ -60,16 +68,39 @@ let reducer = (state: State, action: any): State => {
 
 reducer = produce(reducer);
 
+const countSyllables = (text: string) => {
+  try {
+    return syllable(text);
+  } catch (error) {
+    console.error("Error counting syllables:", error);
+    return 0;
+  }
+};
+
 export default function App() {
   const [state, dispatch] = useReducer<(state: State, action: any) => State>(
     reducer,
     initialState
   );
 
+  console.log("selectedWord", state.editor.selectedWord);
+  let selectedSyllables = countSyllables(state.editor.selectedWord.contents);
+
+  /*   useEffect(() => {
+    countSyllables(state.editor.selectedWord.contents);
+  }, [state.editor.text]); */
+
+  const infoPanelState = {
+    ...state.infoPanel,
+    syllables: selectedSyllables,
+  };
+
   return (
     <div>
       <div>
-        <Sidebar />
+        <Sidebar>
+          <InfoPanel state={infoPanelState} />
+        </Sidebar>
       </div>
 
       <div>
