@@ -20,8 +20,8 @@ app.post("/api/expand", async (req, res) => {
     },
     body: JSON.stringify({
       prompt: req.body.prompt,
-      max_tokens: 50,
-      model: "text-davinci-003",
+      max_tokens: req.body.max_tokens,
+      model: req.body.model,
     }),
   }).then((result) => {
     console.log({ result });

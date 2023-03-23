@@ -14,6 +14,8 @@ import axios from "axios";
 import Button from "./components/Button";
 import ButtonGroup from "./components/ButtonGroup";
 import { EditorState, State } from "./Types";
+import Select from "./components/Select";
+import Input from "./components/Input";
 
 const useStyles = makeStyles({
   generatedText: {
@@ -37,7 +39,9 @@ const TextEditor = ({
 }) => {
   const classes = useStyles();
   const quillRef = useRef();
+  const [model, setModel] = useState("text-davinci-003");
   const [loading, setLoading] = useState(false);
+  const [max_tokens, setMaxTokens] = useState(100);
 
   useEffect(() => {
     if (!quillRef.current) return;
@@ -105,8 +109,11 @@ const TextEditor = ({
   }; */
 
   const handleSuggestion = async (prompt, dispatchType) => {
+    const max_tokens_with_min = Math.min(max_tokens, 500);
     const body = JSON.stringify({
       prompt,
+      model,
+      max_tokens: max_tokens_with_min,
     });
     setLoading(true);
     console.log({ body });
@@ -203,30 +210,61 @@ const TextEditor = ({
           onChange={handleApiKeyChange}
         />
  */}{" "}
-        <ButtonGroup className="mb-sm">
-          <Button disabled={loading} onClick={handleExpand} size="small">
-            Expand
-          </Button>
-          <Button onClick={handleContract} className="ml-xs" size="small">
-            Contract
-          </Button>
-          <Button onClick={handleRewrite} className="ml-xs" size="small">
-            Rewrite
-          </Button>
-          <Button onClick={highlightFillerWords} className="ml-xs" size="small">
-            Highlight Filler Words
-          </Button>
-          {state.selectedText.length > 0 && (
-            <Button onClick={handleSynonymClick} className="ml-xs" size="small">
-              Describe
+        <div className="grid grid-cols-8 mb-sm">
+          <Select
+            title="Engine"
+            name="engine"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+          >
+            <option>text-davinci-003</option>
+            <option>gpt-3.5-turbo</option>
+            <option>gpt-4</option>
+          </Select>
+          <Input
+            title="Max Tokens"
+            name="max_tokens"
+            value={max_tokens}
+            onChange={(e) => setMaxTokens(e.target.value)}
+            className="ml-xs"
+          />
+          <ButtonGroup className="col-span-6 ml-sm mb-auto h-full">
+            <Button disabled={loading} onClick={handleExpand} size="small">
+              Expand
             </Button>
-          )}
-          {state.selectedText.length > 0 && (
-            <Button onClick={handleSynonymClick} className="ml-xs" size="small">
-              Synonyms
+            <Button onClick={handleContract} className="ml-xs" size="small">
+              Contract
             </Button>
-          )}
-        </ButtonGroup>
+            <Button onClick={handleRewrite} className="ml-xs" size="small">
+              Rewrite
+            </Button>
+            <Button
+              onClick={highlightFillerWords}
+              className="ml-xs"
+              size="small"
+            >
+              Highlight Filler Words
+            </Button>
+            {state.selectedText.length > 0 && (
+              <Button
+                onClick={handleSynonymClick}
+                className="ml-xs"
+                size="small"
+              >
+                Describe
+              </Button>
+            )}
+            {state.selectedText.length > 0 && (
+              <Button
+                onClick={handleSynonymClick}
+                className="ml-xs"
+                size="small"
+              >
+                Synonyms
+              </Button>
+            )}
+          </ButtonGroup>
+        </div>
         <ClickAwayListener onClickAway={handleClickAway}>
           <div onClick={onClickEditor} className="mb-md">
             <ReactQuill

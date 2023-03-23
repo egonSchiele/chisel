@@ -10,7 +10,7 @@ export default function ButtonGroup({
   //console.log(children);
   return (
     <span
-      className={`isolate inline-flex rounded-md shadow-sm [&>*]:first:rounded-l-md [&>*]:last:rounded-r-md ${className}`}
+      className={`my-auto rounded-md shadow-sm [&>*]:first:rounded-l-md [&>*]:last:rounded-r-md ${className}`}
     >
       {children}
     </span>
