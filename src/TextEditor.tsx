@@ -38,12 +38,12 @@ const TextEditor = ({
   const classes = useStyles();
   const quillRef = useRef();
   const [loading, setLoading] = useState(false);
-  const [contents, setContents] = useState({});
 
   useEffect(() => {
     if (!quillRef.current) return;
     const editor = quillRef.current.getEditor();
-    editor.setText("Once upon a time,");
+    editor.setText(state.text);
+    dispatch({ type: "setContents", payload: editor.getContents() });
   }, [quillRef.current]);
 
   const handleSynonymClick = (synonym) => {
@@ -89,10 +89,11 @@ const TextEditor = ({
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
     const editor = quillRef.current.getEditor();
-    const newContents = editor.getContents();
-    console.log({ newContents });
-    //console.log({ contents });
-    setContents(newContents);
+
+    dispatch({
+      type: "setContents",
+      payload: editor.getContents(),
+    });
     dispatch({
       type: "setText",
       payload: editor.getText(),
@@ -103,9 +104,9 @@ const TextEditor = ({
     setApiKey(event.target.value);
   }; */
 
-  const handleExpand = async () => {
+  const handleSuggestion = async (prompt, dispatchType) => {
     const body = JSON.stringify({
-      prompt: `${state.text}. Write another paragraph:`,
+      prompt,
     });
     setLoading(true);
     console.log({ body });
@@ -121,8 +122,8 @@ const TextEditor = ({
         res.json().then((data) => {
           const generatedText = data.choices[0].text;
           dispatch({
-            type: "setText",
-            payload: `${state.text}${generatedText}`,
+            type: dispatchType,
+            payload: generatedText,
           });
           setLoading(false);
         });
@@ -130,6 +131,21 @@ const TextEditor = ({
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const handleExpand = async () => {
+    const prompt = `${state.text}. Write another paragraph:`;
+    handleSuggestion(prompt, "addExpandSuggestion");
+  };
+
+  const handleContract = async () => {
+    const prompt = `Make this text shorter without changing its meaning: ${state.text}.`;
+    handleSuggestion(prompt, "addContractSuggestion");
+  };
+
+  const handleRewrite = async () => {
+    const prompt = `Rewrite this text to make it flow better: ${state.text}.`;
+    handleSuggestion(prompt, "addRewriteSuggestion");
   };
 
   const fetchSynonyms = async (word) => {
@@ -191,10 +207,10 @@ const TextEditor = ({
           <Button disabled={loading} onClick={handleExpand} size="small">
             Expand
           </Button>
-          <Button onClick={highlightFillerWords} className="ml-xs" size="small">
+          <Button onClick={handleContract} className="ml-xs" size="small">
             Contract
           </Button>
-          <Button onClick={highlightFillerWords} className="ml-xs" size="small">
+          <Button onClick={handleRewrite} className="ml-xs" size="small">
             Rewrite
           </Button>
           <Button onClick={highlightFillerWords} className="ml-xs" size="small">
@@ -215,7 +231,7 @@ const TextEditor = ({
           <div onClick={onClickEditor} className="mb-md">
             <ReactQuill
               ref={quillRef}
-              value={contents}
+              value={state.contents}
               placeholder="Write something..."
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}

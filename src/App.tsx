@@ -6,9 +6,12 @@ import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
 import InfoPanel from "./InfoPanel";
 import { EditorState, State } from "./Types";
+import Panel from "./components/Panel";
+import SuggestionPanel from "./SuggestionPanel";
 
 const initialEditorState: EditorState = {
   text: "Once upon a time,",
+  contents: {},
   tooltipPosition: { top: 0, left: 0 },
   tooltipOpen: false,
   selectedText: { index: 0, length: 0, contents: "" },
@@ -18,12 +21,26 @@ const initialState: State = {
   editor: initialEditorState,
   synonyms: [],
   infoPanel: { syllables: 0 },
+  suggestions: [
+    {
+      type: "expand",
+      contents:
+        "In a faraway kingdom, there lived a vibrant young princess who was beloved by her people. Despite her royal wealth, not to mention her long flowing hair, the young princess felt trapped in the castle walls. She was desperate to explore the      ",
+    },
+  ],
 };
 
 let reducer = (state: State, action: any): State => {
   switch (action.type) {
     case "setText":
       state.editor.text = action.payload;
+      break;
+    case "setContents":
+      state.editor.contents = action.payload;
+      break;
+    case "addToContents":
+      state.editor.contents.insert(action.payload);
+      state.editor.text += action.payload;
       break;
     case "setSynonyms":
       state.synonyms = action.payload;
@@ -45,6 +62,26 @@ let reducer = (state: State, action: any): State => {
     case "synonymSelected":
       state.editor.selectedText = action.payload;
       state.editor.tooltipOpen = false;
+      break;
+    case "addExpandSuggestion":
+      state.suggestions.push({
+        type: "expand",
+        contents: action.payload,
+      });
+      break;
+
+    case "addContractSuggestion":
+      state.suggestions.push({
+        type: "contract",
+        contents: action.payload,
+      });
+      break;
+
+    case "addRewriteSuggestion":
+      state.suggestions.push({
+        type: "rewrite",
+        contents: action.payload,
+      });
       break;
   }
   return state;
@@ -74,11 +111,27 @@ export default function App() {
     syllables: selectedSyllables,
   };
 
+  const addToContents = (text: string) => {
+    console.log({ text });
+    console.log(state.editor.contents);
+    dispatch({
+      type: "addToContents",
+      payload: text,
+    });
+  };
+
   return (
     <div>
       <div>
         <Sidebar>
           <InfoPanel state={infoPanelState} />
+          {state.suggestions.map((suggestion) => (
+            <SuggestionPanel
+              title={suggestion.type}
+              contents={suggestion.contents}
+              onClick={addToContents}
+            />
+          ))}
         </Sidebar>
       </div>
 

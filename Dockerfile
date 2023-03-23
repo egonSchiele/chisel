@@ -1,5 +1,5 @@
 FROM --platform=linux/amd64 node:19
-RUN apt-get update -y && apt-get install -y vim
+#RUN apt-get update -y && apt-get install -y vim
 
 WORKDIR /
 
