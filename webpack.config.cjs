@@ -42,7 +42,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Tiny CRA",
+      title: "Frisson Editor",
       filename: "index.html",
       template: "./index.html",
     }),

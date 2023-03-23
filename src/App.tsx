@@ -5,29 +5,13 @@ import "./globals.css";
 import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
 import InfoPanel from "./InfoPanel";
-type EditorState = {
-  text: string;
-  tooltipPosition: { top: number; left: number };
-  tooltipOpen: boolean;
-  selectedWord: { index: number; length: number; contents: string };
-  // selectedSyllables: number;
-};
-
-type InfoPanelState = {
-  syllables: number;
-};
-
-type State = {
-  editor: EditorState;
-  synonyms: string[];
-  infoPanel: InfoPanelState;
-};
+import { EditorState, State } from "./Types";
 
 const initialEditorState: EditorState = {
   text: "Once upon a time,",
   tooltipPosition: { top: 0, left: 0 },
   tooltipOpen: false,
-  selectedWord: { index: 0, length: 0, contents: "" },
+  selectedText: { index: 0, length: 0, contents: "" },
 };
 
 const initialState: State = {
@@ -56,10 +40,10 @@ let reducer = (state: State, action: any): State => {
     case "closeTooltip":
       state.editor.tooltipOpen = false;
       break;
-    case "setSelectedWord":
-      state.editor.selectedWord = action.payload;
+    case "setSelectedText":
+      state.editor.selectedText = action.payload;
     case "synonymSelected":
-      state.editor.selectedWord = action.payload;
+      state.editor.selectedText = action.payload;
       state.editor.tooltipOpen = false;
       break;
   }
@@ -83,7 +67,7 @@ export default function App() {
     initialState
   );
 
-  let selectedSyllables = countSyllables(state.editor.selectedWord.contents);
+  let selectedSyllables = countSyllables(state.editor.selectedText.contents);
 
   const infoPanelState = {
     ...state.infoPanel,
@@ -107,7 +91,7 @@ export default function App() {
               </h1>
             </div>
             <div className="mx-auto max-w-7xl px-sm lg:px-md">
-              <TextEditor dispatch={dispatch} state={state.editor} />
+              <TextEditor dispatch={dispatch as any} state={state.editor} />
             </div>
           </div>
         </div>

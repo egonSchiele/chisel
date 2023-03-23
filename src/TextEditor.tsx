@@ -2,7 +2,7 @@
 
 import { fillers } from "fillers";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./globals.css";
@@ -12,6 +12,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import axios from "axios";
 import Button from "./components/Button";
+import ButtonGroup from "./components/ButtonGroup";
+import { EditorState, State } from "./Types";
+
 const useStyles = makeStyles({
   generatedText: {
     animation: "$fadeIn 5s",
@@ -25,10 +28,23 @@ const useStyles = makeStyles({
   },
 });
 
-const TextEditor = ({ dispatch, state }) => {
+const TextEditor = ({
+  dispatch,
+  state,
+}: {
+  dispatch: (state: State, action: any) => State;
+  state: EditorState;
+}) => {
   const classes = useStyles();
   const quillRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [contents, setContents] = useState({});
+
+  useEffect(() => {
+    if (!quillRef.current) return;
+    const editor = quillRef.current.getEditor();
+    editor.setText("Once upon a time,");
+  }, [quillRef.current]);
 
   const handleSynonymClick = (synonym) => {
     const quill = quillRef.current.getEditor();
@@ -71,7 +87,16 @@ const TextEditor = ({ dispatch, state }) => {
   };
 
   const handleTextChange = (value) => {
-    dispatch({ type: "setText", payload: value });
+    if (!quillRef.current) return;
+    const editor = quillRef.current.getEditor();
+    const newContents = editor.getContents();
+    console.log({ newContents });
+    //console.log({ contents });
+    setContents(newContents);
+    dispatch({
+      type: "setText",
+      payload: editor.getText(),
+    });
   };
 
   /*   const handleApiKeyChange = (event) => {
@@ -128,7 +153,7 @@ const TextEditor = ({ dispatch, state }) => {
     if (range) {
       const word = quill.getText(range.index, range.length).trim();
       dispatch({
-        type: "setSelectedWord",
+        type: "setSelectedText",
         payload: { index: range.index, length: range.length, contents: word },
       });
     }
@@ -162,11 +187,36 @@ const TextEditor = ({ dispatch, state }) => {
           onChange={handleApiKeyChange}
         />
  */}{" "}
+        <ButtonGroup className="mb-sm">
+          <Button disabled={loading} onClick={handleExpand} size="small">
+            Expand
+          </Button>
+          <Button onClick={highlightFillerWords} className="ml-xs" size="small">
+            Contract
+          </Button>
+          <Button onClick={highlightFillerWords} className="ml-xs" size="small">
+            Rewrite
+          </Button>
+          <Button onClick={highlightFillerWords} className="ml-xs" size="small">
+            Highlight Filler Words
+          </Button>
+          {state.selectedText.length > 0 && (
+            <Button onClick={handleSynonymClick} className="ml-xs" size="small">
+              Describe
+            </Button>
+          )}
+          {state.selectedText.length > 0 && (
+            <Button onClick={handleSynonymClick} className="ml-xs" size="small">
+              Synonyms
+            </Button>
+          )}
+        </ButtonGroup>
         <ClickAwayListener onClickAway={handleClickAway}>
           <div onClick={onClickEditor} className="mb-md">
             <ReactQuill
               ref={quillRef}
-              value={state.text}
+              value={contents}
+              placeholder="Write something..."
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
               onChangeSelection={setSelection}
@@ -196,12 +246,6 @@ const TextEditor = ({ dispatch, state }) => {
         >
           <div />
         </Tooltip> */}
-        <Button disabled={loading} onClick={handleExpand}>
-          Expand
-        </Button>
-        <Button onClick={highlightFillerWords} className="ml-2">
-          Highlight Filler Words
-        </Button>
       </Box>
       {/*       <Box>
         <Paper elevation={3}>
