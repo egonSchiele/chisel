@@ -41,6 +41,7 @@ const TextEditor = ({
   const quillRef = useRef();
   const [model, setModel] = useState("text-davinci-003");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [max_tokens, setMaxTokens] = useState(100);
 
   useEffect(() => {
@@ -116,6 +117,7 @@ const TextEditor = ({
       max_tokens: max_tokens_with_min,
     });
     setLoading(true);
+    setError("");
     console.log({ body });
     fetch("/api/expand", {
       method: "POST",
@@ -126,7 +128,19 @@ const TextEditor = ({
     })
       .then((res) => {
         console.log({ res });
+        if (!res.ok) {
+          setError(res.statusText);
+          setLoading(false);
+          return;
+        }
         res.json().then((data) => {
+          console.log({ data });
+          if (data.error) {
+            setError(data.error.message);
+            setLoading(false);
+            return;
+          }
+
           const generatedText = data.choices[0].text;
           dispatch({
             type: dispatchType,
@@ -210,6 +224,7 @@ const TextEditor = ({
           onChange={handleApiKeyChange}
         />
  */}{" "}
+        {error !== "" && <p>Error: {error}</p>}
         <div className="grid grid-cols-8 mb-sm">
           <Select
             title="Engine"
@@ -218,8 +233,8 @@ const TextEditor = ({
             onChange={(e) => setModel(e.target.value)}
           >
             <option>text-davinci-003</option>
-            <option>gpt-3.5-turbo</option>
-            <option>gpt-4</option>
+            <option>davinci</option>
+            <option>curie</option>
           </Select>
           <Input
             title="Max Tokens"
