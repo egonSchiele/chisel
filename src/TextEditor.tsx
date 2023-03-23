@@ -28,6 +28,7 @@ const useStyles = makeStyles({
 const TextEditor = ({ dispatch, state }) => {
   const classes = useStyles();
   const quillRef = useRef();
+  const [loading, setLoading] = useState(false);
 
   const handleSynonymClick = (synonym) => {
     const quill = quillRef.current.getEditor();
@@ -81,6 +82,7 @@ const TextEditor = ({ dispatch, state }) => {
     const body = JSON.stringify({
       prompt: `${state.text}. Write another paragraph:`,
     });
+    setLoading(true);
     console.log({ body });
     fetch("/api/expand", {
       method: "POST",
@@ -88,13 +90,21 @@ const TextEditor = ({ dispatch, state }) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((res) => {
-      console.log({ res });
-      res.json().then((data) => {
-        const generatedText = data.choices[0].text;
-        dispatch({ type: "setText", payload: `${state.text}${generatedText}` });
+    })
+      .then((res) => {
+        console.log({ res });
+        res.json().then((data) => {
+          const generatedText = data.choices[0].text;
+          dispatch({
+            type: "setText",
+            payload: `${state.text}${generatedText}`,
+          });
+          setLoading(false);
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
   };
 
   const fetchSynonyms = async (word) => {
@@ -186,7 +196,9 @@ const TextEditor = ({ dispatch, state }) => {
         >
           <div />
         </Tooltip> */}
-        <Button onClick={handleExpand}>Expand</Button>
+        <Button disabled={loading} onClick={handleExpand}>
+          Expand
+        </Button>
         <Button onClick={highlightFillerWords} className="ml-2">
           Highlight Filler Words
         </Button>
