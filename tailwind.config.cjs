@@ -2,7 +2,30 @@
 module.exports = {
   content: ["./src/*.(tsx|ts|jsx|js)", "./src/**/*.(tsx|ts|jsx|js)"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        georgia: "Georgia",
+      },
+      colors: {
+        hover: "#325531",
+        main: "#658864",
+        background: "#B7B78A",
+        highlight: "#F5EC8D",
+        highlight2: "#A1E69C",
+      },
+      margin: {
+        sm: "1rem",
+        md: "2rem",
+        lg: "3rem",
+        xl: "4rem",
+      },
+      padding: {
+        sm: "1rem",
+        md: "2rem",
+        lg: "3rem",
+        xl: "4rem",
+      },
+    },
   },
   plugins: [],
 };

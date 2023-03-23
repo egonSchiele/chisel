@@ -160,7 +160,7 @@ const TextEditor = ({ dispatch, state }) => {
         />
  */}{" "}
         <ClickAwayListener onClickAway={handleClickAway}>
-          <div onClick={onClickEditor}>
+          <div onClick={onClickEditor} className="mb-md">
             <ReactQuill
               ref={quillRef}
               value={state.text}

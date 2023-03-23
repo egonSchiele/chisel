@@ -73,14 +73,14 @@ export default function App() {
       </div>
 
       <div>
-        <div className="flex flex-1 flex-col lg:pl-64">
-          <div className="py-6">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-1 flex-col lg:pl-64 my-lg">
+          <div className="py-md">
+            <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
               <h1 className="text-2xl font-semibold text-gray-900">
                 Your story
               </h1>
             </div>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-sm lg:px-md">
               <TextEditor dispatch={dispatch} state={state.editor} />
             </div>
           </div>
