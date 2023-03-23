@@ -83,12 +83,7 @@ export default function App() {
     initialState
   );
 
-  console.log("selectedWord", state.editor.selectedWord);
   let selectedSyllables = countSyllables(state.editor.selectedWord.contents);
-
-  /*   useEffect(() => {
-    countSyllables(state.editor.selectedWord.contents);
-  }, [state.editor.text]); */
 
   const infoPanelState = {
     ...state.infoPanel,

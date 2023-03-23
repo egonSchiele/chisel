@@ -26,7 +26,6 @@ const useStyles = makeStyles({
 });
 
 const TextEditor = ({ dispatch, state }) => {
-  console.log("rerender", { state }, state.text);
   const classes = useStyles();
   const quillRef = useRef();
 
@@ -71,10 +70,6 @@ const TextEditor = ({ dispatch, state }) => {
   };
 
   const handleTextChange = (value) => {
-    console.log("set text", { value });
-    if (value === "<p><br></p>") {
-      throw new Error("empty");
-    }
     dispatch({ type: "setText", payload: value });
   };
 
@@ -144,10 +139,7 @@ const TextEditor = ({ dispatch, state }) => {
     }
   };
 
-  const handleKeyDown = (event) => {
-    console.log("keydown");
-    setSelection();
-  };
+  const handleKeyDown = (event) => {};
 
   return (
     <div className="">
