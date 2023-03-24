@@ -39,7 +39,7 @@ const TextEditor = ({
 }) => {
   const classes = useStyles();
   const quillRef = useRef();
-  const [model, setModel] = useState("text-davinci-003");
+  const [model, setModel] = useState("gpt-3.5-turbo");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [max_tokens, setMaxTokens] = useState(100);
@@ -178,6 +178,11 @@ const TextEditor = ({
     handleSuggestion(prompt, "addRewriteSuggestion");
   };
 
+  const fixTextToSpeech = async () => {
+    const prompt = `This text was written using text to speech, and it contains some errors. Please fix them: ${state.text}.`;
+    handleSuggestion(prompt, "addTextToSpeechSuggestion");
+  };
+
   const fetchSynonyms = async (word) => {
     try {
       const response = await axios.get(
@@ -241,6 +246,7 @@ const TextEditor = ({
             value={model}
             onChange={(e) => setModel(e.target.value)}
           >
+            <option>gpt-3.5-turbo</option>
             <option>text-davinci-003</option>
             <option>davinci</option>
             <option>curie</option>
@@ -268,6 +274,9 @@ const TextEditor = ({
               size="small"
             >
               Highlight Filler Words
+            </Button>
+            <Button onClick={fixTextToSpeech} className="ml-xs" size="small">
+              Fix Text-To-Speech
             </Button>
             {state.selectedText.length > 0 && (
               <Button

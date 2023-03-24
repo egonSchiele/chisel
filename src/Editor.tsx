@@ -73,6 +73,12 @@ const reducer = produce((draft: t.State, action: any) => {
         contents: action.payload,
       });
       break;
+    case "addTextToSpeechSuggestion":
+      draft.suggestions.push({
+        type: "texttospeech",
+        contents: action.payload,
+      });
+      break;
   }
 });
 

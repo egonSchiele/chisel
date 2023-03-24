@@ -18,7 +18,7 @@ export type State = {
   suggestions: Suggestion[];
 };
 export type ButtonSize = "small" | "medium" | "large";
-export type SuggestionType = "expand" | "contract" | "rewrite";
+export type SuggestionType = "expand" | "contract" | "rewrite" | "texttospeech";
 
 export type Suggestion = {
   type: SuggestionType;

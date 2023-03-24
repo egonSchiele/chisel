@@ -39,23 +39,46 @@ app.post("/api/save", async (req, res) => {
 
 app.post("/api/expand", async (req, res) => {
   console.log({ body: req.body });
+
+  const chatModels = ["gpt-3.5-turbo"];
+  let endpoint = "https://api.openai.com/v1/completions";
+  let reqBody = {
+    prompt: req.body.prompt,
+    max_tokens: req.body.max_tokens,
+    model: req.body.model,
+  };
+  if (chatModels.includes(req.body.model)) {
+    endpoint = "https://api.openai.com/v1/chat/completions";
+
+    reqBody = {
+      messages: [{ role: "user", content: req.body.prompt }],
+      max_tokens: req.body.max_tokens,
+      model: req.body.model,
+    };
+    //"messages": [{"role": "user", "content": "Hello!"}]
+  }
+
   //console.log({ prompt: JSON.parse(req.body) });
-  fetch("https://api.openai.com/v1/completions", {
+  fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
-    body: JSON.stringify({
-      prompt: req.body.prompt,
-      max_tokens: req.body.max_tokens,
-      model: req.body.model,
-    }),
+    body: JSON.stringify(reqBody),
   }).then((result) => {
     console.log({ result });
     result.json().then((json) => {
       console.log({ json });
-      res.json(json);
+      let choices;
+      if (chatModels.includes(req.body.model)) {
+        choices = json.choices.map((choice) => ({
+          text: choice.message.content,
+        }));
+      } else {
+        choices = json.choices.map((choice) => ({ text: choice.text }));
+      }
+      res.json({ choices });
     });
   });
 });
