@@ -12,17 +12,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("dist"));
 
+try {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountKey.default),
+  }); //export const analytics = getAnalytics(firebase);
+} catch (e) {
+  console.log(e);
+}
+// Get a reference to the database
+const db = getFirestore();
 app.post("/api/save", async (req, res) => {
-  try {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey.default),
-    }); //export const analytics = getAnalytics(firebase);
-  } catch (e) {
-    console.log(e);
-  }
-  // Get a reference to the database
-  const db = getFirestore();
-
   let { book } = req.body;
   book = JSON.parse(book);
   console.log("saving book");
@@ -34,6 +33,20 @@ app.post("/api/save", async (req, res) => {
     console.log("Successfully synced book to Firestore");
   } catch (error) {
     console.error("Error syncing book to Firestore:", error);
+  }
+});
+
+app.get("/api/book/:bookid", async (req, res) => {
+  let { bookid } = req.params;
+  console.log("getting book");
+  console.log({ bookid });
+  const docRef = db.collection("books").doc(bookid);
+  try {
+    const book = await docRef.get();
+    res.json(book.data());
+  } catch (error) {
+    console.error("Error syncing book to Firestore:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 

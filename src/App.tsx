@@ -74,6 +74,9 @@ let reducer = produce((draft: t.Book, action: any) => {
         }
       }
       break;
+    case "SET_BOOK":
+      return action.payload;
+
     default:
       break;
   }
@@ -83,8 +86,22 @@ let reducer = produce((draft: t.Book, action: any) => {
 
 export default function App() {
   const [state, dispatch] = React.useReducer<
-    (state: t.Book, action: any) => t.Book
+    (state: t.Book, action: any) => any
   >(reducer, initialState);
+
+  useEffect(() => {
+    const func = async () => {
+      const res = await fetch(`/api/book/${state.bookid}`);
+      if (!res.ok) {
+        setError(res.statusText);
+        return;
+      }
+      const data: t.Book = await res.json();
+      dispatch({ type: "SET_BOOK", payload: data });
+    };
+    func();
+  }, []);
+
   const [prevBookJSON, setPrevBookJSON] = React.useState(
     JSON.stringify(initialState)
   );
