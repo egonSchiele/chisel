@@ -1,9 +1,10 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import { getFirestore } from "firebase-admin/firestore";
-import admin from "firebase-admin";
-import * as serviceAccountKey from "./serviceAccountKey.json" assert { type: "json" };
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const settings = require("./settings.ts");
+const storage = require("./src/storage/firebase.ts");
+// import settings from "./settings.ts";
+// import { saveBook, getBook } from "./src/storage/firebase.ts";
 
 dotenv.config();
 
@@ -12,42 +13,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("dist"));
 
-try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountKey.default),
-  }); //export const analytics = getAnalytics(firebase);
-} catch (e) {
-  console.log(e);
-}
-// Get a reference to the database
-const db = getFirestore();
 app.post("/api/save", async (req, res) => {
   let { book } = req.body;
   book = JSON.parse(book);
-  console.log("saving book");
-  console.log({ book });
-  book.created_at = Date.now();
-  const docRef = db.collection("books").doc(book.bookid);
-  try {
-    await docRef.set(book);
-    console.log("Successfully synced book to Firestore");
-  } catch (error) {
-    console.error("Error syncing book to Firestore:", error);
-  }
+  await storage.saveBook(book);
   res.status(200).end();
 });
 
 app.get("/api/book/:bookid", async (req, res) => {
   let { bookid } = req.params;
-  console.log("getting book");
-  console.log({ bookid });
-  const docRef = db.collection("books").doc(bookid);
   try {
-    const book = await docRef.get();
-    res.json(book.data());
+    const data = await storage.getBook(bookid);
+    res.status(200).json(data);
   } catch (error) {
-    console.error("Error syncing book to Firestore:", error);
-    res.status(400).json({ error: error.message });
+    console.error("Error getting book:", error);
+    res.status(400).json({ error: error });
   }
 });
 
@@ -77,7 +57,7 @@ app.post("/api/expand", async (req, res) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${settings.openAiApiKey}`,
     },
     body: JSON.stringify(reqBody),
   })
