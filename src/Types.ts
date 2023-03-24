@@ -26,6 +26,7 @@ export type Suggestion = {
 };
 
 export type Chapter = {
+  chapterid: string;
   title: string;
   text: string;
 };
@@ -36,6 +37,7 @@ export type Column = {
 };
 
 export type Book = {
+  bookid: string;
   title: string;
   author: string;
   columns: Column[];
