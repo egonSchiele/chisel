@@ -11,7 +11,7 @@ export default function Book({ book }) {
           key={cindex}
           className="rounded-lg w-56 h-full odd:bg-gray-300 even:bg-gray-100 mr-md shadow-sm"
         > */
-        <div className="px-2 py-5">
+        <div key={index} className="px-2 py-5">
           <Chapter
             key={index}
             chapterid={chapter.chapterid}

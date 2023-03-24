@@ -43,42 +43,53 @@ const initialState: t.Book = {
   chapters: [chapter1, chapter2, chapter3],
 };
 
-import produce from "immer";
+import produce, { current } from "immer";
+import { useInterval } from "./utils";
 
-function reducer(state: t.Book, action: any) {
-  return produce(state, (draft: t.Book) => {
-    switch (action.type) {
-      case "SET_TITLE":
-        {
-          const { chapterID, newTitle } = action.payload;
-          const chapter = draft.chapters.find(
-            (ch) => ch.chapterid === chapterID
-          );
-          if (chapter) {
-            chapter.title = newTitle;
-          }
+let reducer = produce((draft: t.Book, action: any) => {
+  switch (action.type) {
+    case "SET_TITLE":
+      {
+        const chapter = draft.chapters.find(
+          (ch) => ch.chapterid === action.payload.chapterID
+        );
+        if (chapter) {
+          chapter.title = action.payload.newTitle;
         }
-        break;
-      case "SET_TEXT":
-        {
-          const { chapterID, newText } = action.payload;
-          const chapter = draft.chapters.find(
-            (ch) => ch.chapterid === chapterID
+      }
+      break;
+    case "SET_TEXT":
+      {
+        const chapter = draft.chapters.find(
+          (ch) => ch.chapterid === action.payload.chapterID
+        );
+        if (chapter) {
+          chapter.text = action.payload.newText;
+        } else {
+          console.log(
+            "Chapter not found",
+            current(draft.chapters),
+            action.payload.chapterID
           );
-          if (chapter) {
-            chapter.text = newText;
-          }
         }
-        break;
-      default:
-        break;
-    }
-  });
-}
+      }
+      break;
+    default:
+      break;
+  }
+});
+
+//reducer = produce(reducer);
 
 export default function App() {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer<
+    (state: t.Book, action: any) => t.Book
+  >(reducer, initialState);
+  const [prevBookJSON, setPrevBookJSON] = React.useState(
+    JSON.stringify(initialState)
+  );
 
+  const [error, setError] = React.useState("");
   function setTitle(chapterID: string, newTitle: string) {
     dispatch({ type: "SET_TITLE", payload: { chapterID, newTitle } });
   }
@@ -87,39 +98,49 @@ export default function App() {
     dispatch({ type: "SET_TEXT", payload: { chapterID, newText } });
   }
 
-  useEffect(() => {
-    syncBookToFirestore(state);
-  }, []);
+  useInterval(() => {
+    saveBook(state);
+  }, 5000);
 
-  let prevBookJSON: string = JSON.stringify(initialState);
-
-  async function syncBookToFirestore(book: t.Book) {
+  async function saveBook(book: t.Book) {
     const currentBookJSON = JSON.stringify(book);
 
-    /*     if (prevBookJSON !== currentBookJSON) {
-      prevBookJSON = currentBookJSON;
-    } */
-
+    if (prevBookJSON === currentBookJSON) {
+      return;
+    }
+    setPrevBookJSON(currentBookJSON);
     const body = JSON.stringify({
       book: currentBookJSON,
     });
 
-    fetch("/api/save", {
+    const result = await fetch("/api/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body,
     });
+
+    if (!result.ok) {
+      setError(result.statusText);
+      return;
+    } else {
+      setError("");
+    }
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Book book={state} />} />
-      <Route
-        path="/chapter/:chapterid"
-        element={<Editor book={state} setTitle={setTitle} setText={setText} />}
-      />
-    </Routes>
+    <div>
+      {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
+      <Routes>
+        <Route path="/" element={<Book book={state} />} />
+        <Route
+          path="/chapter/:chapterid"
+          element={
+            <Editor book={state} setTitle={setTitle} setText={setText} />
+          }
+        />
+      </Routes>
+    </div>
   );
 }

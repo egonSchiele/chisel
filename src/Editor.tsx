@@ -1,6 +1,6 @@
 import { syllable } from "syllable";
 import React, { useState, useRef, useReducer, useEffect } from "react";
-import produce from "immer";
+import produce, { current } from "immer";
 import "./globals.css";
 import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
@@ -19,6 +19,62 @@ const countSyllables = (text: string) => {
     return 0;
   }
 };
+
+const reducer = produce((draft: t.State, action: any) => {
+  switch (action.type) {
+    case "setText":
+      draft.editor.text = action.payload;
+      break;
+    case "setContents":
+      draft.editor.contents = action.payload;
+      break;
+    case "addToContents":
+      draft.editor.contents.insert(action.payload);
+      draft.editor.text += action.payload;
+      break;
+    case "setSynonyms":
+      draft.synonyms = action.payload;
+      break;
+    case "clearSynonyms":
+      draft.synonyms = [];
+      break;
+    case "setTooltipPosition":
+      draft.editor.tooltipPosition = action.payload;
+      break;
+    case "openTooltip":
+      draft.editor.tooltipOpen = true;
+      break;
+    case "closeTooltip":
+      draft.editor.tooltipOpen = false;
+      break;
+    case "setSelectedText":
+      draft.editor.selectedText = action.payload;
+    case "synonymSelected":
+      draft.editor.selectedText = action.payload;
+      draft.editor.tooltipOpen = false;
+      break;
+    case "addExpandSuggestion":
+      draft.suggestions.push({
+        type: "expand",
+        contents: action.payload,
+      });
+      break;
+
+    case "addContractSuggestion":
+      draft.suggestions.push({
+        type: "contract",
+        contents: action.payload,
+      });
+      break;
+
+    case "addRewriteSuggestion":
+      draft.suggestions.push({
+        type: "rewrite",
+        contents: action.payload,
+      });
+      break;
+  }
+});
 
 export default function Editor({
   book,
@@ -60,71 +116,14 @@ export default function Editor({
     ],
   };
 
-  let reducer = (state: State, action: any): State => {
-    switch (action.type) {
-      case "setText":
-        state.editor.text = action.payload;
-        setText(chapterid, state.editor.text);
-        break;
-      case "setContents":
-        state.editor.contents = action.payload;
-        break;
-      case "addToContents":
-        state.editor.contents.insert(action.payload);
-        state.editor.text += action.payload;
-        setText(chapterid, state.editor.text);
-        break;
-      case "setSynonyms":
-        state.synonyms = action.payload;
-        break;
-      case "clearSynonyms":
-        state.synonyms = [];
-        break;
-      case "setTooltipPosition":
-        state.editor.tooltipPosition = action.payload;
-        break;
-      case "openTooltip":
-        state.editor.tooltipOpen = true;
-        break;
-      case "closeTooltip":
-        state.editor.tooltipOpen = false;
-        break;
-      case "setSelectedText":
-        state.editor.selectedText = action.payload;
-      case "synonymSelected":
-        state.editor.selectedText = action.payload;
-        state.editor.tooltipOpen = false;
-        break;
-      case "addExpandSuggestion":
-        state.suggestions.push({
-          type: "expand",
-          contents: action.payload,
-        });
-        break;
-
-      case "addContractSuggestion":
-        state.suggestions.push({
-          type: "contract",
-          contents: action.payload,
-        });
-        break;
-
-      case "addRewriteSuggestion":
-        state.suggestions.push({
-          type: "rewrite",
-          contents: action.payload,
-        });
-        break;
-    }
-    return state;
-  };
-
-  reducer = produce(reducer);
-
   const [state, dispatch] = useReducer<(state: State, action: any) => State>(
     reducer,
     initialState
   );
+
+  useEffect(() => {
+    setText(chapterid, state.editor.text);
+  }, [state.editor.text]);
 
   let selectedSyllables = countSyllables(state.editor.selectedText.contents);
 
@@ -147,8 +146,9 @@ export default function Editor({
       <div>
         <Sidebar>
           <InfoPanel state={infoPanelState} />
-          {state.suggestions.map((suggestion) => (
+          {state.suggestions.map((suggestion, index) => (
             <SuggestionPanel
+              key={index}
               title={suggestion.type}
               contents={suggestion.contents}
               onClick={addToContents}

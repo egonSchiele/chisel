@@ -25,6 +25,7 @@ app.post("/api/save", async (req, res) => {
 
   let { book } = req.body;
   book = JSON.parse(book);
+  console.log("saving book");
   console.log({ book });
   book.created_at = Date.now();
   const docRef = db.collection("books").doc(book.bookid);
