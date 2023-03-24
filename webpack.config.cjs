@@ -30,6 +30,7 @@ module.exports = {
         test: /\.(svg|png|jpg|jpeg|ico|gif)$/i,
         type: "asset/resource",
       },
+      { test: /\.json$/, type: "json" },
       {
         test: /\.jsx?$/,
         loader: "babel-loader",

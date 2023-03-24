@@ -11,65 +11,6 @@ import SuggestionPanel from "./SuggestionPanel";
 import { useParams } from "react-router-dom";
 import * as t from "./Types";
 
-let reducer = (state: State, action: any): State => {
-  switch (action.type) {
-    case "setText":
-      state.editor.text = action.payload;
-      break;
-    case "setContents":
-      state.editor.contents = action.payload;
-      break;
-    case "addToContents":
-      state.editor.contents.insert(action.payload);
-      state.editor.text += action.payload;
-      break;
-    case "setSynonyms":
-      state.synonyms = action.payload;
-      break;
-    case "clearSynonyms":
-      state.synonyms = [];
-      break;
-    case "setTooltipPosition":
-      state.editor.tooltipPosition = action.payload;
-      break;
-    case "openTooltip":
-      state.editor.tooltipOpen = true;
-      break;
-    case "closeTooltip":
-      state.editor.tooltipOpen = false;
-      break;
-    case "setSelectedText":
-      state.editor.selectedText = action.payload;
-    case "synonymSelected":
-      state.editor.selectedText = action.payload;
-      state.editor.tooltipOpen = false;
-      break;
-    case "addExpandSuggestion":
-      state.suggestions.push({
-        type: "expand",
-        contents: action.payload,
-      });
-      break;
-
-    case "addContractSuggestion":
-      state.suggestions.push({
-        type: "contract",
-        contents: action.payload,
-      });
-      break;
-
-    case "addRewriteSuggestion":
-      state.suggestions.push({
-        type: "rewrite",
-        contents: action.payload,
-      });
-      break;
-  }
-  return state;
-};
-
-reducer = produce(reducer);
-
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -79,17 +20,23 @@ const countSyllables = (text: string) => {
   }
 };
 
-export default function Editor({ book }: { book: t.Book }) {
+export default function Editor({
+  book,
+  setTitle,
+  setText,
+}: {
+  book: t.Book;
+  setTitle: (chapterID: string, newTitle: string) => void;
+  setText: (chapterID: string, newText: string) => void;
+}) {
   const { chapterid } = useParams();
 
   let chapter: t.Chapter | null = null;
 
-  book.columns.forEach((c) => {
-    c.chapters.forEach((ch) => {
-      if (ch.chapterid === chapterid) {
-        chapter = ch;
-      }
-    });
+  book.chapters.forEach((c) => {
+    if (c.chapterid === chapterid) {
+      chapter = c;
+    }
   });
 
   const initialEditorState: EditorState = {
@@ -112,6 +59,67 @@ export default function Editor({ book }: { book: t.Book }) {
       },
     ],
   };
+
+  let reducer = (state: State, action: any): State => {
+    switch (action.type) {
+      case "setText":
+        state.editor.text = action.payload;
+        setText(chapterid, state.editor.text);
+        break;
+      case "setContents":
+        state.editor.contents = action.payload;
+        break;
+      case "addToContents":
+        state.editor.contents.insert(action.payload);
+        state.editor.text += action.payload;
+        setText(chapterid, state.editor.text);
+        break;
+      case "setSynonyms":
+        state.synonyms = action.payload;
+        break;
+      case "clearSynonyms":
+        state.synonyms = [];
+        break;
+      case "setTooltipPosition":
+        state.editor.tooltipPosition = action.payload;
+        break;
+      case "openTooltip":
+        state.editor.tooltipOpen = true;
+        break;
+      case "closeTooltip":
+        state.editor.tooltipOpen = false;
+        break;
+      case "setSelectedText":
+        state.editor.selectedText = action.payload;
+      case "synonymSelected":
+        state.editor.selectedText = action.payload;
+        state.editor.tooltipOpen = false;
+        break;
+      case "addExpandSuggestion":
+        state.suggestions.push({
+          type: "expand",
+          contents: action.payload,
+        });
+        break;
+
+      case "addContractSuggestion":
+        state.suggestions.push({
+          type: "contract",
+          contents: action.payload,
+        });
+        break;
+
+      case "addRewriteSuggestion":
+        state.suggestions.push({
+          type: "rewrite",
+          contents: action.payload,
+        });
+        break;
+    }
+    return state;
+  };
+
+  reducer = produce(reducer);
 
   const [state, dispatch] = useReducer<(state: State, action: any) => State>(
     reducer,

@@ -16,7 +16,7 @@ export default function Chapter({ chapterid, title, text, x = 0, y = 0 }) {
       onMouseDown={console.log}
     >
       <div
-        className={`divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow w-48 my-xs mx-auto p-xs cursor-pointer`}
+        className={`divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow w-48 max-w-md my-xs mx-xs p-xs cursor-pointer`}
       >
         <div className="handle uppercase text-sm font-semibold border-b-2 mb-xs">
           {title}

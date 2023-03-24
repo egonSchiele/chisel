@@ -25,22 +25,28 @@ export type Suggestion = {
   contents: string;
 };
 
+export type Pos = {
+  x: number;
+  y: number;
+};
+
 export type Chapter = {
   chapterid: string;
   title: string;
   text: string;
+  pos: Pos;
 };
 
 export type Column = {
   title: string;
-  chapters: Chapter[];
 };
 
 export type Book = {
   bookid: string;
   title: string;
   author: string;
-  columns: Column[];
+  chapters: Chapter[];
+  //columns: Column[];
 };
 
 export type Coords = {

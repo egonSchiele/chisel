@@ -4,3 +4,4 @@ dist/*
 makefile
 kustomization.yaml
 pod*.yaml
+serviceAccountKey.json
