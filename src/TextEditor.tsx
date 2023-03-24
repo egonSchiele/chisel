@@ -141,11 +141,20 @@ const TextEditor = ({
             return;
           }
 
-          const generatedText = data.choices[0].text;
-          dispatch({
-            type: dispatchType,
-            payload: generatedText,
+          if (!data.choices) {
+            setError("No choices returned.");
+            setLoading(false);
+            return;
+          }
+
+          data.choices.forEach((choice) => {
+            const generatedText = choice.text;
+            dispatch({
+              type: dispatchType,
+              payload: generatedText,
+            });
           });
+
           setLoading(false);
         });
       })

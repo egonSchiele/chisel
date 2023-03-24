@@ -24,3 +24,26 @@ export type Suggestion = {
   type: SuggestionType;
   contents: string;
 };
+
+export type Chapter = {
+  title: string;
+  text: string;
+};
+
+export type Column = {
+  title: string;
+  chapters: Chapter[];
+};
+
+export type Book = {
+  title: string;
+  author: string;
+  columns: Column[];
+};
+
+export type Coords = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
