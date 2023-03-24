@@ -34,6 +34,7 @@ app.post("/api/save", async (req, res) => {
   } catch (error) {
     console.error("Error syncing book to Firestore:", error);
   }
+  res.status(200).end();
 });
 
 app.get("/api/book/:bookid", async (req, res) => {
@@ -46,7 +47,7 @@ app.get("/api/book/:bookid", async (req, res) => {
     res.json(book.data());
   } catch (error) {
     console.error("Error syncing book to Firestore:", error);
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -79,21 +80,26 @@ app.post("/api/expand", async (req, res) => {
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify(reqBody),
-  }).then((result) => {
-    console.log({ result });
-    result.json().then((json) => {
-      console.log({ json });
-      let choices;
-      if (chatModels.includes(req.body.model)) {
-        choices = json.choices.map((choice) => ({
-          text: choice.message.content,
-        }));
-      } else {
-        choices = json.choices.map((choice) => ({ text: choice.text }));
-      }
-      res.json({ choices });
+  })
+    .then((result) => {
+      console.log({ result });
+      result.json().then((json) => {
+        console.log({ json });
+        let choices;
+        if (chatModels.includes(req.body.model)) {
+          choices = json.choices.map((choice) => ({
+            text: choice.message.content,
+          }));
+        } else {
+          choices = json.choices.map((choice) => ({ text: choice.text }));
+        }
+        res.json({ choices });
+      });
+    })
+    .catch((error) => {
+      console.log({ error });
+      res.status(400).json({ error: error.message });
     });
-  });
 });
 
 const port = process.env.PORT || 80;
