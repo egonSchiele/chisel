@@ -89,6 +89,8 @@ export default function App() {
     (state: t.Book, action: any) => any
   >(reducer, initialState);
 
+  const [loaded, setLoaded] = React.useState(false);
+
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/book/${state.bookid}`);
@@ -97,7 +99,9 @@ export default function App() {
         return;
       }
       const data: t.Book = await res.json();
+      console.log("got book");
       dispatch({ type: "SET_BOOK", payload: data });
+      setLoaded(true);
     };
     func();
   }, []);
@@ -145,19 +149,21 @@ export default function App() {
       setError("");
     }
   }
-
   return (
     <div>
       {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
-      <Routes>
-        <Route path="/" element={<Book book={state} />} />
-        <Route
-          path="/chapter/:chapterid"
-          element={
-            <Editor book={state} setTitle={setTitle} setText={setText} />
-          }
-        />
-      </Routes>
+      {!loaded && <p className="p-sm bg-yellow-400 w-full">Loading...</p>}
+      {loaded && (
+        <Routes>
+          <Route path="/" element={<Book book={state} />} />
+          <Route
+            path="/chapter/:chapterid"
+            element={
+              <Editor book={state} setTitle={setTitle} setText={setText} />
+            }
+          />
+        </Routes>
+      )}
     </div>
   );
 }

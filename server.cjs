@@ -3,9 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const settings = require("./settings.ts");
 const storage = require("./src/storage/firebase.ts");
+const fs = require("fs");
+const path = require("path");
 // import settings from "./settings.ts";
 // import { saveBook, getBook } from "./src/storage/firebase.ts";
-
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,17 @@ app.post("/api/save", async (req, res) => {
   book = JSON.parse(book);
   await storage.saveBook(book);
   res.status(200).end();
+});
+
+app.get("/chapter/:chapterid", async (req, res) => {
+  fs.readFile(path.resolve("./dist/index.html"), "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("An error occurred");
+    }
+
+    return res.send(data);
+  });
 });
 
 app.get("/api/book/:bookid", async (req, res) => {
@@ -57,7 +69,7 @@ app.post("/api/expand", async (req, res) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${settings.openAiApiKey}`,
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify(reqBody),
   })

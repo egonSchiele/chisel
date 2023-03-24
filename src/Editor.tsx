@@ -98,7 +98,6 @@ export default function Editor({
   setText: (chapterID: string, newText: string) => void;
 }) {
   const { chapterid } = useParams();
-
   let chapter: t.Chapter | null = null;
 
   book.chapters.forEach((c) => {
