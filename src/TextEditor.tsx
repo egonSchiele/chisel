@@ -183,6 +183,11 @@ const TextEditor = ({
     handleSuggestion(prompt, "addTextToSpeechSuggestion");
   };
 
+  const fixPassiveVoice = async () => {
+    const prompt = `Please change passive voice to active voice in this text: ${state.text}.`;
+    handleSuggestion(prompt, "fixPassiveVoiceSuggestion");
+  };
+
   const fetchSynonyms = async (word) => {
     try {
       const response = await axios.get(
@@ -276,7 +281,10 @@ const TextEditor = ({
               Highlight Filler Words
             </Button>
             <Button onClick={fixTextToSpeech} className="ml-xs" size="small">
-              Fix Text-To-Speech
+              Fix Speech-To-Text
+            </Button>
+            <Button onClick={fixPassiveVoice} className="ml-xs" size="small">
+              Rewrite As Active Voice
             </Button>
             {state.selectedText.length > 0 && (
               <Button

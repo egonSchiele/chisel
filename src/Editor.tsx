@@ -79,6 +79,12 @@ const reducer = produce((draft: t.State, action: any) => {
         contents: action.payload,
       });
       break;
+    case "fixPassiveVoiceSuggestion":
+      draft.suggestions.push({
+        type: "activevoice",
+        contents: action.payload,
+      });
+      break;
   }
 });
 
