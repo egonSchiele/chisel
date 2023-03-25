@@ -83,6 +83,12 @@ app.post("/submitLogin", async (req, res) => {
   res.redirect("/");
 });
 
+app.get("/logout", async (req, res) => {
+  res.clearCookie("userid");
+  res.clearCookie("token");
+  res.redirect("/login.html");
+});
+
 app.post("/api/save", async (req, res) => {
   let { book } = req.body;
   book = JSON.parse(book);
