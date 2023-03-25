@@ -5,3 +5,4 @@ makefile
 kustomization.yaml
 pod*.yaml
 serviceAccountKey.json
+settings.ts
