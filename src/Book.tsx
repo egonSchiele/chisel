@@ -82,6 +82,15 @@ export default function Book({}) {
       {bookid}
       <h1>{state.title}</h1>
       <p>{state.chapters.length} chapters</p>
+      <ul>
+        {state.chapters.map((chapter, index) => (
+          <li key={index}>
+            <a href={`/chapter/${chapter.chapterid}`}>
+              {chapter.title} - {chapter.text}
+            </a>
+          </li>
+        ))}
+      </ul>
       <form
         className="flex w-full lg:max-w-md"
         action="/api/newChapter"

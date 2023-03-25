@@ -94,7 +94,7 @@ const TextEditor = ({
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
     const editor = quillRef.current.getEditor();
-
+    dispatch({ type: "setSaved", payload: false });
     dispatch({
       type: "setContents",
       payload: editor.getContents(),

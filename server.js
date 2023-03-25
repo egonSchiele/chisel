@@ -60,8 +60,16 @@ app.get("/logout", async (req, res) => {
 
 app.post("/api/save", async (req, res) => {
   let { book } = req.body;
+
   book = JSON.parse(book);
   await saveBook(book);
+  res.status(200).end();
+});
+
+app.post("/api/saveChapter", async (req, res) => {
+  let { chapter } = req.body;
+  console.log(chapter);
+  await saveChapter(chapter);
   res.status(200).end();
 });
 
@@ -105,6 +113,8 @@ app.post("/api/newChapter", async (req, res) => {
         text: "Once upon a time...",
         pos: { x: 0, y: 0 },
       };
+
+      console.log(chapter);
 
       //book.chapters.push(chapter);
       await saveChapter(chapter);

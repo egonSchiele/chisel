@@ -10,6 +10,7 @@ import Panel from "./components/Panel";
 import SuggestionPanel from "./SuggestionPanel";
 import { useParams } from "react-router-dom";
 import * as t from "./Types";
+import { useInterval } from "./utils";
 
 const countSyllables = (text: string) => {
   try {
@@ -24,17 +25,21 @@ const reducer = produce((draft: t.State, action: any) => {
   switch (action.type) {
     case "setText":
       draft.editor.text = action.payload;
+      draft.chapter.text = action.payload;
       break;
     case "setContents":
       draft.editor.contents = action.payload;
       break;
     case "setChapter":
       draft.chapter = action.payload;
+    case "setSaved":
+      draft.saved = action.payload;
     case "addToContents":
       // if (!draft.editor.contents) return;
       // console.log(current(draft.editor.contents));
       // draft.editor.contents.insert(action.payload);
       draft.editor.text += action.payload;
+      draft.chapter.text += action.payload;
       break;
     case "setSynonyms":
       draft.synonyms = action.payload;
@@ -107,6 +112,7 @@ export default function Editor(
 
   const [error, setError] = React.useState("");
   const [loaded, setLoaded] = React.useState(false);
+  const [saved, setSaved] = React.useState(true);
 
   useEffect(() => {
     const func = async () => {
@@ -125,6 +131,37 @@ export default function Editor(
     func();
   }, []);
 
+  useInterval(() => {
+    saveChapter(state);
+  }, 5000);
+
+  async function saveChapter(state: t.State) {
+    console.log(state);
+    if (state.saved) return;
+    if (!state.chapter) {
+      console.log("no chapter");
+      return;
+    }
+
+    const body = JSON.stringify({ chapter: state.chapter });
+
+    const result = await fetch("/api/saveChapter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+
+    if (!result.ok) {
+      setError(result.statusText);
+      return;
+    } else {
+      setError("");
+      dispatch({ type: "setSaved", payload: true });
+    }
+  }
+
   const initialEditorState: EditorState = {
     text: "",
     contents: {},
@@ -135,6 +172,7 @@ export default function Editor(
 
   const initialState: State = {
     editor: initialEditorState,
+    saved: true,
     chapterid,
     chapter: null,
     synonyms: [],
@@ -181,6 +219,12 @@ export default function Editor(
       {error && <div className="error">{error}</div>}
       <div>
         <Sidebar>
+          <a
+            className="text-sm text-gray-500 m-sm"
+            href={`/book/${state.chapter.bookid}`}
+          >
+            Back to book
+          </a>
           <InfoPanel state={infoPanelState} />
           {state.suggestions.map((suggestion, index) => (
             <SuggestionPanel
@@ -198,7 +242,12 @@ export default function Editor(
           <div className="py-md">
             <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
               <h1 className="text-2xl font-semibold text-gray-900">
-                Your story
+                Your story{" "}
+                {!state.saved && (
+                  <span className="text-xs text-gray-500">
+                    (unsaved changes)
+                  </span>
+                )}
               </h1>
             </div>
             <div className="mx-auto max-w-7xl px-sm lg:px-md">

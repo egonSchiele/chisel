@@ -13,6 +13,7 @@ export type InfoPanelState = {
 
 export type State = {
   editor: EditorState;
+  saved: boolean;
   chapterid: string;
   chapter: Chapter | null;
   synonyms: string[];

@@ -16,6 +16,10 @@ const db = getFirestore();
 export const saveBook = async (book) => {
   console.log("saving book");
   console.log({ book });
+  if (!book) {
+    console.log("no book to save");
+    return;
+  }
   book.created_at = Date.now();
   const docRef = db.collection("books").doc(book.bookid);
   try {
@@ -30,16 +34,33 @@ export const getBook = async (bookid) => {
   console.log("getting book");
   console.log({ bookid });
   const docRef = db.collection("books").doc(bookid);
-  const book = await docRef.get();
-  if (!book.exists) {
+  const bookObj = await docRef.get();
+  if (!bookObj.exists) {
     return null;
   }
-  return book.data();
+  const book = bookObj.data();
+  const chapters = await db
+    .collection("chapters")
+    .where("bookid", "==", bookid)
+    .get();
+  console.log(chapters);
+  if (chapters.empty) {
+    console.log("No chapters found.");
+  } else {
+    chapters.forEach((chapter) => {
+      book.chapters.push(chapter.data());
+    });
+  }
+  return book;
 };
 
 export const saveChapter = async (chapter) => {
   console.log("saving chapter");
   console.log({ chapter });
+  if (!chapter) {
+    console.log("no chapter to save");
+    return;
+  }
   chapter.created_at = Date.now();
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   try {

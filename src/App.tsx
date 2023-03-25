@@ -52,37 +52,8 @@ export default function App() {
     //  dispatch({ type: "SET_TEXT", payload: { chapterID, newText } });
   }
 
-  /*   useInterval(() => {
-    saveBook(state);
-  }, 5000);
- 
-  async function saveBook(book: t.Book) {
-    const currentBookJSON = JSON.stringify(book);
-
-    if (prevBookJSON === currentBookJSON) {
-      return;
-    }
-    setPrevBookJSON(currentBookJSON);
-    const body = JSON.stringify({
-      book: currentBookJSON,
-    });
-
-    const result = await fetch("/api/save", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-
-    if (!result.ok) {
-      setError(result.statusText);
-      return;
-    } else {
-      setError("");
-    }
-  }
-  */
+  /*
+   */
   return (
     <div>
       {/* {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>} */}
