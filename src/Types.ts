@@ -44,6 +44,7 @@ export type Chapter = {
   title: string;
   text: string;
   pos: Pos;
+  suggestions: Suggestion[];
 };
 
 export type Column = {

@@ -24,22 +24,34 @@ const countSyllables = (text: string) => {
 const reducer = produce((draft: t.State, action: any) => {
   switch (action.type) {
     case "setText":
+      console.log("setText", action.payload);
       draft.editor.text = action.payload;
       draft.chapter.text = action.payload;
       break;
     case "setContents":
+      console.log("setContents", action.payload);
       draft.editor.contents = action.payload;
       break;
     case "setChapter":
       draft.chapter = action.payload;
+      break;
+    case "setSuggestions":
+      if (action.payload) {
+        draft.suggestions = action.payload;
+      }
+      break;
     case "setSaved":
+      console.log("setSaved", action.payload);
       draft.saved = action.payload;
+      break;
     case "addToContents":
-      // if (!draft.editor.contents) return;
+      if (!draft.editor.contents.insert) return;
       // console.log(current(draft.editor.contents));
-      // draft.editor.contents.insert(action.payload);
+
+      draft.editor.contents.insert(action.payload);
       draft.editor.text += action.payload;
-      draft.chapter.text += action.payload;
+      draft.saved = false;
+      //draft.chapter.text += action.payload;
       break;
     case "setSynonyms":
       draft.synonyms = action.payload;
@@ -58,6 +70,7 @@ const reducer = produce((draft: t.State, action: any) => {
       break;
     case "setSelectedText":
       draft.editor.selectedText = action.payload;
+      break;
     case "synonymSelected":
       draft.editor.selectedText = action.payload;
       draft.editor.tooltipOpen = false;
@@ -112,7 +125,6 @@ export default function Editor(
 
   const [error, setError] = React.useState("");
   const [loaded, setLoaded] = React.useState(false);
-  const [saved, setSaved] = React.useState(true);
 
   useEffect(() => {
     const func = async () => {
@@ -125,6 +137,7 @@ export default function Editor(
       console.log("got chapter");
       console.log(data);
       dispatch({ type: "setChapter", payload: data });
+      dispatch({ type: "setSuggestions", payload: data.suggestions });
       dispatch({ type: "setText", payload: data.text });
       setLoaded(true);
     };
@@ -136,14 +149,15 @@ export default function Editor(
   }, 5000);
 
   async function saveChapter(state: t.State) {
-    console.log(state);
     if (state.saved) return;
     if (!state.chapter) {
       console.log("no chapter");
       return;
     }
 
-    const body = JSON.stringify({ chapter: state.chapter });
+    const chapter = { ...state.chapter };
+    chapter.suggestions = state.suggestions;
+    const body = JSON.stringify({ chapter });
 
     const result = await fetch("/api/saveChapter", {
       method: "POST",

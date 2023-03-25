@@ -154,7 +154,7 @@ const TextEditor = ({
               payload: generatedText,
             });
           });
-
+          dispatch({ type: "setSaved", payload: false });
           setLoading(false);
         });
       })

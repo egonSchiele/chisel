@@ -112,6 +112,7 @@ app.post("/api/newChapter", async (req, res) => {
         title: "New Chapter",
         text: "Once upon a time...",
         pos: { x: 0, y: 0 },
+        suggestions: [],
       };
 
       console.log(chapter);
