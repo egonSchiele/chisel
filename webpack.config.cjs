@@ -19,8 +19,10 @@ module.exports = {
   mode: "development",
   entry: {
     //server: "./server.js",
-    index: "./index.tsx",
+    library: "./index.tsx",
+
     login: "./empty.tsx",
+    register: "./empty.tsx",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

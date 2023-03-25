@@ -31,6 +31,9 @@ const getBook = async (bookid) => {
   console.log({ bookid });
   const docRef = db.collection("books").doc(bookid);
   const book = await docRef.get();
+  if (!book.exists) {
+    return null;
+  }
   return book.data();
 };
 

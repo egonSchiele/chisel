@@ -307,7 +307,7 @@ const TextEditor = ({
           </ButtonGroup>
         </div>
         <ClickAwayListener onClickAway={handleClickAway}>
-          <div onClick={onClickEditor} className="mb-md">
+          <div onClick={onClickEditor} className="mb-md font-georgia">
             <ReactQuill
               ref={quillRef}
               value={state.contents}
