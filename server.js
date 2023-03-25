@@ -1,12 +1,13 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const settings = require("./settings.ts");
-const storage = require("./src/storage/firebase.ts");
-const fs = require("fs");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const auth = require("./src/authentication/firebase.ts");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+//import settings from "./settings.js";
+import { saveBook, getBook } from "./src/storage/firebase.js";
+//import fs from "fs"
+import * as fs from "fs";
+import path from "path";
+import cookieParser from "cookie-parser";
+import { requireLogin, submitLogin } from "./src/authentication/firebase.js";
 //const serviceAccountKey = require("./serviceAccountKey.json");
 
 /* import { initializeApp } from "firebase/app";
@@ -32,7 +33,7 @@ app.use(express.static("dist"));
 app.use(cookieParser());
 
 app.post("/submitLogin", async (req, res) => {
-  await auth.submitLogin(req, res);
+  await submitLogin(req, res);
 });
 
 app.get("/logout", async (req, res) => {
@@ -44,11 +45,11 @@ app.get("/logout", async (req, res) => {
 app.post("/api/save", async (req, res) => {
   let { book } = req.body;
   book = JSON.parse(book);
-  await storage.saveBook(book);
+  await saveBook(book);
   res.status(200).end();
 });
 
-app.get("/chapter/:chapterid", auth.requireLogin, async (req, res) => {
+app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
   fs.readFile(path.resolve("./dist/library.html"), "utf8", (err, data) => {
     if (err) {
       console.error(err);
@@ -59,7 +60,7 @@ app.get("/chapter/:chapterid", auth.requireLogin, async (req, res) => {
   });
 });
 
-app.get("/", auth.requireLogin, async (req, res) => {
+app.get("/", requireLogin, async (req, res) => {
   fs.readFile(path.resolve("./dist/library.html"), "utf8", (err, data) => {
     if (err) {
       console.error(err);
@@ -73,7 +74,7 @@ app.get("/", auth.requireLogin, async (req, res) => {
 app.get("/api/book/:bookid", async (req, res) => {
   let { bookid } = req.params;
   try {
-    const data = await storage.getBook(bookid);
+    const data = await getBook(bookid);
     res.status(200).json(data);
   } catch (error) {
     console.error("Error getting book:", error);

@@ -1,9 +1,9 @@
-const firestore = require("firebase-admin/firestore");
-const admin = require("firebase-admin");
-const settings = require("../../settings.ts");
-const serviceAccountKey = require("../../serviceAccountKey.json");
+import { getFirestore } from "firebase-admin/firestore";
+
+import admin from "firebase-admin";
+import settings from "../../settings.js";
+import serviceAccountKey from "../../serviceAccountKey.json" assert { type: "json" };
 //const serviceAccountKey = await import(settings.firebaseServiceAccountKeyPath);
-//console.log(serviceAccountKey, "<<");
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey),
@@ -11,9 +11,9 @@ try {
 } catch (e) {
   console.log(e);
 }
-const db = firestore.getFirestore();
+const db = getFirestore();
 
-const saveBook = async (book) => {
+export const saveBook = async (book) => {
   console.log("saving book");
   console.log({ book });
   book.created_at = Date.now();
@@ -26,7 +26,7 @@ const saveBook = async (book) => {
   }
 };
 
-const getBook = async (bookid) => {
+export const getBook = async (bookid) => {
   console.log("getting book");
   console.log({ bookid });
   const docRef = db.collection("books").doc(bookid);
@@ -35,9 +35,4 @@ const getBook = async (bookid) => {
     return null;
   }
   return book.data();
-};
-
-module.exports = {
-  saveBook,
-  getBook,
 };

@@ -1,20 +1,22 @@
-const firestore2 = require("firebase-admin/firestore");
-const admin2 = require("firebase-admin");
-const firebaseAuth = require("@firebase/auth");
-const firebaseApp = require("firebase/app");
-const settings2 = require("../../settings.ts");
-const serviceAccountKey2 = require("../../serviceAccountKey.json");
-const firebase = firebaseApp.initializeApp(settings2.firebaseConfig);
+import { getFirestore } from "firebase-admin/firestore";
+
+import admin from "firebase-admin";
+import settings from "../../settings.js";
+import serviceAccountKey from "../../serviceAccountKey.json" assert { type: "json" };
+
+import * as firebaseAuth from "@firebase/auth";
+import * as firebaseApp from "firebase/app";
+const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
 try {
-  admin2.initializeApp({
-    credential: admin2.credential.cert(serviceAccountKey2),
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountKey),
   });
 } catch (e) {
   console.log(e);
 }
-const db2 = firestore2.getFirestore();
+const db2 = getFirestore();
 
 async function stringToHash(str) {
   const encoder = new TextEncoder();
@@ -26,7 +28,7 @@ async function stringToHash(str) {
     .join("");
 }
 
-const requireLogin = (req, res, next) => {
+export const requireLogin = (req, res, next) => {
   const c = req.cookies;
   //console.log({ req });
 
@@ -44,7 +46,7 @@ const requireLogin = (req, res, next) => {
   }
 };
 
-const submitLogin = async (req, res) => {
+export const submitLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -109,10 +111,4 @@ const createUser = async (email) => {
     console.error("Error syncing user to Firestore:", error);
     return null;
   }
-};
-
-module.exports = {
-  requireLogin,
-  stringToHash,
-  submitLogin,
 };
