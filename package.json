@@ -10,6 +10,7 @@
     "babel-loader": "^9.1.2",
     "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
+    "nodemon": "^2.0.22",
     "postcss": "^8.4.21",
     "postcss-loader": "^7.1.0",
     "postcss-preset-env": "^8.0.1",
@@ -52,6 +53,8 @@
     "start": "node server.js",
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
+    "nodemon": "nodemon server.js",
     "serve": "webpack serve"
   }
 }

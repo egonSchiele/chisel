@@ -61,6 +61,8 @@ app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
 });
 
 app.get("/", requireLogin, async (req, res) => {
+  res.sendFile(path.resolve("./dist/library.html"));
+  return;
   fs.readFile(path.resolve("./dist/library.html"), "utf8", (err, data) => {
     if (err) {
       console.error(err);
