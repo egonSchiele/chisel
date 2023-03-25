@@ -47,6 +47,7 @@ export type Column = {
 };
 
 export type Book = {
+  userid: string;
   bookid: string;
   title: string;
   author: string;

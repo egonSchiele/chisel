@@ -7,11 +7,14 @@ import { saveBook, getBook } from "./src/storage/firebase.js";
 import * as fs from "fs";
 import path from "path";
 import cookieParser from "cookie-parser";
+//import * as t from "./src/Types";
 import {
   requireLogin,
   submitLogin,
   submitRegister,
+  getUserId,
 } from "./src/authentication/firebase.js";
+import { nanoid } from "nanoid";
 //const serviceAccountKey = require("./serviceAccountKey.json");
 
 /* import { initializeApp } from "firebase/app";
@@ -57,6 +60,25 @@ app.post("/api/save", async (req, res) => {
   res.status(200).end();
 });
 
+app.post("/api/newBook", async (req, res) => {
+  const userid = getUserId(req);
+  if (!userid) {
+    console.log("no userid");
+    res.status(401).end();
+  } else {
+    const bookid = nanoid();
+    const book = {
+      userid: userid,
+      bookid,
+      title: "Untitled",
+      author: "Unknown",
+      chapters: [],
+    };
+    await saveBook(book);
+    res.redirect(`/book/${bookid}`);
+  }
+});
+
 app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
   fs.readFile(path.resolve("./dist/library.html"), "utf8", (err, data) => {
     if (err) {
@@ -70,15 +92,10 @@ app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
 
 app.get("/", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/library.html"));
-  return;
-  fs.readFile(path.resolve("./dist/library.html"), "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("An error occurred");
-    }
+});
 
-    return res.send(data);
-  });
+app.get("/book/:bookid", requireLogin, async (req, res) => {
+  res.sendFile(path.resolve("./dist/book.html"));
 });
 
 app.get("/api/book/:bookid", async (req, res) => {

@@ -47,6 +47,14 @@ export const requireLogin = (req, res, next) => {
   }
 };
 
+export const getUserId = (req) => {
+  if (!req.cookies.userid) {
+    return null;
+  } else {
+    return req.cookies.userid;
+  }
+};
+
 export const submitLogin = async (req, res) => {
   const { email, password } = req.body;
 
