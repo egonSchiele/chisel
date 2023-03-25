@@ -7,7 +7,11 @@ import { saveBook, getBook } from "./src/storage/firebase.js";
 import * as fs from "fs";
 import path from "path";
 import cookieParser from "cookie-parser";
-import { requireLogin, submitLogin } from "./src/authentication/firebase.js";
+import {
+  requireLogin,
+  submitLogin,
+  submitRegister,
+} from "./src/authentication/firebase.js";
 //const serviceAccountKey = require("./serviceAccountKey.json");
 
 /* import { initializeApp } from "firebase/app";
@@ -34,6 +38,10 @@ app.use(cookieParser());
 
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);
+});
+
+app.post("/submitRegister", async (req, res) => {
+  await submitRegister(req, res);
 });
 
 app.get("/logout", async (req, res) => {

@@ -1,4 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
+import { nanoid } from "nanoid";
 
 import admin from "firebase-admin";
 import settings from "../../settings.js";
@@ -64,9 +65,9 @@ export const submitLogin = async (req, res) => {
       if (!user) {
         throw new Error("Failed to create user");
       }
-      if (!user.approved) {
-        throw new Error("User not approved");
-      }
+    }
+    if (!user.approved) {
+      throw new Error("User not approved");
     }
 
     const token = await stringToHash(user.id);
@@ -76,6 +77,29 @@ export const submitLogin = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.redirect("/login.html?err=" + err);
+  }
+};
+
+export const submitRegister = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const credentials = await firebaseAuth.createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const firebaseUser = credentials.user;
+
+    const user = await createUser(email);
+    if (!user) {
+      throw new Error("Failed to create user");
+    }
+
+    res.redirect("/");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/register.html?err=" + err);
   }
 };
 
@@ -94,7 +118,7 @@ const createUser = async (email) => {
   console.log("creating user");
   console.log({ email });
   const data = {
-    id: 1,
+    id: nanoid(),
     email,
     approved: false,
     settings: {},
