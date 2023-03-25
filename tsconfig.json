@@ -11,8 +11,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*.ts", "src/authentication/firebase.js", "src/authentication/firebase.js", "src/storage/firebase.js", "src/storage/firebase.js",
-  ],
+  
   "exclude": ["node_modules"],
 }
