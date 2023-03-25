@@ -36,3 +36,27 @@ export const getBook = async (bookid) => {
   }
   return book.data();
 };
+
+export const saveChapter = async (chapter) => {
+  console.log("saving chapter");
+  console.log({ chapter });
+  chapter.created_at = Date.now();
+  const docRef = db.collection("chapters").doc(chapter.chapterid);
+  try {
+    await docRef.set(chapter);
+    console.log("Successfully synced chapter to Firestore");
+  } catch (error) {
+    console.error("Error syncing chapter to Firestore:", error);
+  }
+};
+
+export const getChapter = async (chapterid) => {
+  console.log("getting chapter");
+  console.log({ chapterid });
+  const docRef = db.collection("chapters").doc(chapterid);
+  const chapter = await docRef.get();
+  if (!chapter.exists) {
+    return null;
+  }
+  return chapter.data();
+};

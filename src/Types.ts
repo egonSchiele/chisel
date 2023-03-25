@@ -13,6 +13,8 @@ export type InfoPanelState = {
 
 export type State = {
   editor: EditorState;
+  chapterid: string;
+  chapter: Chapter | null;
   synonyms: string[];
   infoPanel: InfoPanelState;
   suggestions: Suggestion[];
@@ -36,6 +38,7 @@ export type Pos = {
 };
 
 export type Chapter = {
+  bookid: string;
   chapterid: string;
   title: string;
   text: string;

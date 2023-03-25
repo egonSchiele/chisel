@@ -2,7 +2,12 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 //import settings from "./settings.js";
-import { saveBook, getBook } from "./src/storage/firebase.js";
+import {
+  saveBook,
+  getBook,
+  saveChapter,
+  getChapter,
+} from "./src/storage/firebase.js";
 //import fs from "fs"
 import * as fs from "fs";
 import path from "path";
@@ -64,7 +69,7 @@ app.post("/api/newBook", async (req, res) => {
   const userid = getUserId(req);
   if (!userid) {
     console.log("no userid");
-    res.status(401).end();
+    res.status(404).end();
   } else {
     const bookid = nanoid();
     const book = {
@@ -79,15 +84,44 @@ app.post("/api/newBook", async (req, res) => {
   }
 });
 
-app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
-  fs.readFile(path.resolve("./dist/library.html"), "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("An error occurred");
-    }
+app.post("/api/newChapter", async (req, res) => {
+  const userid = getUserId(req);
+  console.log(req.body);
+  const { bookid } = req.body;
+  if (!userid) {
+    console.log("no userid");
+    res.status(404).end();
+  } else {
+    const book = await getBook(bookid);
+    if (!book) {
+      console.log("no book with id, " + bookid);
+      res.status(404).end();
+    } else {
+      const chapterid = nanoid();
+      const chapter = {
+        bookid,
+        chapterid,
+        title: "New Chapter",
+        text: "Once upon a time...",
+        pos: { x: 0, y: 0 },
+      };
 
-    return res.send(data);
-  });
+      //book.chapters.push(chapter);
+      await saveChapter(chapter);
+      res.redirect(`/chapter/${chapterid}`);
+    }
+  }
+});
+
+app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
+  const { chapterid } = req.params;
+  const chapter = await getChapter(chapterid);
+  if (!chapter) {
+    console.log("no chapter with id, " + chapterid);
+    res.status(404).end();
+  } else {
+    res.sendFile(path.resolve("./dist/chapter.html"));
+  }
 });
 
 app.get("/", requireLogin, async (req, res) => {
@@ -105,6 +139,17 @@ app.get("/api/book/:bookid", async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     console.error("Error getting book:", error);
+    res.status(400).json({ error: error });
+  }
+});
+
+app.get("/api/chapter/:chapterid", async (req, res) => {
+  let { chapterid } = req.params;
+  try {
+    const data = await getChapter(chapterid);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error getting chapter:", error);
     res.status(400).json({ error: error });
   }
 });

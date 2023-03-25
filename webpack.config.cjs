@@ -19,8 +19,9 @@ module.exports = {
   mode: "development",
   entry: {
     //server: "./server.js",
-    book: "./book.tsx",
     library: "./library.tsx",
+    book: "./book.tsx",
+    chapter: "./chapter.tsx",
     login: "./empty.tsx",
     register: "./empty.tsx",
   },

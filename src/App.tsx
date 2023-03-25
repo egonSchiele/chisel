@@ -15,7 +15,7 @@ const column2: t.Column = {
 };
  */
 
-const chapter1: t.Chapter = {
+/* const chapter1: t.Chapter = {
   chapterid: "1",
   title: "Chapter 1",
   text: "Chapter 1 content",
@@ -34,7 +34,7 @@ const chapter3: t.Chapter = {
   title: "Chapter 3",
   text: "Chapter 3 content",
   pos: { x: 1, y: 0 },
-};
+}; */
 
 //reducer = produce(reducer);
 
@@ -90,12 +90,7 @@ export default function App() {
       {
         <Routes>
           <Route path="/book/:bookid" element={<Book />} />
-          <Route
-            path="/chapter/:chapterid"
-            element={
-              <Editor book={null} setTitle={setTitle} setText={setText} />
-            }
-          />
+          <Route path="/chapter/:chapterid" element={<Editor />} />
         </Routes>
       }
     </div>

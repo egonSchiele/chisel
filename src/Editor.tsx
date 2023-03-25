@@ -28,8 +28,12 @@ const reducer = produce((draft: t.State, action: any) => {
     case "setContents":
       draft.editor.contents = action.payload;
       break;
+    case "setChapter":
+      draft.chapter = action.payload;
     case "addToContents":
-      draft.editor.contents.insert(action.payload);
+      // if (!draft.editor.contents) return;
+      // console.log(current(draft.editor.contents));
+      // draft.editor.contents.insert(action.payload);
       draft.editor.text += action.payload;
       break;
     case "setSynonyms":
@@ -88,26 +92,41 @@ const reducer = produce((draft: t.State, action: any) => {
   }
 });
 
-export default function Editor({
-  book,
+export default function Editor(
+  {
+    /*   book,
   setTitle,
-  setText,
-}: {
+  setText, */
+  } /* : {
   book: t.Book;
   setTitle: (chapterID: string, newTitle: string) => void;
   setText: (chapterID: string, newText: string) => void;
-}) {
+} */
+) {
   const { chapterid } = useParams();
-  let chapter: t.Chapter | null = null;
 
-  book.chapters.forEach((c) => {
-    if (c.chapterid === chapterid) {
-      chapter = c;
-    }
-  });
+  const [error, setError] = React.useState("");
+  const [loaded, setLoaded] = React.useState(false);
+
+  useEffect(() => {
+    const func = async () => {
+      const res = await fetch(`/api/chapter/${chapterid}`);
+      if (!res.ok) {
+        setError(res.statusText);
+        return;
+      }
+      const data: t.Chapter = await res.json();
+      console.log("got chapter");
+      console.log(data);
+      dispatch({ type: "setChapter", payload: data });
+      dispatch({ type: "setText", payload: data.text });
+      setLoaded(true);
+    };
+    func();
+  }, []);
 
   const initialEditorState: EditorState = {
-    text: chapter ? chapter.text : "",
+    text: "",
     contents: {},
     tooltipPosition: { top: 0, left: 0 },
     tooltipOpen: false,
@@ -116,6 +135,8 @@ export default function Editor({
 
   const initialState: State = {
     editor: initialEditorState,
+    chapterid,
+    chapter: null,
     synonyms: [],
     infoPanel: { syllables: 0 },
     suggestions: [
@@ -131,10 +152,6 @@ export default function Editor({
     reducer,
     initialState
   );
-
-  useEffect(() => {
-    setText(chapterid, state.editor.text);
-  }, [state.editor.text]);
 
   let selectedSyllables = countSyllables(state.editor.selectedText.contents);
 
@@ -152,8 +169,16 @@ export default function Editor({
     });
   };
 
+  if (!loaded) {
+    if (error) {
+      return <div>{error}</div>;
+    }
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
+      {error && <div className="error">{error}</div>}
       <div>
         <Sidebar>
           <InfoPanel state={infoPanelState} />
