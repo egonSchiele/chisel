@@ -1,10 +1,26 @@
 const path = require("path");
+const fs = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+const pages = fs.readdirSync(path.resolve(__dirname, "pages"));
+
+const htmlPages = pages.map((page) => {
+  const name = page.split(".")[0];
+  return new HtmlWebpackPlugin({
+    title: "Frisson Editor",
+    filename: page,
+    template: `./pages/${page}`,
+    chunks: [`${name}`],
+    excludeChunks: ["main"],
+  });
+});
+
 module.exports = {
   mode: "development",
   entry: {
     //server: "./server.js",
-    main: "./index.tsx",
+    index: "./index.tsx",
+    login: "./empty.tsx",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -42,13 +58,7 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: "Frisson Editor",
-      filename: "index.html",
-      template: "./index.html",
-    }),
-  ],
+  plugins: [...htmlPages],
   devServer: {
     open: true,
     hot: true,

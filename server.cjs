@@ -5,14 +5,83 @@ const settings = require("./settings.ts");
 const storage = require("./src/storage/firebase.ts");
 const fs = require("fs");
 const path = require("path");
-// import settings from "./settings.ts";
+const firebaseAuth = require("@firebase/auth");
+const firebaseApp = require("firebase/app");
+const cookieParser = require("cookie-parser");
+//const serviceAccountKey = require("./serviceAccountKey.json");
+
+/* import { initializeApp } from "firebase/app";
+import { getAuth } from "@firebase/auth"; */
+const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
+const auth = firebaseAuth.getAuth(firebase);
+
+// const credentials = await signInWithEmailAndPassword(auth, email, password);
+// const firebaseUser = credentials.user;
+
+//const firebaseCommon = require("@firebase
+/* import { signInWithEmailAndPassword } from "@firebase/auth";
+
+import { firebase, auth, _getAuth } from "@/common/firebase";
+ */ // import settings from "./settings.ts";
 // import { saveBook, getBook } from "./src/storage/firebase.ts";
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded());
+
 app.use(express.static("dist"));
+app.use(cookieParser());
+
+async function stringToHash(str) {
+  const encoder = new TextEncoder();
+  const salt = process.env.SALT;
+  const data = encoder.encode(str + salt);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+const requireLogin = (req, res, next) => {
+  const c = req.cookies;
+  //console.log({ req });
+  console.log(req.cookies);
+  if (!req.cookies.userid) {
+    console.log("no userid");
+    res.redirect("/login.html");
+  } else {
+    stringToHash(req.cookies.userid).then((hash) => {
+      console.log({ hash, token: req.cookies.token });
+      if (hash !== req.cookies.token) {
+        res.redirect("/login.html");
+      } else {
+        next();
+      }
+    });
+  }
+};
+
+app.post("/submitLogin", async (req, res) => {
+  console.log(req);
+  console.log(req.body);
+  const { email, password } = req.body;
+  console.log({ email, password });
+
+  const credentials = await firebaseAuth.signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  const firebaseUser = credentials.user;
+  console.log(firebaseUser);
+  res.cookie("userid", firebaseUser.uid);
+
+  const token = await stringToHash(firebaseUser.uid);
+  res.cookie("token", token);
+  res.redirect("/");
+});
 
 app.post("/api/save", async (req, res) => {
   let { book } = req.body;
@@ -21,7 +90,18 @@ app.post("/api/save", async (req, res) => {
   res.status(200).end();
 });
 
-app.get("/chapter/:chapterid", async (req, res) => {
+app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
+  fs.readFile(path.resolve("./dist/index.html"), "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("An error occurred");
+    }
+
+    return res.send(data);
+  });
+});
+
+app.get("/", requireLogin, async (req, res) => {
   fs.readFile(path.resolve("./dist/index.html"), "utf8", (err, data) => {
     if (err) {
       console.error(err);
