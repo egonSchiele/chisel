@@ -16,7 +16,7 @@ import ButtonGroup from "./components/ButtonGroup";
 import { EditorState, State } from "./Types";
 import Select from "./components/Select";
 import Input from "./components/Input";
-
+import EditableInput from "./components/EditableInput";
 import * as t from "./Types";
 
 const useStyles = makeStyles({
@@ -168,12 +168,19 @@ const TextEditor = ({
         <div className="ql-editor hidden">hi</div>
         <div className="ql-toolbar ql-snow hidden">hi</div>
         <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
-          <h1 className="text-3xl mb-sm tracking-wide font-light font-georgia text-darkest dark:text-lightest">
-            {state.title}
-            {!saved && (
-              <span className="text-xs text-gray-500">(unsaved changes)</span>
-            )}
-          </h1>
+          <EditableInput
+            value={state.title}
+            onSubmit={(title) => {
+              dispatch({ type: "setTitle", payload: title });
+            }}
+          >
+            <h1 className="text-3xl mb-sm tracking-wide font-light font-georgia text-darkest dark:text-lightest">
+              {state.title}
+              {!saved && (
+                <span className="text-xs text-gray-500">(unsaved changes)</span>
+              )}
+            </h1>
+          </EditableInput>
           <ClickAwayListener onClickAway={handleClickAway}>
             <div onClick={onClickEditor} className="mb-md font-georgia">
               <ReactQuill
