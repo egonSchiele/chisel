@@ -128,3 +128,9 @@ export const getChapter = async (chapterid) => {
   }
   return chapter.data();
 };
+
+export const deleteChapter = async (chapterid) => {
+  console.log("getting chapter");
+  console.log({ chapterid });
+  await db.collection("chapters").doc(chapterid).delete();
+};

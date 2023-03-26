@@ -8,6 +8,7 @@ import {
   deleteBook,
   getBooks,
   saveChapter,
+  deleteChapter,
   getChapter,
 } from "./src/storage/firebase.js";
 //import fs from "fs"
@@ -217,6 +218,17 @@ app.get("/api/chapter/:chapterid", async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     console.error("Error getting chapter:", error);
+    res.status(400).json({ error: error });
+  }
+});
+
+app.post("/api/deleteChapter", async (req, res) => {
+  let { chapterid } = req.body;
+  try {
+    const data = await deleteChapter(chapterid);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error deleting chapter:", error);
     res.status(400).json({ error: error });
   }
 });

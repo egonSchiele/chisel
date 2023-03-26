@@ -15,6 +15,7 @@ const initialState: t.Book = {
 import produce, { current } from "immer";
 import Button from "./components/Button";
 import EditableInput from "./components/EditableInput";
+import { TrashIcon } from "@heroicons/react/24/solid";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -112,6 +113,20 @@ export default function Book({}) {
     }
   }
 
+  async function deleteChapter(chapterid: string) {
+    const res = await fetch(`/api/deleteChapter`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ chapterid }),
+    });
+    if (!res.ok) {
+      setError(res.statusText);
+      return;
+    }
+  }
+
   if (!loaded) return <div>Loading...</div>;
   console.log("state", state);
   return (
@@ -132,16 +147,22 @@ export default function Book({}) {
         <ul className="">
           {loaded &&
             state.chapters.map((chapter, index) => (
-              <a key={index} href={`/chapter/${chapter.chapterid}`}>
-                <li
-                  className={
-                    "border-b border-slate-400 px-2 py-2 cursor-pointer" +
-                    (index % 2 === 0 ? " bg-dmlistitem1" : " bg-dmlistitem2")
-                  }
-                >
-                  {chapter.title}
-                </li>
-              </a>
+              <div className="relative">
+                <a key={index} href={`/chapter/${chapter.chapterid}`}>
+                  <li
+                    className={
+                      "border-b border-slate-400 px-2 py-2 cursor-pointer" +
+                      (index % 2 === 0 ? " bg-dmlistitem1" : " bg-dmlistitem2")
+                    }
+                  >
+                    {chapter.title}
+                  </li>
+                </a>
+                <TrashIcon
+                  className="w-6 m-2 absolute top-0 right-0 cursor-pointer hover:text-white"
+                  onClick={() => deleteChapter(chapter.chapterid)}
+                />
+              </div>
             ))}
         </ul>
         <Button className="rounded mt-md" buttonType="submit">
