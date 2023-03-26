@@ -58,6 +58,29 @@ export const getBook = async (bookid) => {
   return book;
 };
 
+export const deleteBook = async (bookid) => {
+  console.log("deleting book");
+  console.log({ bookid });
+
+  const chapters = await db
+    .collection("chapters")
+    .where("bookid", "==", bookid)
+    .get();
+
+  if (chapters.empty) {
+    console.log("No chapters found.");
+  } else {
+    const batch = db.batch();
+    chapters.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+  }
+
+  const docRef = db.collection("books").doc(bookid);
+  await docRef.delete();
+};
+
 export const getBooks = async (userid) => {
   console.log("getting books");
   console.log({ userid });

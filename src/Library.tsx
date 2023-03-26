@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import * as t from "./Types";
 import "./globals.css";
 import Button from "./components/Button";
+import { TrashIcon } from "@heroicons/react/24/solid";
 /* import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -36,6 +37,21 @@ export default function Library() {
     };
     func();
   }, []);
+
+  async function deleteBook(bookid: string) {
+    const res = await fetch(`/api/deleteBook`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookid }),
+    });
+    if (!res.ok) {
+      setError(res.statusText);
+      return;
+    }
+  }
+
   return (
     <header className="">
       {error && <div className="text-red-500">{error}</div>}
@@ -48,16 +64,24 @@ export default function Library() {
           <ul className="">
             {books &&
               books.map((book, index) => (
-                <a key={index} href={`/book/${book.bookid}`}>
-                  <li
-                    className={
-                      "border-b border-slate-400 px-2 py-2 cursor-pointer" +
-                      (index % 2 === 0 ? " bg-dmlistitem1" : " bg-dmlistitem2")
-                    }
-                  >
-                    {book.title}
-                  </li>
-                </a>
+                <div className="relative">
+                  <a key={index} href={`/book/${book.bookid}`}>
+                    <li
+                      className={
+                        "border-b border-slate-400 px-2 py-2 cursor-pointer" +
+                        (index % 2 === 0
+                          ? " bg-dmlistitem1"
+                          : " bg-dmlistitem2")
+                      }
+                    >
+                      {book.title}
+                    </li>
+                  </a>
+                  <TrashIcon
+                    className="w-6 m-2 absolute top-0 right-0 cursor-pointer hover:text-white"
+                    onClick={() => deleteBook(book.bookid)}
+                  />
+                </div>
               ))}
           </ul>
           <Button className="rounded mt-md" buttonType="submit">

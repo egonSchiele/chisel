@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import {
   saveBook,
   getBook,
+  deleteBook,
   getBooks,
   saveChapter,
   getChapter,
@@ -190,6 +191,12 @@ app.get("/books", requireLogin, async (req, res) => {
 
 app.get("/book/:bookid", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/book.html"));
+});
+
+app.post("/api/deleteBook", requireLogin, async (req, res) => {
+  const { bookid } = req.body;
+  await deleteBook(bookid);
+  res.redirect("/");
 });
 
 app.get("/api/book/:bookid", async (req, res) => {
