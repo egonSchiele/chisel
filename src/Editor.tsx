@@ -225,10 +225,10 @@ export default function Editor(
   }
 
   return (
-    <div className="grid grid-cols-8">
+    <div className="grid grid-cols-10">
       {error && <div className="error">{error}</div>}
 
-      <div className="col-span-7">
+      <div className="col-span-8">
         <div>
           <div className="">
             <Toolbar
@@ -246,14 +246,14 @@ export default function Editor(
         </div>
       </div>
 
-      <div>
+      <div className="col-span-2 min-h-screen">
         <Sidebar>
-          <a
+          {/* <a
             className="text-sm text-gray-500 m-sm"
             href={`/book/${state.chapter.bookid}`}
           >
             Back to book
-          </a>
+          </a> */}
           {/*  <InfoPanel state={infoPanelState} /> */}
           {state.suggestions.map((suggestion, index) => (
             <SuggestionPanel

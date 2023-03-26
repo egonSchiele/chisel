@@ -14,6 +14,7 @@ module.exports = {
           "Didot, 'Bodoni MT', 'Noto Serif Display', 'URW Palladio L', P052, Sylfaen, serif",
         merriweather: "Merriweather, serif",
       },
+      // palette: https://www.color-hex.com/color-palette/9376
       colors: {
         hover: "#325531",
         main: "#658864",
@@ -24,8 +25,21 @@ module.exports = {
         background: "#1A1A1A",
         text: "#F5F5F5",
 
-        dmbackground: "#171F2D",
-        dmtext: "rgb(148 163 184)",
+        dmbackground: "#1e453e",
+        dmtext: "#d2d9d8",
+
+        dmbutton: "#0c1612",
+        dmbuttontext: "#d2d9d8",
+        // Not enough contrast with background:
+        //dmbutton: "#182c25",
+        dmbuttonhover: "#F5EC8D",
+        dmbuttonhovertext: "#0c1612",
+
+        //dmbuttonhover: "#598669",
+        dmsidebar: "#182c25",
+
+        "dmpanel-background": "#455b55",
+        "dmpanel-background-hover": "#576b66",
       },
       spacing: {
         xs: "0.5rem",

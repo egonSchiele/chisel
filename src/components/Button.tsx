@@ -15,7 +15,7 @@ export default function Button({
 }) {
   const colors = disabled
     ? "bg-gray-300 hover:bg-gray-300 text-gray-900 hover:text-gray-900"
-    : "bg-darkest hover:bg-highlight text-white hover:text-hover";
+    : "bg-darkest dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext hover:text-hover";
 
   const sizes = {
     small: " py-1 px-2 text-sm",
