@@ -2,16 +2,18 @@ import React from "react";
 import { ButtonSize } from "../Types";
 export default function Button({
   children,
-  onClick,
+  onClick = () => {},
   className = "",
   disabled = false,
   size = "medium",
+  buttonType = "button",
 }: {
-  size: ButtonSize;
+  size?: ButtonSize;
   children: string;
-  onClick: () => void;
-  className: string;
-  disabled: boolean;
+  onClick?: () => void;
+  className?: string;
+  disabled?: boolean;
+  buttonType?: "button" | "submit";
 }) {
   const colors = disabled
     ? "bg-gray-300 hover:bg-gray-300 text-gray-900 hover:text-gray-900"
@@ -27,7 +29,7 @@ export default function Button({
 
   return (
     <button
-      type="button"
+      type={buttonType}
       disabled={disabled}
       className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${colors} ${sizeCss} ${className}`}
       onClick={onClick}

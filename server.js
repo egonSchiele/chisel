@@ -61,10 +61,9 @@ app.get("/logout", async (req, res) => {
   res.redirect("/login.html");
 });
 
-app.post("/api/save", async (req, res) => {
+app.post("/api/saveBook", async (req, res) => {
   let { book } = req.body;
 
-  book = JSON.parse(book);
   await saveBook(book);
   res.status(200).end();
 });

@@ -1,5 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import * as t from "./Types";
+import "./globals.css";
+import Button from "./components/Button";
 /* import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -35,34 +37,33 @@ export default function Library() {
     func();
   }, []);
   return (
-    <header className="relative isolate z-10 bg-white">
+    <header className="">
       {error && <div className="text-red-500">{error}</div>}
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="mx-auto mt-lg max-w-2xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
       >
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <form
-            className="flex w-full lg:max-w-md"
-            action="/api/newBook"
-            method="POST"
-          >
-            <ul>
-              {books &&
-                books.map((book, index) => (
-                  <li key={index}>
-                    <a href={`/book/${book.bookid}`}>{book.title}</a>
+        <form className="" action="/api/newBook" method="POST">
+          <h1 className="mb-sm heading">Your books</h1>
+          <ul className="">
+            {books &&
+              books.map((book, index) => (
+                <a key={index} href={`/book/${book.bookid}`}>
+                  <li
+                    className={
+                      "border-b border-slate-400 px-2 py-2 cursor-pointer" +
+                      (index % 2 === 0 ? " bg-dmlistitem1" : " bg-dmlistitem2")
+                    }
+                  >
+                    {book.title}
                   </li>
-                ))}
-            </ul>
-            <button
-              type="submit"
-              className="text-sm font-semibold leading-6 text-gray-900"
-            >
-              New Book... <span aria-hidden="true">&rarr;</span>
-            </button>
-          </form>
-        </div>
+                </a>
+              ))}
+          </ul>
+          <Button className="rounded mt-md" buttonType="submit">
+            New Book...
+          </Button>
+        </form>
       </nav>
     </header>
   );

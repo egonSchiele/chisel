@@ -48,4 +48,13 @@
        border: 0 !important;
        padding: 0 !important;
     }
+
+    .heading {
+        @apply text-3xl;
+        @apply font-light;
+        @apply mb-sm;
+        @apply mt-md;
+        @apply text-highlight;
+        @apply font-georgia;
+    }
 }

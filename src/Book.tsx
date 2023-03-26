@@ -13,6 +13,8 @@ const initialState: t.Book = {
 };
 
 import produce, { current } from "immer";
+import Button from "./components/Button";
+import EditableInput from "./components/EditableInput";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -45,6 +47,11 @@ let reducer = produce((draft: t.Book, action: any) => {
       break;
     case "SET_BOOK":
       return action.payload;
+      break;
+    case "SET_BOOK_TITLE":
+      draft.title = action.payload;
+
+      break;
 
     default:
       break;
@@ -58,6 +65,7 @@ export default function Book({}) {
   const [error, setError] = React.useState("");
 
   const [loaded, setLoaded] = React.useState(false);
+  const [saved, setSaved] = React.useState(true);
 
   const { bookid } = useParams();
   useEffect(() => {
@@ -75,34 +83,66 @@ export default function Book({}) {
     };
     func();
   }, []);
+
+  useEffect(() => {
+    if (saved) return;
+    saveBook(state);
+    setSaved(true);
+  }, [saved]);
+
+  async function saveBook(state: t.Book) {
+    const body = JSON.stringify({ book: state });
+    console.log("hihihi");
+    const result = await fetch("/api/saveBook", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+
+    if (!result.ok) {
+      setError(result.statusText);
+      return;
+    } else {
+      setError("");
+    }
+  }
+
+  if (!loaded) return <div>Loading...</div>;
+  console.log("state", state);
   return (
-    <div className="m-sm">
+    <div className="mx-auto mt-lg max-w-2xl items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
 
-      {bookid}
-      <h1>{state.title}</h1>
-      <p>{state.chapters.length} chapters</p>
-      <ul>
-        {state.chapters.map((chapter, index) => (
-          <li key={index}>
-            <a href={`/chapter/${chapter.chapterid}`}>
-              {chapter.title} - {chapter.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-      <form
-        className="flex w-full lg:max-w-md"
-        action="/api/newChapter"
-        method="POST"
-      >
-        <input type="hidden" name="bookid" value={bookid} />
-        <button
-          type="submit"
-          className="text-sm font-semibold leading-6 text-gray-900"
+      <form className="" action="/api/newBook" method="POST">
+        <EditableInput
+          value={state.title}
+          onSubmit={(title) => {
+            dispatch({ type: "SET_BOOK_TITLE", payload: title });
+            setSaved(false);
+          }}
         >
-          New Chapter... <span aria-hidden="true">&rarr;</span>
-        </button>
+          <h1 className="mb-sm heading">{state.title}</h1>
+        </EditableInput>
+        <ul className="">
+          {loaded &&
+            state.chapters.map((chapter, index) => (
+              <a key={index} href={`/chapter/${chapter.chapterid}`}>
+                <li
+                  className={
+                    "border-b border-slate-400 px-2 py-2 cursor-pointer" +
+                    (index % 2 === 0 ? " bg-dmlistitem1" : " bg-dmlistitem2")
+                  }
+                >
+                  {chapter.title}
+                </li>
+              </a>
+            ))}
+        </ul>
+        <Button className="rounded mt-md" buttonType="submit">
+          New Chapter...
+        </Button>
       </form>
       {/*book.chapters.map((chapter, index) => (
         /*        <div

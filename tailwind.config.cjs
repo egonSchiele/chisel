@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class",
+  //  darkMode: "class",
   content: [
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
@@ -53,6 +53,9 @@ module.exports = {
 
         "panel-background-hover": "#DBDAD2",
         "dmpanel-background-hover": "#576b66",
+
+        dmlistitem1: "#455b55",
+        dmlistitem2: "#303f3b",
       },
       spacing: {
         xs: "0.5rem",
