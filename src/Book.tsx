@@ -119,6 +119,7 @@ export default function Book({}) {
       {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
 
       <form className="" action="/api/newChapter" method="POST">
+        <input type="hidden" name="bookid" value={state.bookid} />
         <EditableInput
           value={state.title}
           onSubmit={(title) => {
