@@ -214,7 +214,7 @@ app.get("/api/chapter/:chapterid", async (req, res) => {
   }
 });
 
-app.post("/api/expand", async (req, res) => {
+app.post("/api/suggestions", async (req, res) => {
   console.log({ body: req.body });
 
   const chatModels = ["gpt-3.5-turbo"];

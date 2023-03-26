@@ -142,7 +142,10 @@ export const getUser = async (req) => {
     theme: "default",
     version_control: false,
     prompts: [
-      { label: "Expand", text: "{{text}} Write another paragraph:" },
+      {
+        label: "Expand",
+        text: "Write another paragraph for this text: {{text}}",
+      },
       {
         label: "Contract",
         text: "Make this text shorter without changing its meaning: {{text}}",

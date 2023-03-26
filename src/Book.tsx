@@ -118,7 +118,7 @@ export default function Book({}) {
     <div className="mx-auto mt-lg max-w-2xl items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
 
-      <form className="" action="/api/newBook" method="POST">
+      <form className="" action="/api/newChapter" method="POST">
         <EditableInput
           value={state.title}
           onSubmit={(title) => {

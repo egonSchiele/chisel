@@ -29,11 +29,13 @@ const reducer = produce((draft: t.State, action: any) => {
       console.log("setText", action.payload);
       draft.editor.text = action.payload;
       draft.chapter.text = action.payload;
+      draft.saved = false;
       break;
     case "setTitle":
       console.log("setTitle", action.payload);
       draft.editor.title = action.payload;
       draft.chapter.title = action.payload;
+      draft.saved = false;
       break;
     case "setContents":
       console.log("setContents", action.payload);
@@ -41,10 +43,12 @@ const reducer = produce((draft: t.State, action: any) => {
       break;
     case "setChapter":
       draft.chapter = action.payload;
+      draft.saved = false;
       break;
     case "setSuggestions":
       if (action.payload) {
         draft.suggestions = action.payload;
+        draft.saved = false;
       }
       break;
     case "setSaved":
@@ -87,6 +91,11 @@ const reducer = produce((draft: t.State, action: any) => {
         type: action.label,
         contents: action.payload,
       });
+      draft.saved = false;
+      break;
+    case "deleteSuggestion":
+      draft.suggestions.splice(action.payload, 1);
+      draft.saved = false;
       break;
   }
 });
@@ -261,6 +270,9 @@ export default function Editor(
               title={suggestion.type}
               contents={suggestion.contents}
               onClick={addToContents}
+              onDelete={() => {
+                dispatch({ type: "deleteSuggestion", payload: index });
+              }}
             />
           ))}
           {/* <Settings /> */}

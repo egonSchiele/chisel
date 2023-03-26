@@ -16,7 +16,12 @@ export default function Toolbar({
   const [error, setError] = useState("");
   const handleSuggestion = async (_prompt, label) => {
     const max_tokens_with_min = Math.min(settings.max_tokens, 500);
-    let prompt = _prompt.replaceAll("{{text}}", state.text);
+    let text = state.text;
+    if (state.selectedText && state.selectedText.length > 0) {
+      text = state.selectedText.contents;
+    }
+    console.log({ text });
+    let prompt = _prompt.replaceAll("{{text}}", text);
     const body = JSON.stringify({
       prompt,
       model: settings.model,
@@ -25,7 +30,7 @@ export default function Toolbar({
     setLoading(true);
     setError("");
     console.log({ body });
-    fetch("/api/expand", {
+    fetch("/api/suggestions", {
       method: "POST",
       body,
       headers: {
