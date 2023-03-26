@@ -154,7 +154,7 @@ const TextEditor = ({
   const handleKeyDown = (event) => {};
 
   return (
-    <div className="">
+    <div className="mt-xl">
       <Box flexGrow={1}>
         {/*         <TextField
           label="OpenAI API Key"

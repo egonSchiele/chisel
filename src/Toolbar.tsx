@@ -71,7 +71,7 @@ export default function Toolbar({
   };
 
   return (
-    <div className="grid grid-cols-8 mb-sm">
+    <div className="grid grid-cols-8 mb-sm w-full bg-black">
       {/*   <Select
           title="Engine"
           name="engine"

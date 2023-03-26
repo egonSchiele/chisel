@@ -225,12 +225,12 @@ export default function Editor(
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-8">
       {error && <div className="error">{error}</div>}
 
-      <div>
-        <div className="flex flex-1 flex-col lg:pl-64 my-lg">
-          <div className="py-md">
+      <div className="col-span-7">
+        <div>
+          <div className="">
             <Toolbar
               dispatch={dispatch as any}
               state={state.editor}
