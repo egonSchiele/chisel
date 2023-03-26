@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import {
   saveBook,
   getBook,
+  getBooks,
   saveChapter,
   getChapter,
 } from "./src/storage/firebase.js";
@@ -18,6 +19,8 @@ import {
   submitLogin,
   submitRegister,
   getUserId,
+  getUser,
+  saveUser,
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
 //const serviceAccountKey = require("./serviceAccountKey.json");
@@ -137,6 +140,53 @@ app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
 
 app.get("/", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/library.html"));
+});
+
+app.get("/api/settings", async (req, res) => {
+  console.log("getting settings");
+
+  const user = await getUser(req);
+  if (!user) {
+    console.log("no user");
+    res.status(404).end();
+  } else {
+    console.log(user);
+    res.status(200).json({ settings: user.settings });
+  }
+});
+
+app.post("/api/settings", async (req, res) => {
+  const { settings } = req.body;
+  if (!settings) {
+    console.log("no settings");
+    res.status(404).end();
+  } else {
+    const user = await getUser(req);
+    if (!user) {
+      console.log("no user");
+      res.status(404).end();
+    } else {
+      user.settings = settings;
+      const result = await saveUser(user);
+      if (!result) {
+        console.log("error saving user");
+        res.status(500).end();
+      } else {
+        res.status(200).json({ settings: user.settings });
+      }
+    }
+  }
+});
+
+app.get("/books", requireLogin, async (req, res) => {
+  const userid = getUserId(req);
+  if (!userid) {
+    console.log("no userid");
+    res.status(404).end();
+  } else {
+    const books = await getBooks(userid);
+    res.status(200).json({ books });
+  }
 });
 
 app.get("/book/:bookid", requireLogin, async (req, res) => {

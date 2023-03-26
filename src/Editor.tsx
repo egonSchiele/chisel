@@ -11,6 +11,7 @@ import SuggestionPanel from "./SuggestionPanel";
 import { useParams } from "react-router-dom";
 import * as t from "./Types";
 import { useInterval } from "./utils";
+import Settings from "./Settings";
 
 const countSyllables = (text: string) => {
   try {
@@ -248,6 +249,7 @@ export default function Editor(
               onClick={addToContents}
             />
           ))}
+          <Settings />
         </Sidebar>
       </div>
 

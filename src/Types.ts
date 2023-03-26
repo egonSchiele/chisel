@@ -66,3 +66,21 @@ export type Coords = {
   w: number;
   h: number;
 };
+
+export type UserSettings = {
+  model: string;
+  max_tokens: number;
+  num_suggestions: number;
+  theme: Theme;
+  version_control: boolean;
+};
+
+export type Theme = "default";
+
+export type User = {
+  id: string;
+  email: string;
+  approved: boolean;
+  settings: UserSettings;
+  created_at: string;
+};

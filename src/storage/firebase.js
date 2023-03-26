@@ -54,6 +54,26 @@ export const getBook = async (bookid) => {
   return book;
 };
 
+export const getBooks = async (userid) => {
+  console.log("getting books");
+  console.log({ userid });
+  const books = await db
+    .collection("books")
+    .where("userid", "==", userid)
+    .get();
+  console.log(books);
+  if (books.empty) {
+    console.log("No books found.");
+    return [];
+  } else {
+    const allBooks = [];
+    books.forEach((book) => {
+      allBooks.push(book.data());
+    });
+    return allBooks;
+  }
+};
+
 export const saveChapter = async (chapter) => {
   console.log("saving chapter");
   console.log({ chapter });

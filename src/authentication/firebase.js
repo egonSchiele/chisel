@@ -17,7 +17,7 @@ try {
 } catch (e) {
   console.log(e);
 }
-const db2 = getFirestore();
+const db = getFirestore();
 
 async function stringToHash(str) {
   const encoder = new TextEncoder();
@@ -67,7 +67,7 @@ export const submitLogin = async (req, res) => {
     const firebaseUser = credentials.user;
     /* console.log(firebaseUser);
      */
-    let user = await getUser(email);
+    let user = await getUserWithEmail(email);
     if (!user) {
       user = await createUser(email);
       if (!user) {
@@ -78,8 +78,8 @@ export const submitLogin = async (req, res) => {
       throw new Error("User not approved");
     }
 
-    const token = await stringToHash(user.id);
-    res.cookie("userid", user.id);
+    const token = await stringToHash(user.userid);
+    res.cookie("userid", user.userid);
     res.cookie("token", token);
     res.redirect("/");
   } catch (err) {
@@ -111,10 +111,10 @@ export const submitRegister = async (req, res) => {
   }
 };
 
-const getUser = async (email) => {
+const _getUser = async (userid) => {
   console.log("getting user");
-  console.log({ email });
-  const userRef = db2.collection("users").doc(email);
+  console.log({ userid });
+  const userRef = db.collection("users").doc(userid);
   const user = await userRef.get();
   if (!user.exists) {
     return null;
@@ -122,18 +122,88 @@ const getUser = async (email) => {
   return user.data();
 };
 
+export const getUser = async (req) => {
+  const userid = getUserId(req);
+  if (!userid) {
+    console.log("no userid");
+    return null;
+  }
+
+  const user = await _getUser(userid);
+  if (!user) {
+    console.log("no user");
+    return null;
+  }
+
+  const defaultSettings = {
+    model: "gpt-3.5-turbo",
+    max_tokens: 100,
+    num_suggestions: 1,
+    theme: "default",
+    version_control: false,
+  };
+
+  const settings = {
+    ...defaultSettings,
+    ...user.settings,
+  };
+
+  user.settings = settings;
+  return user;
+};
+
+export const saveUser = async (user) => {
+  console.log("saving user");
+  console.log({ user });
+  if (!user) {
+    console.log("no user to save");
+    return false;
+  }
+  user.created_at = Date.now();
+  const docRef = db.collection("users").doc(user.userid);
+  try {
+    await docRef.set(user);
+    console.log("Successfully synced user to Firestore");
+    return true;
+  } catch (error) {
+    console.error("Error syncing user to Firestore:", error);
+    return false;
+  }
+};
+
+const getUserWithEmail = async (email) => {
+  console.log("getting user");
+  console.log({ email });
+  const userRef = db.collection("users").where("email", "==", email);
+  const user = await userRef.get();
+  console.log({ user });
+  if (user.empty) {
+    return null;
+  }
+  const users = [];
+  user.forEach((doc) => {
+    users.push(doc.data());
+  });
+  if (users.length > 1) {
+    console.log("Multiple users with same email:", email);
+    return null;
+  }
+  return users[0];
+};
+
 const createUser = async (email) => {
   console.log("creating user");
   console.log({ email });
+  const userid = nanoid();
   const data = {
-    id: nanoid(),
+    userid,
     email,
-    approved: false,
+    approved: true,
     settings: {},
     created_at: Date.now(),
   };
 
-  const userRef = db2.collection("users").doc(email);
+  const userRef = db.collection("users").doc(userid);
 
   try {
     await userRef.set(data);
