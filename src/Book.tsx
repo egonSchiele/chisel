@@ -91,8 +91,11 @@ export default function Book({}) {
   }, [saved]);
 
   async function saveBook(state: t.Book) {
-    const body = JSON.stringify({ book: state });
-    console.log("hihihi");
+    const book = { ...state };
+
+    console.log("saving book", book);
+    book.chapters = [];
+    const body = JSON.stringify({ book });
     const result = await fetch("/api/saveBook", {
       method: "POST",
       headers: {

@@ -10,6 +10,7 @@ const Settings: React.FC = () => {
     num_suggestions: 0,
     theme: "default",
     version_control: false,
+    prompts: [],
   });
 
   const [loaded, setLoaded] = useState<boolean>(false);

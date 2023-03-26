@@ -39,18 +39,22 @@ export const getBook = async (bookid) => {
     return null;
   }
   const book = bookObj.data();
+  console.log("1chapters", book.chapters);
   const chapters = await db
     .collection("chapters")
     .where("bookid", "==", bookid)
     .get();
-  console.log(chapters);
+
   if (chapters.empty) {
     console.log("No chapters found.");
   } else {
     chapters.forEach((chapter) => {
-      book.chapters.push(chapter.data());
+      const data = chapter.data();
+      console.log("data", data);
+      book.chapters.push(data);
     });
   }
+  console.log("chapters", book.chapters);
   return book;
 };
 
