@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import * as t from "./Types";
 import { useInterval } from "./utils";
 import Settings from "./Settings";
+import Toolbar from "./Toolbar";
 
 const countSyllables = (text: string) => {
   try {
@@ -28,6 +29,11 @@ const reducer = produce((draft: t.State, action: any) => {
       console.log("setText", action.payload);
       draft.editor.text = action.payload;
       draft.chapter.text = action.payload;
+      break;
+    case "setTitle":
+      console.log("setTitle", action.payload);
+      draft.editor.title = action.payload;
+      draft.chapter.title = action.payload;
       break;
     case "setContents":
       console.log("setContents", action.payload);
@@ -76,35 +82,9 @@ const reducer = produce((draft: t.State, action: any) => {
       draft.editor.selectedText = action.payload;
       draft.editor.tooltipOpen = false;
       break;
-    case "addExpandSuggestion":
+    case "addSuggestion":
       draft.suggestions.push({
-        type: "expand",
-        contents: action.payload,
-      });
-      break;
-
-    case "addContractSuggestion":
-      draft.suggestions.push({
-        type: "contract",
-        contents: action.payload,
-      });
-      break;
-
-    case "addRewriteSuggestion":
-      draft.suggestions.push({
-        type: "rewrite",
-        contents: action.payload,
-      });
-      break;
-    case "addTextToSpeechSuggestion":
-      draft.suggestions.push({
-        type: "texttospeech",
-        contents: action.payload,
-      });
-      break;
-    case "fixPassiveVoiceSuggestion":
-      draft.suggestions.push({
-        type: "activevoice",
+        type: action.label,
         contents: action.payload,
       });
       break;
@@ -148,6 +128,7 @@ export default function Editor(
       dispatch({ type: "setChapter", payload: data });
       dispatch({ type: "setSuggestions", payload: data.suggestions });
       dispatch({ type: "setText", payload: data.text });
+      dispatch({ type: "setTitle", payload: data.title });
 
       const response = await fetch("/api/settings", { credentials: "include" });
       const settingsData = await response.json();
@@ -191,6 +172,7 @@ export default function Editor(
   }
 
   const initialEditorState: EditorState = {
+    title: "",
     text: "",
     contents: {},
     tooltipPosition: { top: 0, left: 0 },
@@ -249,23 +231,17 @@ export default function Editor(
       <div>
         <div className="flex flex-1 flex-col lg:pl-64 my-lg">
           <div className="py-md">
-            <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
-              <h1 className="text-3xl tracking-wide font-light font-georgia text-darkest dark:text-lightest">
-                {state.chapter.title}
-                {!state.saved && (
-                  <span className="text-xs text-gray-500">
-                    (unsaved changes)
-                  </span>
-                )}
-              </h1>
-            </div>
-            <div className="mx-auto max-w-7xl px-sm lg:px-md">
-              <TextEditor
-                dispatch={dispatch as any}
-                state={state.editor}
-                settings={settings}
-              />
-            </div>
+            <Toolbar
+              dispatch={dispatch as any}
+              state={state.editor}
+              settings={settings}
+            />
+            <TextEditor
+              dispatch={dispatch as any}
+              state={state.editor}
+              saved={state.saved}
+              settings={settings}
+            />
           </div>
         </div>
       </div>

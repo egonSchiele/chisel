@@ -36,17 +36,17 @@ const TextEditor = ({
   dispatch,
   state,
   settings,
+  saved,
 }: {
-  dispatch: (state: State, action: any) => State;
+  dispatch: (action: any) => State;
   state: EditorState;
   settings: t.UserSettings;
+  saved: boolean;
 }) => {
   const classes = useStyles();
   const quillRef = useRef();
-  const [model, setModel] = useState("gpt-3.5-turbo");
-  const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState("");
-  const [max_tokens, setMaxTokens] = useState(100);
 
   useEffect(() => {
     if (!quillRef.current) return;
@@ -109,90 +109,6 @@ const TextEditor = ({
     });
   };
 
-  /*   const handleApiKeyChange = (event) => {
-    setApiKey(event.target.value);
-  }; */
-
-  const handleSuggestion = async (_prompt, dispatchType) => {
-    const max_tokens_with_min = Math.min(max_tokens, 500);
-    let prompt = _prompt.replaceAll("{{text}}", state.text);
-    const body = JSON.stringify({
-      prompt,
-      model,
-      max_tokens: max_tokens_with_min,
-    });
-    setLoading(true);
-    setError("");
-    console.log({ body });
-    fetch("/api/expand", {
-      method: "POST",
-      body,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        console.log({ res });
-        if (!res.ok) {
-          setError(res.statusText);
-          setLoading(false);
-          return;
-        }
-        res.json().then((data) => {
-          console.log({ data });
-          if (data.error) {
-            setError(data.error.message);
-            setLoading(false);
-            return;
-          }
-
-          if (!data.choices) {
-            setError("No choices returned.");
-            setLoading(false);
-            return;
-          }
-
-          data.choices.forEach((choice) => {
-            const generatedText = choice.text;
-            dispatch({
-              type: dispatchType,
-              payload: generatedText,
-            });
-          });
-          dispatch({ type: "setSaved", payload: false });
-          setLoading(false);
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  const handleExpand = async () => {
-    const prompt = `${state.text}. Write another paragraph:`;
-    handleSuggestion(prompt, "addExpandSuggestion");
-  };
-
-  const handleContract = async () => {
-    const prompt = `Make this text shorter without changing its meaning: ${state.text}.`;
-    handleSuggestion(prompt, "addContractSuggestion");
-  };
-
-  const handleRewrite = async () => {
-    const prompt = `Rewrite this text to make it flow better: ${state.text}.`;
-    handleSuggestion(prompt, "addRewriteSuggestion");
-  };
-
-  const fixTextToSpeech = async () => {
-    const prompt = `This text was written using text to speech, and it contains some errors. Please fix them: ${state.text}.`;
-    handleSuggestion(prompt, "addTextToSpeechSuggestion");
-  };
-
-  const fixPassiveVoice = async () => {
-    const prompt = `Please change passive voice to active voice in this text: ${state.text}.`;
-    handleSuggestion(prompt, "fixPassiveVoiceSuggestion");
-  };
-
   const fetchSynonyms = async (word) => {
     try {
       const response = await axios.get(
@@ -249,102 +165,28 @@ const TextEditor = ({
         />
  */}{" "}
         {error !== "" && <p>Error: {error}</p>}
-        <div className="grid grid-cols-8 mb-sm">
-          {/*   <Select
-            title="Engine"
-            name="engine"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-          >
-            <option>gpt-3.5-turbo</option>
-            <option>text-davinci-003</option>
-            <option>davinci</option>
-            <option>curie</option>
-          </Select>
-          <Input
-            title="Max Tokens"
-            name="max_tokens"
-            value={max_tokens}
-            onChange={(e) => setMaxTokens(e.target.value)}
-            className="ml-xs"
-          /> */}
-          <ButtonGroup className="col-span-6 mb-auto h-full">
-            {settings.prompts.map((prompt, i) => {
-              let classNames = "";
-              if (i === 0) {
-                classNames = "rounded-l border-r border-slate-800";
-              } else if (i === settings.prompts.length - 1) {
-                classNames = "rounded-r";
-              } else {
-                classNames = "border-r border-slate-800";
-              }
-              return (
-                <Button
-                  key={i}
-                  disabled={loading}
-                  onClick={() =>
-                    handleSuggestion(prompt.text, "addExpandSuggestion")
-                  }
-                  size="small"
-                  className={classNames}
-                >
-                  {prompt.label}
-                </Button>
-              );
-            })}
-            {/*
-            <Button onClick={handleContract} className="ml-xs" size="small">
-              Contract
-            </Button>
-            <Button onClick={handleRewrite} className="ml-xs" size="small">
-              Rewrite
-            </Button>
-            <Button
-              onClick={highlightFillerWords}
-              className="ml-xs"
-              size="small"
-            >
-              Highlight Filler Words
-            </Button>
-            <Button onClick={fixTextToSpeech} className="ml-xs" size="small">
-              Fix Speech-To-Text
-            </Button>
-            <Button onClick={fixPassiveVoice} className="ml-xs" size="small">
-              Rewrite As Active Voice
-            </Button>
-            {state.selectedText.length > 0 && (
-              <Button
-                onClick={handleSynonymClick}
-                className="ml-xs"
-                size="small"
-              >
-                Describe
-              </Button>
+        <div className="ql-editor hidden">hi</div>
+        <div className="ql-toolbar ql-snow hidden">hi</div>
+        <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
+          <h1 className="text-3xl mb-sm tracking-wide font-light font-georgia text-darkest dark:text-lightest">
+            {state.title}
+            {!saved && (
+              <span className="text-xs text-gray-500">(unsaved changes)</span>
             )}
-            {state.selectedText.length > 0 && (
-              <Button
-                onClick={handleSynonymClick}
-                className="ml-xs"
-                size="small"
-              >
-                Synonyms
-              </Button>
-            )}{" "}
-            */}
-          </ButtonGroup>
+          </h1>
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <div onClick={onClickEditor} className="mb-md font-georgia">
+              <ReactQuill
+                ref={quillRef}
+                value={state.contents}
+                placeholder="Write something..."
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
+                onChangeSelection={setSelection}
+              />
+            </div>
+          </ClickAwayListener>
         </div>
-        <ClickAwayListener onClickAway={handleClickAway}>
-          <div onClick={onClickEditor} className="mb-md font-georgia">
-            <ReactQuill
-              ref={quillRef}
-              value={state.contents}
-              placeholder="Write something..."
-              onChange={handleTextChange}
-              onKeyDown={handleKeyDown}
-              onChangeSelection={setSelection}
-            />
-          </div>
-        </ClickAwayListener>
         {/* <Tooltip
           open={state.tooltipOpen}
           title={state.synonyms.map((synonym, index) => (

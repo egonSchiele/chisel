@@ -1,4 +1,5 @@
 export type EditorState = {
+  title: string;
   text: string;
   contents: any;
   tooltipPosition: { top: number; left: number };

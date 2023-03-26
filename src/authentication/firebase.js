@@ -147,6 +147,18 @@ export const getUser = async (req) => {
         label: "Contract",
         text: "Make this text shorter without changing its meaning: {{text}}",
       },
+      {
+        label: "Rewrite",
+        text: "Rewrite this text to make it flow better: {{text}}",
+      },
+      {
+        label: "Fix speech-to-text",
+        text: "This text was written using text to speech, and it contains some errors. Please fix them: {{text}}",
+      },
+      {
+        label: "Fix passive voice",
+        text: "Please change passive voice to active voice in this text: {{text}}",
+      },
     ],
   };
 

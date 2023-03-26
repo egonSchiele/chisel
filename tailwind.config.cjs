@@ -17,11 +17,15 @@ module.exports = {
       colors: {
         hover: "#325531",
         main: "#658864",
-        background: "#B7B78A",
         highlight: "#F5EC8D",
         highlight2: "#A1E69C",
         darkest: "#1A1A1A",
         lightest: "#F5F5F5",
+        background: "#1A1A1A",
+        text: "#F5F5F5",
+
+        dmbackground: "#171F2D",
+        dmtext: "rgb(148 163 184)",
       },
       spacing: {
         xs: "0.5rem",
