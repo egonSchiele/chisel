@@ -15,11 +15,11 @@ export default function Button({
 }) {
   const colors = disabled
     ? "bg-gray-300 hover:bg-gray-300 text-gray-900 hover:text-gray-900"
-    : "bg-main hover:bg-highlight text-white hover:text-hover";
+    : "bg-darkest hover:bg-highlight text-white hover:text-hover";
 
   const sizes = {
-    small: "rounded py-1 px-2 text-sm",
-    medium: "rounded-md py-2 px-3 text-sm",
+    small: " py-1 px-2 text-sm",
+    medium: " py-2 px-3 text-sm",
     large: "py-3 px-4 text-base",
   };
 

@@ -17,6 +17,8 @@ import { EditorState, State } from "./Types";
 import Select from "./components/Select";
 import Input from "./components/Input";
 
+import * as t from "./Types";
+
 const useStyles = makeStyles({
   generatedText: {
     animation: "$fadeIn 5s",
@@ -33,9 +35,11 @@ const useStyles = makeStyles({
 const TextEditor = ({
   dispatch,
   state,
+  settings,
 }: {
   dispatch: (state: State, action: any) => State;
   state: EditorState;
+  settings: t.UserSettings;
 }) => {
   const classes = useStyles();
   const quillRef = useRef();
@@ -109,8 +113,9 @@ const TextEditor = ({
     setApiKey(event.target.value);
   }; */
 
-  const handleSuggestion = async (prompt, dispatchType) => {
+  const handleSuggestion = async (_prompt, dispatchType) => {
     const max_tokens_with_min = Math.min(max_tokens, 500);
+    let prompt = _prompt.replaceAll("{{text}}", state.text);
     const body = JSON.stringify({
       prompt,
       model,
@@ -245,7 +250,7 @@ const TextEditor = ({
  */}{" "}
         {error !== "" && <p>Error: {error}</p>}
         <div className="grid grid-cols-8 mb-sm">
-          <Select
+          {/*   <Select
             title="Engine"
             name="engine"
             value={model}
@@ -262,11 +267,32 @@ const TextEditor = ({
             value={max_tokens}
             onChange={(e) => setMaxTokens(e.target.value)}
             className="ml-xs"
-          />
-          <ButtonGroup className="col-span-6 ml-sm mb-auto h-full">
-            <Button disabled={loading} onClick={handleExpand} size="small">
-              Expand
-            </Button>
+          /> */}
+          <ButtonGroup className="col-span-6 mb-auto h-full">
+            {settings.prompts.map((prompt, i) => {
+              let classNames = "";
+              if (i === 0) {
+                classNames = "rounded-l border-r border-slate-800";
+              } else if (i === settings.prompts.length - 1) {
+                classNames = "rounded-r";
+              } else {
+                classNames = "border-r border-slate-800";
+              }
+              return (
+                <Button
+                  key={i}
+                  disabled={loading}
+                  onClick={() =>
+                    handleSuggestion(prompt.text, "addExpandSuggestion")
+                  }
+                  size="small"
+                  className={classNames}
+                >
+                  {prompt.label}
+                </Button>
+              );
+            })}
+            {/*
             <Button onClick={handleContract} className="ml-xs" size="small">
               Contract
             </Button>
@@ -303,7 +329,8 @@ const TextEditor = ({
               >
                 Synonyms
               </Button>
-            )}
+            )}{" "}
+            */}
           </ButtonGroup>
         </div>
         <ClickAwayListener onClickAway={handleClickAway}>

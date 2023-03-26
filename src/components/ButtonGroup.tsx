@@ -8,11 +8,5 @@ export default function ButtonGroup({
   className?: string;
 }) {
   //console.log(children);
-  return (
-    <span
-      className={`my-auto rounded-md shadow-sm [&>*]:first:rounded-l-md [&>*]:last:rounded-r-md ${className}`}
-    >
-      {children}
-    </span>
-  );
+  return <span className={`my-auto ${className}`}>{children}</span>;
 }

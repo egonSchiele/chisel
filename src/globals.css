@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.typography {
+    font-family: 'Merriweather', serif;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    
+    font-size: 18px;
+    line-height: 22px;
+    @apply text-darkest
+}

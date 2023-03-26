@@ -8,7 +8,7 @@ export default function SuggestionPanel({ title, contents, onClick }) {
       title={title}
       onClick={() => onClick(contents)}
     >
-      <p className="text-sm">{contents}</p>
+      <p className="typography">{contents}</p>
     </Panel>
   );
 }

@@ -126,6 +126,14 @@ export default function Editor(
 
   const [error, setError] = React.useState("");
   const [loaded, setLoaded] = React.useState(false);
+  const [settings, setSettings] = useState<t.UserSettings>({
+    model: "",
+    max_tokens: 0,
+    num_suggestions: 0,
+    theme: "default",
+    version_control: false,
+    prompts: [],
+  });
 
   useEffect(() => {
     const func = async () => {
@@ -140,6 +148,11 @@ export default function Editor(
       dispatch({ type: "setChapter", payload: data });
       dispatch({ type: "setSuggestions", payload: data.suggestions });
       dispatch({ type: "setText", payload: data.text });
+
+      const response = await fetch("/api/settings", { credentials: "include" });
+      const settingsData = await response.json();
+      console.log("got settings", settingsData);
+      setSettings(settingsData.settings);
       setLoaded(true);
     };
     func();
@@ -232,33 +245,13 @@ export default function Editor(
   return (
     <div>
       {error && <div className="error">{error}</div>}
-      <div>
-        <Sidebar>
-          <a
-            className="text-sm text-gray-500 m-sm"
-            href={`/book/${state.chapter.bookid}`}
-          >
-            Back to book
-          </a>
-          <InfoPanel state={infoPanelState} />
-          {state.suggestions.map((suggestion, index) => (
-            <SuggestionPanel
-              key={index}
-              title={suggestion.type}
-              contents={suggestion.contents}
-              onClick={addToContents}
-            />
-          ))}
-          <Settings />
-        </Sidebar>
-      </div>
 
       <div>
         <div className="flex flex-1 flex-col lg:pl-64 my-lg">
           <div className="py-md">
             <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Your story{" "}
+              <h1 className="text-3xl tracking-wide font-light font-georgia text-darkest dark:text-lightest">
+                {state.chapter.title}
                 {!state.saved && (
                   <span className="text-xs text-gray-500">
                     (unsaved changes)
@@ -267,10 +260,35 @@ export default function Editor(
               </h1>
             </div>
             <div className="mx-auto max-w-7xl px-sm lg:px-md">
-              <TextEditor dispatch={dispatch as any} state={state.editor} />
+              <TextEditor
+                dispatch={dispatch as any}
+                state={state.editor}
+                settings={settings}
+              />
             </div>
           </div>
         </div>
+      </div>
+
+      <div>
+        <Sidebar>
+          <a
+            className="text-sm text-gray-500 m-sm"
+            href={`/book/${state.chapter.bookid}`}
+          >
+            Back to book
+          </a>
+          {/*  <InfoPanel state={infoPanelState} /> */}
+          {state.suggestions.map((suggestion, index) => (
+            <SuggestionPanel
+              key={index}
+              title={suggestion.type}
+              contents={suggestion.contents}
+              onClick={addToContents}
+            />
+          ))}
+          {/* <Settings /> */}
+        </Sidebar>
       </div>
     </div>
   );

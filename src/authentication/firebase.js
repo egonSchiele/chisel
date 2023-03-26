@@ -141,6 +141,13 @@ export const getUser = async (req) => {
     num_suggestions: 1,
     theme: "default",
     version_control: false,
+    prompts: [
+      { label: "Expand", text: "{{text}} Write another paragraph:" },
+      {
+        label: "Contract",
+        text: "Make this text shorter without changing its meaning: {{text}}",
+      },
+    ],
   };
 
   const settings = {

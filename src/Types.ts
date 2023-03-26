@@ -73,6 +73,12 @@ export type UserSettings = {
   num_suggestions: number;
   theme: Theme;
   version_control: boolean;
+  prompts: Prompt[];
+};
+
+export type Prompt = {
+  label: string;
+  text: string;
 };
 
 export type Theme = "default";
