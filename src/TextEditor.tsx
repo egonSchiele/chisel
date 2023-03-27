@@ -56,7 +56,15 @@ const TextEditor = ({
     const editor = quillRef.current.getEditor();
     editor.setText(state.text);
     dispatch({ type: "setContents", payload: editor.getContents() });
+    document.body.addEventListener("click", focus);
+    return () => window.removeEventListener("click", focus);
   }, [quillRef.current]);
+
+  const focus = () => {
+    if (!quillRef.current) return;
+    const editor = quillRef.current.getEditor();
+    editor.focus();
+  };
 
   const handleSynonymClick = (synonym) => {
     const quill = quillRef.current.getEditor();
