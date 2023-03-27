@@ -26,6 +26,7 @@ export default function Toolbar({
       prompt,
       model: settings.model,
       max_tokens: max_tokens_with_min,
+      num_suggestions: settings.num_suggestions,
     });
     setLoading(true);
     setError("");

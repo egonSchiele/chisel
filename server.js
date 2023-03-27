@@ -242,6 +242,7 @@ app.post("/api/suggestions", async (req, res) => {
     prompt: req.body.prompt,
     max_tokens: req.body.max_tokens,
     model: req.body.model,
+    n: req.body.num_suggestions,
   };
   if (chatModels.includes(req.body.model)) {
     endpoint = "https://api.openai.com/v1/chat/completions";
@@ -250,6 +251,7 @@ app.post("/api/suggestions", async (req, res) => {
       messages: [{ role: "user", content: req.body.prompt }],
       max_tokens: req.body.max_tokens,
       model: req.body.model,
+      n: req.body.num_suggestions,
     };
     //"messages": [{"role": "user", "content": "Hello!"}]
   }
@@ -267,6 +269,16 @@ app.post("/api/suggestions", async (req, res) => {
       console.log({ result });
       result.json().then((json) => {
         console.log({ json });
+        /* {
+  json: {
+    id: 'chatcmpl-6yYGIiBy74VzsfSeC7smESchLVt0X',
+    object: 'chat.completion',
+    created: 1679889402,
+    model: 'gpt-3.5-turbo-0301',
+    usage: { prompt_tokens: 137, completion_tokens: 33, total_tokens: 170 },
+    choices: [ [Object], [Object], [Object] ]
+  }
+} */
         let choices;
         if (chatModels.includes(req.body.model)) {
           choices = json.choices.map((choice) => ({
