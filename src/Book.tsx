@@ -94,7 +94,7 @@ export default function Book({}) {
   const { bookid } = useParams();
 
   const fetchBook = async () => {
-    const res = await fetch(`/api/book/${bookid}`);
+    const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
     if (!res.ok) {
       setError(res.statusText);
       return;

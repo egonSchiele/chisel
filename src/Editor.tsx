@@ -135,7 +135,9 @@ export default function Editor(
 
   useEffect(() => {
     const func = async () => {
-      const res = await fetch(`/api/chapter/${chapterid}`);
+      const res = await fetch(`/api/chapter/${chapterid}`, {
+        credentials: "include",
+      });
       if (!res.ok) {
         dispatch({ type: "setError", payload: res.statusText });
         return;

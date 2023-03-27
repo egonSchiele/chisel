@@ -50,6 +50,19 @@ app.use(express.urlencoded());
 app.use(express.static("dist"));
 app.use(cookieParser());
 
+export const noCache = (req, res, next) => {
+  // res.setHeader("Surrogate-Control", "no-store");
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+};
+
+app.use(noCache);
+
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);
 });
@@ -135,7 +148,7 @@ app.post("/api/newChapter", async (req, res) => {
   }
 });
 
-app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
+app.get("/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
   const { chapterid } = req.params;
   const chapter = await getChapter(chapterid);
   if (!chapter) {
@@ -154,7 +167,7 @@ app.get("/404", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/404.html"));
 });
 
-app.get("/api/settings", async (req, res) => {
+app.get("/api/settings", requireLogin, noCache, async (req, res) => {
   console.log("getting settings");
 
   const user = await getUser(req);
@@ -190,7 +203,7 @@ app.post("/api/settings", async (req, res) => {
   }
 });
 
-app.get("/books", requireLogin, async (req, res) => {
+app.get("/books", requireLogin, noCache, async (req, res) => {
   const userid = getUserId(req);
   if (!userid) {
     console.log("no userid");
@@ -201,7 +214,7 @@ app.get("/books", requireLogin, async (req, res) => {
   }
 });
 
-app.get("/book/:bookid", requireLogin, async (req, res) => {
+app.get("/book/:bookid", requireLogin, noCache, async (req, res) => {
   res.sendFile(path.resolve("./dist/book.html"));
 });
 
@@ -211,7 +224,7 @@ app.post("/api/deleteBook", requireLogin, async (req, res) => {
   res.redirect("/");
 });
 
-app.get("/api/book/:bookid", async (req, res) => {
+app.get("/api/book/:bookid", requireLogin, noCache, async (req, res) => {
   let { bookid } = req.params;
   try {
     const data = await getBook(bookid);
@@ -222,7 +235,7 @@ app.get("/api/book/:bookid", async (req, res) => {
   }
 });
 
-app.get("/api/chapter/:chapterid", async (req, res) => {
+app.get("/api/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
   let { chapterid } = req.params;
   try {
     const data = await getChapter(chapterid);
