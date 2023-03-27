@@ -79,6 +79,10 @@ export default function Book({}) {
       const data: t.Book = await res.json();
       console.log("got book");
       console.log(data);
+      if (!data) {
+        setError("Book not found");
+        return;
+      }
       dispatch({ type: "SET_BOOK", payload: data });
       setLoaded(true);
     };
@@ -127,7 +131,14 @@ export default function Book({}) {
     }
   }
 
-  if (!loaded) return <div>Loading...</div>;
+  if (!loaded) {
+    if (error) {
+      return (
+        <p className="p-sm bg-red-700 text-white w-full">Error: {error}</p>
+      );
+    }
+    return <div>Loading...</div>;
+  }
   console.log("state", state);
   return (
     <div className="mx-auto mt-lg max-w-2xl items-center justify-between p-6 lg:px-8">

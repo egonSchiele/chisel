@@ -24,6 +24,7 @@ module.exports = {
     chapter: "./chapter.tsx",
     login: "./empty.tsx",
     register: "./empty.tsx",
+    404: "./empty.tsx",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

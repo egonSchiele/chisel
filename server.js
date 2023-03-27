@@ -134,7 +134,7 @@ app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
   const chapter = await getChapter(chapterid);
   if (!chapter) {
     console.log("no chapter with id, " + chapterid);
-    res.status(404).end();
+    res.redirect("/404");
   } else {
     res.sendFile(path.resolve("./dist/chapter.html"));
   }
@@ -142,6 +142,10 @@ app.get("/chapter/:chapterid", requireLogin, async (req, res) => {
 
 app.get("/", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/library.html"));
+});
+
+app.get("/404", requireLogin, async (req, res) => {
+  res.sendFile(path.resolve("./dist/404.html"));
 });
 
 app.get("/api/settings", async (req, res) => {
