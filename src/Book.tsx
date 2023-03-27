@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import * as t from "./Types";
 import Chapter from "./Chapter";
 import "./globals.css";
@@ -166,6 +166,13 @@ export default function Book({}) {
     }
   }
 
+  const cell = useRef();
+  useEffect(() => {
+    console.log(cell, "asdf");
+  }, [cell]);
+  console.log("state", state);
+  console.log(cell);
+
   if (!loaded) {
     if (error) {
       return (
@@ -174,14 +181,18 @@ export default function Book({}) {
     }
     return <div>Loading...</div>;
   }
-  console.log("state", state);
   return (
-    <div className="mx-auto mt-xs w-full bg-blue-700 items-center justify-between p-6 lg:px-8">
+    <div className="mx-auto mt-xs w-full h-full bg-blue-700 items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
 
-      <form className="" action="/api/newChapter" method="POST">
+      <form
+        className="grid grid-cols-10 mb-sm"
+        action="/api/newChapter"
+        method="POST"
+      >
         <input type="hidden" name="bookid" value={state.bookid} />
         <EditableInput
+          className="col-span-9"
           value={state.title}
           onSubmit={(title) => {
             dispatch({ type: "SET_BOOK_TITLE", payload: title });
@@ -190,17 +201,65 @@ export default function Book({}) {
         >
           <h1 className="mb-sm heading">{state.title}</h1>
         </EditableInput>
-        <div className="relative border border-yellow-400">
+        <Button className="col-span-1 rounded mt-md" buttonType="submit">
+          New Chapter...
+        </Button>
+      </form>
+      <div className="relative border border-yellow-400">
+        <div className="w-screen h-screen grid grid-cols-12 grid-rows-12">
           {state.chapters.map((chapter, index) => (
             <Chapter
               chapter={chapter}
               key={index}
               dispatch={dispatch}
               onChange={onChange}
+              // @ts-ignore
+              width={cell.current ? cell.current!.offsetWidth : 100}
+              // @ts-ignore
+              height={cell.current ? cell.current?.offsetHeight : 50}
             />
           ))}
+          <div ref={cell} className="w-chapter h-chapter bg-blue-500">
+            1
+          </div>
+          <div className="w-chapter h-chapter bg-green-500">2</div>
+          <div className="w-chapter h-chapter bg-red-500">3</div>
+          <div className="w-chapter h-chapter bg-yellow-500">4</div>
+          <div className="w-chapter h-chapter bg-purple-500">5</div>
+          <div className="w-chapter h-chapter bg-pink-500">6</div>
+          <div className="w-chapter h-chapter bg-indigo-500">7</div>
+          <div className="w-chapter h-chapter bg-teal-500">8</div>
+          <div className="w-chapter h-chapter bg-gray-500">9</div>
+
+          <div className="w-chapter h-chapter bg-green-500">2</div>
+          <div className="w-chapter h-chapter bg-red-500">3</div>
+          <div className="w-chapter h-chapter bg-yellow-500">4</div>
+          <div className="w-chapter h-chapter bg-purple-500">5</div>
+          <div className="w-chapter h-chapter bg-pink-500">6</div>
+          <div className="w-chapter h-chapter bg-indigo-500">7</div>
+          <div className="w-chapter h-chapter bg-teal-500">8</div>
+          <div className="w-chapter h-chapter bg-gray-500">9</div>
+
+          <div className="w-chapter h-chapter bg-green-500">2</div>
+          <div className="w-chapter h-chapter bg-red-500">3</div>
+          <div className="w-chapter h-chapter bg-yellow-500">4</div>
+          <div className="w-chapter h-chapter bg-purple-500">5</div>
+          <div className="w-chapter h-chapter bg-pink-500">6</div>
+          <div className="w-chapter h-chapter bg-indigo-500">7</div>
+          <div className="w-chapter h-chapter bg-teal-500">8</div>
+          <div className="w-chapter h-chapter bg-gray-500">9</div>
+
+          <div className="w-chapter h-chapter bg-green-500">2</div>
+          <div className="w-chapter h-chapter bg-red-500">3</div>
+          <div className="w-chapter h-chapter bg-yellow-500">4</div>
+          <div className="w-chapter h-chapter bg-purple-500">5</div>
+          <div className="w-chapter h-chapter bg-pink-500">6</div>
+          <div className="w-chapter h-chapter bg-indigo-500">7</div>
+          <div className="w-chapter h-chapter bg-teal-500">8</div>
+          <div className="w-chapter h-chapter bg-gray-500">9</div>
         </div>
-        {/*  <ul className="">
+      </div>
+      {/*  <ul className="">
           {loaded &&
             state.chapters.map((chapter, index) => (
               <div className="relative">
@@ -221,10 +280,7 @@ export default function Book({}) {
               </div>
             ))}
         </ul> */}
-        <Button className="rounded mt-md" buttonType="submit">
-          New Chapter...
-        </Button>
-      </form>
+
       {/*book.chapters.map((chapter, index) => (
         /*        <div
           key={cindex}

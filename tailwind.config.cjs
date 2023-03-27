@@ -73,6 +73,12 @@ module.exports = {
         lg: "3rem",
         xl: "4rem",
       },
+      width: {
+        chapter: "100px",
+      },
+      height: {
+        chapter: "50px",
+      },
       /*   padding: {
         xs: "0.5rem",
         sm: "1rem",
