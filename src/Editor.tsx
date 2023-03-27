@@ -29,19 +29,16 @@ const countSyllables = (text: string) => {
 const reducer = produce((draft: t.State, action: any) => {
   switch (action.type) {
     case "setText":
-      console.log("setText", action.payload);
       draft.editor.text = action.payload;
       draft.chapter.text = action.payload;
       draft.saved = false;
       break;
     case "setTitle":
-      console.log("setTitle", action.payload);
       draft.editor.title = action.payload;
       draft.chapter.title = action.payload;
       draft.saved = false;
       break;
     case "setContents":
-      console.log("setContents", action.payload);
       draft.editor.contents = action.payload;
       break;
     case "setChapter":
@@ -55,7 +52,6 @@ const reducer = produce((draft: t.State, action: any) => {
       }
       break;
     case "setSaved":
-      console.log("setSaved", action.payload);
       draft.saved = action.payload;
       break;
     case "setError":
@@ -66,12 +62,11 @@ const reducer = produce((draft: t.State, action: any) => {
       break;
     case "addToContents":
       if (!draft.editor.contents.insert) return;
-      // console.log(current(draft.editor.contents));
 
       draft.editor.contents.insert(action.payload);
       draft.editor.text += action.payload;
       draft.saved = false;
-      //draft.chapter.text += action.payload;
+
       break;
     case "setSynonyms":
       draft.synonyms = action.payload;
@@ -90,6 +85,9 @@ const reducer = produce((draft: t.State, action: any) => {
       break;
     case "setSelectedText":
       draft.editor.selectedText = action.payload;
+      break;
+    case "clearSelectedText":
+      draft.editor.selectedText = { index: 0, length: 0, contents: "" };
       break;
     case "synonymSelected":
       draft.editor.selectedText = action.payload;
@@ -234,8 +232,6 @@ export default function Editor(
   };
 
   const addToContents = (text: string) => {
-    console.log({ text });
-    console.log(state.editor.contents);
     dispatch({
       type: "addToContents",
       payload: text,
@@ -300,7 +296,11 @@ export default function Editor(
             />
           ))}
         </Sidebar>
-        <SlideOver title="Settings" open={true} setOpen={setSettingsOpen}>
+        <SlideOver
+          title="Settings"
+          open={settingsOpen}
+          setOpen={setSettingsOpen}
+        >
           <Settings
             settings={settings}
             setSettings={setSettings}

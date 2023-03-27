@@ -126,19 +126,20 @@ const TextEditor = ({
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
-    console.log({ range });
+
     if (range) {
       const word = quill.getText(range.index, range.length).trim();
       dispatch({
         type: "setSelectedText",
         payload: { index: range.index, length: range.length, contents: word },
       });
+    } else {
+      dispatch({ type: "clearSelectedText" });
     }
   };
   const onClickEditor = (event) => {
     setSelection();
     if (event.metaKey || event.ctrlKey) {
-      console.log("metaKey");
       if (range && range.length > 0) {
         fetchSynonyms(word);
         const bounds = quill.getBounds(range.index);
@@ -156,14 +157,6 @@ const TextEditor = ({
   return (
     <div className="mt-xl">
       <Box flexGrow={1}>
-        {/*         <TextField
-          label="OpenAI API Key"
-          variant="outlined"
-          fullWidth
-          value={apiKey}
-          onChange={handleApiKeyChange}
-        />
- */}{" "}
         {error !== "" && <p>Error: {error}</p>}
         <div className="ql-editor hidden">hi</div>
         <div className="ql-toolbar ql-snow hidden">hi</div>

@@ -6,33 +6,36 @@ import Select from "./components/Select";
 import * as t from "./Types";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 
-const Prompt = ({ label, text, onLabelChange, onTextChange }) => {
+const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
   return (
-    <div className="mb-sm">
-      <div className="flex">
-        <TagIcon className="w-sm flex-initial" />
+    <div className="mb-sm p-2 rounded-sm bg-slate-200">
+      <div className="mb-xs w-full">
         <Input
           name="label"
-          placeholder="Button Label"
+          title="Button Label"
           value={label}
-          rounded={false}
-          inputClassName="ml-xs rounded-b-md border-b-0"
-          className="flex-auto w-full"
+          className=" w-full"
           onChange={(e) => onLabelChange(e.target.value)}
         />
       </div>
-      <div className="flex">
-        <PencilIcon className="w-sm flex-initial" />
+      <div className="w-full">
         <Input
           name="text"
-          placeholder="Prompt (use {{text}} for input text)"
+          title="Prompt (use {{text}} for input text)"
           value={text}
-          rounded={false}
-          inputClassName=" rounded-b-md"
-          className="ml-xs flex-auto w-full"
+          className="w-full"
           onChange={(e) => onTextChange(e.target.value)}
         />
       </div>
+      <Button
+        size="small"
+        onClick={onDelete}
+        style="secondary"
+        rounded={true}
+        className="mt-xs"
+      >
+        Delete
+      </Button>
     </div>
   );
 };
@@ -52,6 +55,24 @@ const Settings = ({ settings, setSettings, onSave }) => {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts[index][key] = value;
+      })
+    );
+  };
+
+  const deletePrompt = (index: number) => {
+    setSettings(
+      produce(settings, (draft) => {
+        // @ts-ignore
+        draft.prompts.splice(index, 1);
+      })
+    );
+  };
+
+  const addPrompt = (index: number) => {
+    setSettings(
+      produce(settings, (draft) => {
+        // @ts-ignore
+        draft.prompts.push({ label: "", text: "" });
       })
     );
   };
@@ -127,8 +148,17 @@ const Settings = ({ settings, setSettings, onSave }) => {
             text={prompt.text}
             onLabelChange={(value) => handlePromptChange(i, "label", value)}
             onTextChange={(value) => handlePromptChange(i, "text", value)}
+            onDelete={() => deletePrompt(i)}
           />
         ))}
+        <Button
+          onClick={addPrompt}
+          rounded={true}
+          className="mt-sm"
+          style="secondary"
+        >
+          New Prompt
+        </Button>
       </div>
       <Button onClick={handleSave} rounded={true} className="mt-sm">
         Save

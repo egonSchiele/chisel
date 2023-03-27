@@ -7,6 +7,7 @@ export default function Button({
   disabled = false,
   rounded = false,
   size = "medium",
+  style = "primary",
   buttonType = "button",
 }: {
   size?: ButtonSize;
@@ -15,6 +16,7 @@ export default function Button({
   className?: string;
   disabled?: boolean;
   rounded?: boolean;
+  style?: "primary" | "secondary";
   buttonType?: "button" | "submit";
 }) {
   const colors =
@@ -29,7 +31,7 @@ export default function Button({
   const sizeCss = sizes[size];
 
   const rounds = {
-    small: "rounded-sm",
+    small: "rounded-md",
     medium: "rounded-md",
     large: "rounded-lg",
   };
