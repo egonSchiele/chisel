@@ -91,6 +91,10 @@ app.post("/api/newBook", async (req, res) => {
       title: "Untitled",
       author: "Unknown",
       chapters: [],
+      design: {
+        coverColor: "bg-red-700",
+      },
+      columnHeadings: [],
     };
     await saveBook(book);
     res.redirect(`/book/${bookid}`);

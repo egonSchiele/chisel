@@ -10,6 +10,10 @@ const initialState: t.Book = {
   title: "",
   author: "",
   chapters: [],
+  design: {
+    coverColor: "bg-red-700",
+  },
+  columnHeadings: [],
 };
 
 import produce, { current } from "immer";
@@ -170,6 +174,36 @@ export default function Book({}) {
   const headings = []; // ["hi", "there", "how", "are", "you"];
   console.log("state", state);
 
+  const positions = {};
+  state.chapters.forEach((chapter, i) => {
+    const key = [chapter.pos.x, chapter.pos.y].toString();
+    if (!positions[key]) {
+      positions[key] = 0;
+    }
+
+    positions[key] += 1;
+  });
+
+  const stackElements = [];
+
+  for (const pos in positions) {
+    console.log("pos", pos, positions[pos]);
+    if (positions[pos] > 1) {
+      const [x, y] = pos.split(",").map((n) => parseInt(n));
+      stackElements.push(
+        <p
+          className="absolute w-8 h-8 p-2 rounded-md bg-red-700 text-center content-center -m-xs"
+          style={{
+            top: `${y * 147}px`,
+            left: `${x * 222}px`,
+          }}
+        >
+          {positions[pos]}
+        </p>
+      );
+    }
+  }
+
   if (!loaded) {
     if (error) {
       return (
@@ -231,6 +265,7 @@ export default function Book({}) {
               height={147}
             />
           ))}
+          {stackElements}
         </div>
       </div>
       {/*  <ul className="">

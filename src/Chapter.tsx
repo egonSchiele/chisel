@@ -42,7 +42,7 @@ export default function Chapter({
           {chapter.title}
         </div>
         <Link to={`/chapter/${chapter.chapterid}`}>
-          <div className="h-3/4 dark:bg-dmchaptercardhover p-xs">
+          <div className="h-3/4 dark:bg-dmchaptercardhover p-xs overflow-hidden">
             {/*  {chapter.pos.x}, {chapter.pos.y}  */}
             {chapter.text}
           </div>

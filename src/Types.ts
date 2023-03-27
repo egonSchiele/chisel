@@ -60,6 +60,10 @@ export type Book = {
   title: string;
   author: string;
   chapters: Chapter[];
+  design: {
+    coverColor: string;
+  };
+  columnHeadings: string[];
   //columns: Column[];
 };
 
