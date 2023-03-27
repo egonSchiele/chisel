@@ -58,3 +58,16 @@
         @apply font-georgia;
     }
 }
+
+
+.chaptergrid {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+.chaptergrid {
+    background-image:
+      repeating-linear-gradient(#fff 0 1px, transparent 1px 100%),
+      repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 100%);
+    background-size: 100px 50px;
+}

@@ -167,11 +167,8 @@ export default function Book({}) {
   }
 
   const cell = useRef();
-  useEffect(() => {
-    console.log(cell, "asdf");
-  }, [cell]);
+
   console.log("state", state);
-  console.log(cell);
 
   if (!loaded) {
     if (error) {
@@ -205,8 +202,8 @@ export default function Book({}) {
           New Chapter...
         </Button>
       </form>
-      <div className="relative border border-yellow-400">
-        <div className="w-screen h-screen grid grid-cols-12 grid-rows-12">
+      <div className="relative  h-screen w-screen">
+        <div className="w-screen h-screen chaptergrid">
           {state.chapters.map((chapter, index) => (
             <Chapter
               chapter={chapter}
@@ -214,49 +211,11 @@ export default function Book({}) {
               dispatch={dispatch}
               onChange={onChange}
               // @ts-ignore
-              width={cell.current ? cell.current!.offsetWidth : 100}
+              width={100}
               // @ts-ignore
-              height={cell.current ? cell.current?.offsetHeight : 50}
+              height={50}
             />
           ))}
-          <div ref={cell} className="w-chapter h-chapter bg-blue-500">
-            1
-          </div>
-          <div className="w-chapter h-chapter bg-green-500">2</div>
-          <div className="w-chapter h-chapter bg-red-500">3</div>
-          <div className="w-chapter h-chapter bg-yellow-500">4</div>
-          <div className="w-chapter h-chapter bg-purple-500">5</div>
-          <div className="w-chapter h-chapter bg-pink-500">6</div>
-          <div className="w-chapter h-chapter bg-indigo-500">7</div>
-          <div className="w-chapter h-chapter bg-teal-500">8</div>
-          <div className="w-chapter h-chapter bg-gray-500">9</div>
-
-          <div className="w-chapter h-chapter bg-green-500">2</div>
-          <div className="w-chapter h-chapter bg-red-500">3</div>
-          <div className="w-chapter h-chapter bg-yellow-500">4</div>
-          <div className="w-chapter h-chapter bg-purple-500">5</div>
-          <div className="w-chapter h-chapter bg-pink-500">6</div>
-          <div className="w-chapter h-chapter bg-indigo-500">7</div>
-          <div className="w-chapter h-chapter bg-teal-500">8</div>
-          <div className="w-chapter h-chapter bg-gray-500">9</div>
-
-          <div className="w-chapter h-chapter bg-green-500">2</div>
-          <div className="w-chapter h-chapter bg-red-500">3</div>
-          <div className="w-chapter h-chapter bg-yellow-500">4</div>
-          <div className="w-chapter h-chapter bg-purple-500">5</div>
-          <div className="w-chapter h-chapter bg-pink-500">6</div>
-          <div className="w-chapter h-chapter bg-indigo-500">7</div>
-          <div className="w-chapter h-chapter bg-teal-500">8</div>
-          <div className="w-chapter h-chapter bg-gray-500">9</div>
-
-          <div className="w-chapter h-chapter bg-green-500">2</div>
-          <div className="w-chapter h-chapter bg-red-500">3</div>
-          <div className="w-chapter h-chapter bg-yellow-500">4</div>
-          <div className="w-chapter h-chapter bg-purple-500">5</div>
-          <div className="w-chapter h-chapter bg-pink-500">6</div>
-          <div className="w-chapter h-chapter bg-indigo-500">7</div>
-          <div className="w-chapter h-chapter bg-teal-500">8</div>
-          <div className="w-chapter h-chapter bg-gray-500">9</div>
         </div>
       </div>
       {/*  <ul className="">

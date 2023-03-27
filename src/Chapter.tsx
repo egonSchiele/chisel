@@ -18,8 +18,8 @@ export default function Chapter({
   const updateChapterPosition = (e, data) => {
     const newChapter = { ...chapter };
     newChapter.pos = { ...chapter.pos };
-    newChapter.pos.x = data.x / width;
-    newChapter.pos.y = data.y / height;
+    newChapter.pos.x = Math.round(data.x / width);
+    newChapter.pos.y = Math.round(data.y / height);
     onChange(newChapter);
     //dispatch({ type: "setChapter", payload: chapter });
     //saveChapter();
@@ -33,13 +33,15 @@ export default function Chapter({
       onStop={updateChapterPosition}
     >
       <div
-        className={`shadow p-xs cursor-pointer dark:bg-dmbackground dark:text-dmtext w-chapter h-chapter`}
+        className={`shadow absolute p-xs m-0 cursor-pointer dark:bg-dmbackground dark:text-dmtext w-chapter h-chapter`}
       >
         <div className="handle uppercase text-sm font-semibold border-b-2 mb-xs">
           {chapter.title}
         </div>
         <Link to={`/chapter/${chapter.chapterid}`}>
-          <div>{chapter.text}</div>
+          <div>
+            {chapter.pos.x}, {chapter.pos.y} {chapter.text}
+          </div>
         </Link>
       </div>
     </Draggable>
