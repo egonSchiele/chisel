@@ -8,6 +8,7 @@ export default function Input({
   ref = null,
   className = "",
   inputClassName = "",
+  labelClassName = "",
   placeholder = "",
   onBlur = null,
   onKeyDown = null,
@@ -18,7 +19,7 @@ export default function Input({
       {title && (
         <label
           htmlFor={name}
-          className="block text-sm font-light leading-6 text-gray-500"
+          className={`block text-sm font-light leading-6 text-gray-500 dark:text-dmtextsecondary ${labelClassName}`}
         >
           {title}
         </label>

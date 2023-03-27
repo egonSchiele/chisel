@@ -8,13 +8,14 @@ import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 
 const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
   return (
-    <div className="mb-sm p-2 rounded-sm bg-slate-200">
-      <div className="mb-xs w-full">
+    <div className="mb-sm p-3 rounded-md bg-dmsettingspanel">
+      <div className="mb-sm w-full">
         <Input
           name="label"
           title="Button Label"
           value={label}
           className=" w-full"
+          labelClassName="dark:text-black"
           onChange={(e) => onLabelChange(e.target.value)}
         />
       </div>
@@ -24,6 +25,7 @@ const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
           title="Prompt (use {{text}} for input text)"
           value={text}
           className="w-full"
+          labelClassName="dark:text-black"
           onChange={(e) => onTextChange(e.target.value)}
         />
       </div>
@@ -32,7 +34,7 @@ const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
         onClick={onDelete}
         style="secondary"
         rounded={true}
-        className="mt-xs"
+        className="mt-sm"
       >
         Delete
       </Button>
@@ -138,7 +140,7 @@ const Settings = ({ settings, setSettings, onSave }) => {
         />
       </label> */}
       <div>
-        <h4 className="block text-sm font-light leading-6 text-gray-500">
+        <h4 className="text-xl font-semibold text-black mb-xs mt-sm">
           Prompts
         </h4>
         {settings.prompts.map((prompt, i) => (
