@@ -167,7 +167,7 @@ export default function Book({}) {
   }
 
   const cell = useRef();
-
+  const headings = []; // ["hi", "there", "how", "are", "you"];
   console.log("state", state);
 
   if (!loaded) {
@@ -202,6 +202,21 @@ export default function Book({}) {
           New Chapter...
         </Button>
       </form>
+      <div className="relative w-screen h-6">
+        {headings.map((heading, i) => {
+          return (
+            <p
+              key={i}
+              className="text-center uppercase w-chapter dark:bg-dmsidebar dark:text-dmtext absolute top-0"
+              style={{
+                left: `${i * 222}px`,
+              }}
+            >
+              {heading}
+            </p>
+          );
+        })}
+      </div>
       <div className="relative  h-screen w-screen">
         <div className="w-screen h-screen chaptergrid">
           {state.chapters.map((chapter, index) => (
