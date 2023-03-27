@@ -69,10 +69,10 @@ export default function Library() {
                     <a key={index} href={`/book/${book.bookid}`}>
                       <div
                         className={
-                          "bg-blue-700 hover:bg-blue-500 h-48 rounded-md grid grid-rows-5" +
-                          (index % 2 === 0
-                            ? " bg-dmlistitem1"
-                            : " bg-dmlistitem2")
+                          "bg-blue-700 hover:bg-blue-500 h-48 rounded-md grid grid-rows-5 " +
+                          (book.design && book.design.coverColor
+                            ? book.design.coverColor
+                            : "bg-dmlistitem2")
                         }
                       >
                         <div></div>

@@ -56,8 +56,8 @@ const TextEditor = ({
     const editor = quillRef.current.getEditor();
     editor.setText(state.text);
     dispatch({ type: "setContents", payload: editor.getContents() });
-    document.body.addEventListener("click", focus);
-    return () => window.removeEventListener("click", focus);
+    // document.body.addEventListener("click", focus);
+    // return () => window.removeEventListener("click", focus);
   }, [quillRef.current]);
 
   const focus = () => {

@@ -20,6 +20,7 @@ import produce, { current } from "immer";
 import Button from "./components/Button";
 import EditableInput from "./components/EditableInput";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import Select from "./components/Select";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -60,7 +61,9 @@ let reducer = produce((draft: t.Book, action: any) => {
       });
 
       break;
-
+    case "SET_COVER_COLOR":
+      draft.design.coverColor = action.payload;
+      break;
     case "SET_BOOK":
       return action.payload;
       break;
@@ -97,6 +100,10 @@ export default function Book({}) {
       if (!data) {
         setError("Book not found");
         return;
+      }
+
+      if (!data.design) {
+        data.design = { coverColor: "bg-red-700" };
       }
       dispatch({ type: "SET_BOOK", payload: data });
       setLoaded(true);
@@ -155,6 +162,11 @@ export default function Book({}) {
       setError("");
     }
   }
+
+  const setCoverColor = async (e) => {
+    dispatch({ type: "SET_COVER_COLOR", payload: e.target.value });
+    setSaved(false);
+  };
 
   async function deleteChapter(chapterid: string) {
     const res = await fetch(`/api/deleteChapter`, {
@@ -235,6 +247,17 @@ export default function Book({}) {
         <Button className="col-span-1 rounded mt-md" buttonType="submit">
           New Chapter...
         </Button>
+        <Select
+          title="Cover color"
+          name="coverColor"
+          value={state.design.coverColor}
+          onChange={setCoverColor}
+        >
+          <option value="bg-red-700">Red</option>
+          <option value="bg-blue-700">Blue</option>
+          <option value="bg-dmlistitem1">Pale Green</option>
+          <option value="bg-dmlistitem2">Dark Green</option>
+        </Select>
       </form>
       <div className="relative w-screen h-6">
         {headings.map((heading, i) => {
