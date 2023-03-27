@@ -46,6 +46,17 @@ let reducer = produce((draft: t.Book, action: any) => {
         }
       }
       break;
+    case "SET_CHAPTER":
+      draft.chapters = draft.chapters.map((ch) => {
+        if (ch.chapterid === action.payload.chapterID) {
+          return action.payload.chapter;
+        } else {
+          return ch;
+        }
+      });
+
+      break;
+
     case "SET_BOOK":
       return action.payload;
       break;
@@ -88,6 +99,30 @@ export default function Book({}) {
     };
     func();
   }, []);
+
+  async function saveChapter(chapter) {
+    const body = JSON.stringify({ chapter });
+
+    const result = await fetch("/api/saveChapter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+
+    if (!result.ok) {
+      console.log("error saving chapter", result.statusText);
+    }
+  }
+
+  const onChange = async (chapter: t.Chapter) => {
+    dispatch({
+      type: "SET_CHAPTER",
+      payload: { chapter, chapterID: chapter.chapterid },
+    });
+    await saveChapter(chapter);
+  };
 
   useEffect(() => {
     if (saved) return;
@@ -141,7 +176,7 @@ export default function Book({}) {
   }
   console.log("state", state);
   return (
-    <div className="mx-auto mt-lg max-w-2xl items-center justify-between p-6 lg:px-8">
+    <div className="mx-auto mt-xs w-full bg-blue-700 items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
 
       <form className="" action="/api/newChapter" method="POST">
@@ -155,7 +190,17 @@ export default function Book({}) {
         >
           <h1 className="mb-sm heading">{state.title}</h1>
         </EditableInput>
-        <ul className="">
+        <div className="relative border border-yellow-400">
+          {state.chapters.map((chapter, index) => (
+            <Chapter
+              chapter={chapter}
+              key={index}
+              dispatch={dispatch}
+              onChange={onChange}
+            />
+          ))}
+        </div>
+        {/*  <ul className="">
           {loaded &&
             state.chapters.map((chapter, index) => (
               <div className="relative">
@@ -175,7 +220,7 @@ export default function Book({}) {
                 />
               </div>
             ))}
-        </ul>
+        </ul> */}
         <Button className="rounded mt-md" buttonType="submit">
           New Chapter...
         </Button>

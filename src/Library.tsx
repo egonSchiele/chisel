@@ -61,29 +61,37 @@ export default function Library() {
       >
         <form className="" action="/api/newBook" method="POST">
           <h1 className="mb-sm heading">Your books</h1>
-          <ul className="">
+          <div className="grid grid-cols-4 gap-4">
             {books &&
               books.map((book, index) => (
-                <div className="relative">
-                  <a key={index} href={`/book/${book.bookid}`}>
-                    <li
-                      className={
-                        "border-b border-slate-400 px-2 py-2 cursor-pointer" +
-                        (index % 2 === 0
-                          ? " bg-dmlistitem1"
-                          : " bg-dmlistitem2")
-                      }
-                    >
-                      {book.title}
-                    </li>
-                  </a>
-                  <TrashIcon
-                    className="w-6 m-2 absolute top-0 right-0 cursor-pointer hover:text-white"
-                    onClick={() => deleteBook(book.bookid)}
-                  />
+                <div>
+                  <div>
+                    <a key={index} href={`/book/${book.bookid}`}>
+                      <div
+                        className={
+                          "bg-blue-700 hover:bg-blue-500 h-48 rounded-md grid grid-rows-5" +
+                          (index % 2 === 0
+                            ? " bg-dmlistitem1"
+                            : " bg-dmlistitem2")
+                        }
+                      >
+                        <div></div>
+                        <p className="col-span-2 px-2 py-2 my-auto border-t-2 border-b-2 text-center bg-red-700 border-yellow-400 font-georgia">
+                          {book.title}
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+                  <div className="relative mt-xs">
+                    <p className="mr-xs">{book.title}</p>
+                    <TrashIcon
+                      className="w-6 ml-xs absolute top-0 right-0 cursor-pointer hover:text-white"
+                      onClick={() => deleteBook(book.bookid)}
+                    />
+                  </div>
                 </div>
               ))}
-          </ul>
+          </div>
           <Button className="rounded mt-md" buttonType="submit">
             New Book...
           </Button>
