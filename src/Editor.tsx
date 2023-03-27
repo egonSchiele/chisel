@@ -13,6 +13,8 @@ import * as t from "./Types";
 import { useInterval } from "./utils";
 import Settings from "./Settings";
 import Toolbar from "./Toolbar";
+import SlideOver from "./components/SlideOver";
+import Button from "./components/Button";
 
 const countSyllables = (text: string) => {
   try {
@@ -112,6 +114,7 @@ export default function Editor(
 } */
 ) {
   const { chapterid } = useParams();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [error, setError] = React.useState("");
   const [loaded, setLoaded] = React.useState(false);
@@ -145,7 +148,12 @@ export default function Editor(
       setSettings(settingsData.settings);
       setLoaded(true);
     };
-    func();
+    try {
+      func();
+    } catch (error) {
+      console.error(error);
+      setError(error);
+    }
   }, []);
 
   useInterval(() => {
@@ -256,7 +264,7 @@ export default function Editor(
       </div>
 
       <div className="col-span-2 min-h-screen">
-        <Sidebar>
+        <Sidebar setSettingsOpen={setSettingsOpen}>
           {/* <a
             className="text-sm text-gray-500 m-sm"
             href={`/book/${state.chapter.bookid}`}
@@ -275,8 +283,18 @@ export default function Editor(
               }}
             />
           ))}
-          {/* <Settings /> */}
         </Sidebar>
+        <SlideOver
+          title="Settings"
+          open={settingsOpen}
+          setOpen={setSettingsOpen}
+        >
+          <Settings
+            settings={settings}
+            setSettings={setSettings}
+            onSave={() => setSettingsOpen(false)}
+          />
+        </SlideOver>
       </div>
     </div>
   );

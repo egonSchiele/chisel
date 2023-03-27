@@ -5,19 +5,20 @@ export default function Button({
   onClick = () => {},
   className = "",
   disabled = false,
+  rounded = false,
   size = "medium",
   buttonType = "button",
 }: {
   size?: ButtonSize;
   children: string;
-  onClick?: () => void;
+  onClick?: any;
   className?: string;
   disabled?: boolean;
+  rounded?: boolean;
   buttonType?: "button" | "submit";
 }) {
-  const colors = disabled
-    ? "bg-gray-300 hover:bg-gray-300 text-gray-900 hover:text-gray-900"
-    : "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
+  const colors =
+    "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
 
   const sizes = {
     small: " py-1 px-2 text-sm",
@@ -27,11 +28,19 @@ export default function Button({
 
   const sizeCss = sizes[size];
 
+  const rounds = {
+    small: "rounded-sm",
+    medium: "rounded-md",
+    large: "rounded-lg",
+  };
+
+  const roundedCss = rounded ? rounds[size] : "";
+
   return (
     <button
       type={buttonType}
       disabled={disabled}
-      className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${colors} ${sizeCss} ${className}`}
+      className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${colors} ${sizeCss} ${roundedCss} ${className}`}
       onClick={onClick}
     >
       {children}

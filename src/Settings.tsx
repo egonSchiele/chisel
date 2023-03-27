@@ -1,32 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { produce } from "immer";
-
+import Button from "./components/Button";
+import Input from "./components/Input";
+import Select from "./components/Select";
 import * as t from "./Types";
 
-const Settings: React.FC = () => {
-  const [settings, setSettings] = useState<t.UserSettings>({
-    model: "",
-    max_tokens: 0,
-    num_suggestions: 0,
-    theme: "default",
-    version_control: false,
-    prompts: [],
-  });
-
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      const response = await fetch("/api/settings", { credentials: "include" });
-      const data = await response.json();
-      console.log("got settings", data);
-      setSettings(data.settings);
-      setLoaded(true);
-    };
-
-    fetchSettings();
-  }, []);
-
+const Settings = ({ settings, setSettings, onSave }) => {
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
@@ -45,63 +24,60 @@ const Settings: React.FC = () => {
       },
       body: JSON.stringify({ settings }),
     });
+    onSave();
   };
 
-  if (!loaded) return <div>Loading...</div>;
-
   return (
-    <form>
-      <label>
-        Model:
-        <select
-          value={settings.model}
-          onChange={(e) => handleChange("model", e.target.value)}
-        >
-          {/* List your models here */}
-          <option value="model1">Model 1</option>
-          <option value="model2">Model 2</option>
-        </select>
-      </label>
-      <label>
-        Max Tokens:
-        <input
-          type="text"
-          value={settings.max_tokens}
-          onChange={(e) =>
-            handleChange("max_tokens", parseInt(e.target.value, 10))
-          }
-        />
-      </label>
-      <label>
-        Num Suggestions:
-        <input
-          type="text"
-          value={settings.num_suggestions}
-          onChange={(e) =>
-            handleChange("num_suggestions", parseInt(e.target.value, 10))
-          }
-        />
-      </label>
-      <label>
-        Theme:
-        <select
-          value={settings.theme}
-          onChange={(e) => handleChange("theme", e.target.value as t.Theme)}
-        >
-          <option value="default">default</option>
-        </select>
-      </label>
-      <label>
+    <form className="grid grid-cols-1 gap-y-sm">
+      <Select
+        title="Model"
+        name="model"
+        value={settings.model}
+        onChange={(e) => handleChange("model", e.target.value)}
+      >
+        <option>gpt-3.5-turbo</option>
+        <option>text-davinci-003</option>
+        <option>davinci</option>
+        <option>curie</option>
+      </Select>
+
+      <Input
+        title="Max Tokens"
+        name="max_tokens"
+        value={settings.max_tokens}
+        onChange={(e) =>
+          handleChange("max_tokens", parseInt(e.target.value, 10))
+        }
+      />
+      <Input
+        title="Num Suggestions"
+        name="num_suggestions"
+        value={settings.num_suggestions}
+        onChange={(e) =>
+          handleChange("num_suggestions", parseInt(e.target.value, 10))
+        }
+      />
+
+      <Select
+        title="Theme"
+        name="theme"
+        value={settings.theme}
+        onChange={(e) => handleChange("theme", e.target.value as t.Theme)}
+      >
+        <option value="default">default</option>
+      </Select>
+
+      {/*  <label>
         Version Control:
         <input
           type="checkbox"
           checked={settings.version_control}
           onChange={(e) => handleChange("version_control", e.target.checked)}
         />
-      </label>
-      <button type="button" onClick={handleSave}>
+      </label> */}
+      <Button onClick={handleSave} rounded={true} className="mt-sm">
         Save
-      </button>
+      </Button>
     </form>
   );
 };

@@ -77,24 +77,6 @@ export default function Toolbar({
 
   return (
     <div className="grid grid-cols-8 mb-sm w-full bg-button dark:bg-dmbutton">
-      {/*   <Select
-          title="Engine"
-          name="engine"
-          value={model}
-          onChange={(e) => setModel(e.target.value)}
-        >
-          <option>gpt-3.5-turbo</option>
-          <option>text-davinci-003</option>
-          <option>davinci</option>
-          <option>curie</option>
-        </Select>
-        <Input
-          title="Max Tokens"
-          name="max_tokens"
-          value={max_tokens}
-          onChange={(e) => setMaxTokens(e.target.value)}
-          className="ml-xs"
-        /> */}
       <ButtonGroup className="col-span-6 mb-auto h-full">
         {settings.prompts.map((prompt, i) => {
           let classNames = "";
@@ -117,46 +99,8 @@ export default function Toolbar({
             </Button>
           );
         })}
-        {/*
-          <Button onClick={handleContract} className="ml-xs" size="small">
-            Contract
-          </Button>
-          <Button onClick={handleRewrite} className="ml-xs" size="small">
-            Rewrite
-          </Button>
-          <Button
-            onClick={highlightFillerWords}
-            className="ml-xs"
-            size="small"
-          >
-            Highlight Filler Words
-          </Button>
-          <Button onClick={fixTextToSpeech} className="ml-xs" size="small">
-            Fix Speech-To-Text
-          </Button>
-          <Button onClick={fixPassiveVoice} className="ml-xs" size="small">
-            Rewrite As Active Voice
-          </Button>
-          {state.selectedText.length > 0 && (
-            <Button
-              onClick={handleSynonymClick}
-              className="ml-xs"
-              size="small"
-            >
-              Describe
-            </Button>
-          )}
-          {state.selectedText.length > 0 && (
-            <Button
-              onClick={handleSynonymClick}
-              className="ml-xs"
-              size="small"
-            >
-              Synonyms
-            </Button>
-          )}{" "}
-          */}
       </ButtonGroup>
+      {loading && <p>Loading...</p>}
     </div>
   );
 }
