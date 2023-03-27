@@ -92,7 +92,9 @@ app.post("/api/newBook", async (req, res) => {
       author: "Unknown",
       chapters: [],
       design: {
-        coverColor: "bg-red-700",
+        coverColor: "bg-dmlistitem2",
+        labelColor: "bg-blue-700",
+        labelLinesColor: "border-yellow-400",
       },
       columnHeadings: [],
     };

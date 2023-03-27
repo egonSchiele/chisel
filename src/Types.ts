@@ -62,6 +62,8 @@ export type Book = {
   chapters: Chapter[];
   design: {
     coverColor: string;
+    labelColor: string;
+    labelLinesColor: string;
   };
   columnHeadings: string[];
   //columns: Column[];

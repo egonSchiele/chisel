@@ -12,6 +12,8 @@ const initialState: t.Book = {
   chapters: [],
   design: {
     coverColor: "bg-red-700",
+    labelColor: "bg-blue-700",
+    labelLinesColor: "bg-yellow-400",
   },
   columnHeadings: [],
 };
@@ -64,6 +66,9 @@ let reducer = produce((draft: t.Book, action: any) => {
     case "SET_COVER_COLOR":
       draft.design.coverColor = action.payload;
       break;
+    case "SET_LABEL_COLOR":
+      draft.design.labelColor = action.payload;
+      break;
     case "SET_BOOK":
       return action.payload;
       break;
@@ -87,28 +92,33 @@ export default function Book({}) {
   const [saved, setSaved] = React.useState(true);
 
   const { bookid } = useParams();
-  useEffect(() => {
-    const func = async () => {
-      const res = await fetch(`/api/book/${bookid}`);
-      if (!res.ok) {
-        setError(res.statusText);
-        return;
-      }
-      const data: t.Book = await res.json();
-      console.log("got book");
-      console.log(data);
-      if (!data) {
-        setError("Book not found");
-        return;
-      }
 
-      if (!data.design) {
-        data.design = { coverColor: "bg-red-700" };
-      }
-      dispatch({ type: "SET_BOOK", payload: data });
-      setLoaded(true);
-    };
-    func();
+  const fetchBook = async () => {
+    const res = await fetch(`/api/book/${bookid}`);
+    if (!res.ok) {
+      setError(res.statusText);
+      return;
+    }
+    const data: t.Book = await res.json();
+    console.log("got book");
+    console.log(data);
+    if (!data) {
+      setError("Book not found");
+      return;
+    }
+
+    if (!data.design) {
+      data.design = {
+        coverColor: "bg-dmlistitem2",
+        labelColor: "bg-blue-700",
+        labelLinesColor: "border-yellow-400",
+      };
+    }
+    dispatch({ type: "SET_BOOK", payload: data });
+    setLoaded(true);
+  };
+  useEffect(() => {
+    fetchBook();
   }, []);
 
   async function saveChapter(chapter) {
@@ -168,6 +178,11 @@ export default function Book({}) {
     setSaved(false);
   };
 
+  const setLabelColor = async (e) => {
+    dispatch({ type: "SET_LABEL_COLOR", payload: e.target.value });
+    setSaved(false);
+  };
+
   async function deleteChapter(chapterid: string) {
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
@@ -181,6 +196,21 @@ export default function Book({}) {
       return;
     }
   }
+
+  const newChapter = async (event) => {
+    if (event.metaKey) {
+      event.preventDefault();
+      await fetch("/api/newChapter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ bookid }),
+      });
+      await fetchBook();
+    } else {
+    }
+  };
 
   const cell = useRef();
   const headings = []; // ["hi", "there", "how", "are", "you"];
@@ -198,12 +228,14 @@ export default function Book({}) {
 
   const stackElements = [];
 
+  let key = 0;
   for (const pos in positions) {
     console.log("pos", pos, positions[pos]);
     if (positions[pos] > 1) {
       const [x, y] = pos.split(",").map((n) => parseInt(n));
       stackElements.push(
         <p
+          key={key++}
           className="absolute w-8 h-8 p-2 rounded-md bg-red-700 text-center content-center -m-xs"
           style={{
             top: `${y * 147}px`,
@@ -244,7 +276,11 @@ export default function Book({}) {
         >
           <h1 className="mb-sm heading">{state.title}</h1>
         </EditableInput>
-        <Button className="col-span-1 rounded mt-md" buttonType="submit">
+        <Button
+          className="col-span-1 rounded mt-md"
+          buttonType="submit"
+          onClick={newChapter}
+        >
           New Chapter...
         </Button>
         <Select
@@ -255,6 +291,19 @@ export default function Book({}) {
         >
           <option value="bg-red-700">Red</option>
           <option value="bg-blue-700">Blue</option>
+          <option value="bg-yellow-400">Yellow</option>
+          <option value="bg-dmlistitem1">Pale Green</option>
+          <option value="bg-dmlistitem2">Dark Green</option>
+        </Select>
+        <Select
+          title="Label color"
+          name="labelColor"
+          value={state.design.labelColor}
+          onChange={setLabelColor}
+        >
+          <option value="bg-red-700">Red</option>
+          <option value="bg-blue-700">Blue</option>
+          <option value="bg-yellow-400">Yellow</option>
           <option value="bg-dmlistitem1">Pale Green</option>
           <option value="bg-dmlistitem2">Dark Green</option>
         </Select>

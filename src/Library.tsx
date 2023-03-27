@@ -76,7 +76,14 @@ export default function Library() {
                         }
                       >
                         <div></div>
-                        <p className="col-span-2 px-2 py-2 my-auto border-t-2 border-b-2 text-center bg-red-700 border-yellow-400 font-georgia">
+                        <p
+                          className={
+                            `col-span-2 px-2 py-2 my-auto border-t-2 border-b-2 text-center  border-yellow-400 font-georgia ` +
+                            (book.design && book.design.labelColor
+                              ? book.design.labelColor
+                              : "bg-red-700")
+                          }
+                        >
                           {book.title}
                         </p>
                       </div>
