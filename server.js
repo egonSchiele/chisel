@@ -25,6 +25,7 @@ import {
   saveUser,
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
+import settings from "./settings.js";
 //const serviceAccountKey = require("./serviceAccountKey.json");
 
 /* import { initializeApp } from "firebase/app";
@@ -235,7 +236,19 @@ app.post("/api/deleteChapter", async (req, res) => {
 
 app.post("/api/suggestions", async (req, res) => {
   console.log({ body: req.body });
+  const user = await getUser(req);
+  if (!user.permissions.openai_api) {
+    res.status(400).json({ error: "no openai api permissions" });
+    return;
+  }
+  let month_total = 0;
+  month_total += user.usage.openai_api.tokens.month.prompt;
+  month_total += user.usage.openai_api.tokens.month.completion;
 
+  if (month_total > settings.maxMonthlyTokens) {
+    res.status(400).json({ error: "month token limit reached" });
+    return;
+  }
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
   let reqBody = {
@@ -267,8 +280,18 @@ app.post("/api/suggestions", async (req, res) => {
   })
     .then((result) => {
       console.log({ result });
-      result.json().then((json) => {
+      result.json().then(async (json) => {
         console.log({ json });
+
+        user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
+        user.usage.openai_api.tokens.month.completion +=
+          json.usage.completion_tokens;
+
+        user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
+        user.usage.openai_api.tokens.total.completion +=
+          json.usage.completion_tokens;
+
+        await saveUser(user);
         /* {
   json: {
     id: 'chatcmpl-6yYGIiBy74VzsfSeC7smESchLVt0X',

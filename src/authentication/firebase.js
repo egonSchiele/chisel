@@ -221,6 +221,24 @@ const createUser = async (email) => {
     userid,
     email,
     approved: true,
+    admin: false,
+    permissions: {
+      openai_api: true,
+    },
+    usage: {
+      openai_api: {
+        tokens: {
+          month: {
+            prompt: 0,
+            completion: 0,
+          },
+          total: {
+            prompt: 0,
+            completion: 0,
+          },
+        },
+      },
+    },
     settings: {},
     created_at: Date.now(),
   };

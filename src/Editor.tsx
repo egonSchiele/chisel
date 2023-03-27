@@ -15,6 +15,7 @@ import Settings from "./Settings";
 import Toolbar from "./Toolbar";
 import SlideOver from "./components/SlideOver";
 import Button from "./components/Button";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 const countSyllables = (text: string) => {
   try {
@@ -56,6 +57,12 @@ const reducer = produce((draft: t.State, action: any) => {
     case "setSaved":
       console.log("setSaved", action.payload);
       draft.saved = action.payload;
+      break;
+    case "setError":
+      draft.error = action.payload;
+      break;
+    case "clearError":
+      //draft.error = "";
       break;
     case "addToContents":
       if (!draft.editor.contents.insert) return;
@@ -116,7 +123,6 @@ export default function Editor(
   const { chapterid } = useParams();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const [error, setError] = React.useState("");
   const [loaded, setLoaded] = React.useState(false);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -131,7 +137,7 @@ export default function Editor(
     const func = async () => {
       const res = await fetch(`/api/chapter/${chapterid}`);
       if (!res.ok) {
-        setError(res.statusText);
+        dispatch({ type: "setError", payload: res.statusText });
         return;
       }
       const data: t.Chapter = await res.json();
@@ -152,7 +158,7 @@ export default function Editor(
       func();
     } catch (error) {
       console.error(error);
-      setError(error);
+      dispatch({ type: "setError", payload: error });
     }
   }, []);
 
@@ -180,10 +186,10 @@ export default function Editor(
     });
 
     if (!result.ok) {
-      setError(result.statusText);
+      dispatch({ type: "setError", payload: result.statusText });
       return;
     } else {
-      setError("");
+      dispatch({ type: "clearError" });
       dispatch({ type: "setSaved", payload: true });
     }
   }
@@ -199,7 +205,6 @@ export default function Editor(
 
   const initialState: State = {
     editor: initialEditorState,
-    saved: true,
     chapterid,
     chapter: null,
     synonyms: [],
@@ -211,6 +216,9 @@ export default function Editor(
           "In a faraway kingdom, there lived a vibrant young princess who was beloved by her people. Despite her royal wealth, not to mention her long flowing hair, the young princess felt trapped in the castle walls. She was desperate to explore the      ",
       },
     ],
+    saved: true,
+    error: "",
+    loading: true,
   };
 
   const [state, dispatch] = useReducer<(state: State, action: any) => State>(
@@ -235,16 +243,14 @@ export default function Editor(
   };
 
   if (!loaded) {
-    if (error) {
-      return <div>{error}</div>;
+    if (state.error) {
+      return <div>{state.error}</div>;
     }
     return <div>Loading...</div>;
   }
 
   return (
     <div className="grid grid-cols-10">
-      {error && <div className="error">{error}</div>}
-
       <div className="col-span-8">
         <div>
           <div className="">
@@ -253,6 +259,16 @@ export default function Editor(
               state={state.editor}
               settings={settings}
             />
+            {state.error && (
+              <div className="m-0 p-sm bg-red-700 w-full">
+                <p>{state.error}</p>
+                {/* <XMarkIcon
+                  className="h-sm"
+                  onClick={() => dispatch("clearError")}
+                /> */}
+              </div>
+            )}
+
             <TextEditor
               dispatch={dispatch as any}
               state={state.editor}

@@ -14,12 +14,14 @@ export type InfoPanelState = {
 
 export type State = {
   editor: EditorState;
-  saved: boolean;
   chapterid: string;
   chapter: Chapter | null;
   synonyms: string[];
   infoPanel: InfoPanelState;
   suggestions: Suggestion[];
+  saved: boolean;
+  error: string;
+  loading: boolean;
 };
 export type ButtonSize = "small" | "medium" | "large";
 export type SuggestionType =
@@ -84,10 +86,32 @@ export type Prompt = {
 
 export type Theme = "default";
 
+export type UserPermissions = {
+  openai_api: boolean;
+};
+
+export type Usage = {
+  openai_api: {
+    tokens: {
+      month: {
+        prompt: number;
+        completion: number;
+      };
+      total: {
+        prompt: number;
+        completion: number;
+      };
+    };
+  };
+};
+
 export type User = {
-  id: string;
+  userid: string;
   email: string;
   approved: boolean;
+  admin: boolean;
+  permissions: UserPermissions;
+  usage: Usage;
   settings: UserSettings;
   created_at: string;
 };

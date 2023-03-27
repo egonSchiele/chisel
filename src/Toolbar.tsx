@@ -13,7 +13,6 @@ export default function Toolbar({
   settings: t.UserSettings;
 }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const handleSuggestion = async (_prompt, label) => {
     const max_tokens_with_min = Math.min(settings.max_tokens, 500);
     let text = state.text;
@@ -29,7 +28,7 @@ export default function Toolbar({
       num_suggestions: settings.num_suggestions,
     });
     setLoading(true);
-    setError("");
+    dispatch({ type: "clearError" });
     console.log({ body });
     fetch("/api/suggestions", {
       method: "POST",
@@ -40,21 +39,24 @@ export default function Toolbar({
     })
       .then((res) => {
         console.log({ res });
-        if (!res.ok) {
-          setError(res.statusText);
+        /* if (!res.ok) {
+          dispatch({ type: "setError", payload: res.statusText });
+
           setLoading(false);
           return;
-        }
+        } */
         res.json().then((data) => {
           console.log({ data });
           if (data.error) {
-            setError(data.error.message);
+            dispatch({ type: "setError", payload: data.error });
+
             setLoading(false);
             return;
           }
 
           if (!data.choices) {
-            setError("No choices returned.");
+            dispatch({ type: "setError", payload: "No choices returned." });
+
             setLoading(false);
             return;
           }
@@ -77,7 +79,7 @@ export default function Toolbar({
   };
 
   return (
-    <div className="grid grid-cols-8 mb-sm w-full bg-button dark:bg-dmbutton">
+    <div className="grid grid-cols-8 w-full bg-button dark:bg-dmbutton">
       <ButtonGroup className="col-span-6 mb-auto h-full">
         {settings.prompts.map((prompt, i) => {
           let classNames = "";
