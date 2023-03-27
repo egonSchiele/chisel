@@ -3,12 +3,16 @@ export default function Input({
   name,
   value,
   onChange,
+  rounded = true,
   title = null,
   ref = null,
   className = "",
+  inputClassName = "",
+  placeholder = "",
   onBlur = null,
   onKeyDown = null,
 }) {
+  const roundedCss = rounded ? "rounded-md" : "";
   return (
     <div className={className}>
       {title && (
@@ -28,8 +32,9 @@ export default function Input({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
+          placeholder={placeholder}
           onKeyDown={onKeyDown}
-          className="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          className={`block w-full py-1 px-2 text-gray-900 shadow-sm border border-gray-200 sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
         />
       </div>
     </div>

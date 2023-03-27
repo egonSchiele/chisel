@@ -4,6 +4,38 @@ import Button from "./components/Button";
 import Input from "./components/Input";
 import Select from "./components/Select";
 import * as t from "./Types";
+import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
+
+const Prompt = ({ label, text, onLabelChange, onTextChange }) => {
+  return (
+    <div className="mb-sm">
+      <div className="flex">
+        <TagIcon className="w-sm flex-initial" />
+        <Input
+          name="label"
+          placeholder="Button Label"
+          value={label}
+          rounded={false}
+          inputClassName="ml-xs rounded-b-md border-b-0"
+          className="flex-auto w-full"
+          onChange={(e) => onLabelChange(e.target.value)}
+        />
+      </div>
+      <div className="flex">
+        <PencilIcon className="w-sm flex-initial" />
+        <Input
+          name="text"
+          placeholder="Prompt (use {{text}} for input text)"
+          value={text}
+          rounded={false}
+          inputClassName=" rounded-b-md"
+          className="ml-xs flex-auto w-full"
+          onChange={(e) => onTextChange(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+};
 
 const Settings = ({ settings, setSettings, onSave }) => {
   const handleChange = (key: keyof t.UserSettings, value: any) => {
@@ -11,6 +43,15 @@ const Settings = ({ settings, setSettings, onSave }) => {
       produce(settings, (draft) => {
         // @ts-ignore
         draft[key] = value;
+      })
+    );
+  };
+
+  const handlePromptChange = (index: number, key: string, value: string) => {
+    setSettings(
+      produce(settings, (draft) => {
+        // @ts-ignore
+        draft.prompts[index][key] = value;
       })
     );
   };
@@ -75,6 +116,20 @@ const Settings = ({ settings, setSettings, onSave }) => {
           onChange={(e) => handleChange("version_control", e.target.checked)}
         />
       </label> */}
+      <div>
+        <h4 className="block text-sm font-light leading-6 text-gray-500">
+          Prompts
+        </h4>
+        {settings.prompts.map((prompt, i) => (
+          <Prompt
+            key={i}
+            label={prompt.label}
+            text={prompt.text}
+            onLabelChange={(value) => handlePromptChange(i, "label", value)}
+            onTextChange={(value) => handlePromptChange(i, "text", value)}
+          />
+        ))}
+      </div>
       <Button onClick={handleSave} rounded={true} className="mt-sm">
         Save
       </Button>

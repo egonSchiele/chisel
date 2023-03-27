@@ -300,11 +300,7 @@ export default function Editor(
             />
           ))}
         </Sidebar>
-        <SlideOver
-          title="Settings"
-          open={settingsOpen}
-          setOpen={setSettingsOpen}
-        >
+        <SlideOver title="Settings" open={true} setOpen={setSettingsOpen}>
           <Settings
             settings={settings}
             setSettings={setSettings}
