@@ -65,6 +65,9 @@ module.exports = {
 
         dmsettings: "#e4deae",
         dmsettingspanel: "#b7bf96",
+
+        dmchaptercard: "#2d695e",
+        dmchaptercardhover: "#357a6e",
       },
       spacing: {
         xs: "0.5rem",
@@ -74,10 +77,10 @@ module.exports = {
         xl: "4rem",
       },
       width: {
-        chapter: "100px",
+        chapter: "222px",
       },
       height: {
-        chapter: "50px",
+        chapter: "147px",
       },
       /*   padding: {
         xs: "0.5rem",

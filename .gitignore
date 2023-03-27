@@ -7,3 +7,4 @@ pod*.yaml
 serviceAccountKey.json
 settings.ts
 settings.js
+yarn.lock

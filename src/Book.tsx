@@ -179,8 +179,8 @@ export default function Book({}) {
     return <div>Loading...</div>;
   }
   return (
-    <div className="mx-auto mt-xs w-full h-full bg-blue-700 items-center justify-between p-6 lg:px-8">
-      {error && <p className="p-sm bg-red-400 w-full">Error: {error}</p>}
+    <div className="mx-auto mt-xs w-full h-full bg-dmbackground items-center justify-between p-6 lg:px-8">
+      {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
 
       <form
         className="grid grid-cols-10 mb-sm"
@@ -211,9 +211,9 @@ export default function Book({}) {
               dispatch={dispatch}
               onChange={onChange}
               // @ts-ignore
-              width={100}
+              width={222}
               // @ts-ignore
-              height={50}
+              height={147}
             />
           ))}
         </div>
