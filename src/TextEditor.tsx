@@ -37,17 +37,20 @@ const TextEditor = ({
   state,
   settings,
   saved,
+  onSave,
 }: {
   dispatch: (action: any) => State;
   state: EditorState;
   settings: t.UserSettings;
   saved: boolean;
+  onSave: () => void;
 }) => {
   const classes = useStyles();
   const quillRef = useRef();
 
   const [error, setError] = useState("");
 
+  const [edited, setEdited] = useState(false);
   useEffect(() => {
     if (!quillRef.current) return;
     const editor = quillRef.current.getEditor();
@@ -97,6 +100,7 @@ const TextEditor = ({
 
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
+    if (!edited) return;
     const editor = quillRef.current.getEditor();
     dispatch({ type: "setSaved", payload: false });
     dispatch({
@@ -152,7 +156,14 @@ const TextEditor = ({
     }
   };
 
-  const handleKeyDown = (event) => {};
+  const handleKeyDown = (event) => {
+    setEdited(true);
+    if (event.metaKey && event.code == "KeyS") {
+      event.preventDefault();
+      console.log("saving!");
+      onSave();
+    }
+  };
 
   return (
     <div className="mt-xl">

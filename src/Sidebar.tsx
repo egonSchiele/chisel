@@ -1,7 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
-export default function Sidebar({ children, setSettingsOpen, className = "" }) {
+export default function Sidebar({
+  children,
+  setSettingsOpen,
+  bookid,
+  className = "",
+}) {
   return (
     <div className={`min-h-full bg-sidebar dark:bg-dmsidebar ${className}`}>
       <div className="overflow-y-auto pt-5 pb-4">
@@ -19,6 +24,11 @@ export default function Sidebar({ children, setSettingsOpen, className = "" }) {
             >
               Settings
             </Button>
+            <Link to={`/book/${bookid}`} className="">
+              <Button onClick={() => {}} rounded={true} className="ml-xs">
+                Back to book
+              </Button>
+            </Link>
           </div>
         </div>
 

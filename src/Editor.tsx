@@ -41,9 +41,11 @@ const reducer = produce((draft: t.State, action: any) => {
     case "setContents":
       draft.editor.contents = action.payload;
       break;
-    case "setChapter":
-      draft.chapter = action.payload;
-      draft.saved = false;
+    case "setLoadedChapterData":
+      draft.chapter = action.payload.chapter;
+      draft.suggestions = action.payload.suggestions;
+      draft.editor.text = action.payload.text;
+      draft.editor.title = action.payload.title;
       break;
     case "setSuggestions":
       if (action.payload) {
@@ -141,10 +143,20 @@ export default function Editor(
       const data: t.Chapter = await res.json();
       console.log("got chapter");
       console.log(data);
-      dispatch({ type: "setChapter", payload: data });
+      /*   dispatch({ type: "setChapter", payload: data });
       dispatch({ type: "setSuggestions", payload: data.suggestions });
       dispatch({ type: "setText", payload: data.text });
-      dispatch({ type: "setTitle", payload: data.title });
+      dispatch({ type: "setTitle", payload: data.title }); */
+      // dispatch({ type: "setSaved", payload: true });
+      dispatch({
+        type: "setLoadedChapterData",
+        payload: {
+          chapter: data,
+          suggestions: data.suggestions,
+          text: data.text,
+          title: data.title,
+        },
+      });
 
       const response = await fetch("/api/settings", { credentials: "include" });
       const settingsData = await response.json();
@@ -270,13 +282,17 @@ export default function Editor(
               state={state.editor}
               saved={state.saved}
               settings={settings}
+              onSave={() => saveChapter(state)}
             />
           </div>
         </div>
       </div>
 
       <div className="col-span-2 min-h-screen">
-        <Sidebar setSettingsOpen={setSettingsOpen}>
+        <Sidebar
+          setSettingsOpen={setSettingsOpen}
+          bookid={state.chapter.bookid}
+        >
           {/* <a
             className="text-sm text-gray-500 m-sm"
             href={`/book/${state.chapter.bookid}`}
