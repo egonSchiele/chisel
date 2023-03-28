@@ -10,6 +10,8 @@ import {
   saveChapter,
   deleteChapter,
   getChapter,
+  saveToHistory,
+  getHistory,
 } from "./src/storage/firebase.js";
 //import fs from "fs"
 import * as fs from "fs";
@@ -147,6 +149,32 @@ app.post("/api/newChapter", async (req, res) => {
     }
   }
 });
+
+app.post("/api/saveToHistory", async (req, res) => {
+  let { chapterid, text } = req.body;
+
+  console.log("saving to history");
+  console.log(chapterid, text);
+
+  await saveToHistory(chapterid, text);
+  res.status(200).end();
+});
+
+app.get(
+  "/api/getHistory/:chapterid",
+  requireLogin,
+  noCache,
+  async (req, res) => {
+    const { chapterid } = req.params;
+    const history = await getHistory(chapterid);
+    if (!history) {
+      console.log("no history with id, " + chapterid);
+      res.status(404).end();
+    } else {
+      res.json(history);
+    }
+  }
+);
 
 app.get("/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
   const { chapterid } = req.params;

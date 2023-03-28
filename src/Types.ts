@@ -121,3 +121,5 @@ export type User = {
   settings: UserSettings;
   created_at: string;
 };
+
+export type History = string[];

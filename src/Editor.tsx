@@ -16,7 +16,7 @@ import Toolbar from "./Toolbar";
 import SlideOver from "./components/SlideOver";
 import Button from "./components/Button";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-
+import History from "./History";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -121,9 +121,10 @@ export default function Editor(
 } */
 ) {
   const { chapterid } = useParams();
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [loaded, setLoaded] = React.useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -177,6 +178,29 @@ export default function Editor(
   useInterval(() => {
     saveChapter(state);
   }, 5000);
+
+  async function onTextEditorSave(state: t.State) {
+    await saveChapter(state);
+    await saveToHistory(state);
+  }
+
+  async function saveToHistory(state: t.State) {
+    const body = JSON.stringify({
+      chapterid: state.chapter.chapterid,
+      text: state.chapter.text,
+    });
+
+    console.log(state.chapter.text, "!!");
+
+    const result = await fetch("/api/saveToHistory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body,
+    });
+  }
 
   async function saveChapter(state: t.State) {
     if (state.saved) return;
@@ -284,7 +308,7 @@ export default function Editor(
               state={state.editor}
               saved={state.saved}
               settings={settings}
-              onSave={() => saveChapter(state)}
+              onSave={() => onTextEditorSave(state)}
             />
           </div>
         </div>
@@ -293,6 +317,7 @@ export default function Editor(
       <div className="col-span-2 min-h-screen">
         <Sidebar
           setSettingsOpen={setSettingsOpen}
+          setHistoryOpen={setHistoryOpen}
           bookid={state.chapter.bookid}
         >
           {/* <a
@@ -323,6 +348,19 @@ export default function Editor(
             settings={settings}
             setSettings={setSettings}
             onSave={() => setSettingsOpen(false)}
+          />
+        </SlideOver>
+        <SlideOver
+          title="History"
+          open={historyOpen}
+          setOpen={setHistoryOpen}
+          size="large"
+        >
+          <History
+            /*  history={history}
+            sethistory={setHistory} */
+            chapterid={state.chapter.chapterid}
+            onSave={() => setHistoryOpen(false)}
           />
         </SlideOver>
       </div>

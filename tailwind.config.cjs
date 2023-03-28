@@ -78,6 +78,8 @@ module.exports = {
       },
       width: {
         chapter: "222px",
+        history: "800px",
+        historysmall: "760px",
       },
       height: {
         chapter: "147px",

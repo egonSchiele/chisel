@@ -2,7 +2,17 @@ import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-export default function SlideOver({ title, children, open, setOpen }) {
+export default function SlideOver({
+  title,
+  children,
+  open,
+  setOpen,
+  size = "medium",
+}) {
+  let sizeCss = "";
+  if (size === "large") {
+    sizeCss = "w-history";
+  }
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -10,7 +20,9 @@ export default function SlideOver({ title, children, open, setOpen }) {
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div
+              className={`pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 ${sizeCss}`}
+            >
               <Transition.Child
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-500"
@@ -20,8 +32,12 @@ export default function SlideOver({ title, children, open, setOpen }) {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col overflow-y-scroll bg-dmsettings py-6 shadow-xl">
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-md w-historysmall">
+                  <div
+                    className={`flex h-full flex-col overflow-y-scroll bg-dmsettings py-6 shadow-xl ${
+                      size === "large" ? "w-historysmall" : ""
+                    }`}
+                  >
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-2xl font-semibold text-black">
