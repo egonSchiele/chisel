@@ -300,6 +300,7 @@ export default function Book({}) {
           name="labelColor"
           value={state.design.labelColor}
           onChange={setLabelColor}
+          className="ml-xs"
         >
           <option value="bg-red-700">Red</option>
           <option value="bg-blue-700">Blue</option>
