@@ -1,9 +1,10 @@
 import * as t from "./Types";
 import React from "react";
 import List from "./components/List";
+import { Link } from "react-router-dom";
 function BookItem({ book, selected }: { book: t.Book; selected: boolean }) {
   return (
-    <a href={`/book/${book.bookid}`}>
+    <Link to={`/book/${book.bookid}`}>
       <div
         className={`border-b p-xs border-slate-300 ${
           selected ? "bg-slate-300 rounded-md pl-sm" : "mx-xs"
@@ -11,7 +12,7 @@ function BookItem({ book, selected }: { book: t.Book; selected: boolean }) {
       >
         {book.title}
       </div>
-    </a>
+    </Link>
   );
 }
 
