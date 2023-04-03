@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  //  darkMode: "class",
+  darkMode: "class",
   content: [
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
@@ -24,7 +24,7 @@ module.exports = {
         darkest: "#1A1A1A",
         lightest: "#F5F5F5",
 
-        background: "#fdfce8",
+        background: "#fff",
         // Too bright
         //background: "#fffdeb",
         dmbackground: "#1e453e",
@@ -51,7 +51,7 @@ module.exports = {
         dmbuttonhovertextsecondary: "#0c1612",
 
         //dmbuttonhover: "#598669",
-        sidebar: "#e5e3d3",
+        sidebar: "#F0EDF4",
         dmsidebar: "#182c25",
 
         "panel-background": "#fdfce8",

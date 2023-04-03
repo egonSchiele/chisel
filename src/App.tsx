@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Book from "./Book";
 import Editor from "./Editor";
 import * as t from "./Types";
+import Library from "./Library";
 
 /* const column1: t.Column = {
   title: "Column 1",
@@ -60,8 +61,9 @@ export default function App() {
       {/* {!loaded && <p className="p-sm bg-yellow-400 w-full">Loading...</p>} */}
       {
         <Routes>
-          <Route path="/book/:bookid" element={<Book />} />
+          {/*  <Route path="/book/:bookid" element={<Book />} /> */}
           <Route path="/chapter/:chapterid" element={<Editor />} />
+          <Route path="/book/:bookid" element={<Library />} />
         </Routes>
       }
     </div>
