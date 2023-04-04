@@ -8,3 +8,4 @@ serviceAccountKey.json
 settings.ts
 settings.js
 yarn.lock
+tmp/*

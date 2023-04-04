@@ -62,7 +62,7 @@ export default function App() {
       {
         <Routes>
           {/*  <Route path="/book/:bookid" element={<Book />} /> */}
-          <Route path="/chapter/:chapterid" element={<Editor />} />
+          <Route path="/chapter/:chapterid" element={<Library />} />
           <Route path="/book/:bookid" element={<Library />} />
         </Routes>
       }

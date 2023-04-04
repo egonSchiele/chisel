@@ -6,6 +6,7 @@ import { TrashIcon } from "@heroicons/react/24/solid";
 import BookList from "./BookList";
 import { useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
+import Editor from "./Editor";
 
 type LibraryState = {
   books: t.Book[];
@@ -48,6 +49,7 @@ export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const { bookid } = useParams();
+  const { chapterid } = useParams();
 
   const fetchBook = async () => {
     if (!bookid) return;
@@ -122,6 +124,7 @@ export default function Library() {
             <ChapterList chapters={state.selectedBook.chapters} />
           </div>
         )}
+        <div className="col-span-4 h-full">{chapterid && <Editor />}</div>
       </div>
     </div>
   );

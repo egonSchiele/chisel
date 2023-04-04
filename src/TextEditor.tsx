@@ -186,7 +186,7 @@ const TextEditor = ({
               dispatch({ type: "setTitle", payload: title });
             }}
           >
-            <h1 className="text-3xl mb-sm tracking-wide font-light font-georgia text-darkest dark:text-lightest">
+            <h1 className="text-3xl mb-sm tracking-wide font-bold text-darkest dark:text-lightest">
               {state.title}
               {!saved && (
                 <span className="text-xs text-gray-500">(unsaved changes)</span>
@@ -194,7 +194,7 @@ const TextEditor = ({
             </h1>
           </EditableInput>
           <ClickAwayListener onClickAway={handleClickAway}>
-            <div onClick={onClickEditor} className="mb-md font-georgia">
+            <div onClick={onClickEditor} className="mb-md">
               <ReactQuill
                 ref={quillRef}
                 value={state.contents}

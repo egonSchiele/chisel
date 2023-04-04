@@ -1,22 +1,13 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { nanoid } from "nanoid";
 
-import admin from "firebase-admin";
 import settings from "../../settings.js";
-import serviceAccountKey from "../../serviceAccountKey.json" assert { type: "json" };
 
 import * as firebaseAuth from "@firebase/auth";
 import * as firebaseApp from "firebase/app";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
-try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountKey),
-  });
-} catch (e) {
-  console.log(e);
-}
 const db = getFirestore();
 
 async function stringToHash(str) {

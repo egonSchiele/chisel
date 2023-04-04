@@ -28,20 +28,7 @@ import {
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
 import settings from "./settings.js";
-//const serviceAccountKey = require("./serviceAccountKey.json");
 
-/* import { initializeApp } from "firebase/app";
-import { getAuth } from "@firebase/auth"; */
-
-// const credentials = await signInWithEmailAndPassword(auth, email, password);
-// const firebaseUser = credentials.user;
-
-//const firebaseCommon = require("@firebase
-/* import { signInWithEmailAndPassword } from "@firebase/auth";
-
-import { firebase, auth, _getAuth } from "@/common/firebase";
- */ // import settings from "./settings.ts";
-// import { saveBook, getBook } from "./src/storage/firebase.ts";
 dotenv.config();
 
 const app = express();
