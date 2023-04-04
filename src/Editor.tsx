@@ -1,3 +1,4 @@
+import PromptsSidebar from "./PromptsSidebar";
 import { syllable } from "syllable";
 import React, { useState, useRef, useReducer, useEffect } from "react";
 import produce, { current } from "immer";
@@ -17,6 +18,7 @@ import SlideOver from "./components/SlideOver";
 import Button from "./components/Button";
 import {
   EllipsisHorizontalCircleIcon,
+  SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import History from "./History";
@@ -136,9 +138,8 @@ export default function Editor(
   const { chapterid } = useParams();
 
   const [loaded, setLoaded] = React.useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [promptsOpen, setPromptsOpen] = useState(false);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -284,14 +285,41 @@ export default function Editor(
     return <div>Loading...</div>;
   }
 
+  let editorColSpan = "col-span-4";
+
+  if (sidebarOpen && promptsOpen) {
+    editorColSpan = "col-span-2";
+  } else if (sidebarOpen || promptsOpen) {
+    editorColSpan = "col-span-3";
+  }
+
   return (
     <div className="grid grid-cols-4 w-full">
-      <div className={`w-full ${sidebarOpen ? "col-span-3" : "col-span-4"}`}>
-        <div className="h-8 p-sm w-full mt-sm mb-sm relative">
-          <EllipsisHorizontalCircleIcon
-            className="pr-sm h-full absolute top-0 right-0 text-darkest cursor-pointer"
-            onClick={() => setSidebarOpen((s) => !s)}
-          />
+      <div className={`w-full ${editorColSpan}`}>
+        <div className="h-8 p-sm w-full my-xs flex">
+          <div className="flex flex-grow" />
+          <div className="flex flex-none">
+            <button
+              type="button"
+              className="relative inline-flex items-center rounded-l-md bg-white px-2 py-2 text-gray-500   ring-0"
+              onClick={() => setPromptsOpen((s) => !s)}
+            >
+              <span className="sr-only">Prompts</span>
+              <SparklesIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              className="relative -ml-px inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-500   ring-0"
+              onClick={() => setSidebarOpen((s) => !s)}
+            >
+              <span className="sr-only">Sidebar</span>
+              <EllipsisHorizontalCircleIcon
+                className="h-6 w-6"
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </div>
         <div className="">
           {/*    <Toolbar
@@ -318,38 +346,31 @@ export default function Editor(
           />
         </div>
       </div>
-
-      <SlideOver title="" open={sidebarOpen} setOpen={setSidebarOpen}>
+      {promptsOpen && (
+        <div className="col-span-1 min-h-screen">
+          <PromptsSidebar
+            dispatch={dispatch as any}
+            state={state.editor}
+            settings={settings}
+            closeSidebar={() => setPromptsOpen(false)}
+          />
+        </div>
+      )}
+      {sidebarOpen && (
         <div className="col-span-1 min-h-screen">
           <Sidebar
             state={state}
             settings={settings}
             setSettings={setSettings}
+            closeSidebar={() => setSidebarOpen(false)}
+            onSuggestionClick={addToContents}
+            onSuggestionDelete={(index) => {
+              dispatch({ type: "deleteSuggestion", payload: index });
+            }}
+            onSettingsSave={() => {}}
           />
-          {/*   <SlideOver
-            title="Settings"
-            open={settingsOpen}
-            setOpen={setSettingsOpen}
-          >
-            <Settings
-              settings={settings}
-              setSettings={setSettings}
-              onSave={() => setSettingsOpen(false)}
-            />
-          </SlideOver>
-          <SlideOver
-            title="History"
-            open={historyOpen}
-            setOpen={setHistoryOpen}
-            size="large"
-          >
-            <History
-              chapterid={state.chapter.chapterid}
-              onSave={() => setHistoryOpen(false)}
-            />
-          </SlideOver> */}
         </div>
-      </SlideOver>
+      )}
     </div>
   );
 }

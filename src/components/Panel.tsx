@@ -15,7 +15,7 @@ export default function Panel({
         <p>{title}</p>
         {onDelete && (
           <XMarkIcon
-            className="w-6 m-2 absolute top-0 right-0"
+            className="w-6 m-2 absolute top-0 right-0 cursor-pointer"
             onClick={onDelete}
           />
         )}
