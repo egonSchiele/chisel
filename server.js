@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-//import settings from "./settings.js";
+import settings from "./settings.js";
 import {
   saveBook,
   getBook,
@@ -27,7 +27,6 @@ import {
   saveUser,
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
-import settings from "./settings.js";
 
 dotenv.config();
 
@@ -312,7 +311,7 @@ app.post("/api/suggestions", async (req, res) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${settings.openAiApiKey}`,
     },
     body: JSON.stringify(reqBody),
   })
@@ -321,6 +320,10 @@ app.post("/api/suggestions", async (req, res) => {
       result.json().then(async (json) => {
         console.log({ json });
 
+        if (json.error) {
+          res.status(400).json({ error: json.error.message });
+          return;
+        }
         user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
         user.usage.openai_api.tokens.month.completion +=
           json.usage.completion_tokens;

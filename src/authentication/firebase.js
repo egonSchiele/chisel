@@ -12,7 +12,7 @@ const db = getFirestore();
 
 async function stringToHash(str) {
   const encoder = new TextEncoder();
-  const salt = process.env.SALT;
+  const salt = settings.tokenSalt;
   const data = encoder.encode(str + salt);
   const hash = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(hash))

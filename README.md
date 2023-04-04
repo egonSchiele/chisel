@@ -14,9 +14,10 @@ Then:
 
 1. Add your OpenAI key to `settings.example.js`.
 2. Add your Firebase config to `settings.example.js`.
-3. Rename `settings.example.js` to `settings.js`.
-4. Get your `serviceAccountKey.json` from Firebase and save it in the root directory of your project.
-5. `yarn` to install dependencies.
+3. Add a salt to `settings.example.js` (`tokenSalt`).
+4. Rename `settings.example.js` to `settings.js`.
+5. Get your `serviceAccountKey.json` from Firebase and save it in the root directory of your project.
+6. `yarn` to install dependencies.
 
 ### Running
 
