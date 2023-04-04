@@ -3,29 +3,60 @@ import React from "react";
 import List from "./components/List";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
-function BookItem({ book, selected }: { book: t.Book; selected: boolean }) {
+import { XMarkIcon } from "@heroicons/react/24/outline";
+function BookItem({
+  book,
+  selected,
+  onDelete,
+}: {
+  book: t.Book;
+  selected: boolean;
+  onDelete: () => void;
+}) {
+  const selectedCss = selected ? "bg-slate-300" : "";
   return (
-    <Link to={`/book/${book.bookid}`}>
-      <div
-        className={`border-b p-xs hover:bg-slate-300 border-slate-300 ${
-          selected ? "bg-slate-300 rounded-md pl-sm" : "mx-xs"
-        }`}
-      >
-        {book.title}
+    <div
+      className={`flex py-xs border-b border-slate-300 hover:bg-slate-300 ${selectedCss}`}
+    >
+      <div className="flex flex-grow">
+        <Link to={`/book/${book.bookid}`}>
+          <div>{book.title}</div>
+        </Link>
       </div>
-    </Link>
+      <div
+        className="flex flex-none cursor-pointer items-center mr-xs"
+        onClick={onDelete}
+      >
+        <XMarkIcon className="w-4 h-4 text-slate-400" />
+      </div>
+    </div>
   );
 }
 
 export default function BookList({
   books,
   selectedBookId,
-  onNewBook,
+  onChange,
 }: {
   books: t.Book[];
   selectedBookId: string;
-  onNewBook: () => void;
+  onChange: () => void;
 }) {
+  async function deleteBook(bookid: string) {
+    const res = await fetch(`/api/deleteBook`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookid }),
+    });
+    if (!res.ok) {
+      console.log(res.statusText);
+      return;
+    }
+    await onChange();
+  }
+
   const newBook = async () => {
     const res = await fetch("/api/newBook", {
       method: "POST",
@@ -34,12 +65,16 @@ export default function BookList({
       console.log("error");
       return;
     }
-    await onNewBook();
+    await onChange();
   };
 
   const _items = books.map((book, index) => (
     <li key={book.bookid}>
-      <BookItem book={book} selected={book.bookid === selectedBookId} />
+      <BookItem
+        book={book}
+        selected={book.bookid === selectedBookId}
+        onDelete={() => deleteBook(book.bookid)}
+      />
     </li>
   ));
   const newBookButton = (

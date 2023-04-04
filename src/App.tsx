@@ -67,6 +67,7 @@ export default function App() {
             element={<Library />}
           />
           <Route path="/book/:bookid" element={<Library />} />
+          <Route path="/grid/:bookid" element={<Book />} />
         </Routes>
       }
     </div>

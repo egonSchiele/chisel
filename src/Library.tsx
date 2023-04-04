@@ -121,7 +121,7 @@ export default function Library() {
           <BookList
             books={state.books}
             selectedBookId={selectedBookId}
-            onNewBook={fetchBooks}
+            onChange={fetchBooks}
           />
         </div>
         {state.selectedBook && (
@@ -129,7 +129,8 @@ export default function Library() {
             <ChapterList
               chapters={state.selectedBook.chapters}
               bookid={state.selectedBook.bookid}
-              onNewChapter={fetchBook}
+              selectedChapterId={chapterid || ""}
+              onChange={fetchBook}
             />
           </div>
         )}

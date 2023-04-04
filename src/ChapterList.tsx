@@ -3,25 +3,63 @@ import React from "react";
 import List from "./components/List";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
-function ChapterItem({ chapter }: { chapter: t.Chapter }) {
+import { XMarkIcon } from "@heroicons/react/24/outline";
+function ChapterItem({
+  chapter,
+  selected,
+  onDelete,
+}: {
+  chapter: t.Chapter;
+  selected: boolean;
+  onDelete: () => void;
+}) {
+  const selectedCss = selected ? "bg-slate-300" : "";
   return (
-    <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-      <div className="py-xs border-b border-slate-300 hover:bg-slate-200">
-        {chapter.title}
+    <div
+      className={`flex py-xs border-b border-slate-300 hover:bg-slate-300 ${selectedCss}`}
+    >
+      {" "}
+      <div className="flex flex-grow">
+        <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
+          <div>{chapter.title}</div>
+        </Link>
       </div>
-    </Link>
+      <div
+        className="flex flex-none cursor-pointer items-center mr-xs"
+        onClick={onDelete}
+      >
+        <XMarkIcon className="w-4 h-4 text-slate-400" />
+      </div>
+    </div>
   );
 }
 
 export default function ChapterList({
   chapters,
   bookid,
-  onNewChapter,
+  selectedChapterId,
+  onChange,
 }: {
   chapters: t.Chapter[];
   bookid: string;
-  onNewChapter: () => void;
+  selectedChapterId: string;
+  onChange: () => void;
 }) {
+  async function deleteChapter(chapterid: string) {
+    const res = await fetch(`/api/deleteChapter`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ chapterid }),
+    });
+    if (!res.ok) {
+      console.log(res.statusText);
+      return;
+    }
+    onChange();
+  }
+
   const newChapter = async () => {
     const res = await fetch("/api/newChapter", {
       method: "POST",
@@ -34,12 +72,16 @@ export default function ChapterList({
       console.log("error");
       return;
     }
-    await onNewChapter();
+    await onChange();
   };
 
   const _items = chapters.map((chapter, index) => (
     <li key={chapter.chapterid}>
-      <ChapterItem chapter={chapter} />
+      <ChapterItem
+        chapter={chapter}
+        selected={chapter.chapterid === selectedChapterId}
+        onDelete={() => deleteChapter(chapter.chapterid)}
+      />
     </li>
   ));
 
