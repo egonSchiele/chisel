@@ -1,0 +1,21 @@
+- history panel should refresh automatically after change
+- make editing titles easier
+- dark mode styles
+- add tests
+- security audit
+- accessibility audit
+- keyboard shortcuts
+- snippets functionality
+- should be able to click anywhere on editor to start editing
+- remember state of ui in user preferences
+- count syllables
+- get synonyms
+- pin books/chapters to top
+- favicon
+- home page
+- Fix loading flash
+- ask ai to outline entire book
+- show chapters in a grid
+- download all data
+- word count
+- tags
