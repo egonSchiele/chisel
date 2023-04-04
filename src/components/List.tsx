@@ -44,8 +44,8 @@ export default function List({
         className={`pt-sm px-sm border-r border-slate-300  h-full ${className} `}
       >
         <Nav close={close} direction={direction} />
-        <h2 className="text-3xl font-semibold pb-md">{title}</h2>
-        <ul>{items}</ul>
+        <h2 className="text-3xl font-semibold pb-xs">{title}</h2>
+        <ul className="pt-xs">{items}</ul>
       </div>
     );
   }
@@ -54,8 +54,8 @@ export default function List({
     <div
       className={`pt-xl px-sm border-r border-slate-300  h-full ${className} `}
     >
-      <h2 className="text-3xl font-semibold pb-md">{title}</h2>
-      <ul>{items}</ul>
+      <h2 className="text-3xl font-semibold pb-xs">{title}</h2>
+      <ul className="pt-xs">{items}</ul>
     </div>
   );
 }

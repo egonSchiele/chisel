@@ -80,20 +80,21 @@ export default function Library() {
     fetchBook();
   }, [bookid]);
 
+  const fetchBooks = async () => {
+    const res = await fetch(`/books`);
+    if (!res.ok) {
+      dispatch({ type: "SET_ERROR", payload: res.statusText });
+      return;
+    }
+    const data = await res.json();
+    console.log("got books");
+    console.log(data);
+    dispatch({ type: "SET_BOOKS", payload: data.books });
+    dispatch({ type: "CLEAR_ERROR" });
+  };
+
   useEffect(() => {
-    const func = async () => {
-      const res = await fetch(`/books`);
-      if (!res.ok) {
-        dispatch({ type: "SET_ERROR", payload: res.statusText });
-        return;
-      }
-      const data = await res.json();
-      console.log("got books");
-      console.log(data);
-      dispatch({ type: "SET_BOOKS", payload: data.books });
-      dispatch({ type: "CLEAR_ERROR" });
-    };
-    func();
+    fetchBooks();
   }, []);
 
   async function deleteBook(bookid: string) {
@@ -117,11 +118,19 @@ export default function Library() {
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="grid grid-cols-6 h-full">
         <div className="col-span-1 h-full">
-          <BookList books={state.books} selectedBookId={selectedBookId} />
+          <BookList
+            books={state.books}
+            selectedBookId={selectedBookId}
+            onNewBook={fetchBooks}
+          />
         </div>
         {state.selectedBook && (
           <div className="col-span-1 h-full">
-            <ChapterList chapters={state.selectedBook.chapters} />
+            <ChapterList
+              chapters={state.selectedBook.chapters}
+              bookid={state.selectedBook.bookid}
+              onNewChapter={fetchBook}
+            />
           </div>
         )}
         <div className="col-span-4 h-full">{chapterid && <Editor />}</div>
