@@ -2,6 +2,7 @@ export type EditorState = {
   title: string;
   text: string;
   contents: any;
+  chapterid: string;
   tooltipPosition: { top: number; left: number };
   tooltipOpen: boolean;
   selectedText: { index: number; length: number; contents: string };

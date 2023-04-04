@@ -45,6 +45,7 @@ const TextEditor = ({
   saved: boolean;
   onSave: () => void;
 }) => {
+  console.log("TextEditor", { state, settings, saved });
   const classes = useStyles();
   const quillRef = useRef();
 
@@ -58,7 +59,7 @@ const TextEditor = ({
     dispatch({ type: "setContents", payload: editor.getContents() });
     // document.body.addEventListener("click", focus);
     // return () => window.removeEventListener("click", focus);
-  }, [quillRef.current]);
+  }, [quillRef.current, state.chapterid]);
 
   const focus = () => {
     if (!quillRef.current) return;

@@ -61,6 +61,7 @@ const reducer = produce((draft: t.State, action: any) => {
       draft.suggestions = action.payload.suggestions;
       draft.editor.text = action.payload.text;
       draft.editor.title = action.payload.title;
+      draft.editor.chapterid = action.payload.chapterid;
       break;
     case "setSuggestions":
       if (action.payload) {
@@ -124,19 +125,8 @@ const reducer = produce((draft: t.State, action: any) => {
   }
 });
 
-export default function Editor(
-  {
-    /*   book,
-  setTitle,
-  setText, */
-  } /* : {
-  book: t.Book;
-  setTitle: (chapterID: string, newTitle: string) => void;
-  setText: (chapterID: string, newText: string) => void;
-} */
-) {
-  const { chapterid } = useParams();
-
+export default function Editor({ chapterid }: { chapterid: string }) {
+  console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [promptsOpen, setPromptsOpen] = useState(true);
@@ -192,6 +182,7 @@ export default function Editor(
           suggestions: data.suggestions,
           text: data.text,
           title: data.title,
+          chapterid: data.chapterid,
         },
       });
 
@@ -207,7 +198,7 @@ export default function Editor(
       console.error(error);
       dispatch({ type: "setError", payload: error });
     }
-  }, []);
+  }, [chapterid]);
 
   useInterval(() => {
     saveChapter(state);

@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(domNode);
 //root.render(<Editor />);
 root.render(
   <BrowserRouter>
-    <Library />
+    <App />
   </BrowserRouter>
 );
 //root.render(<Test />);

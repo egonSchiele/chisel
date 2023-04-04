@@ -134,7 +134,9 @@ export default function Library() {
             />
           </div>
         )}
-        <div className="col-span-4 h-full">{chapterid && <Editor />}</div>
+        <div className="col-span-4 h-full">
+          {chapterid && <Editor chapterid={chapterid} />}
+        </div>
       </div>
     </div>
   );
