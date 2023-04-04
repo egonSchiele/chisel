@@ -36,6 +36,7 @@ const initialEditorState: EditorState = {
   title: "",
   text: "",
   contents: {},
+  chapterid: "",
   tooltipPosition: { top: 0, left: 0 },
   tooltipOpen: false,
   selectedText: { index: 0, length: 0, contents: "" },
