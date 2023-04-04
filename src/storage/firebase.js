@@ -140,7 +140,7 @@ export const getHistory = async (chapterid) => {
   const docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();
   if (!bookObj.exists) {
-    return { history: [] };
+    return [];
   }
   return bookObj.data().history;
 };

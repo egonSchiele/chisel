@@ -353,6 +353,9 @@ export default function Editor(
             state={state.editor}
             settings={settings}
             closeSidebar={() => setPromptsOpen(false)}
+            onLoad={() => {
+              setSidebarOpen(true);
+            }}
           />
         </div>
       )}

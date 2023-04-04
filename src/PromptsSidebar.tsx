@@ -9,11 +9,13 @@ export default function PromptsSidebar({
   state,
   settings,
   closeSidebar,
+  onLoad,
 }: {
   dispatch: (action: any) => t.State;
   state: t.EditorState;
   settings: t.UserSettings;
   closeSidebar: () => void;
+  onLoad: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const handleSuggestion = async (_prompt, label) => {
@@ -74,6 +76,7 @@ export default function PromptsSidebar({
           });
           dispatch({ type: "setSaved", payload: false });
           setLoading(false);
+          onLoad();
         });
       })
       .finally(() => {
@@ -88,7 +91,7 @@ export default function PromptsSidebar({
         /* disabled={loading} */
         onClick={() => handleSuggestion(prompt.text, prompt.label)}
         /* size="small" */
-        className="py-xs border-b border-slate-300"
+        className="py-xs border-b border-slate-300 cursor-pointer hover:bg-slate-200"
       >
         {prompt.label}
       </li>
@@ -102,6 +105,7 @@ export default function PromptsSidebar({
       className="border-l"
       close={closeSidebar}
       direction="right"
+      loading={loading}
     />
   );
 }

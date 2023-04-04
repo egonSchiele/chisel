@@ -12,4 +12,5 @@ EXPOSE 80
 
 ENV PORT 80
 ENV HOST 0.0.0.0
+
 CMD ["yarn", "start"]

@@ -7,7 +7,7 @@ function BookItem({ book, selected }: { book: t.Book; selected: boolean }) {
   return (
     <Link to={`/book/${book.bookid}`}>
       <div
-        className={`border-b p-xs border-slate-300 ${
+        className={`border-b p-xs hover:bg-slate-300 border-slate-300 ${
           selected ? "bg-slate-300 rounded-md pl-sm" : "mx-xs"
         }`}
       >

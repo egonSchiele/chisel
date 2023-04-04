@@ -6,7 +6,9 @@ import Button from "./components/Button";
 function ChapterItem({ chapter }: { chapter: t.Chapter }) {
   return (
     <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-      <div className="py-xs border-b border-slate-300">{chapter.title}</div>
+      <div className="py-xs border-b border-slate-300 hover:bg-slate-200">
+        {chapter.title}
+      </div>
     </Link>
   );
 }
