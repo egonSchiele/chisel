@@ -139,7 +139,7 @@ export default function Editor(
 
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [promptsOpen, setPromptsOpen] = useState(false);
+  const [promptsOpen, setPromptsOpen] = useState(true);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,

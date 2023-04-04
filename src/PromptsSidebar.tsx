@@ -95,7 +95,15 @@ export default function PromptsSidebar({
     );
   });
 
-  return <List title="Prompts" items={prompts} />;
+  return (
+    <List
+      title="Prompts"
+      items={prompts}
+      className="border-l"
+      close={closeSidebar}
+      direction="right"
+    />
+  );
 }
 /*  
     <div className="grid grid-cols-8 w-full bg-button dark:bg-dmbutton">
