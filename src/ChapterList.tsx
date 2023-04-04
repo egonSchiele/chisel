@@ -4,7 +4,7 @@ import List from "./components/List";
 import { Link } from "react-router-dom";
 function ChapterItem({ chapter }: { chapter: t.Chapter }) {
   return (
-    <Link to={`/chapter/${chapter.chapterid}`}>
+    <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
       <div className="py-xs border-b border-slate-300">{chapter.title}</div>
     </Link>
   );

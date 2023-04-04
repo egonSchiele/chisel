@@ -14,7 +14,7 @@ export default function SuggestionPanel({
       onClick={() => onClick(contents)}
       onDelete={onDelete}
     >
-      <p className="typography">{contents}</p>
+      <p className="">{contents}</p>
     </Panel>
   );
 }

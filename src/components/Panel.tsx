@@ -1,5 +1,6 @@
 import React from "react";
 import { BeakerIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Panel({
   title,
@@ -9,20 +10,23 @@ export default function Panel({
   className = "",
 }) {
   return (
-    <div
-      className={`divide-y divide-gray-500 overflow-hidden bg-panel-background hover:bg-panel-background-hover dark:bg-dmpanel-background dark:hover:bg-dmpanel-background-hover shadow ${className}`}
-    >
-      <div className="px-2 py-2 sm:px-2 relative">
-        <p>{title}</p>{" "}
+    <div className="mb-md">
+      <div className="p-xs relative text-md text-slate-600 font-light uppercase">
+        <p>{title}</p>
         {onDelete && (
-          <TrashIcon
+          <XMarkIcon
             className="w-6 m-2 absolute top-0 right-0"
             onClick={onDelete}
           />
         )}
       </div>
-      <div className="px-2 py-2 sm:p-2" onClick={onClick}>
-        {children}
+
+      <div
+        className={`rounded-md bg-panel-background hover:bg-panel-background-hover dark:bg-dmpanel-background dark:hover:bg-dmpanel-background-hover ${className}`}
+      >
+        <div className="p-sm text-md leading-6 text-darkest" onClick={onClick}>
+          {children}
+        </div>
       </div>
     </div>
   );

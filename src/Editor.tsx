@@ -15,8 +15,12 @@ import Settings from "./Settings";
 import Toolbar from "./Toolbar";
 import SlideOver from "./components/SlideOver";
 import Button from "./components/Button";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import {
+  EllipsisHorizontalCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import History from "./History";
+
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -24,6 +28,15 @@ const countSyllables = (text: string) => {
     console.error("Error counting syllables:", error);
     return 0;
   }
+};
+
+const initialEditorState: EditorState = {
+  title: "",
+  text: "",
+  contents: {},
+  tooltipPosition: { top: 0, left: 0 },
+  tooltipOpen: false,
+  selectedText: { index: 0, length: 0, contents: "" },
 };
 
 const reducer = produce((draft: t.State, action: any) => {
@@ -125,6 +138,7 @@ export default function Editor(
   const [loaded, setLoaded] = React.useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -133,6 +147,29 @@ export default function Editor(
     version_control: false,
     prompts: [],
   });
+
+  const initialState: State = {
+    editor: initialEditorState,
+    chapterid,
+    chapter: null,
+    synonyms: [],
+    infoPanel: { syllables: 0 },
+    suggestions: [
+      {
+        type: "expand",
+        contents:
+          "In a faraway kingdom, there lived a vibrant young princess who was beloved by her people. Despite her royal wealth, not to mention her long flowing hair, the young princess felt trapped in the castle walls. She was desperate to explore the      ",
+      },
+    ],
+    saved: true,
+    error: "",
+    loading: true,
+  };
+
+  const [state, dispatch] = useReducer<(state: State, action: any) => State>(
+    reducer,
+    initialState
+  );
 
   useEffect(() => {
     const func = async () => {
@@ -146,11 +183,7 @@ export default function Editor(
       const data: t.Chapter = await res.json();
       console.log("got chapter");
       console.log(data);
-      /*   dispatch({ type: "setChapter", payload: data });
-      dispatch({ type: "setSuggestions", payload: data.suggestions });
-      dispatch({ type: "setText", payload: data.text });
-      dispatch({ type: "setTitle", payload: data.title }); */
-      // dispatch({ type: "setSaved", payload: true });
+
       dispatch({
         type: "setLoadedChapterData",
         payload: {
@@ -230,38 +263,6 @@ export default function Editor(
     }
   }
 
-  const initialEditorState: EditorState = {
-    title: "",
-    text: "",
-    contents: {},
-    tooltipPosition: { top: 0, left: 0 },
-    tooltipOpen: false,
-    selectedText: { index: 0, length: 0, contents: "" },
-  };
-
-  const initialState: State = {
-    editor: initialEditorState,
-    chapterid,
-    chapter: null,
-    synonyms: [],
-    infoPanel: { syllables: 0 },
-    suggestions: [
-      {
-        type: "expand",
-        contents:
-          "In a faraway kingdom, there lived a vibrant young princess who was beloved by her people. Despite her royal wealth, not to mention her long flowing hair, the young princess felt trapped in the castle walls. She was desperate to explore the      ",
-      },
-    ],
-    saved: true,
-    error: "",
-    loading: true,
-  };
-
-  const [state, dispatch] = useReducer<(state: State, action: any) => State>(
-    reducer,
-    initialState
-  );
-
   let selectedSyllables = countSyllables(state.editor.selectedText.contents);
 
   const infoPanelState = {
@@ -284,86 +285,71 @@ export default function Editor(
   }
 
   return (
-    <div className="grid grid-cols-10">
-      <div className="col-span-8">
-        <div>
-          <div className="">
-            <Toolbar
+    <div className="grid grid-cols-4 w-full">
+      <div className={`w-full ${sidebarOpen ? "col-span-3" : "col-span-4"}`}>
+        <div className="h-8 p-sm w-full mt-sm mb-sm relative">
+          <EllipsisHorizontalCircleIcon
+            className="pr-sm h-full absolute top-0 right-0 text-darkest cursor-pointer"
+            onClick={() => setSidebarOpen((s) => !s)}
+          />
+        </div>
+        <div className="">
+          {/*    <Toolbar
               dispatch={dispatch as any}
               state={state.editor}
               settings={settings}
-            />
-            {state.error && (
-              <div className="m-0 p-sm bg-red-700 w-full">
-                <p>{state.error}</p>
-                {/* <XMarkIcon
+            /> */}
+          {state.error && (
+            <div className="m-0 p-sm bg-red-700 w-full">
+              <p>{state.error}</p>
+              {/* <XMarkIcon
                   className="h-sm"
                   onClick={() => dispatch("clearError")}
                 /> */}
-              </div>
-            )}
+            </div>
+          )}
 
-            <TextEditor
-              dispatch={dispatch as any}
-              state={state.editor}
-              saved={state.saved}
-              settings={settings}
-              onSave={() => onTextEditorSave(state)}
-            />
-          </div>
+          <TextEditor
+            dispatch={dispatch as any}
+            state={state.editor}
+            saved={state.saved}
+            settings={settings}
+            onSave={() => onTextEditorSave(state)}
+          />
         </div>
       </div>
 
-      <div className="col-span-2 min-h-screen">
-        <Sidebar
-          setSettingsOpen={setSettingsOpen}
-          setHistoryOpen={setHistoryOpen}
-          bookid={state.chapter.bookid}
-        >
-          {/* <a
-            className="text-sm text-gray-500 m-sm"
-            href={`/book/${state.chapter.bookid}`}
-          >
-            Back to book
-          </a> */}
-          {/*  <InfoPanel state={infoPanelState} /> */}
-          {state.suggestions.map((suggestion, index) => (
-            <SuggestionPanel
-              key={index}
-              title={suggestion.type}
-              contents={suggestion.contents}
-              onClick={addToContents}
-              onDelete={() => {
-                dispatch({ type: "deleteSuggestion", payload: index });
-              }}
-            />
-          ))}
-        </Sidebar>
-        <SlideOver
-          title="Settings"
-          open={settingsOpen}
-          setOpen={setSettingsOpen}
-        >
-          <Settings
+      <SlideOver title="" open={sidebarOpen} setOpen={setSidebarOpen}>
+        <div className="col-span-1 min-h-screen">
+          <Sidebar
+            state={state}
             settings={settings}
             setSettings={setSettings}
-            onSave={() => setSettingsOpen(false)}
           />
-        </SlideOver>
-        <SlideOver
-          title="History"
-          open={historyOpen}
-          setOpen={setHistoryOpen}
-          size="large"
-        >
-          <History
-            /*  history={history}
-            sethistory={setHistory} */
-            chapterid={state.chapter.chapterid}
-            onSave={() => setHistoryOpen(false)}
-          />
-        </SlideOver>
-      </div>
+          {/*   <SlideOver
+            title="Settings"
+            open={settingsOpen}
+            setOpen={setSettingsOpen}
+          >
+            <Settings
+              settings={settings}
+              setSettings={setSettings}
+              onSave={() => setSettingsOpen(false)}
+            />
+          </SlideOver>
+          <SlideOver
+            title="History"
+            open={historyOpen}
+            setOpen={setHistoryOpen}
+            size="large"
+          >
+            <History
+              chapterid={state.chapter.chapterid}
+              onSave={() => setHistoryOpen(false)}
+            />
+          </SlideOver> */}
+        </div>
+      </SlideOver>
     </div>
   );
 }

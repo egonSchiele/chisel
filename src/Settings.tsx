@@ -8,7 +8,7 @@ import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 
 const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
   return (
-    <div className="mb-sm p-3 rounded-md bg-dmsettingspanel">
+    <div className="mb-sm p-3 rounded-md dark:bg-dmsettingspanel bg-settingspanel">
       <div className="mb-sm w-full">
         <Input
           name="label"

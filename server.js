@@ -173,6 +173,28 @@ app.get("/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
   }
 });
 
+app.get(
+  "/book/:bookid/chapter/:chapterid",
+  requireLogin,
+  noCache,
+  async (req, res) => {
+    const { bookid, chapterid } = req.params;
+    const chapter = await getChapter(chapterid);
+
+    const book = await getBook(bookid);
+
+    if (!chapter) {
+      console.log("no chapter with id, " + chapterid);
+      res.redirect("/404");
+    } else if (!book) {
+      console.log("no book with id, " + bookid);
+      res.redirect("/404");
+    } else {
+      res.sendFile(path.resolve("./dist/chapter.html"));
+    }
+  }
+);
+
 app.get("/", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/library.html"));
 });

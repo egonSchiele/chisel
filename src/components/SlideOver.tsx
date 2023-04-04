@@ -34,11 +34,11 @@ export default function SlideOver({
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md w-historysmall">
                   <div
-                    className={`flex h-full flex-col overflow-y-scroll bg-dmsettings py-6 shadow-xl ${
+                    className={`flex h-full flex-col overflow-y-scroll bg-sidebar dark:bg-dmsidebar ${
                       size === "large" ? "w-historysmall" : ""
                     }`}
                   >
-                    <div className="px-4 sm:px-6">
+                    {/*  <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-2xl font-semibold text-black">
                           {title}
@@ -46,7 +46,7 @@ export default function SlideOver({
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="rounded-md bg-white text-gray-400  focus:outline-none"
                             onClick={() => setOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
@@ -54,10 +54,8 @@ export default function SlideOver({
                           </button>
                         </div>
                       </div>
-                    </div>
-                    <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      {children}
-                    </div>
+                    </div> */}
+                    <div className="relative flex-1 p-4">{children}</div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

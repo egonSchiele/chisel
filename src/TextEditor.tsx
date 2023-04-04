@@ -174,7 +174,7 @@ const TextEditor = ({
   };
 
   return (
-    <div className="mt-xl">
+    <div className="">
       <Box flexGrow={1}>
         {error !== "" && <p>Error: {error}</p>}
         <div className="ql-editor hidden">hi</div>

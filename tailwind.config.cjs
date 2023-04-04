@@ -21,7 +21,7 @@ module.exports = {
         main: "#658864",
         highlight: "#F5EC8D",
         highlight2: "#A1E69C",
-        darkest: "#1A1A1A",
+        darkest: "#1e453e",
         lightest: "#F5F5F5",
 
         background: "#fff",
@@ -54,17 +54,17 @@ module.exports = {
         sidebar: "#F0EDF4",
         dmsidebar: "#182c25",
 
-        "panel-background": "#fdfce8",
+        "panel-background": "#fff",
         "dmpanel-background": "#455b55",
 
-        "panel-background-hover": "#DBDAD2",
+        "panel-background-hover": "#ccc",
         "dmpanel-background-hover": "#576b66",
 
         dmlistitem1: "#455b55",
         dmlistitem2: "#303f3b",
 
         dmsettings: "#e4deae",
-        dmsettingspanel: "#b7bf96",
+        dmsettingspanel: "#fff",
 
         dmchaptercard: "#2d695e",
         dmchaptercardhover: "#357a6e",
