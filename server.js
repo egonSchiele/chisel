@@ -65,21 +65,21 @@ app.get("/logout", async (req, res) => {
   res.redirect("/login.html");
 });
 
-app.post("/api/saveBook", async (req, res) => {
+app.post("/api/saveBook", requireLogin, async (req, res) => {
   let { book } = req.body;
 
   await saveBook(book);
   res.status(200).end();
 });
 
-app.post("/api/saveChapter", async (req, res) => {
+app.post("/api/saveChapter", requireLogin, async (req, res) => {
   let { chapter } = req.body;
   console.log(chapter);
   await saveChapter(chapter);
   res.status(200).end();
 });
 
-app.post("/api/newBook", async (req, res) => {
+app.post("/api/newBook", requireLogin, async (req, res) => {
   const userid = getUserId(req);
   if (!userid) {
     console.log("no userid");
@@ -104,7 +104,7 @@ app.post("/api/newBook", async (req, res) => {
   }
 });
 
-app.post("/api/newChapter", async (req, res) => {
+app.post("/api/newChapter", requireLogin, async (req, res) => {
   const userid = getUserId(req);
   console.log(req.body);
   const { bookid } = req.body;
@@ -136,7 +136,7 @@ app.post("/api/newChapter", async (req, res) => {
   }
 });
 
-app.post("/api/saveToHistory", async (req, res) => {
+app.post("/api/saveToHistory", requireLogin, async (req, res) => {
   let { chapterid, text } = req.body;
 
   console.log("saving to history");
@@ -177,7 +177,7 @@ app.get("/", requireLogin, async (req, res) => {
   res.sendFile(path.resolve("./dist/library.html"));
 });
 
-app.get("/404", requireLogin, async (req, res) => {
+app.get("/404", async (req, res) => {
   res.sendFile(path.resolve("./dist/404.html"));
 });
 
@@ -194,7 +194,7 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
   }
 });
 
-app.post("/api/settings", async (req, res) => {
+app.post("/api/settings", requireLogin, async (req, res) => {
   const { settings } = req.body;
   if (!settings) {
     console.log("no settings");
@@ -260,7 +260,7 @@ app.get("/api/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
   }
 });
 
-app.post("/api/deleteChapter", async (req, res) => {
+app.post("/api/deleteChapter", requireLogin, async (req, res) => {
   let { chapterid } = req.body;
   try {
     const data = await deleteChapter(chapterid);
@@ -271,7 +271,7 @@ app.post("/api/deleteChapter", async (req, res) => {
   }
 });
 
-app.post("/api/suggestions", async (req, res) => {
+app.post("/api/suggestions", requireLogin, async (req, res) => {
   console.log({ body: req.body });
   const user = await getUser(req);
   if (!user.permissions.openai_api) {
