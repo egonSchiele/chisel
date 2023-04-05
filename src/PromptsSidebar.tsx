@@ -102,7 +102,7 @@ export default function PromptsSidebar({
     <List
       title="Prompts"
       items={prompts}
-      className="border-l "
+      className="border-l border-r-0 "
       close={closeSidebar}
       direction="right"
       loading={loading}

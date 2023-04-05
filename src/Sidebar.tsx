@@ -85,7 +85,7 @@ export default function Sidebar({
   const [activePanel, setActivePanel] =
     React.useState<ActivePanel>("suggestions");
   return (
-    <div className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary`}>
+    <div className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}>
       <div className="pt-sm space-y-2  px-3">
         <Navigation onClick={setActivePanel} closeSidebar={closeSidebar} />
         {activePanel === "suggestions" && (
