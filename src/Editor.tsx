@@ -131,6 +131,7 @@ export default function Editor({ chapterid }: { chapterid: string }) {
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [promptsOpen, setPromptsOpen] = useState(true);
+  const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -208,6 +209,7 @@ export default function Editor({ chapterid }: { chapterid: string }) {
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state);
     await saveToHistory(state);
+    setTriggerHistoryRerender(t => t + 1);
   }
 
   async function saveToHistory(state: t.State) {
@@ -363,6 +365,7 @@ export default function Editor({ chapterid }: { chapterid: string }) {
               dispatch({ type: "deleteSuggestion", payload: index });
             }}
             onSettingsSave={() => {}}
+            triggerHistoryRerender={triggerHistoryRerender}
           />
         </div>
       )}

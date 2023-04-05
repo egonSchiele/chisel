@@ -1,4 +1,3 @@
-- history panel should refresh automatically after change
 - make editing titles easier
 - add tests
 - security audit

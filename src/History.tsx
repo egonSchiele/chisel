@@ -7,9 +7,9 @@ import * as t from "./Types";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Panel from "./components/Panel";
 
-const History = ({ chapterid, onSave }) => {
+const History = ({ chapterid, onSave, triggerHistoryRerender }) => {
   const [history, setHistory] = useState<t.History>([]);
-
+console.log("rerendering history");
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${chapterid}`, {
@@ -23,12 +23,12 @@ const History = ({ chapterid, onSave }) => {
       const data = await res.json();
       console.log("got history");
       console.log(data);
-      setHistory(data);
+      setHistory(data.reverse());
     };
     func();
-  }, []);
+  }, [triggerHistoryRerender]);
   return (
-    <div className="grid grid-cols-1 gap-3">
+    <div className="grid grid-cols-1 gap-3">      
       {history.map((patch, i) => (
         <Panel key={i} title="History">
           <pre>{patch}</pre>

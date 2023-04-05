@@ -80,6 +80,7 @@ export default function Sidebar({
   onSuggestionClick,
   onSuggestionDelete,
   onSettingsSave,
+  triggerHistoryRerender,
 }) {
   const [activePanel, setActivePanel] =
     React.useState<ActivePanel>("suggestions");
@@ -96,7 +97,7 @@ export default function Sidebar({
         )}
 
         {activePanel === "history" && (
-          <History chapterid={state.chapter.chapterid} onSave={() => {}} />
+          <History chapterid={state.chapter.chapterid} onSave={() => {}} triggerHistoryRerender={triggerHistoryRerender} />
         )}
 
         {activePanel === "settings" && (
