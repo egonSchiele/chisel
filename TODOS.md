@@ -1,6 +1,5 @@
 - history panel should refresh automatically after change
 - make editing titles easier
-- dark mode styles
 - add tests
 - security audit
 - accessibility audit
