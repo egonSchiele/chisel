@@ -48,6 +48,8 @@ const reducer = (state: LibraryState, action: any) => {
 export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
+  const [bookListOpen, setBookListOpen] = useState(true);
+  const [chapterListOpen, setChapterListOpen] = useState(true);
   const { bookid } = useParams();
   const { chapterid } = useParams();
 
@@ -117,20 +119,22 @@ export default function Library() {
     <div className="h-screen">
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="grid grid-cols-6 h-full">
-        <div className="col-span-1 h-full">
+        {bookListOpen && <div className="col-span-1 h-full">
           <BookList
             books={state.books}
             selectedBookId={selectedBookId}
             onChange={fetchBooks}
+            closeSidebar={() => setBookListOpen(false)}
           />
-        </div>
-        {state.selectedBook && (
+        </div>}
+        {chapterListOpen && state.selectedBook && (
           <div className="col-span-1 h-full">
             <ChapterList
               chapters={state.selectedBook.chapters}
               bookid={state.selectedBook.bookid}
               selectedChapterId={chapterid || ""}
               onChange={fetchBook}
+              closeSidebar={() => setChapterListOpen(false)}
             />
           </div>
         )}

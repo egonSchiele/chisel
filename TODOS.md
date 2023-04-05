@@ -16,3 +16,5 @@
 - download all data
 - word count
 - tags
+- things are loading multiple times
+- make book and chapter cols collapsible

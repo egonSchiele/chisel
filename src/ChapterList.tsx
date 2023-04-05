@@ -39,11 +39,13 @@ export default function ChapterList({
   bookid,
   selectedChapterId,
   onChange,
+  closeSidebar,
 }: {
   chapters: t.Chapter[];
   bookid: string;
   selectedChapterId: string;
   onChange: () => void;
+  closeSidebar: () => void;
 }) {
   async function deleteChapter(chapterid: string) {
     const res = await fetch(`/api/deleteChapter`, {
@@ -92,5 +94,5 @@ export default function ChapterList({
   );
   const items = [newChapterButton, ..._items];
 
-  return <List title="Chapters" items={items} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
+  return <List title="Chapters" items={items} close={closeSidebar} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
 }

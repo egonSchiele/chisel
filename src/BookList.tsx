@@ -37,10 +37,12 @@ export default function BookList({
   books,
   selectedBookId,
   onChange,
+  closeSidebar,
 }: {
   books: t.Book[];
   selectedBookId: string;
   onChange: () => void;
+  closeSidebar: () => void;
 }) {
   async function deleteBook(bookid: string) {
     const res = await fetch(`/api/deleteBook`, {
@@ -83,5 +85,5 @@ export default function BookList({
     </Button>
   );
   const items = [newBookButton, ..._items];
-  return <List title="Books" items={items} className="bg-sidebar dark:bg-dmsidebar" />;
+  return <List title="Books" items={items} close={closeSidebar} className="bg-sidebar dark:bg-dmsidebar" />;
 }
