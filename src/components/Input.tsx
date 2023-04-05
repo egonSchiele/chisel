@@ -19,7 +19,7 @@ export default function Input({
       {title && (
         <label
           htmlFor={name}
-          className={`block text-sm font-light leading-6 text-gray-500 dark:text-dmtextsecondary ${labelClassName}`}
+          className={`block text-sm font-light leading-6 text-gray-500 dark:text-gray-300 ${labelClassName}`}
         >
           {title}
         </label>

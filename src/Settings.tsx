@@ -140,7 +140,7 @@ const Settings = ({ settings, setSettings, onSave }) => {
         />
       </label> */}
       <div>
-        <h4 className="text-xl font-semibold text-black mb-xs mt-sm">
+        <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs mt-sm">
           Prompts
         </h4>
         {settings.prompts.map((prompt, i) => (

@@ -11,7 +11,7 @@ export default function Select({
     <div>
       <label
         htmlFor={name}
-        className="block text-sm font-light leading-6 text-gray-500"
+        className="block text-sm font-light leading-6 text-gray-500 dark:text-gray-300"
       >
         {title}
       </label>

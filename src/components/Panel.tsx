@@ -11,7 +11,7 @@ export default function Panel({
 }) {
   return (
     <div className="mb-md">
-      <div className="p-xs relative text-md text-slate-600 font-light uppercase">
+      <div className="p-xs relative text-sm text-slate-600 dark:text-white font-light uppercase">
         <p>{title}</p>
         {onDelete && (
           <XMarkIcon
@@ -24,7 +24,7 @@ export default function Panel({
       <div
         className={`rounded-md bg-panel-background hover:bg-panel-background-hover dark:bg-dmpanel-background dark:hover:bg-dmpanel-background-hover ${className}`}
       >
-        <div className="p-sm text-md leading-6 text-darkest" onClick={onClick}>
+        <div className="p-sm text-md leading-6 text-darkest dark:text-gray-300" onClick={onClick}>
           {children}
         </div>
       </div>

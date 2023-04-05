@@ -57,16 +57,16 @@ module.exports = {
         dmsidebarSecondary: "#333",
 
         "panel-background": "#fff",
-        "dmpanel-background": "#455b55",
+        "dmpanel-background": "#494959",
 
         "panel-background-hover": "#ccc",
-        "dmpanel-background-hover": "#576b66",
+        "dmpanel-background-hover": "rgb(56,60,72)",
 
         dmlistitem1: "#455b55",
         dmlistitem2: "#303f3b",
 
         dmsettings: "#e4deae",
-        dmsettingspanel: "#fff",
+        dmsettingspanel: "#494959",
 
         dmchaptercard: "#2d695e",
         dmchaptercardhover: "#357a6e",
