@@ -4,7 +4,6 @@
 - accessibility audit
 - keyboard shortcuts
 - snippets functionality
-- should be able to click anywhere on editor to start editing
 - remember state of ui in user preferences
 - count syllables
 - get synonyms

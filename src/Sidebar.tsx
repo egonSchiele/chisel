@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Button from "./components/Button";
 import SuggestionPanel from "./SuggestionPanel";
 import {
-  ChevronLeftIcon,
+  ChevronRightIcon,
   ClipboardIcon,
   ClockIcon,
   Cog6ToothIcon,
@@ -37,7 +37,7 @@ function Navigation({ onClick, closeSidebar }) {
           onClick={closeSidebar}
         >
           <span className="sr-only">Close</span>
-          <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+          <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
       <div className="flex flex-grow" />

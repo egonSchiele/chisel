@@ -175,12 +175,12 @@ const TextEditor = ({
   };
 
   return (
-    <div className="">
-      <Box flexGrow={1}>
+    <div className="h-full">
+      
         {error !== "" && <p>Error: {error}</p>}
         <div className="ql-editor hidden">hi</div>
         <div className="ql-toolbar ql-snow hidden">hi</div>
-        <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm">
+        <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
           <EditableInput
             value={state.title}
             onSubmit={(title) => {
@@ -194,8 +194,8 @@ const TextEditor = ({
               )}
             </h1>
           </EditableInput>
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <div onClick={onClickEditor} className="mb-md">
+          {/* <ClickAwayListener onClickAway={handleClickAway}> */}
+            <div onClick={onClickEditor} className="mb-md h-full w-full">
               <ReactQuill
                 ref={quillRef}
                 value={state.contents}
@@ -205,7 +205,7 @@ const TextEditor = ({
                 onChangeSelection={setSelection}
               />
             </div>
-          </ClickAwayListener>
+          {/* </ClickAwayListener> */}
         </div>
         {/* <Tooltip
           open={state.tooltipOpen}
@@ -230,7 +230,6 @@ const TextEditor = ({
         >
           <div />
         </Tooltip> */}
-      </Box>
       {/*       <Box>
         <Paper elevation={3}>
           <Box p={2}>

@@ -288,8 +288,8 @@ export default function Editor({ chapterid }: { chapterid: string }) {
   }
 
   return (
-    <div className="grid grid-cols-4 w-full">
-      <div className={`w-full ${editorColSpan}`}>
+    <div className="grid grid-cols-4 w-full h-full">
+      <div className={`w-full h-full ${editorColSpan}`}>
         <div className="h-8 p-sm w-full my-xs flex">
           <div className="flex flex-grow" />
           <div className="flex flex-none">
@@ -315,7 +315,7 @@ export default function Editor({ chapterid }: { chapterid: string }) {
             </button>
           </div>
         </div>
-        <div className="">
+        <div className="h-full w-full">
           {/*    <Toolbar
               dispatch={dispatch as any}
               state={state.editor}

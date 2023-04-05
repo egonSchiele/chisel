@@ -26,6 +26,9 @@
         @apply dark:text-dmtext;
         @apply h-full;
         border: 0 !important;
+        @apply h-full;
+       @apply w-full;
+       /* @apply bg-red-400; */
     }
 
     .ql-toolbar {
@@ -47,6 +50,8 @@
        line-height: 24px;
        border: 0 !important;
        padding: 0 !important;
+       @apply h-full;
+       @apply w-full;
     }
 
     .heading {
