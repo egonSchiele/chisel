@@ -91,7 +91,7 @@ export default function PromptsSidebar({
         /* disabled={loading} */
         onClick={() => handleSuggestion(prompt.text, prompt.label)}
         /* size="small" */
-        className="py-xs border-b border-slate-300 cursor-pointer hover:bg-slate-200"
+        className="py-xs text-slate-300 border-b border-listBorder dark:border-dmlistBorder cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
       >
         {prompt.label}
       </li>
@@ -102,7 +102,7 @@ export default function PromptsSidebar({
     <List
       title="Prompts"
       items={prompts}
-      className="border-l"
+      className="border-l "
       close={closeSidebar}
       direction="right"
       loading={loading}

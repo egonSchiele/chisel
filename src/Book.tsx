@@ -16,6 +16,7 @@ const initialState: t.Book = {
     labelLinesColor: "bg-yellow-400",
   },
   columnHeadings: [],
+  favorite: false,
 };
 
 import produce, { current } from "immer";

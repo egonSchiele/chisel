@@ -293,7 +293,7 @@ export default function Editor({ chapterid }: { chapterid: string }) {
           <div className="flex flex-none">
             <button
               type="button"
-              className="relative inline-flex items-center rounded-l-md bg-white px-2 py-2 text-gray-500   ring-0"
+              className="relative inline-flex items-center rounded-l-md bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
               onClick={() => setPromptsOpen((s) => !s)}
             >
               <span className="sr-only">Prompts</span>
@@ -302,7 +302,7 @@ export default function Editor({ chapterid }: { chapterid: string }) {
 
             <button
               type="button"
-              className="relative -ml-px inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-500   ring-0"
+              className="relative -ml-px inline-flex items-center rounded-r-md bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
               onClick={() => setSidebarOpen((s) => !s)}
             >
               <span className="sr-only">Sidebar</span>

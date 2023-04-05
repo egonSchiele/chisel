@@ -98,6 +98,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
         labelLinesColor: "border-yellow-400",
       },
       columnHeadings: [],
+      favorite: false,
     };
     await saveBook(book);
     res.redirect(`/book/${bookid}`);
@@ -125,6 +126,7 @@ app.post("/api/newChapter", requireLogin, async (req, res) => {
         text: "Once upon a time...",
         pos: { x: 0, y: 0 },
         suggestions: [],
+        favorite: false,
       };
 
       console.log(chapter);

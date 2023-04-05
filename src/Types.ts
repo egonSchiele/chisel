@@ -49,6 +49,7 @@ export type Chapter = {
   text: string;
   pos: Pos;
   suggestions: Suggestion[];
+  favorite: boolean;
 };
 
 export type Column = {
@@ -67,7 +68,7 @@ export type Book = {
     labelLinesColor: string;
   };
   columnHeadings: string[];
-  //columns: Column[];
+  favorite: boolean;
 };
 
 export type Coords = {

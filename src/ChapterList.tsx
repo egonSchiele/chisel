@@ -13,10 +13,10 @@ function ChapterItem({
   selected: boolean;
   onDelete: () => void;
 }) {
-  const selectedCss = selected ? "bg-slate-300" : "";
+  const selectedCss = selected ? "bg-listitemhoverSecondary dark:bg-dmlistitemhoverSecondary" : "";
   return (
     <div
-      className={`flex py-xs border-b border-slate-300 hover:bg-slate-300 ${selectedCss}`}
+      className={`flex py-xs border-b text-slate-300 border-listBorder dark:border-dmlistBorder hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary ${selectedCss}`}
     >
       {" "}
       <div className="flex flex-grow">
@@ -92,5 +92,5 @@ export default function ChapterList({
   );
   const items = [newChapterButton, ..._items];
 
-  return <List title="Chapters" items={items} />;
+  return <List title="Chapters" items={items} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
 }

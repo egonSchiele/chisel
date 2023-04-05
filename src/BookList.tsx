@@ -13,10 +13,10 @@ function BookItem({
   selected: boolean;
   onDelete: () => void;
 }) {
-  const selectedCss = selected ? "bg-slate-300" : "";
+  const selectedCss = selected ? "bg-listitemhover dark:bg-dmlistitemhover" : "";
   return (
     <div
-      className={`flex py-xs border-b border-slate-300 hover:bg-slate-300 ${selectedCss}`}
+      className={`flex py-xs border-b text-slate-300 border-listBorder dark:border-dmlistBorder hover:bg-listitemhover dark:hover:bg-dmlistitemhover ${selectedCss}`}
     >
       <div className="flex flex-grow">
         <Link to={`/book/${book.bookid}`}>
@@ -83,5 +83,5 @@ export default function BookList({
     </Button>
   );
   const items = [newBookButton, ..._items];
-  return <List title="Books" items={items} className="bg-sidebar" />;
+  return <List title="Books" items={items} className="bg-sidebar dark:bg-dmsidebar" />;
 }

@@ -8,7 +8,7 @@ function Nav({ close, direction, loading }) {
       <div className="flex-none">
         <button
           type="button"
-          className="relative rounded-md inline-flex items-center bg-white pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
+          className="relative rounded-md inline-flex items-center bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
           onClick={close}
         >
           <span className="sr-only">Close</span>
@@ -68,7 +68,7 @@ export default function List({
   if (close || loading) {
     return (
       <div
-        className={`pt-sm px-sm border-r border-slate-300  h-full ${className} `}
+        className={`pt-sm px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
       >
         <Nav close={close} direction={direction} loading={loading} />
         <h2 className="text-3xl font-semibold pb-xs">{title}</h2>
@@ -79,7 +79,7 @@ export default function List({
 
   return (
     <div
-      className={`pt-xl px-sm border-r border-slate-300  h-full ${className} `}
+      className={`pt-xl px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
     >
       <h2 className="text-3xl font-semibold pb-xs">{title}</h2>
       <ul className="pt-xs">{items}</ul>

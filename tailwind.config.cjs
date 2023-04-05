@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class",
+  //darkMode: "class",
   content: [
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
@@ -27,7 +27,7 @@ module.exports = {
         background: "#fff",
         // Too bright
         //background: "#fffdeb",
-        dmbackground: "#1e453e",
+        dmbackground: "#333",
 
         text: "#1e453e",
         dmtext: "#d2d9d8",
@@ -52,7 +52,9 @@ module.exports = {
 
         //dmbuttonhover: "#598669",
         sidebar: "#F0EDF4",
-        dmsidebar: "#182c25",
+        sidebarSecondary: "#F0EDF4",
+        dmsidebar: "#494959",
+        dmsidebarSecondary: "#333",
 
         "panel-background": "#fff",
         "dmpanel-background": "#455b55",
@@ -68,6 +70,13 @@ module.exports = {
 
         dmchaptercard: "#2d695e",
         dmchaptercardhover: "#357a6e",
+
+        listitemhover: "rgb(240,238,244)",
+        listitemhoverSecondary: "rgb(240,238,244)",
+        dmlistitemhover: "rgb(56,60,72)",
+        dmlistitemhoverSecondary: "#252525",
+        listBorder: "rgb(203,213,226)",
+        dmlistBorder: "#222",
       },
       spacing: {
         xs: "0.5rem",
