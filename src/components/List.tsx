@@ -69,6 +69,7 @@ export default function List({
   items,
   className = "",
   menuItems = [],
+  level=1,
   /* close = null,
   direction = "left", */
   /* loading = false, */
@@ -77,6 +78,7 @@ export default function List({
   items: any[];
   className?: string;
   menuItems?: MenuItem[];
+  level?: number;
   /* close?: () => void | null;
   direction?: Direction;
   loading?: boolean; */
@@ -98,9 +100,12 @@ export default function List({
       className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-full w-full ${className} `}
     >
       <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
-        <div className="flex-grow items-center text-center">
+      {level === 1 && <div className="flex-grow items-center text-center">
       <h3 className="text-sm uppercase font-semibold">{title}</h3>
-      </div>
+      </div>}
+      {level === 2 && <div className="flex-grow">
+      <h3 className="text-sm font-normal">{title}</h3>
+      </div>}
       </div>
       <ul className="pt-xs">{items}</ul>
     </div>

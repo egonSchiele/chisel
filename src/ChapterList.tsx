@@ -7,38 +7,6 @@ import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 
-function ChapterItem({
-  chapter,
-  selected,
-  onDelete,
-  onFavorite,
-}: {
-  chapter: t.Chapter;
-  selected: boolean;
-  onDelete: () => void;
-  onFavorite: () => void;
-}) {
-  const selectedCss = selected ? "bg-listitemhoverSecondary dark:bg-dmlistitemhoverSecondary" : "";
-  return (
-    <div
-      className={`flex py-xs border-b text-slate-300 border-listBorder dark:border-dmlistBorder hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary ${selectedCss}`}
-    >
-      {" "}
-      <div className="flex flex-grow">
-        <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-          <div className="px-xs">{chapter.title}</div>
-        </Link>
-      </div>
-      <div
-        className="flex flex-none cursor-pointer items-center mr-xs hover:bg-slate-500 rounded-md p-2"
-      >
-        <ListMenu onFavorite={onFavorite} onDelete={onDelete} />
-{/*         <EllipsisHorizontalIcon className="w-4 h-4 text-slate-400" /> */}
-      </div>
-    </div>
-  );
-}
-
 
 export default function ChapterList({
   chapters,
@@ -54,6 +22,7 @@ export default function ChapterList({
   closeSidebar: () => void;
 }) {
   async function deleteChapter(chapterid: string) {
+    console.log("delete chapter", chapterid);
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
       headers: {
@@ -69,6 +38,7 @@ export default function ChapterList({
   }
 
   async function favoriteChapter(chapterid: string) {
+    console.log("favorite chapter", chapterid);
     const res = await fetch(`/api/favoriteChapter`, {
       method: "POST",
       headers: {
@@ -111,13 +81,13 @@ export default function ChapterList({
         />
       </li>
     ));
-    return <List title={title} items={items} className="p-0 m-0 border-0 text-lg pt-0 pl-0 border-r-0 mb-md" />
+    return <List title={title} items={items} level={2} className="p-0 m-0 border-0 text-lg pt-0 pl-0 border-r-0 mb-sm" />
   }
 
   const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
   const otherChapters = chapters.filter((chapter) => !chapter.favorite);
 
-
+console.log(favoriteChapters, "FAVORITE CHAPTERS");
   const lists = [];
 
   if (favoriteChapters.length > 0) {

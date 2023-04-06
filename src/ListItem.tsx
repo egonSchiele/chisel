@@ -21,14 +21,13 @@ export function ListItem({
       <div
         className={`flex py-xs text-slate-300 text-sm xl:text-md items-center rounded-md ${selectedCss}`}
       >
-        <div className="flex flex-grow items-center overflow-hidden text-ellipsis whitespace-nowrap">
+        <div className="flex flex-grow items-center overflow-hidden text-ellipsis whitespace-nowrap mr-xs">
           <Link to={link}>
             <div className="px-xs">{title}</div>
           </Link>
         </div>
         <div
           className="flex flex-none cursor-pointer items-center mr-xs"
-          onClick={onDelete}
         >
           <ListMenu onFavorite={onFavorite} onDelete={onDelete} />
           
