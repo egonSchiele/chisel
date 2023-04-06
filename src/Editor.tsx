@@ -1,28 +1,18 @@
 import PromptsSidebar from "./PromptsSidebar";
-import { syllable } from "syllable";
 import React, { useState, useRef, useReducer, useEffect } from "react";
 import produce, { current } from "immer";
 import "./globals.css";
 import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
-import InfoPanel from "./InfoPanel";
 import { EditorState, State } from "./Types";
-import Panel from "./components/Panel";
-import SuggestionPanel from "./SuggestionPanel";
-import { useParams } from "react-router-dom";
 import * as t from "./Types";
 import { useInterval } from "./utils";
-import Settings from "./Settings";
-import Toolbar from "./Toolbar";
-import SlideOver from "./components/SlideOver";
-import Button from "./components/Button";
 import {
   ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
   SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import History from "./History";
 
 const initialEditorState: EditorState = {
   title: "",

@@ -1,3 +1,4 @@
+/* OLD DEPRECATED CODE */
 import React, { useEffect, useRef } from "react";
 import * as t from "./Types";
 import Chapter from "./Chapter";

@@ -128,6 +128,7 @@ const TextEditor = ({
         `https://api.datamuse.com/words?ml=${word}&max=10`
       );
       const synonyms = response.data.map((item) => item.word);
+      console.log("synonyms", synonyms);
       dispatch({ type: "setSynonyms", payload: synonyms });
     } catch (error) {
       console.error("Error fetching synonyms:", error);

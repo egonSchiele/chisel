@@ -1,3 +1,4 @@
+/* OLD DEPRECATED CODE */
 import Draggable from "react-draggable"; // The default
 import { Routes, Route, Link } from "react-router-dom";
 
