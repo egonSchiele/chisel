@@ -178,13 +178,13 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
   return (
     <div className="grid grid-cols-4 w-full h-full">
       <div className={`w-full h-full ${editorColSpan}`}>
-        <div className="h-18 xl:h-8 p-sm w-full xl:my-xs flex">
+        <div className="h-18 xl:h-8 p-xs w-full xl:my-xs flex">
           <div className="flex flex-none">
           <div className="flex-none">
             {!bookListOpen && (
         <button
           type="button"
-          className="relative rounded-md inline-flex items-center bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
+          className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
           onClick={openBookList}
         >
           <span className="sr-only">Close</span>
@@ -197,7 +197,7 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
           <div className="flex flex-none">
             <button
               type="button"
-              className="relative inline-flex items-center rounded-l-md bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
+              className="relative inline-flex items-center rounded-l-md bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
               onClick={() => {
                 setPromptsOpen((current) => !current)
                 if (!promptsOpen) {
@@ -207,12 +207,12 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
               }}
             >
               <span className="sr-only">Prompts</span>
-              <SparklesIcon className="h-6 w-6" aria-hidden="true" />
+              <SparklesIcon className="h-5 w-5" aria-hidden="true" />
             </button>
 
             <button
               type="button"
-              className="relative -ml-px inline-flex items-center rounded-r-md bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
+              className="relative -ml-px inline-flex items-center rounded-r-md bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
               onClick={() => {
                 setSidebarOpen((s) => !s);
                 if (!sidebarOpen) {
@@ -224,7 +224,7 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
             >
               <span className="sr-only">Sidebar</span>
               <EllipsisHorizontalCircleIcon
-                className="h-6 w-6"
+                className="h-5 w-5"
                 aria-hidden="true"
               />
             </button>
