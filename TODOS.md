@@ -1,4 +1,3 @@
-- make editing titles easier
 - deletion
 - add tests
 - security audit
@@ -16,3 +15,4 @@
 - tags
 - make icon buttons look better
 - add new chapter should be a '+' button, not a big black button
+- offline mode
