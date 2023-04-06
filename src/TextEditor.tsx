@@ -16,7 +16,7 @@ import ButtonGroup from "./components/ButtonGroup";
 import { EditorState, State } from "./Types";
 import Select from "./components/Select";
 import Input from "./components/Input";
-import EditableInput from "./components/EditableInput";
+import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
 
 const useStyles = makeStyles({
@@ -182,19 +182,14 @@ const TextEditor = ({
         <div className="ql-editor hidden">hi</div>
         <div className="ql-toolbar ql-snow hidden">hi</div>
         <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
-          <EditableInput
+          <ContentEditable
             value={state.title}
+            className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
             onSubmit={(title) => {
               dispatch({ type: "setTitle", payload: title });
             }}
-          >
-            <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
-              {state.title}
-              {!saved && (
-                <span className="text-xs text-gray-500">(unsaved changes)</span>
-              )}
-            </h1>
-          </EditableInput>
+            nextFocus={focus}
+          />
           {/* <ClickAwayListener onClickAway={handleClickAway}> */}
             <div onClick={onClickEditor} className="mb-md h-full w-full">
               <ReactQuill
