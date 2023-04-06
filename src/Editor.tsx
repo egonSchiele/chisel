@@ -24,15 +24,6 @@ import {
 } from "@heroicons/react/24/outline";
 import History from "./History";
 
-const countSyllables = (text: string) => {
-  try {
-    return syllable(text);
-  } catch (error) {
-    console.error("Error counting syllables:", error);
-    return 0;
-  }
-};
-
 const initialEditorState: EditorState = {
   title: "",
   text: "",
@@ -259,14 +250,14 @@ export default function Editor({ chapterid, showOpenBookListButton, openBookList
     }
   }
 
-  let selectedSyllables = countSyllables(state.editor.selectedText.contents);
+  //let selectedSyllables = countSyllables(state.editor.selectedText.contents);
 
-  const infoPanelState = {
+  /* const infoPanelState = {
     ...state.infoPanel,
     syllables: selectedSyllables,
   };
 
-  const addToContents = (text: string) => {
+ */  const addToContents = (text: string) => {
     dispatch({
       type: "addToContents",
       payload: text,

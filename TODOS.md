@@ -5,7 +5,6 @@
 - keyboard shortcuts
 - snippets functionality
 - remember state of ui in user preferences
-- count syllables
 - get synonyms
 - pin books/chapters to top
 - favicon
@@ -14,7 +13,5 @@
 - ask ai to outline entire book
 - show chapters in a grid
 - download all data
-- word count
 - tags
 - things are loading multiple times
-- make book and chapter cols collapsible

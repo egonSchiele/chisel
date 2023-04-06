@@ -9,7 +9,9 @@ import {
   ClipboardIcon,
   ClockIcon,
   Cog6ToothIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
+import Info from "./Info";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -45,6 +47,14 @@ function Navigation({ onClick, closeSidebar }) {
         <button
           type="button"
           className="relative inline-flex items-center rounded-l-md bg-white px-2 py-2 text-gray-400  hover:bg-gray-50 ring-0"
+          onClick={() => onClick("info")}
+        >
+          <span className="sr-only">Info</span>
+          <InformationCircleIcon className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="relative -ml-px inline-flex items-center bg-white px-2 py-2 text-gray-400  hover:bg-gray-50 ring-0"
           onClick={() => onClick("suggestions")}
         >
           <span className="sr-only">Suggestions</span>
@@ -71,7 +81,7 @@ function Navigation({ onClick, closeSidebar }) {
   );
 }
 
-type ActivePanel = "suggestions" | "settings" | "history";
+type ActivePanel = "info" | "suggestions" | "settings" | "history";
 export default function Sidebar({
   state,
   settings,
@@ -84,10 +94,15 @@ export default function Sidebar({
 }) {
   const [activePanel, setActivePanel] =
     React.useState<ActivePanel>("suggestions");
+    const infoText = state.editor.selectedText.length === 0 ? state.editor.text : state.editor.selectedText.contents;
   return (
     <div className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}>
       <div className="pt-sm space-y-2  px-3">
         <Navigation onClick={setActivePanel} closeSidebar={closeSidebar} />
+        {activePanel === "info" && (
+          
+          <Info text={infoText} />
+        )}
         {activePanel === "suggestions" && (
           <Suggestions
             suggestions={state.suggestions}
