@@ -139,7 +139,10 @@ export default function Library() {
           </div>
         )}
         <div className="col-span-4 h-full">
-          {chapterid && <Editor chapterid={chapterid} />}
+          {chapterid && <Editor chapterid={chapterid} openBookList={() => {
+            setBookListOpen(true);
+            setChapterListOpen(true);
+          }} showOpenBookListButton={!bookListOpen || !chapterListOpen} />}
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ import Toolbar from "./Toolbar";
 import SlideOver from "./components/SlideOver";
 import Button from "./components/Button";
 import {
+  ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
   SparklesIcon,
   XMarkIcon,
@@ -126,7 +127,7 @@ const reducer = produce((draft: t.State, action: any) => {
   }
 });
 
-export default function Editor({ chapterid }: { chapterid: string }) {
+export default function Editor({ chapterid, showOpenBookListButton, openBookList }: { chapterid: string; showOpenBookListButton: boolean; openBookList: () => void }) {
   console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -291,6 +292,20 @@ export default function Editor({ chapterid }: { chapterid: string }) {
     <div className="grid grid-cols-4 w-full h-full">
       <div className={`w-full h-full ${editorColSpan}`}>
         <div className="h-18 xl:h-8 p-sm w-full xl:my-xs flex">
+          <div className="flex flex-none">
+          <div className="flex-none">
+            {showOpenBookListButton && (
+        <button
+          type="button"
+          className="relative rounded-md inline-flex items-center bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
+          onClick={openBookList}
+        >
+          <span className="sr-only">Close</span>
+            <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+          
+        </button>)}
+      </div>
+</div>
           <div className="flex flex-grow" />
           <div className="flex flex-none">
             <button
