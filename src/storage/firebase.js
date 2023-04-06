@@ -152,6 +152,22 @@ export const favoriteChapter = async (chapterid) => {
   await saveChapter(chapter);
 };
 
+export const favoriteBook = async (bookid) => {
+  
+  const book = await getBook(bookid);
+  if (!book) {
+    console.log("no book to favorite");
+    return;
+  }
+  if (!book.favorite) {
+    book.favorite = true;
+  } else {
+    book.favorite = !book.favorite;
+  }
+
+  await saveBook(book);
+};
+
 export const getHistory = async (chapterid) => {
   const docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();

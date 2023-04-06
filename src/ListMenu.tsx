@@ -4,7 +4,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import React from 'react'
 import { EllipsisHorizontalIcon, HeartIcon } from '@heroicons/react/24/outline'
 
-export default function ChapterListMenu({onFavorite, onDelete}) {
+export default function ListMenu({onFavorite, onDelete}) {
   return (
     <Popover className="relative">
       <Popover.Button className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">

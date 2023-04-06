@@ -53,8 +53,8 @@ module.exports = {
         //dmbuttonhover: "#598669",
         sidebar: "#F0EDF4",
         sidebarSecondary: "#F0EDF4",
-        dmsidebar: "#494959",
-        dmsidebarSecondary: "#333",
+        dmsidebar: "rgb(28,27,30)",
+        dmsidebarSecondary: "#000",
 
         "panel-background": "#fff",
         "dmpanel-background": "#494959",
@@ -76,7 +76,7 @@ module.exports = {
         dmlistitemhover: "rgb(56,60,72)",
         dmlistitemhoverSecondary: "#252525",
         listBorder: "rgb(203,213,226)",
-        dmlistBorder: "#222",
+        dmlistBorder: "rgb(19,19,21)",
       },
       spacing: {
         xs: "0.5rem",

@@ -1,4 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { MenuItem } from "../Types";
 import React from "react";
 type Direction = "left" | "right";
 function Nav({ close, direction, loading }) {
@@ -67,18 +68,20 @@ export default function List({
   title,
   items,
   className = "",
-  close = null,
-  direction = "left",
-  loading = false,
+  menuItems = [],
+  /* close = null,
+  direction = "left", */
+  /* loading = false, */
 }: {
   title: string;
   items: any[];
   className?: string;
-  close?: () => void | null;
+  menuItems?: MenuItem[];
+  /* close?: () => void | null;
   direction?: Direction;
-  loading?: boolean;
+  loading?: boolean; */
 }) {
-  if (close || loading) {
+/*   if (close || loading) {
     return (
       <div
         className={`pt-sm px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
@@ -89,12 +92,16 @@ export default function List({
       </div>
     );
   }
-
+ */
   return (
     <div
-      className={`pt-xl px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
+      className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-full w-full ${className} `}
     >
-      <h2 className="text-2xl font-semibold pb-xs">{title}</h2>
+      <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
+        <div className="flex-grow items-center text-center">
+      <h3 className="text-sm uppercase font-semibold">{title}</h3>
+      </div>
+      </div>
       <ul className="pt-xs">{items}</ul>
     </div>
   );

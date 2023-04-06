@@ -62,6 +62,13 @@
         @apply text-highlight;
         @apply font-georgia;
     }
+
+/* 
+    .h3 {
+        @apply text-md;
+        @apply uppercase;
+        @apply font-semibold;
+    } */
 }
 
 

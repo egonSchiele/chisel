@@ -140,3 +140,9 @@ export type Result = Error | Success;
 
 export const error = (message: string): Error => ({ tag: "error", message });
 export const success = (payload: any): Success => ({ tag: "success", payload });
+
+export type MenuItem = {
+  label: string;
+  icon: any;
+  onClick: () => void;
+};

@@ -4,7 +4,9 @@ import List from "./components/List";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import ChapterListMenu from "./ChapterListMenu";
+import ListMenu from "./ListMenu";
+import { ListItem } from "./ListItem";
+
 function ChapterItem({
   chapter,
   selected,
@@ -30,7 +32,7 @@ function ChapterItem({
       <div
         className="flex flex-none cursor-pointer items-center mr-xs hover:bg-slate-500 rounded-md p-2"
       >
-        <ChapterListMenu onFavorite={onFavorite} onDelete={onDelete} />
+        <ListMenu onFavorite={onFavorite} onDelete={onDelete} />
 {/*         <EllipsisHorizontalIcon className="w-4 h-4 text-slate-400" /> */}
       </div>
     </div>
@@ -99,8 +101,10 @@ export default function ChapterList({
   const sublist = (title, chapters: t.Chapter[]) => {
     const items = chapters.map((chapter, index) => (
       <li key={chapter.chapterid}>
-        <ChapterItem
-          chapter={chapter}
+        <ListItem
+          
+          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+          title={chapter.title}
           selected={chapter.chapterid === selectedChapterId}
           onDelete={() => deleteChapter(chapter.chapterid)}
           onFavorite={() => favoriteChapter(chapter.chapterid)}
@@ -120,7 +124,7 @@ export default function ChapterList({
     lists.push(sublist("Favorites", favoriteChapters));
   }
     lists.push(sublist("All", otherChapters));
-    return <List title="Chapters" items={lists} close={closeSidebar} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
+    return <List title="Chapters" items={lists} /* close={closeSidebar} */ className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
   
   
 

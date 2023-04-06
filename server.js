@@ -10,6 +10,7 @@ import {
   saveChapter,
   deleteChapter,
   favoriteChapter,
+  favoriteBook,
   getChapter,
   saveToHistory,
   getHistory,
@@ -303,6 +304,17 @@ app.post("/api/favoriteChapter", requireLogin, async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     console.error("Error favoriting chapter:", error);
+    res.status(400).json({ error: error });
+  }
+});
+
+app.post("/api/favoriteBook", requireLogin, async (req, res) => {
+  let { bookid } = req.body;
+  try {
+    const data = await favoriteBook(bookid);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error favoriting book:", error);
     res.status(400).json({ error: error });
   }
 });
