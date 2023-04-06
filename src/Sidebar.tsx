@@ -12,6 +12,7 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import Info from "./Info";
+import { useLocalStorage } from "./utils";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -92,8 +93,7 @@ export default function Sidebar({
   onSettingsSave,
   triggerHistoryRerender,
 }) {
-  const [activePanel, setActivePanel] =
-    React.useState<ActivePanel>("suggestions");
+  const [activePanel, setActivePanel] = useLocalStorage("activePanel", "suggestions")
     const infoText = state.editor.selectedText.length === 0 ? state.editor.text : state.editor.selectedText.contents;
   return (
     <div className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}>

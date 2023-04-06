@@ -92,7 +92,7 @@ export default function ChapterList({
       New Chapter...
     </Button>
   );
-  const items = [newChapterButton, ..._items];
+  const items = _items; //[newChapterButton, ..._items];
 
   return <List title="Chapters" items={items} close={closeSidebar} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
 }

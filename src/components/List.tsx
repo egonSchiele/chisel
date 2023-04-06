@@ -1,10 +1,23 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 import React from "react";
 type Direction = "left" | "right";
 function Nav({ close, direction, loading }) {
   return (
     <div className="flex pb-sm">
       {direction === "left" && <div className="flex flex-grow" />}
+      <div className="flex-none">
+
+      <button
+          type="button"
+          className="relative rounded-md inline-flex items-center bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
+          onClick={close}
+        >
+          <span className="sr-only">New</span>
+          
+            <PlusIcon className="h-5 w-5" aria-hidden="true" />
+          
+        </button>
+      </div>
       <div className="flex-none">
         <button
           type="button"
@@ -71,7 +84,7 @@ export default function List({
         className={`pt-sm px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
       >
         <Nav close={close} direction={direction} loading={loading} />
-        <h2 className="text-3xl font-semibold pb-xs">{title}</h2>
+        <h2 className="text-2xl font-semibold pb-xs">{title}</h2>
         <ul className="pt-xs">{items}</ul>
       </div>
     );
@@ -81,7 +94,7 @@ export default function List({
     <div
       className={`pt-xl px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
     >
-      <h2 className="text-3xl font-semibold pb-xs">{title}</h2>
+      <h2 className="text-2xl font-semibold pb-xs">{title}</h2>
       <ul className="pt-xs">{items}</ul>
     </div>
   );

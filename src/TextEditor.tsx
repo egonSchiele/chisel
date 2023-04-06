@@ -188,7 +188,7 @@ const TextEditor = ({
               dispatch({ type: "setTitle", payload: title });
             }}
           >
-            <h1 className="text-3xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
+            <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
               {state.title}
               {!saved && (
                 <span className="text-xs text-gray-500">(unsaved changes)</span>

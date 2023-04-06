@@ -31,7 +31,7 @@ console.log("rerendering history");
     <div className="grid grid-cols-1 gap-3">      
       {history.map((patch, i) => (
         <Panel key={i} title="History">
-          <pre>{patch}</pre>
+          <pre className="text-xs xl:text-sm">{patch}</pre>
         </Panel>
       ))}
     </div>
