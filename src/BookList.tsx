@@ -3,7 +3,7 @@ import React from "react";
 import List from "./components/List";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 
@@ -57,8 +57,9 @@ export default function BookList({
     }
     await onChange();
   };
+  const sublist = (title, books: t.Book[]) => {
 
-  const _items = books.map((book, index) => (
+  const items = books.map((book, index) => (
     <li key={book.bookid}>
       <ListItem
         link={`/book/${book.bookid}`}
@@ -69,11 +70,29 @@ export default function BookList({
       />
     </li>
   ));
-  const newBookButton = (
-    <Button className="mb-xs" rounded={true} onClick={newBook}>
-      New Book...
-    </Button>
-  );
-  const items = _items; //[newBookButton, ..._items];
-  return <List title="Books" items={items} /* close={closeSidebar} */ className="bg-sidebar dark:bg-dmsidebar" />;
+  
+    return <List key={title} title={title} items={items} level={2} className="p-0 m-0 border-0 text-lg pt-0 pl-0 pr-0 border-r-0 mb-sm" />
+  }
+  
+
+  const favoriteBooks = books.filter((book) => book.favorite);
+  const otherBooks = books.filter((book) => !book.favorite);
+
+  const lists = [];
+
+  if (favoriteBooks.length > 0) {
+    lists.push(sublist("Favorites", favoriteBooks));
+  }
+  lists.push(sublist("All", otherBooks));
+
+  const buttonStyles = "bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+  const rightMenuItem =
+    { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
+  
+    const leftMenuItem =
+    { label: "New", icon: <PlusIcon className="w-4 h-4" />, onClick: newBook, className: buttonStyles }
+  return <List title="Books" items={lists} rightMenuItem={
+    rightMenuItem
+  } leftMenuItem={leftMenuItem} className="bg-sidebar dark:bg-dmsidebar" />;
+
 }

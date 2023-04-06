@@ -145,4 +145,5 @@ export type MenuItem = {
   label: string;
   icon: any;
   onClick: () => void;
+  className?: string;
 };

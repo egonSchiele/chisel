@@ -21,6 +21,7 @@ export const saveBook = async (book) => {
     console.log("no book to save");
     return;
   }
+  book.chapters = [];
   book.created_at = Date.now();
   const docRef = db.collection("books").doc(book.bookid);
   try {
@@ -40,7 +41,8 @@ export const getBook = async (bookid) => {
     return null;
   }
   const book = bookObj.data();
-  console.log("1chapters", book.chapters);
+  book.chapters = [];
+  //console.log("1chapters", book.chapters);
   const chapters = await db
     .collection("chapters")
     .where("bookid", "==", bookid)
@@ -51,7 +53,7 @@ export const getBook = async (bookid) => {
   } else {
     chapters.forEach((chapter) => {
       const data = chapter.data();
-      console.log("data", data);
+      console.log(">> data.bookid", data.bookid, data.chapterid);
       book.chapters.push(data);
     });
   }

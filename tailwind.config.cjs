@@ -27,7 +27,7 @@ module.exports = {
         background: "#fff",
         // Too bright
         //background: "#fffdeb",
-        dmbackground: "#333",
+        dmbackground: "#000",
 
         text: "#1e453e",
         dmtext: "#d2d9d8",

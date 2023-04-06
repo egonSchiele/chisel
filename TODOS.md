@@ -15,3 +15,6 @@
 - make icon buttons look better
 - add new chapter should be a '+' button, not a big black button
 - offline mode
+- imports
+- drag n drop to import
+- figure out what code is saving chapters on a book object

@@ -3,7 +3,7 @@ import React from "react";
 import List from "./components/List";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
-import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 
@@ -72,7 +72,7 @@ export default function ChapterList({
     const items = chapters.map((chapter, index) => (
       <li key={chapter.chapterid}>
         <ListItem
-          
+
           link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
           title={chapter.title}
           selected={chapter.chapterid === selectedChapterId}
@@ -81,29 +81,37 @@ export default function ChapterList({
         />
       </li>
     ));
-    return <List title={title} items={items} level={2} className="p-0 m-0 border-0 text-lg pt-0 pl-0 border-r-0 mb-sm" />
+    return <List key={title} title={title} items={items} level={2} className="p-0 m-0 border-0 text-lg pt-0 pl-0 pr-0 border-r-0 mb-sm" />
   }
 
   const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
   const otherChapters = chapters.filter((chapter) => !chapter.favorite);
 
-console.log(favoriteChapters, "FAVORITE CHAPTERS");
   const lists = [];
 
   if (favoriteChapters.length > 0) {
     lists.push(sublist("Favorites", favoriteChapters));
   }
-    lists.push(sublist("All", otherChapters));
-    return <List title="Chapters" items={lists} /* close={closeSidebar} */ className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
-  
-  
+  lists.push(sublist("All", otherChapters));
 
-/* 
-  const newChapterButton = (
-    <Button className="mb-xs" rounded={true} onClick={newChapter}>
-      New Chapter...
-    </Button>
-  );
-  const items = _items; //[newChapterButton, ..._items]; */
+  const buttonStyles = "bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const rightMenuItem =
+    { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
+  
+    const leftMenuItem =
+    { label: "New", icon: <PlusIcon className="w-4 h-4" />, onClick: newChapter, className: buttonStyles }
+  return <List title="Chapters" items={lists} rightMenuItem={
+    rightMenuItem
+  } leftMenuItem={leftMenuItem} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
+
+
+
+  /* 
+    const newChapterButton = (
+      <Button className="mb-xs" rounded={true} onClick={newChapter}>
+        New Chapter...
+      </Button>
+    );
+    const items = _items; //[newChapterButton, ..._items]; */
 
 }
