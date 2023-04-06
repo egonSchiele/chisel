@@ -136,6 +136,22 @@ export const deleteChapter = async (chapterid) => {
   await db.collection("chapters").doc(chapterid).delete();
 };
 
+export const favoriteChapter = async (chapterid) => {
+  
+  const chapter = await getChapter(chapterid);
+  if (!chapter) {
+    console.log("no chapter to favorite");
+    return;
+  }
+  if (!chapter.favorite) {
+    chapter.favorite = true;
+  } else {
+    chapter.favorite = !chapter.favorite;
+  }
+
+  await saveChapter(chapter);
+};
+
 export const getHistory = async (chapterid) => {
   const docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();

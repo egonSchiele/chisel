@@ -9,6 +9,7 @@ import {
   getBooks,
   saveChapter,
   deleteChapter,
+  favoriteChapter,
   getChapter,
   saveToHistory,
   getHistory,
@@ -291,6 +292,17 @@ app.post("/api/deleteChapter", requireLogin, async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     console.error("Error deleting chapter:", error);
+    res.status(400).json({ error: error });
+  }
+});
+
+app.post("/api/favoriteChapter", requireLogin, async (req, res) => {
+  let { chapterid } = req.body;
+  try {
+    const data = await favoriteChapter(chapterid);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error favoriting chapter:", error);
     res.status(400).json({ error: error });
   }
 });

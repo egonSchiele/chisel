@@ -5,7 +5,6 @@
 - keyboard shortcuts
 - snippets functionality
 - get synonyms
-- pin books/chapters to top
 - favicon
 - home page
 - Fix loading flash
