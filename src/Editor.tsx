@@ -36,6 +36,22 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
     initialState(chapterid)
   );
 
+  const handleKeyDown = (event) => {    
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setSidebarOpen(false);
+      setPromptsOpen(false);
+    }
+  };
+
+  useEffect(() => {    
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/chapter/${chapterid}`, {

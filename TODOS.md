@@ -1,4 +1,5 @@
 - make editing titles easier
+- deletion
 - add tests
 - security audit
 - accessibility audit
@@ -14,4 +15,3 @@
 - show chapters in a grid
 - download all data
 - tags
-- things are loading multiple times

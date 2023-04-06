@@ -18,6 +18,24 @@ export default function Library() {
   const { bookid } = useParams();
   const { chapterid } = useParams();
 
+
+  const handleKeyDown = (event) => {    
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setBookListOpen(false);
+      setChapterListOpen(false);
+    }
+  };
+
+  useEffect(() => {    
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+
   const fetchBook = async () => {
     const result = await fd.fetchBook(bookid);
     if (result.tag === "success") {
