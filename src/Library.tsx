@@ -7,43 +7,8 @@ import BookList from "./BookList";
 import { useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
-
-type LibraryState = {
-  books: t.Book[];
-  error: string;
-  selectedBook: t.Book | null;
-  selectedChapter: t.Chapter | null;
-  loading: boolean;
-};
-
-const initialState: LibraryState = {
-  books: [],
-  error: "",
-  selectedBook: null,
-  selectedChapter: null,
-  loading: false,
-};
-
-const reducer = (state: LibraryState, action: any) => {
-  switch (action.type) {
-    case "SET_BOOKS":
-      return { ...state, books: action.payload };
-    case "SET_BOOK":
-      return { ...state, selectedBook: action.payload };
-    case "SET_CHAPTER":
-      return { ...state, selectedChapter: action.payload };
-    case "SET_ERROR":
-      return { ...state, error: action.payload };
-    case "CLEAR_ERROR":
-      return { ...state, error: "" };
-    case "LOADING":
-      return { ...state, loading: true };
-    case "LOADED":
-      return { ...state, loading: false };
-    default:
-      return state;
-  }
-};
+import * as fd from "./fetchData";
+import { initialState, reducer } from "./reducers/library";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -54,32 +19,16 @@ export default function Library() {
   const { chapterid } = useParams();
 
   const fetchBook = async () => {
-    if (!bookid) return;
-    const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
-    if (!res.ok) {
-      dispatch({ type: "SET_ERROR", payload: res.statusText });
-      return;
+    const result = await fd.fetchBook(bookid);
+    if (result.tag === "success") {
+      dispatch({ type: "SET_BOOK", payload: result.payload });
+    } else {
+      dispatch({ type: "SET_ERROR", payload: result.message });
     }
-    const data: t.Book = await res.json();
-    console.log("got book");
-    console.log(data);
-    if (!data) {
-      dispatch({ type: "SET_ERROR", payload: "Book not found" });
-      return;
-    }
-
-    if (!data.design) {
-      data.design = {
-        coverColor: "bg-dmlistitem2",
-        labelColor: "bg-blue-700",
-        labelLinesColor: "border-yellow-400",
-      };
-    }
-    dispatch({ type: "SET_BOOK", payload: data });
-  };
+  }
 
   useEffect(() => {
-    fetchBook();
+  fetchBook();
   }, [bookid]);
 
   const fetchBooks = async () => {
@@ -133,7 +82,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
               chapters={state.selectedBook.chapters}
               bookid={state.selectedBook.bookid}
               selectedChapterId={chapterid || ""}
-              onChange={fetchBook}
+              onChange={() => fetchBook()}
               closeSidebar={() => setChapterListOpen(false)}
             />
           </div>

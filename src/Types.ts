@@ -125,3 +125,18 @@ export type User = {
 };
 
 export type History = string[];
+
+export type Error = {
+  tag: "error";
+  message: string;
+}
+
+export type Success = {
+  tag: "success";
+  payload: any;
+}
+
+export type Result = Error | Success;
+
+export const error = (message: string): Error => ({ tag: "error", message });
+export const success = (payload: any): Success => ({ tag: "success", payload });
