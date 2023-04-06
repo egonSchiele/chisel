@@ -5,7 +5,6 @@
 - accessibility audit
 - keyboard shortcuts
 - snippets functionality
-- remember state of ui in user preferences
 - get synonyms
 - pin books/chapters to top
 - favicon

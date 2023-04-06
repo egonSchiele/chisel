@@ -5,7 +5,7 @@ import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
 import { EditorState, State } from "./Types";
 import * as t from "./Types";
-import { useInterval } from "./utils";
+import { useInterval, useLocalStorage } from "./utils";
 import { initialState, reducer } from "./reducers/editor";
 import {
   ChevronRightIcon,
@@ -19,8 +19,8 @@ import {
 export default function Editor({ chapterid, bookListOpen, openBookList, closeBookList }: { chapterid: string; bookListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
   console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [promptsOpen, setPromptsOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
+  const [promptsOpen, setPromptsOpen] = useLocalStorage("promptsOpen", false);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",

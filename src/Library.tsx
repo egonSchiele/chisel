@@ -9,12 +9,13 @@ import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
+import { useLocalStorage } from "./utils";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  const [bookListOpen, setBookListOpen] = useState(true);
-  const [chapterListOpen, setChapterListOpen] = useState(true);
+  const [bookListOpen, setBookListOpen] = useLocalStorage("bookListOpen", true);
+  const [chapterListOpen, setChapterListOpen] = useLocalStorage("chapterListOpen", true);
   const { bookid } = useParams();
   const { chapterid } = useParams();
 
