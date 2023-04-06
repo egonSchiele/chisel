@@ -21,7 +21,7 @@ function ChapterItem({
       {" "}
       <div className="flex flex-grow">
         <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-          <div>{chapter.title}</div>
+          <div className="px-xs">{chapter.title}</div>
         </Link>
       </div>
       <div

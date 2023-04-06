@@ -20,7 +20,7 @@ function BookItem({
     >
       <div className="flex flex-grow">
         <Link to={`/book/${book.bookid}`}>
-          <div>{book.title}</div>
+          <div className="px-xs">{book.title}</div>
         </Link>
       </div>
       <div
