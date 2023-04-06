@@ -118,11 +118,11 @@ const reducer = produce((draft: t.State, action: any) => {
   }
 });
 
-export default function Editor({ chapterid, showOpenBookListButton, openBookList }: { chapterid: string; showOpenBookListButton: boolean; openBookList: () => void }) {
+export default function Editor({ chapterid, bookListOpen, openBookList, closeBookList }: { chapterid: string; bookListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
   console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [promptsOpen, setPromptsOpen] = useState(true);
+  const [promptsOpen, setPromptsOpen] = useState(false);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -285,7 +285,7 @@ export default function Editor({ chapterid, showOpenBookListButton, openBookList
         <div className="h-18 xl:h-8 p-sm w-full xl:my-xs flex">
           <div className="flex flex-none">
           <div className="flex-none">
-            {showOpenBookListButton && (
+            {!bookListOpen && (
         <button
           type="button"
           className="relative rounded-md inline-flex items-center bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
@@ -302,7 +302,13 @@ export default function Editor({ chapterid, showOpenBookListButton, openBookList
             <button
               type="button"
               className="relative inline-flex items-center rounded-l-md bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
-              onClick={() => setPromptsOpen((s) => !s)}
+              onClick={() => {
+                setPromptsOpen((current) => !current)
+                if (!promptsOpen) {
+                  closeBookList();
+                }
+
+              }}
             >
               <span className="sr-only">Prompts</span>
               <SparklesIcon className="h-6 w-6" aria-hidden="true" />
@@ -311,7 +317,14 @@ export default function Editor({ chapterid, showOpenBookListButton, openBookList
             <button
               type="button"
               className="relative -ml-px inline-flex items-center rounded-r-md bg-white dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
-              onClick={() => setSidebarOpen((s) => !s)}
+              onClick={() => {
+                setSidebarOpen((s) => !s);
+                if (!sidebarOpen) {
+                  closeBookList();
+                }
+
+              }
+              }
             >
               <span className="sr-only">Sidebar</span>
               <EllipsisHorizontalCircleIcon

@@ -114,7 +114,7 @@ export default function Library() {
   }
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
-
+const bothListsClosed = !bookListOpen && !chapterListOpen;
   return (
     <div className="h-screen">
       {state.error && <div className="text-red-500">{state.error}</div>}
@@ -138,11 +138,15 @@ export default function Library() {
             />
           </div>
         )}
-        <div className="col-span-4 h-full">
+        {bothListsClosed && <div className="col-span-1 h-full" />}
+        <div className={`h-full ${bothListsClosed ? "col-span-5" : "col-span-4"}`}>
           {chapterid && <Editor chapterid={chapterid} openBookList={() => {
             setBookListOpen(true);
             setChapterListOpen(true);
-          }} showOpenBookListButton={!bookListOpen || !chapterListOpen} />}
+          }} closeBookList={() => {
+            setBookListOpen(false);
+            setChapterListOpen(false);
+          }} bookListOpen={bookListOpen && chapterListOpen} />}
         </div>
       </div>
     </div>
