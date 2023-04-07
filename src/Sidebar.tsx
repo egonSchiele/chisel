@@ -76,12 +76,13 @@ export default function Sidebar({
         <Navigation onClick={setActivePanel} closeSidebar={closeSidebar} />
         {activePanel === "info" && (
           
-          <List title="Info" items={[<Info text={infoText} />]} />
+          <List title="Info" key={"info"} items={[<Info text={infoText} />]} />
           
         )}
         {activePanel === "suggestions" && (
           <List title="Suggestions" items={[
           <Suggestions
+            key={"suggestions"}
             suggestions={state.suggestions}
             onClick={onSuggestionClick}
             onDelete={onSuggestionDelete}
@@ -90,13 +91,14 @@ export default function Sidebar({
 
         {activePanel === "history" && (
           <List title="History" items={[
-          <History chapterid={state.chapter.chapterid} onSave={() => {}} triggerHistoryRerender={triggerHistoryRerender} />
+          <History key={"history"} chapterid={state.chapter.chapterid} onSave={() => {}} triggerHistoryRerender={triggerHistoryRerender} />
           ]} />
         )}
 
         {activePanel === "settings" && (
           <List title="Settings" items={[
           <Settings
+          key={"settings"}
             settings={settings}
             setSettings={setSettings}
             onSave={onSettingsSave}

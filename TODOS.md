@@ -4,7 +4,6 @@
 - accessibility audit
 - keyboard shortcuts
 - snippets functionality
-- get synonyms
 - favicon
 - home page
 - Fix loading flash

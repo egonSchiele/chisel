@@ -136,7 +136,8 @@ const TextEditor = ({
     }
   };
 
-  const setSelection = () => {
+  const setSelection = (e) => {
+    console.log("setSelection", e);
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
@@ -148,6 +149,7 @@ const TextEditor = ({
         payload: { index: range.index, length: range.length, contents: word },
       });
     } else {
+      console.log("no range");
       dispatch({ type: "clearSelectedText" });
     }
   };

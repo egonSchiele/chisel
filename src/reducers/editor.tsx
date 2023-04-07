@@ -65,6 +65,7 @@ export const reducer = produce((draft: State, action: any) => {
             draft.editor.selectedText = action.payload;
             break;
         case "clearSelectedText":
+            draft.editor.cachedSelectedTextContents = draft.editor.selectedText.contents
             draft.editor.selectedText = { index: 0, length: 0, contents: "" };
             break;
         case "synonymSelected":

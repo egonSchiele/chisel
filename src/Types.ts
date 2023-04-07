@@ -6,6 +6,7 @@ export type EditorState = {
   tooltipPosition: { top: number; left: number };
   tooltipOpen: boolean;
   selectedText: { index: number; length: number; contents: string };
+  cachedSelectedTextContents?: string;
   // selectedSyllables: number;
 };
 

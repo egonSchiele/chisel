@@ -111,12 +111,12 @@ export default function PromptsSidebar({
   };
 
   const fetchSynonyms = async () => {
-    const word = state.selectedText.contents;
+    const word = state.cachedSelectedTextContents;
     console.log("word", word);
     if (!word) return;
       setLoading(true);
       const res = await fetch(
-        `https://api.datamuse.com/words?ml=${word}&max=10`
+        `https://api.datamuse.com/words?ml=${word}&max=20`
       );
       if (!res.ok) {
         setLoading(false);
@@ -159,6 +159,7 @@ export default function PromptsSidebar({
   
 const actions = [
   <li  
+  key="synonyms"
   onClick={fetchSynonyms}
   className="py-xs text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
 >
