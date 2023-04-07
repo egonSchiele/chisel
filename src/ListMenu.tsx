@@ -22,13 +22,13 @@ export default function ListMenu({onFavorite, onDelete}) {
         leaveTo="opacity-0 translate-y-1"
       >
         <Popover.Panel className="absolute left-1/2 z-10 mt-5 flex w-screen max-w-min -translate-x-1/2 px-4">
-          <div className="w-56 shrink rounded-xl bg-white p-4 text-sm font-semibold leading-6 text-gray-900 shadow-lg ring-1 ring-gray-900/5">
+          <div className="rounded-md bg-dmmenu p-xs text-sm text-gray-300 gap-1">
             
-              <p className="block p-2 hover:text-indigo-600" onClick={onFavorite}>                
+              <p className="px-sm py-xs rounded-md hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary" onClick={onFavorite}>      
                 Favorite
               </p>
 
-              <p className="block p-2 text-red-500 hover:text-indigo-600" onClick={onDelete}>          
+              <p className="text-red-500 px-sm py-xs rounded-md hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary" onClick={onDelete}>
                 Delete
               </p>
             

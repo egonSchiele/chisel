@@ -56,6 +56,7 @@ module.exports = {
         dmsidebar: "rgb(28,27,30)",
         dmsidebarSecondary: "#000",
 
+        dmmenu: "rgb(28,27,30)",
         "panel-background": "#fff",
         "dmpanel-background": "#494959",
 
