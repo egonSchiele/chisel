@@ -3,7 +3,7 @@ import React from "react";
 import List from "./components/List";
 import { Link } from "react-router-dom";
 import Button from "./components/Button";
-import { EllipsisHorizontalIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, PlusIcon, ViewColumnsIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 
@@ -98,9 +98,14 @@ export default function ChapterList({
   const rightMenuItem =
     { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
   
-    const leftMenuItem =
-    { label: "New", icon: <PlusIcon className="w-4 h-4" />, onClick: newChapter, className: buttonStyles }
-  return <List title="Chapters" items={lists} rightMenuItem={
+    const newMenuItem =
+    { label: "New", icon: <PlusIcon className="w-4 h-4 mr-xs" />, onClick: newChapter, className: buttonStyles }
+  
+    const showGrid =
+    { label: "Grid", icon: <ViewColumnsIcon className="w-4 h-4" />, onClick: newChapter, className: buttonStyles }
+    
+    const leftMenuItem = [newMenuItem, showGrid]
+    return <List title="Chapters" items={lists} rightMenuItem={
     rightMenuItem
-  } leftMenuItem={leftMenuItem} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
+  } leftMenuItem={newMenuItem} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
 }

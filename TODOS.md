@@ -12,8 +12,6 @@
 - show chapters in a grid
 - download all data
 - tags
-- make icon buttons look better
-- add new chapter should be a '+' button, not a big black button
 - offline mode
 - imports
 - drag n drop to import

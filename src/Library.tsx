@@ -96,7 +96,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
           />
         </div>}
         {chapterListOpen && state.selectedBook && (
-          <div className="flex-none w-36 xl:w-48 h-full">
+          <div className="flex-none w-40 xl:w-48 h-full">
             <ChapterList
               chapters={state.selectedBook.chapters}
               bookid={state.selectedBook.bookid}
