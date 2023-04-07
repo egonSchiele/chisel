@@ -51,7 +51,52 @@ export const noCache = (req, res, next) => {
   next();
 };
 
+const checkBookAccess = async (req, res, next) => {
+  const c = req.cookies;
+
+  const { bookid } = req.params;
+  if (!bookid) {
+    console.log("no bookid");
+    res.redirect("/404");
+  }
+
+  const book = await getBook(bookid);
+
+  if (!book) {
+    console.log("no book with id, " + bookid);
+    res.redirect("/404");
+  } else if (book.userid !== c.userid) {
+    console.log("no access to book");
+    res.redirect("/404");
+  } else {
+    next();
+  }
+};
+
+const checkChapterAccess = async (req, res, next) => {
+  const c = req.cookies;
+
+  const { bookid, chapterid } = req.params;
+  if (!bookid || !chapterid) {
+    console.log("no bookid or chapterid");
+    res.redirect("/404");
+  }
+  const chapter = await getChapter(chapterid);
+
+  if (!chapter) {
+    console.log("no chapter with id, " + chapterid);
+    res.redirect("/404");
+  } else if (chapter.bookid !== bookid) {
+    console.log("chapter is not part of book", chapterid, bookid);
+    res.redirect("/404");
+  } else {
+    next();
+  }
+};
+
 app.use(noCache);
+
+
 
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);
@@ -151,9 +196,10 @@ app.post("/api/saveToHistory", requireLogin, async (req, res) => {
 });
 
 app.get(
-  "/api/getHistory/:chapterid",
+  "/api/getHistory/:bookid/:chapterid",
   requireLogin,
-  noCache,
+  checkBookAccess,
+  checkChapterAccess,
   async (req, res) => {
     const { chapterid } = req.params;
     const history = await getHistory(chapterid);
@@ -169,17 +215,15 @@ app.get(
 app.get(
   "/book/:bookid/chapter/:chapterid",
   requireLogin,
-  noCache,
+  checkBookAccess,
+  checkChapterAccess,
   async (req, res) => {
     const { bookid, chapterid } = req.params;
-    const chapter = await getChapter(chapterid);
+
 
     const book = await getBook(bookid);
 
-    if (!chapter) {
-      console.log("no chapter with id, " + chapterid);
-      res.redirect("/404");
-    } else if (!book) {
+    if (!book) {
       console.log("no book with id, " + bookid);
       res.redirect("/404");
     } else {
@@ -243,21 +287,21 @@ app.get("/books", requireLogin, noCache, async (req, res) => {
   }
 });
 
-app.get("/book/:bookid", requireLogin, noCache, async (req, res) => {
+app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
   res.sendFile(path.resolve("./dist/book.html"));
 });
 
-app.get("/grid/:bookid", requireLogin, noCache, async (req, res) => {
+app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
   res.sendFile(path.resolve("./dist/book.html"));
 });
 
-app.post("/api/deleteBook", requireLogin, async (req, res) => {
+app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid } = req.body;
   await deleteBook(bookid);
   res.redirect("/");
 });
 
-app.get("/api/book/:bookid", requireLogin, noCache, async (req, res) => {
+app.get("/api/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
   let { bookid } = req.params;
   try {
     const data = await getBook(bookid);
@@ -268,7 +312,7 @@ app.get("/api/book/:bookid", requireLogin, noCache, async (req, res) => {
   }
 });
 
-app.get("/api/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
+app.get("/api/chapter/:chapterid", requireLogin, checkBookAccess, async (req, res) => {
   let { chapterid } = req.params;
   try {
     const data = await getChapter(chapterid);
@@ -279,7 +323,7 @@ app.get("/api/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
   }
 });
 
-app.post("/api/deleteChapter", requireLogin, async (req, res) => {
+app.post("/api/deleteChapter", requireLogin, checkBookAccess, async (req, res) => {
   let { chapterid } = req.body;
   try {
     const data = await deleteChapter(chapterid);
@@ -290,7 +334,7 @@ app.post("/api/deleteChapter", requireLogin, async (req, res) => {
   }
 });
 
-app.post("/api/favoriteChapter", requireLogin, async (req, res) => {
+app.post("/api/favoriteChapter", requireLogin, checkBookAccess, async (req, res) => {
   let { chapterid } = req.body;
   try {
     const data = await favoriteChapter(chapterid);
@@ -301,7 +345,7 @@ app.post("/api/favoriteChapter", requireLogin, async (req, res) => {
   }
 });
 
-app.post("/api/favoriteBook", requireLogin, async (req, res) => {
+app.post("/api/favoriteBook", requireLogin, checkBookAccess, async (req, res) => {
   let { bookid } = req.body;
   try {
     const data = await favoriteBook(bookid);

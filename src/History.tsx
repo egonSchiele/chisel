@@ -7,12 +7,12 @@ import * as t from "./Types";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Panel from "./components/Panel";
 
-const History = ({ chapterid, onSave, triggerHistoryRerender }) => {
+const History = ({ bookid, chapterid, onSave, triggerHistoryRerender }) => {
   const [history, setHistory] = useState<t.History>([]);
 console.log("rerendering history");
   useEffect(() => {
     const func = async () => {
-      const res = await fetch(`/api/getHistory/${chapterid}`, {
+      const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
         credentials: "include",
       });
       if (!res.ok) {
