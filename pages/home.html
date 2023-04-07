@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+</head>
+<body class=" bg-background text-text dark:bg-dmbackground dark:text-dmtext">
+
+    <div class="grid grid-cols-2 m-md mt-xl">
+        <div class="col-span-1">
+
+                <h1 class="text-4xl font-bold tracking-tight  sm:text-6xl">
+                    Frisson editor
+                                </h1>
+                <p class="mt-xs text-lg leading-8 text-gray-800 dark:text-gray-300 ">
+                    An open-source AI-powered writing app                </p>
+                <div class="mt-10 flex items-center justify-center gap-x-6">
+                  <a
+                    href="https://github.com/egonSchiele/frisson"
+                    class="rounded-md bg-sidebar dark:bg-dmsidebar px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    View on GitHub
+                  </a>
+                  <a href="/login.html" class="rounded-md bg-sidebar dark:bg-dmsidebar px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+                    Try demo
+                  </a>
+                </div>
+    
+
+        </div>
+        <div class="col-span-1">
+            <h2 class="text-2xl font-bold tracking-tight">Features</h2>
+            <ul class="text-base leading-7">
+                <li>Expand text, shorten, rewrite, and more</li>
+                <li>Easily add your own AI functionality</li>
+                <li>Built-in git-like history</li>
+                <li>Dark mode</li>
+                <li>Support for multiple engines</li>
+            </ul>
+            <a class="underline text-gray-700 dark:text-gray-300" href="https://www.youtube.com/watch?v=RAu7k8PwusE">Watch the video walkthrough here</a>.
+<!--             <video width="320" height="240" controls>
+                <source src="https://www.youtube.com/watch?v=RAu7k8PwusE" type="video/mp4">
+                
+              Your browser does not support the video tag.
+              </video> -->
+        </div>
+    </div>
+</body>
+</html>

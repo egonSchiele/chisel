@@ -26,11 +26,11 @@ export const requireLogin = (req, res, next) => {
 
   if (!req.cookies.userid) {
     console.log("no userid");
-    res.redirect("/login.html");
+    res.redirect("/home.html");
   } else {
     stringToHash(req.cookies.userid).then((hash) => {
       if (hash !== req.cookies.token) {
-        res.redirect("/login.html");
+        res.redirect("/home.html");
       } else {
         next();
       }
