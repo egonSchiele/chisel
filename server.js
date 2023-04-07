@@ -54,10 +54,16 @@ export const noCache = (req, res, next) => {
 const checkBookAccess = async (req, res, next) => {
   const c = req.cookies;
 
-  const { bookid } = req.params;
+  console.log("checkBookAccess", req.params)
+  let bookid;
+  if (req.body) {
+    bookid = req.body.bookid;
+  } 
+  bookid = bookid || req.params.bookid;
+  
   if (!bookid) {
     console.log("no bookid");
-    res.redirect("/404");
+    return res.redirect("/404");
   }
 
   const book = await getBook(bookid);
@@ -76,7 +82,15 @@ const checkBookAccess = async (req, res, next) => {
 const checkChapterAccess = async (req, res, next) => {
   const c = req.cookies;
 
-  const { bookid, chapterid } = req.params;
+  let bookid, chapterid;
+  if (req.body) {
+    bookid = req.body.bookid;
+    chapterid = req.body.chapterid;
+  }
+  bookid = bookid || req.params.bookid;
+  chapterid = chapterid || req.params.chapterid;
+  
+
   if (!bookid || !chapterid) {
     console.log("no bookid or chapterid");
     res.redirect("/404");
@@ -218,17 +232,7 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const { bookid, chapterid } = req.params;
-
-
-    const book = await getBook(bookid);
-
-    if (!book) {
-      console.log("no book with id, " + bookid);
-      res.redirect("/404");
-    } else {
       res.sendFile(path.resolve("./dist/chapter.html"));
-    }
   }
 );
 
@@ -312,7 +316,7 @@ app.get("/api/book/:bookid", requireLogin, checkBookAccess, async (req, res) => 
   }
 });
 
-app.get("/api/chapter/:chapterid", requireLogin, checkBookAccess, async (req, res) => {
+app.get("/api/chapter/:bookid/:chapterid", requireLogin, checkBookAccess, async (req, res) => {
   let { chapterid } = req.params;
   try {
     const data = await getChapter(chapterid);

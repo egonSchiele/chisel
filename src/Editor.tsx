@@ -19,7 +19,7 @@ import { NavButton } from "./NavButton";
 
 
 
-export default function Editor({ chapterid, bookListOpen,  chapterListOpen, openBookList, closeBookList }: { chapterid: string; bookListOpen: boolean; chapterListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
+export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOpen, openBookList, closeBookList }: { bookid:string; chapterid: string; bookListOpen: boolean; chapterListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
   console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
@@ -65,7 +65,7 @@ export default function Editor({ chapterid, bookListOpen,  chapterListOpen, open
 
   useEffect(() => {
     const func = async () => {
-      const res = await fetch(`/api/chapter/${chapterid}`, {
+      const res = await fetch(`/api/chapter/${bookid}/${chapterid}`, {
         credentials: "include",
       });
       if (!res.ok) {
