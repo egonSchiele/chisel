@@ -135,7 +135,7 @@ app.post("/api/newChapter", requireLogin, async (req, res) => {
 
       //book.chapters.push(chapter);
       await saveChapter(chapter);
-      res.redirect(`/chapter/${chapterid}`);
+      res.redirect(`/book/${bookid}/chapter/${chapterid}`);
     }
   }
 });

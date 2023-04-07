@@ -17,3 +17,5 @@
 - figure out what code is saving chapters on a book object
 - dont save empty patches in history
 - light mode colors
+- limits on chapter and history length
+- admin page w usage stats for all users
