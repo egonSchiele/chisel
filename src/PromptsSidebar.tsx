@@ -110,17 +110,42 @@ export default function PromptsSidebar({
       });
   };
 
+  const fetchSynonyms = async () => {
+    const word = state.selectedText.contents;
+    console.log("word", word);
+    if (!word) return;
+      setLoading(true);
+      const res = await fetch(
+        `https://api.datamuse.com/words?ml=${word}&max=10`
+      );
+      if (!res.ok) {
+        setLoading(false);
+        console.log("error w synonyms", res);        
+        return;
+      }
+      const response = await res.json();
+      
+      const synonyms = response.map((item) => item.word);
+      console.log("synonyms", synonyms);
+      dispatch({
+        type: "addSuggestion",
+        label: "Synonyms",
+        payload: synonyms.join(", "),
+      });
+
+    dispatch({ type: "setSaved", payload: false });
+      setLoading(false);    
+      onLoad();
+  };
+
   const prompts = settings.prompts.map((prompt, i) => {
     return (
       <li
-        key={i}
-        /* disabled={loading} */
-        onClick={() => handleSuggestion(prompt.text, prompt.label)}
-        /* size="small" */
+        key={i}        
+        onClick={() => handleSuggestion(prompt.text, prompt.label)}        
         className="py-xs text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
       >
-        <p className="px-xs">{prompt.label}</p>
-        
+        <p className="px-xs">{prompt.label}</p>        
       </li>
     );
   });
@@ -132,30 +157,30 @@ export default function PromptsSidebar({
     const leftMenuItem = loading ?
     { label: "Loading", icon: <Spinner />, onClick: () => {}, className: buttonStyles } : null
   
+const actions = [
+  <li  
+  onClick={fetchSynonyms}
+  className="py-xs text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
+>
+  <p className="px-xs">Get synonyms</p>        
+</li>]
 
-
-  return (
+  return (<div className="h-full">
     <List
       title="Prompts"
       items={prompts}
-      className="border-l border-r-0 "
+      className="border-l border-r-0 h-auto"
       rightMenuItem={
         rightMenuItem
       } 
       leftMenuItem={leftMenuItem}
-      /* close={closeSidebar} */
-      /* direction="right"
-      loading={loading} */
     />
-  );
+    <List
+      title="Actions"
+      items={actions}
+      className="border-l border-r-0 h-auto"
+      
+      leftMenuItem={leftMenuItem}
+    />
+    </div>);
 }
-/*  
-    <div className="grid grid-cols-8 w-full bg-button dark:bg-dmbutton">
-      <ButtonGroup className="col-span-6 mb-auto h-full">
-        {}
-      </ButtonGroup>
-      {loading && <p>Loading...</p>}
-    </div>
-  );
-}
- */
