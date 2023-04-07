@@ -102,10 +102,10 @@ export default function ChapterList({
     { label: "New", icon: <PlusIcon className="w-4 h-4 mr-xs" />, onClick: newChapter, className: buttonStyles }
   
     const showGrid =
-    { label: "Grid", icon: <ViewColumnsIcon className="w-4 h-4" />, onClick: newChapter, className: buttonStyles }
+    { label: "Grid", icon: <Link to={`/grid/${bookid}`}><ViewColumnsIcon className="w-4 h-4" /></Link>, onClick: () => {}, className: buttonStyles }
     
     const leftMenuItem = [newMenuItem, showGrid]
     return <List title="Chapters" items={lists} rightMenuItem={
     rightMenuItem
-  } leftMenuItem={newMenuItem} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
+  } leftMenuItem={leftMenuItem} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
 }

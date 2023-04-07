@@ -15,3 +15,5 @@
 - imports
 - drag n drop to import
 - figure out what code is saving chapters on a book object
+- dont save empty patches in history
+- light mode colors

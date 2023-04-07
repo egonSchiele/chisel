@@ -166,17 +166,6 @@ app.get(
   }
 );
 
-app.get("/chapter/:chapterid", requireLogin, noCache, async (req, res) => {
-  const { chapterid } = req.params;
-  const chapter = await getChapter(chapterid);
-  if (!chapter) {
-    console.log("no chapter with id, " + chapterid);
-    res.redirect("/404");
-  } else {
-    res.sendFile(path.resolve("./dist/chapter.html"));
-  }
-});
-
 app.get(
   "/book/:bookid/chapter/:chapterid",
   requireLogin,
@@ -255,6 +244,10 @@ app.get("/books", requireLogin, noCache, async (req, res) => {
 });
 
 app.get("/book/:bookid", requireLogin, noCache, async (req, res) => {
+  res.sendFile(path.resolve("./dist/book.html"));
+});
+
+app.get("/grid/:bookid", requireLogin, noCache, async (req, res) => {
   res.sendFile(path.resolve("./dist/book.html"));
 });
 

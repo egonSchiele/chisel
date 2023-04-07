@@ -42,7 +42,7 @@ export default function Chapter({
         <div className="handle cursor-move uppercase text-sm font-semibold border-b-2 mb-xs text-highlight">
           {chapter.title}
         </div>
-        <Link to={`/chapter/${chapter.chapterid}`}>
+        <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
           <div className="h-3/4 dark:bg-dmchaptercardhover p-xs overflow-hidden">
             {/*  {chapter.pos.x}, {chapter.pos.y}  */}
             {chapter.text}

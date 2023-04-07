@@ -25,6 +25,7 @@ import Button from "./components/Button";
 import EditableInput from "./components/EditableInput";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import Select from "./components/Select";
+import ContentEditable from "./components/ContentEditable";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -262,55 +263,16 @@ export default function Book({}) {
     <div className="mx-auto mt-xs w-full h-full bg-dmbackground items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
 
-      <form
-        className="grid grid-cols-10 mb-sm"
-        action="/api/newChapter"
-        method="POST"
-      >
-        <input type="hidden" name="bookid" value={state.bookid} />
-        <EditableInput
+        <ContentEditable
           className="col-span-9"
           value={state.title}
           onSubmit={(title) => {
             dispatch({ type: "SET_BOOK_TITLE", payload: title });
             setSaved(false);
           }}
-        >
-          <h1 className="mb-sm heading">{state.title}</h1>
-        </EditableInput>
-        <Button
-          className="col-span-1 rounded mt-md"
-          buttonType="submit"
-          onClick={newChapter}
-        >
-          New Chapter...
-        </Button>
-        <Select
-          title="Cover color"
-          name="coverColor"
-          value={state.design.coverColor}
-          onChange={setCoverColor}
-        >
-          <option value="bg-red-700">Red</option>
-          <option value="bg-blue-700">Blue</option>
-          <option value="bg-yellow-400">Yellow</option>
-          <option value="bg-dmlistitem1">Pale Green</option>
-          <option value="bg-dmlistitem2">Dark Green</option>
-        </Select>
-        <Select
-          title="Label color"
-          name="labelColor"
-          value={state.design.labelColor}
-          onChange={setLabelColor}
-          className="ml-xs"
-        >
-          <option value="bg-red-700">Red</option>
-          <option value="bg-blue-700">Blue</option>
-          <option value="bg-yellow-400">Yellow</option>
-          <option value="bg-dmlistitem1">Pale Green</option>
-          <option value="bg-dmlistitem2">Dark Green</option>
-        </Select>
-      </form>
+        />
+   
+   
       <div className="relative w-screen h-6">
         {headings.map((heading, i) => {
           return (
