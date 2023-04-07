@@ -14,12 +14,14 @@ export default function ChapterList({
   selectedChapterId,
   onChange,
   closeSidebar,
+  canCloseSidebar = true,
 }: {
   chapters: t.Chapter[];
   bookid: string;
   selectedChapterId: string;
   onChange: () => void;
   closeSidebar: () => void;
+  canCloseSidebar?: boolean;
 }) {
   async function deleteChapter(chapterid: string) {
     console.log("delete chapter", chapterid);
@@ -95,7 +97,7 @@ export default function ChapterList({
   lists.push(sublist("All", otherChapters));
 
   const buttonStyles = "bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
-  const rightMenuItem =
+  const rightMenuItem = canCloseSidebar &&
     { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
   
     const newMenuItem =

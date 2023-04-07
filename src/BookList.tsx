@@ -12,11 +12,13 @@ export default function BookList({
   selectedBookId,
   onChange,
   closeSidebar,
+  canCloseSidebar = true,
 }: {
   books: t.Book[];
   selectedBookId: string;
   onChange: () => void;
   closeSidebar: () => void;
+  canCloseSidebar?: boolean;
 }) {
   async function deleteBook(bookid: string) {
     const res = await fetch(`/api/deleteBook`, {
@@ -86,8 +88,14 @@ export default function BookList({
   lists.push(sublist("All", otherBooks));
 
   const buttonStyles = "bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
-  const rightMenuItem =
-    { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
+  const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`
+  const rightMenuItem = canCloseSidebar &&
+    {
+      label: "Close",
+      icon: <XMarkIcon className="w-4 h-4" />,
+      onClick: closeSidebar,
+      className: buttonStyles
+    };
   
     const leftMenuItem =
     { label: "New", icon: <PlusIcon className="w-4 h-4" />, onClick: newBook, className: buttonStyles }

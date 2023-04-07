@@ -38,6 +38,9 @@ export default function Library() {
  */
 
   const fetchBook = async () => {
+    if (!bookid) {
+      return;
+    };
     const result = await fd.fetchBook(bookid);
     if (result.tag === "success") {
       dispatch({ type: "SET_BOOK", payload: result.payload });
@@ -47,8 +50,24 @@ export default function Library() {
   }
 
   useEffect(() => {
-  fetchBook();
+    fetchBook();
   }, [bookid]);
+  
+  // if the chapter id is null set the book list open to true
+  // so that we do not end up with an empty screen.
+  useEffect(() => {
+    if (!chapterid) {
+      setBookListOpen(true);
+    }
+  }, [chapterid]);
+  
+  // Force the chapter list open if a chapter has not been selected but a
+  // book has.
+  useEffect(() => {
+    if (!chapterid && state.selectedBook) {
+      setChapterListOpen(true);
+    }
+  }, [state.selectedBook, chapterid])
 
   const fetchBooks = async () => {
     const res = await fetch(`/books`);
@@ -93,6 +112,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
             selectedBookId={selectedBookId}
             onChange={fetchBooks}
             closeSidebar={() => setBookListOpen(false)}
+            canCloseSidebar={chapterid !== undefined}
           />
         </div>}
         {chapterListOpen && state.selectedBook && (
@@ -103,6 +123,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
               selectedChapterId={chapterid || ""}
               onChange={() => fetchBook()}
               closeSidebar={() => setChapterListOpen(false)}
+              canCloseSidebar={chapterid !== undefined || !state.selectedBook}
             />
           </div>
         )}
@@ -117,6 +138,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
           }} bookListOpen={bookListOpen}
            chapterListOpen={ chapterListOpen}
           />}
+          {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
       </div>
     </div>
