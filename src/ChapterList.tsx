@@ -30,7 +30,7 @@ export default function ChapterList({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ chapterid }),
+      body: JSON.stringify({ bookid, chapterid }),
     });
     if (!res.ok) {
       console.log(res.statusText);
@@ -46,7 +46,7 @@ export default function ChapterList({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ chapterid }),
+      body: JSON.stringify({ bookid, chapterid }),
     });
     if (!res.ok) {
       console.log(res.statusText);

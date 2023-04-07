@@ -129,7 +129,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
         )}
         
         <div className={`h-full flex-grow`}>
-          {chapterid && <Editor chapterid={chapterid} openBookList={() => {
+          {chapterid && <Editor bookid={bookid} chapterid={chapterid} openBookList={() => {
             setBookListOpen(true);
             setChapterListOpen(true);
           }} closeBookList={() => {
