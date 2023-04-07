@@ -316,7 +316,7 @@ app.get("/api/book/:bookid", requireLogin, checkBookAccess, async (req, res) => 
   }
 });
 
-app.get("/api/chapter/:bookid/:chapterid", requireLogin, checkBookAccess, async (req, res) => {
+app.get("/api/chapter/:bookid/:chapterid", requireLogin, checkBookAccess, checkChapterAccess, async (req, res) => {
   let { chapterid } = req.params;
   try {
     const data = await getChapter(chapterid);
@@ -327,7 +327,7 @@ app.get("/api/chapter/:bookid/:chapterid", requireLogin, checkBookAccess, async 
   }
 });
 
-app.post("/api/deleteChapter", requireLogin, checkBookAccess, async (req, res) => {
+app.post("/api/deleteChapter", requireLogin, checkBookAccess, checkChapterAccess, async (req, res) => {
   let { chapterid } = req.body;
   try {
     const data = await deleteChapter(chapterid);
@@ -338,7 +338,7 @@ app.post("/api/deleteChapter", requireLogin, checkBookAccess, async (req, res) =
   }
 });
 
-app.post("/api/favoriteChapter", requireLogin, checkBookAccess, async (req, res) => {
+app.post("/api/favoriteChapter", requireLogin, checkBookAccess, checkChapterAccess, async (req, res) => {
   let { chapterid } = req.body;
   try {
     const data = await favoriteChapter(chapterid);
