@@ -8,11 +8,14 @@ import * as t from "./Types";
 import { useInterval, useLocalStorage } from "./utils";
 import { initialState, reducer } from "./reducers/editor";
 import {
+  CheckCircleIcon,
   ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
+  MinusIcon,
   SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { NavButton } from "./NavButton";
 
 
 
@@ -195,39 +198,42 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
 </div>
           <div className="flex flex-grow" />
           <div className="flex flex-none">
-            <button
-              type="button"
-              className="relative inline-flex items-center rounded-l-md bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
-              onClick={() => {
+
+          {!state.saved && <NavButton label="Unsaved" onClick={() => {              
+              }}>
+          <MinusIcon className="h-5 w-5" aria-hidden="true" />
+        </NavButton>}
+
+        {state.saved && <NavButton label="Unsaved" onClick={() => {              
+              }}>
+          <CheckCircleIcon className="h-5 w-5 text-green-300" aria-hidden="true" />
+        </NavButton>}
+
+          <NavButton label="Prompts" onClick={() => {
                 setPromptsOpen((current) => !current)
                 if (!promptsOpen) {
                   closeBookList();
                 }
 
-              }}
-            >
-              <span className="sr-only">Prompts</span>
-              <SparklesIcon className="h-5 w-5" aria-hidden="true" />
-            </button>
-
-            <button
-              type="button"
-              className="relative -ml-px inline-flex items-center rounded-r-md bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary dark:text-gray-400 px-2 py-2 text-gray-500   ring-0"
-              onClick={() => {
+              }}>
+          <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+        </NavButton>
+           
+        <NavButton label="Sidebar" onClick={() => {
                 setSidebarOpen((s) => !s);
                 if (!sidebarOpen) {
                   closeBookList();
                 }
 
               }
-              }
-            >
-              <span className="sr-only">Sidebar</span>
-              <EllipsisHorizontalCircleIcon
+              }>
+                      <EllipsisHorizontalCircleIcon
                 className="h-5 w-5"
                 aria-hidden="true"
               />
-            </button>
+        </NavButton>
+
+        
           </div>
         </div>
         <div className="h-full w-full">         
