@@ -19,7 +19,7 @@ export function ListItem({
     const selectedCss = selected ? "bg-listitemhover dark:bg-dmlistitemhover" : "";
     return (
       <div
-        className={`flex py-xs text-slate-300 text-sm xl:text-md items-center rounded-md ${selectedCss}`}
+        className={`flex py-xs text-black dark:text-slate-300 text-sm xl:text-md items-center rounded-md ${selectedCss}`}
       >
         <div className="flex flex-grow items-center overflow-hidden text-ellipsis whitespace-nowrap mr-xs">
           <Link to={link}>

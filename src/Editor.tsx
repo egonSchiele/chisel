@@ -214,7 +214,7 @@ export default function Editor({ chapterid, bookListOpen,  chapterListOpen, open
 
         {state.saved && <NavButton label="Unsaved" onClick={() => {              
               }}>
-          <CheckCircleIcon className="h-5 w-5 text-green-300" aria-hidden="true" />
+          <CheckCircleIcon className="h-5 w-5 text-green-700 dark:text-green-300" aria-hidden="true" />
         </NavButton>}
 
           <NavButton label="Prompts" onClick={() => {

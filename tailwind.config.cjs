@@ -21,7 +21,7 @@ module.exports = {
         main: "#658864",
         highlight: "#F5EC8D",
         highlight2: "#A1E69C",
-        darkest: "#1e453e",
+        darkest: "#000",
         lightest: "#F5F5F5",
 
         background: "#fff",
@@ -29,30 +29,30 @@ module.exports = {
         //background: "#fffdeb",
         dmbackground: "#000",
 
-        text: "#1e453e",
-        dmtext: "#d2d9d8",
-        dmtextsecondary: "#1e453e",
+        text: "#000",
+        dmtext: "#fff",
+        dmtextsecondary: "#eee",
 
         button: "#0c1612",
-        dmbutton: "#0c1612",
-        dmbuttonsecondary: "#e4deae",
+        dmbutton: "rgb(28,27,30)",
+        dmbuttonsecondary: "#000",
 
         buttontext: "#d2d9d8",
-        dmbuttontext: "#d2d9d8",
-        dmbuttontextsecondary: "#000",
+        dmbuttontext: "#eee",
+        dmbuttontextsecondary: "#eee",
         // Not enough contrast with background:
         //dmbutton: "#182c25",
         buttonhover: "#F5EC8D",
-        dmbuttonhover: "rgb(19,19,21)",
-        dmbuttonhoversecondary: "#F5EC8D",
+        dmbuttonhover: "#222",
+        dmbuttonhoversecondary: "#222",
 
         buttonhovertext: "#0c1612",
-        dmbuttonhovertext: "#0c1612",
-        dmbuttonhovertextsecondary: "#0c1612",
+        dmbuttonhovertext: "#fff",
+        dmbuttonhovertextsecondary: "#fff",
 
         //dmbuttonhover: "#598669",
-        sidebar: "#F0EDF4",
-        sidebarSecondary: "#F0EDF4",
+        sidebar: "rgb(242,241,247)",
+        sidebarSecondary: "#FFF",
         dmsidebar: "rgb(28,27,30)",
         dmsidebarSecondary: "#000",
 
@@ -67,7 +67,7 @@ module.exports = {
         dmlistitem2: "#303f3b",
 
         dmsettings: "#e4deae",
-        dmsettingspanel: "#494959",
+        dmsettingspanel: "rgb(28,27,30)",
 
         dmchaptercard: "#2d695e",
         dmchaptercardhover: "#357a6e",

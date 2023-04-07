@@ -87,8 +87,7 @@ export default function BookList({
   }
   lists.push(sublist("All", otherBooks));
 
-  const buttonStyles = "bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
-  const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`
+  const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";  const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`
   const rightMenuItem = canCloseSidebar &&
     {
       label: "Close",

@@ -96,8 +96,7 @@ export default function ChapterList({
   }
   lists.push(sublist("All", otherChapters));
 
-  const buttonStyles = "bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
-  const rightMenuItem = canCloseSidebar &&
+  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";  const rightMenuItem = canCloseSidebar &&
     { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
   
     const newMenuItem =

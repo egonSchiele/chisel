@@ -5,7 +5,7 @@ import React from "react";
 function MenuItem({ label, icon, onClick, className = "" }: { label: string, icon: any, onClick: () => void, className?: string }) {
   return <button
     type="button"
-    className={`relative rounded-md inline-flex items-center text-gray-400  hover:bg-gray-50 ring-0 ${className}`}
+    className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 ${className}`}
     onClick={onClick}
   >
     <span className="sr-only">{label}</span>
@@ -20,9 +20,6 @@ export default function List({
   leftMenuItem = null,
   rightMenuItem = null,
   level = 1,
-  /* close = null,
-  direction = "left", */
-  /* loading = false, */
 }: {
   title: string;
   items: any[];
@@ -30,22 +27,7 @@ export default function List({
   leftMenuItem?: t.MenuItem[] | t.MenuItem | null;
   rightMenuItem?: t.MenuItem | null;
   level?: number;
-  /* close?: () => void | null;
-  direction?: Direction;
-  loading?: boolean; */
 }) {
-  /*   if (close || loading) {
-      return (
-        <div
-          className={`pt-sm px-sm border-r border-listBorder dark:border-dmlistBorder  h-full ${className} `}
-        >
-          <Nav close={close} direction={direction} loading={loading} />
-          <h2 className="text-2xl font-semibold pb-xs">{title}</h2>
-          <ul className="pt-xs">{items}</ul>
-        </div>
-      );
-    }
-   */
   return (
     <div
       className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-full w-full ${className} `}

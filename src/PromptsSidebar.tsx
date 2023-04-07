@@ -143,14 +143,14 @@ export default function PromptsSidebar({
       <li
         key={i}        
         onClick={() => handleSuggestion(prompt.text, prompt.label)}        
-        className="py-xs text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
+        className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
       >
         <p className="px-xs">{prompt.label}</p>        
       </li>
     );
   });
 
-  const buttonStyles = "bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem =
     { label: "Close", icon: <XMarkIcon className="w-4 h-4" />, onClick: closeSidebar, className: buttonStyles }
   

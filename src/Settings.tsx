@@ -153,16 +153,12 @@ const Settings = ({ settings, setSettings, onSave }) => {
             onDelete={() => deletePrompt(i)}
           />
         ))}
-        <Button
-          onClick={addPrompt}
-          rounded={true}
-          className="mt-sm"
-          style="secondary"
-        >
-          New Prompt
-        </Button>
+     
       </div>
-      <Button onClick={handleSave} rounded={true} className="mt-sm">
+      <Button onClick={addPrompt} rounded={true} className="mt-0">
+      New Prompt
+      </Button>
+      <Button onClick={handleSave} rounded={true} className="mt-0">
         Save
       </Button>
     </form>
