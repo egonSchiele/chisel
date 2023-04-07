@@ -43,7 +43,7 @@ module.exports = {
         // Not enough contrast with background:
         //dmbutton: "#182c25",
         buttonhover: "#F5EC8D",
-        dmbuttonhover: "#F5EC8D",
+        dmbuttonhover: "rgb(19,19,21)",
         dmbuttonhoversecondary: "#F5EC8D",
 
         buttonhovertext: "#0c1612",
@@ -78,6 +78,7 @@ module.exports = {
         dmlistitemhoverSecondary: "#252525",
         listBorder: "rgb(203,213,226)",
         dmlistBorder: "rgb(19,19,21)",
+        
       },
       spacing: {
         xs: "0.5rem",
