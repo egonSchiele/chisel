@@ -11,11 +11,11 @@ export default function Panel({
 }) {
   return (
     <div className="mb-md">
-      <div className="p-xs relative text-sm text-slate-600 dark:text-white font-light uppercase">
+      <div className="p-xs relative text-xs xl:text-sm text-slate-600 dark:text-white font-light uppercase">
         <p>{title}</p>
         {onDelete && (
           <XMarkIcon
-            className="w-6 m-2 absolute top-0 right-0 cursor-pointer"
+            className="w-4 m-2 absolute top-0 right-0 cursor-pointer"
             onClick={onDelete}
           />
         )}

@@ -86,8 +86,8 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
   return (
     <div className="h-screen">
       {state.error && <div className="text-red-500">{state.error}</div>}
-      <div className="grid grid-cols-6 h-full">
-        {bookListOpen && <div className="col-span-1 h-full">
+      <div className="flex h-full">
+        {bookListOpen && <div className="flex-none w-36 xl:w-48 h-full">
           <BookList
             books={state.books}
             selectedBookId={selectedBookId}
@@ -96,7 +96,7 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
           />
         </div>}
         {chapterListOpen && state.selectedBook && (
-          <div className="col-span-1 h-full">
+          <div className="flex-none w-36 xl:w-48 h-full">
             <ChapterList
               chapters={state.selectedBook.chapters}
               bookid={state.selectedBook.bookid}
@@ -106,8 +106,8 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
             />
           </div>
         )}
-        {bothListsClosed && <div className="col-span-1 h-full" />}
-        <div className={`h-full ${bothListsClosed ? "col-span-5" : "col-span-4"}`}>
+        
+        <div className={`h-full flex-grow`}>
           {chapterid && <Editor chapterid={chapterid} openBookList={() => {
             setBookListOpen(true);
             setChapterListOpen(true);

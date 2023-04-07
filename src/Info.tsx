@@ -12,8 +12,8 @@ const countSyllables = (text: string) => {
 export default function Info({text}) {
     const word_count = text.trim().split(/\s+/).length;
     const syllable_count = countSyllables(text.trim());
-    return <div>
-        <p>Word count: {word_count} words</p>
-        <p>Syllable count: {syllable_count} syllables</p>
+    return <div className='text-sm xl:text-md'>
+        <p>{word_count} <span className="text-gray-400">words</span></p>
+        <p>{syllable_count} <span className="text-gray-400">syllables</span></p>
         </div>
 }

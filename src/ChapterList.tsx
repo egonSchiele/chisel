@@ -103,15 +103,4 @@ export default function ChapterList({
   return <List title="Chapters" items={lists} rightMenuItem={
     rightMenuItem
   } leftMenuItem={leftMenuItem} className="bg-sidebarSecondary dark:bg-dmsidebarSecondary" />;
-
-
-
-  /* 
-    const newChapterButton = (
-      <Button className="mb-xs" rounded={true} onClick={newChapter}>
-        New Chapter...
-      </Button>
-    );
-    const items = _items; //[newChapterButton, ..._items]; */
-
 }

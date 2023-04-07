@@ -176,7 +176,7 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
   }
 
   return (
-    <div className="grid grid-cols-4 w-full h-full">
+    <div className="flex w-full h-full">
       <div className={`w-full h-full ${editorColSpan}`}>
         <div className="h-18 xl:h-8 p-xs w-full xl:my-xs flex">
           <div className="flex flex-none">
@@ -230,12 +230,7 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
             </button>
           </div>
         </div>
-        <div className="h-full w-full">
-          {/*    <Toolbar
-              dispatch={dispatch as any}
-              state={state.editor}
-              settings={settings}
-            /> */}
+        <div className="h-full w-full">         
           {state.error && (
             <div className="m-0 p-sm bg-red-700 w-full">
               <p>{state.error}</p>
@@ -256,7 +251,7 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
         </div>
       </div>
       {promptsOpen && (
-        <div className="col-span-1 min-h-screen">
+        <div className="w-36 xl:w-48 flex-none min-h-screen">
           <PromptsSidebar
             dispatch={dispatch as any}
             state={state.editor}
@@ -269,7 +264,7 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
         </div>
       )}
       {sidebarOpen && (
-        <div className="col-span-1 min-h-screen">
+        <div className="w-48 xl:w-48 flex-none min-h-screen">
           <Sidebar
             state={state}
             settings={settings}
