@@ -20,7 +20,7 @@ export default function Library() {
   const { chapterid } = useParams();
 
 
-  const handleKeyDown = (event) => {    
+/*   const handleKeyDown = (event) => {    
     if (event.key === "Escape") {
       event.preventDefault();
       setBookListOpen(false);
@@ -35,7 +35,7 @@ export default function Library() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
-
+ */
 
   const fetchBook = async () => {
     const result = await fd.fetchBook(bookid);
@@ -114,7 +114,9 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
           }} closeBookList={() => {
             setBookListOpen(false);
             setChapterListOpen(false);
-          }} bookListOpen={bookListOpen && chapterListOpen} />}
+          }} bookListOpen={bookListOpen}
+           chapterListOpen={ chapterListOpen}
+          />}
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ import { NavButton } from "./NavButton";
 
 
 
-export default function Editor({ chapterid, bookListOpen, openBookList, closeBookList }: { chapterid: string; bookListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
+export default function Editor({ chapterid, bookListOpen,  chapterListOpen, openBookList, closeBookList }: { chapterid: string; bookListOpen: boolean; chapterListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
   console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
@@ -42,8 +42,16 @@ export default function Editor({ chapterid, bookListOpen, openBookList, closeBoo
   const handleKeyDown = (event) => {    
     if (event.key === "Escape") {
       event.preventDefault();
-      setSidebarOpen(false);
-      setPromptsOpen(false);
+      if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {     
+        setSidebarOpen(false);
+        setPromptsOpen(false);
+        closeBookList();
+      } else {
+        setSidebarOpen(true);
+        setPromptsOpen(true);
+
+        openBookList();
+      }
     }
   };
 
