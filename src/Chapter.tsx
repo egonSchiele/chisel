@@ -59,7 +59,7 @@ return (
 }
 
 {small && <div className="rows-2 text-center">
-      <div className={`handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs`}>
+      <div className={`handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-1/2`}>
           {chapter.title}
         </div>
         <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>

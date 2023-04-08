@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import * as t from "./Types";
 import Chapter from "./Chapter";
 import "./globals.css";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const initialState: t.Book = {
   userid: "",
@@ -28,9 +28,10 @@ import EditableInput from "./components/EditableInput";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import Select from "./components/Select";
 import ContentEditable from "./components/ContentEditable";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { NavButton } from "./NavButton";
 import { useLocalStorage } from "./utils";
+import Launcher from "./Launcher";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -124,6 +125,8 @@ export default function Book({}) {
 
   const width = widths[size];
   const height = heights[size];
+
+  const navigate = useNavigate()
 
   const { bookid } = useParams();
 
@@ -275,9 +278,9 @@ useEffect(() => {
     }
   }
 
-  const newChapter = async (event) => {
-    if (event.metaKey) {
-      event.preventDefault();
+  const newChapter = async () => {
+    
+    
       await fetch("/api/newChapter", {
         method: "POST",
         headers: {
@@ -286,8 +289,7 @@ useEffect(() => {
         body: JSON.stringify({ bookid }),
       });
       await fetchBook();
-    } else {
-    }
+    
   };
 
   const cell = useRef();
@@ -368,6 +370,30 @@ useEffect(() => {
 }
 elements = [...elements, ...chapterElements];
 
+const launchItems = [
+/* 
+    {
+      label: "Save",
+      onClick: () => {
+        saveBook(state);
+      },
+      icon: <SaveIcon className="h-4 w-4" aria-hidden="true" />,
+    }, */
+    {
+      label: "New Chapter",
+      onClick: () => {
+        newChapter();
+      },
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+    {
+      label: "Back",
+      onClick: () => {
+        navigate(`/book/${bookid}`);
+      },
+      icon: <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+]
 
   if (!loaded) {
     if (error) {
@@ -380,6 +406,7 @@ elements = [...elements, ...chapterElements];
   return (
     <div className="mx-auto mt-xs w-full h-full bg-dmbackground items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
+<Launcher items={launchItems} />
 <p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>
 <div className="w-full text-sm dark:text-gray-300 my-xs flex">
 <Link to={`/book/${bookid}`}>
@@ -389,7 +416,7 @@ elements = [...elements, ...chapterElements];
 </Link>
 
         <ContentEditable
-          className="col-span-9 flex-grow text-md"
+          className="col-span-9 flex-grow text-md align-text-top"
           value={state.title}
           onSubmit={(title) => {
             dispatch({ type: "SET_BOOK_TITLE", payload: title });
