@@ -99,7 +99,11 @@ useEffect(() => {
                           classNames('cursor-default select-none px-4 py-2', active && 'bg-gray-300')
                         }
                       >
-                        {item.label}
+                        <div className='flex'>
+                        <div className=' mt-0.5'>{item.icon} </div>
+                        <div className='ml-1 flex-grow'>{item.label}
+                        </div>
+                        </div>
                       </Combobox.Option>
                     ))}
                   </Combobox.Options>

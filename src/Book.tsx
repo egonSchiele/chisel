@@ -28,7 +28,7 @@ import EditableInput from "./components/EditableInput";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import Select from "./components/Select";
 import ContentEditable from "./components/ContentEditable";
-import { ChevronLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { Bars3BottomLeftIcon, ChevronLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { NavButton } from "./NavButton";
 import { useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
@@ -394,6 +394,16 @@ const launchItems = [
       icon: <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />,
     },
 ]
+
+state.chapters.forEach((chapter, i) => {
+launchItems.push({
+  label: chapter.title,
+  onClick: () => {
+    navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
+  },
+  icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+});
+});
 
   if (!loaded) {
     if (error) {
