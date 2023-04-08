@@ -159,6 +159,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
         labelLinesColor: "border-yellow-400",
       },
       columnHeadings: [],
+      rowHeadings: [],
       favorite: false,
     };
     await saveBook(book);

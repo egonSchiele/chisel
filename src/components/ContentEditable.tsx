@@ -7,6 +7,7 @@ export default function ContentEditable({
   value,
   onSubmit,
   className = "",
+  style = {},
   nextFocus = null,
 }) {
   const [content, setContent] = React.useState(value);
@@ -36,6 +37,7 @@ export default function ContentEditable({
       suppressContentEditableWarning
       onBlur={handleSubmit}
       onKeyDown={onKeyDown}
+      style={style}
       onInput={handleChange}
     >
       {value}

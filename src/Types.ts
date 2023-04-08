@@ -69,6 +69,7 @@ export type Book = {
     labelLinesColor: string;
   };
   columnHeadings: string[];
+  rowHeadings: string[];
   favorite: boolean;
 };
 

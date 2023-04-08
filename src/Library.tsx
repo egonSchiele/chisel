@@ -10,6 +10,7 @@ import Editor from "./Editor";
 import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
 import { useLocalStorage } from "./utils";
+import Launcher from "./Launcher";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -104,6 +105,7 @@ export default function Library() {
 const bothListsClosed = !bookListOpen && !chapterListOpen;
   return (
     <div className="h-screen">
+      <Launcher />
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="flex h-full">
         {bookListOpen && <div className="flex-none w-36 xl:w-48 h-full">

@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import * as t from "./Types";
 import Chapter from "./Chapter";
 import "./globals.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const initialState: t.Book = {
   userid: "",
@@ -17,6 +17,8 @@ const initialState: t.Book = {
     labelLinesColor: "bg-yellow-400",
   },
   columnHeadings: [],
+  rowHeadings: [],
+
   favorite: false,
 };
 
@@ -26,6 +28,8 @@ import EditableInput from "./components/EditableInput";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import Select from "./components/Select";
 import ContentEditable from "./components/ContentEditable";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { NavButton } from "./NavButton";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -73,13 +77,22 @@ let reducer = produce((draft: t.Book, action: any) => {
       draft.design.labelColor = action.payload;
       break;
     case "SET_BOOK":
-      return action.payload;
-      break;
+      const book = {...action.payload};
+      if (!book.columnHeadings || book.columnHeadings.length === 0) {
+        book.columnHeadings = Array(12).fill("");
+      }
+      if (!book.rowHeadings || book.rowHeadings.length === 0) {
+        book.rowHeadings = Array(12).fill("");
+      }
+      console.log("set book", book);
+      return book;
+      
     case "SET_BOOK_TITLE":
       draft.title = action.payload;
-
       break;
-
+    case "SET_COLUMN_HEADING":
+      draft.columnHeadings[action.payload.i] = action.payload.newHeading;
+      break;
     default:
       break;
   }
@@ -176,7 +189,7 @@ export default function Book({}) {
     }
   }
 
-  const setCoverColor = async (e) => {
+/*   const setCoverColor = async (e) => {
     dispatch({ type: "SET_COVER_COLOR", payload: e.target.value });
     setSaved(false);
   };
@@ -185,7 +198,7 @@ export default function Book({}) {
     dispatch({ type: "SET_LABEL_COLOR", payload: e.target.value });
     setSaved(false);
   };
-
+ */
   async function deleteChapter(chapterid: string) {
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
@@ -218,7 +231,9 @@ export default function Book({}) {
   const cell = useRef();
   const headings = []; // ["hi", "there", "how", "are", "you"];
   console.log("state", state);
-
+ if (!state) {
+    return <div>Loading...</div>;
+ }
   const positions = {};
   state.chapters.forEach((chapter, i) => {
     const key = [chapter.pos.x, chapter.pos.y].toString();
@@ -254,8 +269,8 @@ export default function Book({}) {
   const chapterElements = [];
   key = 0;
 
-  for  (let x = 0; x < 12; x++) {
-  for  (let y = 0; y < 12; y++) {
+  for  (let x = 0; x < state.columnHeadings.length; x++) {
+  for  (let y = 0; y < state.rowHeadings.length; y++) {
     const chapters = state.chapters.filter(c => c.pos.x === x && c.pos.y === y);
     if (chapters.length > 0) {
       chapters.forEach(chapter => {
@@ -288,18 +303,7 @@ export default function Book({}) {
   }
 }
 elements = [...elements, ...chapterElements];
-/*   state.chapters.map((chapter, index) => (
-    <Chapter
-      chapter={chapter}
-      key={index}
-      dispatch={dispatch}
-      onChange={onChange}
-      // @ts-ignore
-      width={222}
-      // @ts-ignore
-      height={147}
-    />
-  )) */
+
 
   if (!loaded) {
     if (error) {
@@ -312,29 +316,39 @@ elements = [...elements, ...chapterElements];
   return (
     <div className="mx-auto mt-xs w-full h-full bg-dmbackground items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
+<p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>
+<div className="w-full text-sm dark:text-gray-300 my-xs flex">
+<Link to={`/book/${bookid}`}>
+<NavButton label="Back" onClick={() =>{}}>
+        <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+        </NavButton>
+</Link>
 
         <ContentEditable
-          className="col-span-9"
+          className="col-span-9 flex-grow text-md"
           value={state.title}
           onSubmit={(title) => {
             dispatch({ type: "SET_BOOK_TITLE", payload: title });
             setSaved(false);
           }}
         />
+   </div>
    
-   
-      <div className="relative w-screen h-6">
-        {headings.map((heading, i) => {
+      <div className="relative w-screen h-8">
+        {state.columnHeadings.map((heading, i) => {
           return (
-            <p
+            <ContentEditable
               key={i}
-              className="text-center uppercase w-chapter dark:bg-dmsidebar dark:text-dmtext absolute top-0"
+              value={heading}
+              className="text-center text-sm w-chapter dark:bg-dmsidebar dark:text-dmtext absolute top-0 h-full leading-8"
               style={{
                 left: `${i * 222}px`,
               }}
-            >
-              {heading}
-            </p>
+              onSubmit={(newHeading) => {
+                dispatch({ type: "SET_COLUMN_HEADING", payload: { i, newHeading } });
+                setSaved(false);
+              }}
+            />
           );
         })}
       </div>

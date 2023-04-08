@@ -38,13 +38,13 @@ const def = JSON.stringify({ x: chapter.pos.x * width, y: chapter.pos.y * height
       bounds="parent"
     >
       <div
-        className={`shadow absolute p-xs m-0 dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext w-chapter h-chapter select-none overflow-hidden border border-dmlistBorder`}
+        className={`shadow absolute m-0 dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext w-chapter h-chapter select-none overflow-hidden border border-dmlistBorder`}
       >
-        <div className="handle cursor-move uppercase text-sm font-semibold m-xs mb-0 text-gray-700 dark:text-gray-400">
+        <div className="handle cursor-move uppercase text-sm font-semibold p-xs text-gray-700 dark:text-black dark:bg-slate-400">
           {chapter.title}{/*  | {chapter.chapterid} */}
         </div>
         <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-          <div className="text-sm m-xs mt-0 overflow-hidden inline-block h-24">
+          <div className="text-sm m-xs overflow-hidden inline-block h-20">
              {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
             {chapter.text}
             , 
