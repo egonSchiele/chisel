@@ -58,12 +58,13 @@ return (
         </div>
 }
 
-{small && <div className="rows-2 text-center">
-      <div className={`handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-1/2`}>
+{small && <div className="h-18 text-center">
+      <div className={`handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-9 max-h-9 overflow-hidden pt-1`}>
           {chapter.title}
         </div>
-        <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-          Edit
+        <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`} className="h-9  block
+        ">
+        <div className="pt-1">  Edit</div>
         </Link>
         </div>
 }
