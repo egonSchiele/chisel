@@ -75,7 +75,7 @@ useEffect(() => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white dark:bg-black shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox onChange={(item:MenuItem) => item.onClick()}>
                 <div className="relative">
                   <MagnifyingGlassIcon
@@ -83,20 +83,20 @@ useEffect(() => {
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={(event) => setQuery(event.target.value)}
                   />
                 </div>
 
                 {filteredItems.length > 0 && (
-                  <Combobox.Options static className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800">
+                  <Combobox.Options static className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800 dark:text-gray-200">
                     {filteredItems.map((item, i) => (
                       <Combobox.Option
                         key={i}
                         value={item}
                         className={({ active }) =>
-                          classNames('cursor-default select-none px-4 py-2', active && 'bg-gray-300')
+                          classNames('cursor-default select-none px-4 py-2', active && 'bg-gray-300 dark:bg-dmsidebar')
                         }
                       >
                         <div className='flex'>
