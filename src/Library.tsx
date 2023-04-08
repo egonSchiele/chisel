@@ -11,6 +11,7 @@ import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
 import { useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -101,11 +102,30 @@ export default function Library() {
     }
   }
 
+  const launchItems = [
+    /* 
+        {
+          label: "Save",
+          onClick: () => {
+            saveBook(state);
+          },
+          icon: <SaveIcon className="h-4 w-4" aria-hidden="true" />,
+        }, */
+        {
+          label: "New Chapter",
+          onClick: () => {
+            
+          },
+          icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+        }  
+    ]
+    
+
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
 const bothListsClosed = !bookListOpen && !chapterListOpen;
   return (
     <div className="h-screen">
-      <Launcher />
+      <Launcher items={launchItems} />
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="flex h-full">
         {bookListOpen && <div className="flex-none w-36 xl:w-48 h-full">

@@ -1,57 +1,118 @@
-import React, { useEffect, useRef, useState } from "react";
-import { MenuItem } from "./Types";
-
-function LaunchItem({ label, icon, onClick, className = "" }: { label: string, icon: any, onClick: () => void, className?: string }) {
-    return <button
-      type="button"
-      className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400 dark:bg-dmsidebar  hover:bg-gray-50 ring-0 ${className}`}
-      onClick={onClick}
-    >
-      <span className="sr-only">{label}</span>
-      {icon}
-    </button>
+/*
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@tailwindcss/forms'),
+    ],
   }
+  ```
+*/
+import React, { Fragment, useState, useEffect } from 'react'
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { Combobox, Dialog, Transition } from '@headlessui/react'
+import { MenuItem } from './Types'
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
 
 export default function Launcher({items}:{items: MenuItem[]}) {
+  const [query, setQuery] = useState('')
 
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
-    const handleKeyDown = (event) => {
-        if (event.metaKey && event.key === "p") {
-            event.preventDefault();
-            setOpen(cur => {
-                return !cur;
-            });
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [handleKeyDown]);
-
-    if (!open) {
-        return <></>
+  const handleKeyDown = (event) => {
+    if (event.metaKey && event.key === "p") {
+        event.preventDefault();
+        setOpen(cur => {
+            return !cur;
+        });
     }
-    console.log("items", items);
-    return (
-        <div className={`absolute top-0 left-0 w-full h-full bg-black bg-opacity-40 text-black dark:text-white`}>
-            <div className="grid grid-cols-3">
-            <div className="col-span-1"></div>
-            <div className="grid grid-rows-3">
-                <div className="row-span-1" />
-                    <input type="text" autoFocus className="text-black" />
-                    {items.map((item, i) => {
-                        return <LaunchItem key={i} label={item.label} icon={item.icon} onClick={item.onClick} className={item.className} />
-                    })}
-                    
-                <div className="row-span-1" />
-            </div>
-            <div className="col-span-1"></div>
-            </div>
+  }
+
+useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+    };
+}, [handleKeyDown]);
+
+  const filteredItems =
+    query === ''
+      ? items
+      : items.filter((item) => {
+          return item.label.toLowerCase().includes(query.toLowerCase())
+        })
+
+  return (
+    <Transition.Root show={open} as={Fragment} afterLeave={() => setQuery('')} appear>
+      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+              <Combobox onChange={(item:MenuItem) => item.onClick()}>
+                <div className="relative">
+                  <MagnifyingGlassIcon
+                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                  <Combobox.Input
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                    placeholder="Search..."
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                </div>
+
+                {filteredItems.length > 0 && (
+                  <Combobox.Options static className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800">
+                    {filteredItems.map((item, i) => (
+                      <Combobox.Option
+                        key={i}
+                        value={item}
+                        className={({ active }) =>
+                          classNames('cursor-default select-none px-4 py-2', active && 'bg-gray-300')
+                        }
+                      >
+                        {item.label}
+                      </Combobox.Option>
+                    ))}
+                  </Combobox.Options>
+                )}
+
+                {query !== '' && filteredItems.length === 0 && (
+                  <p className="p-4 text-sm text-gray-500">No items found.</p>
+                )}
+              </Combobox>
+            </Dialog.Panel>
+          </Transition.Child>
         </div>
-    )
+      </Dialog>
+    </Transition.Root>
+  )
 }
