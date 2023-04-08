@@ -30,6 +30,7 @@ import Select from "./components/Select";
 import ContentEditable from "./components/ContentEditable";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { NavButton } from "./NavButton";
+import { useLocalStorage } from "./utils";
 //import { useInterval } from "./utils";
 
 let reducer = produce((draft: t.Book, action: any) => {
@@ -107,7 +108,64 @@ export default function Book({}) {
   const [loaded, setLoaded] = React.useState(false);
   const [saved, setSaved] = React.useState(true);
 
+  const [size, setSize] = useLocalStorage("grid_size", "medium")
+
+  const widths = {
+    small: 100,
+    medium: 200,
+    large: 300,
+  };
+
+  const heights = {
+    small: 70,
+    medium: 140,
+    large: 210,
+  };
+
+  const width = widths[size];
+  const height = heights[size];
+
   const { bookid } = useParams();
+
+  const zoomOut = (val) => {
+    if (val === "large") {
+      return "medium";
+    } else if (val === "medium") {
+      return "small";
+    } else {
+      return "small";
+    }
+  };
+
+  const zoomIn = (val) => {
+    if (val === "small") {
+      return "medium";
+    } else if (val === "medium") {
+      return "large";
+    } else {
+      return "large";
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.metaKey && event.key === "-") {
+        event.preventDefault();
+        setSize(zoomOut);
+    }
+    else if (event.metaKey && event.key === "=") {
+      event.preventDefault();
+      setSize(zoomIn);
+    }
+};
+
+useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+    };
+}, [handleKeyDown]);
+
 
   const fetchBook = async () => {
     const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
@@ -255,8 +313,8 @@ export default function Book({}) {
           key={key++}
           className="absolute w-8 h-8 p-2 rounded-md bg-red-700 text-center content-center -m-xs"
           style={{
-            top: `${y * 147}px`,
-            left: `${x * 222}px`,
+            top: `${y * height}px`,
+            left: `${x * width}px`,
           }}
         >
           {positions[pos]}
@@ -281,9 +339,9 @@ export default function Book({}) {
           dispatch={dispatch}
           onChange={onChange}
           // @ts-ignore
-          width={222}
+          width={width}
           // @ts-ignore
-          height={147}
+          height={height}
         />        
         )
           
@@ -292,10 +350,12 @@ export default function Book({}) {
       elements.push(
         <div
           key={key++}
-          className=" h-chapter w-chapter bg-background dark:bg-dmbackground border dark:border-gray-700 border-gray-300 absolute" 
+          className=" bg-background dark:bg-dmbackground border dark:border-gray-700 border-gray-300 absolute" 
           style={{
-            left: `${x * 222}px`,
-            top: `${y * 147}px`,
+            left: `${x * width}px`,
+            top: `${y * height}px`,
+            height: `${height}px`,
+            width: `${width}px`,
           }}
 
           />)
@@ -340,9 +400,11 @@ elements = [...elements, ...chapterElements];
             <ContentEditable
               key={i}
               value={heading}
-              className="text-center text-sm w-chapter dark:bg-dmsidebar dark:text-dmtext absolute top-0 h-full leading-8"
+              className="text-center text-sm dark:bg-dmsidebar dark:text-dmtext absolute top-0 h-full leading-8"
               style={{
-                left: `${i * 222}px`,
+                left: `${i * width}px`,
+                height: `${height}px`,
+            width: `${width}px`,
               }}
               onSubmit={(newHeading) => {
                 dispatch({ type: "SET_COLUMN_HEADING", payload: { i, newHeading } });

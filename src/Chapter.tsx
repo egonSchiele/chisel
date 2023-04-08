@@ -29,7 +29,8 @@ export default function Chapter({
     //saveChapter();
   };
 const def = JSON.stringify({ x: chapter.pos.x * width, y: chapter.pos.y * height })
-  return (
+const small = width <= 100;  
+return (
     <Draggable
       grid={[width, height]}
       handle=".handle"
@@ -38,18 +39,35 @@ const def = JSON.stringify({ x: chapter.pos.x * width, y: chapter.pos.y * height
       bounds="parent"
     >
       <div
-        className={`shadow absolute m-0 dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext w-chapter h-chapter select-none overflow-hidden border border-dmlistBorder`}
+        className={`shadow absolute m-0 dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext select-none overflow-hidden border border-dmlistBorder`}
+        style={{
+          height: `${height}px`,
+          width: `${width}px`,
+        }}
       >
-        <div className="handle cursor-move uppercase text-sm font-semibold p-xs text-gray-700 dark:text-black dark:bg-slate-400">
+        {!small && <div><div className={`handle cursor-move uppercase font-semibold p-xs text-gray-700 dark:text-black dark:bg-slate-400 text-sm`}>
           {chapter.title}{/*  | {chapter.chapterid} */}
         </div>
         <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
           <div className="text-sm m-xs overflow-hidden inline-block h-20">
              {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
             {chapter.text}
-            , 
+            
           </div>
         </Link>
+        </div>
+}
+
+{small && <div className="rows-2 text-center">
+      <div className={`handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs`}>
+          {chapter.title}
+        </div>
+        <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
+          Edit
+        </Link>
+        </div>
+}
+
       </div>
     </Draggable>
   );

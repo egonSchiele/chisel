@@ -88,12 +88,12 @@ module.exports = {
         xl: "4rem",
       },
       width: {
-        chapter: "222px",
+        
         history: "800px",
         historysmall: "760px",
       },
       height: {
-        chapter: "147px",
+        
       },
       /*   padding: {
         xs: "0.5rem",
