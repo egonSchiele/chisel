@@ -78,11 +78,11 @@
     margin: 0;
 }
 .chaptergrid {
-    background-image:
+/*     background-image:
       repeating-linear-gradient(#888 0 1px, transparent 1px 100%),
       repeating-linear-gradient(90deg, #888 0 1px, transparent 1px 100%);
     background-size: 222px 147px;
-}
+ */}
 
 pre {
     white-space:pre-line;

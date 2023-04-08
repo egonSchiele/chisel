@@ -20,3 +20,6 @@
 - admin page w usage stats for all users
 - clicking patch should save current state and load older state
 - rename to Chisel? or David? "The sculpture is already complete within the marble block, before I start my work. It is already there, I just have to chisel away the superfluous material."
+- launcher for books, panes, parts of ui
+- search
+- text preview for chapters

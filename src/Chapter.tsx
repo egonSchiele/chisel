@@ -15,37 +15,39 @@ export default function Chapter({
   /* const WIDTH = 250;
   const HEIGHT = 100;
  */
-  console.log({ width, height });
   const updateChapterPosition = (e, data) => {
-    console.log(data);
+    console.log(data.x, data.y);
+    console.log("old", chapter.chapterid, chapter.pos.x, chapter.pos.y);
     const newChapter = { ...chapter };
     newChapter.pos = { ...chapter.pos };
     newChapter.pos.x = Math.round(data.x / width);
     newChapter.pos.y = Math.round(data.y / height);
     /* data.x = Math.round(data.x / width) * width; */
+    console.log("new", newChapter.chapterid, newChapter.pos.x, newChapter.pos.y);
     onChange(newChapter);
     //dispatch({ type: "setChapter", payload: chapter });
     //saveChapter();
   };
-
+const def = JSON.stringify({ x: chapter.pos.x * width, y: chapter.pos.y * height })
   return (
     <Draggable
       grid={[width, height]}
       handle=".handle"
-      defaultPosition={{ x: chapter.pos.x * width, y: chapter.pos.y * height }}
+      position={{ x: chapter.pos.x * width, y: chapter.pos.y * height }}
       onStop={updateChapterPosition}
       bounds="parent"
     >
       <div
-        className={`shadow absolute p-xs m-0 dark:bg-dmchaptercard hover:bg-dmchaptercardhover  dark:text-dmtext w-chapter h-chapter select-none`}
+        className={`shadow absolute p-xs m-0 dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext w-chapter h-chapter select-none overflow-hidden border border-dmlistBorder`}
       >
-        <div className="handle cursor-move uppercase text-sm font-semibold border-b-2 mb-xs text-highlight">
-          {chapter.title}
+        <div className="handle cursor-move uppercase text-sm font-semibold m-xs mb-0 text-gray-700 dark:text-gray-400">
+          {chapter.title}{/*  | {chapter.chapterid} */}
         </div>
         <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-          <div className="h-3/4 dark:bg-dmchaptercardhover p-xs overflow-hidden">
-            {/*  {chapter.pos.x}, {chapter.pos.y}  */}
+          <div className="text-sm m-xs mt-0 overflow-hidden inline-block h-24">
+             {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
             {chapter.text}
+            , 
           </div>
         </Link>
       </div>

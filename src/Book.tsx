@@ -233,7 +233,6 @@ export default function Book({}) {
 
   let key = 0;
   for (const pos in positions) {
-    console.log("pos", pos, positions[pos]);
     if (positions[pos] > 1) {
       const [x, y] = pos.split(",").map((n) => parseInt(n));
       stackElements.push(
@@ -250,6 +249,57 @@ export default function Book({}) {
       );
     }
   }
+
+  let elements = [];
+  const chapterElements = [];
+  key = 0;
+
+  for  (let x = 0; x < 12; x++) {
+  for  (let y = 0; y < 12; y++) {
+    const chapters = state.chapters.filter(c => c.pos.x === x && c.pos.y === y);
+    if (chapters.length > 0) {
+      chapters.forEach(chapter => {
+        chapterElements.push(
+          <Chapter
+          chapter={chapter}
+          key={chapter.chapterID}
+          dispatch={dispatch}
+          onChange={onChange}
+          // @ts-ignore
+          width={222}
+          // @ts-ignore
+          height={147}
+        />        
+        )
+          
+      });
+    } 
+      elements.push(
+        <div
+          key={key++}
+          className=" h-chapter w-chapter bg-background dark:bg-dmbackground border dark:border-gray-700 border-gray-300 absolute" 
+          style={{
+            left: `${x * 222}px`,
+            top: `${y * 147}px`,
+          }}
+
+          />)
+    
+  }
+}
+elements = [...elements, ...chapterElements];
+/*   state.chapters.map((chapter, index) => (
+    <Chapter
+      chapter={chapter}
+      key={index}
+      dispatch={dispatch}
+      onChange={onChange}
+      // @ts-ignore
+      width={222}
+      // @ts-ignore
+      height={147}
+    />
+  )) */
 
   if (!loaded) {
     if (error) {
@@ -289,19 +339,8 @@ export default function Book({}) {
         })}
       </div>
       <div className="relative  h-screen w-screen">
-        <div className="w-screen h-screen chaptergrid">
-          {state.chapters.map((chapter, index) => (
-            <Chapter
-              chapter={chapter}
-              key={index}
-              dispatch={dispatch}
-              onChange={onChange}
-              // @ts-ignore
-              width={222}
-              // @ts-ignore
-              height={147}
-            />
-          ))}
+        <div className="h-screen w-screen chaptergrid ">
+          {elements}
           {stackElements}
         </div>
       </div>
