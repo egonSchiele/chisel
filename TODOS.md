@@ -23,5 +23,3 @@
 - launcher for books, panes, parts of ui
 - search
 - text preview for chapters
-- col and row labels for grid
-- zoom in/out for grid

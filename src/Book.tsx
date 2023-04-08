@@ -156,7 +156,11 @@ export default function Book({}) {
       event.preventDefault();
       setSize(zoomIn);
     }
-};
+    else if (event.metaKey && event.key === "0") {
+      event.preventDefault();
+      setSize("medium");
+    }
+  };
 
 useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
