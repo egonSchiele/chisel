@@ -54,13 +54,13 @@ export const noCache = (req, res, next) => {
 const checkBookAccess = async (req, res, next) => {
   const c = req.cookies;
 
-  console.log("checkBookAccess", req.params)
+  console.log("checkBookAccess", req.params);
   let bookid;
   if (req.body) {
     bookid = req.body.bookid;
-  } 
+  }
   bookid = bookid || req.params.bookid;
-  
+
   if (!bookid) {
     console.log("no bookid");
     return res.redirect("/404");
@@ -89,7 +89,6 @@ const checkChapterAccess = async (req, res, next) => {
   }
   bookid = bookid || req.params.bookid;
   chapterid = chapterid || req.params.chapterid;
-  
 
   if (!bookid || !chapterid) {
     console.log("no bookid or chapterid");
@@ -109,8 +108,6 @@ const checkChapterAccess = async (req, res, next) => {
 };
 
 app.use(noCache);
-
-
 
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);
@@ -167,37 +164,26 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
   }
 });
 
-app.post("/api/newChapter", requireLogin, async (req, res) => {
+app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   const userid = getUserId(req);
   console.log(req.body);
-  const { bookid } = req.body;
-  if (!userid) {
-    console.log("no userid");
-    res.status(404).end();
-  } else {
-    const book = await getBook(bookid);
-    if (!book) {
-      console.log("no book with id, " + bookid);
-      res.status(404).end();
-    } else {
-      const chapterid = nanoid();
-      const chapter = {
-        bookid,
-        chapterid,
-        title: "New Chapter",
-        text: "Once upon a time...",
-        pos: { x: 0, y: 0 },
-        suggestions: [],
-        favorite: false,
-      };
+  const { bookid, title, text } = req.body;
+  const chapterid = nanoid();
+  const chapter = {
+    bookid,
+    chapterid,
+    title,
+    text,
+    pos: { x: 0, y: 0 },
+    suggestions: [],
+    favorite: false,
+  };
 
-      console.log(chapter);
+  console.log(chapter);
 
-      //book.chapters.push(chapter);
-      await saveChapter(chapter);
-      res.redirect(`/book/${bookid}/chapter/${chapterid}`);
-    }
-  }
+  //book.chapters.push(chapter);
+  await saveChapter(chapter);
+  res.redirect(`/book/${bookid}/chapter/${chapterid}`);
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
@@ -233,7 +219,7 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-      res.sendFile(path.resolve("./dist/chapter.html"));
+    res.sendFile(path.resolve("./dist/chapter.html"));
   }
 );
 
@@ -306,60 +292,88 @@ app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   res.redirect("/");
 });
 
-app.get("/api/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  let { bookid } = req.params;
-  try {
-    const data = await getBook(bookid);
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error getting book:", error);
-    res.status(400).json({ error: error });
+app.get(
+  "/api/book/:bookid",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    let { bookid } = req.params;
+    try {
+      const data = await getBook(bookid);
+      res.status(200).json(data);
+    } catch (error) {
+      console.error("Error getting book:", error);
+      res.status(400).json({ error: error });
+    }
   }
-});
+);
 
-app.get("/api/chapter/:bookid/:chapterid", requireLogin, checkBookAccess, checkChapterAccess, async (req, res) => {
-  let { chapterid } = req.params;
-  try {
-    const data = await getChapter(chapterid);
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error getting chapter:", error);
-    res.status(400).json({ error: error });
+app.get(
+  "/api/chapter/:bookid/:chapterid",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    let { chapterid } = req.params;
+    try {
+      const data = await getChapter(chapterid);
+      res.status(200).json(data);
+    } catch (error) {
+      console.error("Error getting chapter:", error);
+      res.status(400).json({ error: error });
+    }
   }
-});
+);
 
-app.post("/api/deleteChapter", requireLogin, checkBookAccess, checkChapterAccess, async (req, res) => {
-  let { chapterid } = req.body;
-  try {
-    const data = await deleteChapter(chapterid);
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error deleting chapter:", error);
-    res.status(400).json({ error: error });
+app.post(
+  "/api/deleteChapter",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    let { chapterid } = req.body;
+    try {
+      const data = await deleteChapter(chapterid);
+      res.status(200).json(data);
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
+      res.status(400).json({ error: error });
+    }
   }
-});
+);
 
-app.post("/api/favoriteChapter", requireLogin, checkBookAccess, checkChapterAccess, async (req, res) => {
-  let { chapterid } = req.body;
-  try {
-    const data = await favoriteChapter(chapterid);
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error favoriting chapter:", error);
-    res.status(400).json({ error: error });
+app.post(
+  "/api/favoriteChapter",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    let { chapterid } = req.body;
+    try {
+      const data = await favoriteChapter(chapterid);
+      res.status(200).json(data);
+    } catch (error) {
+      console.error("Error favoriting chapter:", error);
+      res.status(400).json({ error: error });
+    }
   }
-});
+);
 
-app.post("/api/favoriteBook", requireLogin, checkBookAccess, async (req, res) => {
-  let { bookid } = req.body;
-  try {
-    const data = await favoriteBook(bookid);
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error favoriting book:", error);
-    res.status(400).json({ error: error });
+app.post(
+  "/api/favoriteBook",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    let { bookid } = req.body;
+    try {
+      const data = await favoriteBook(bookid);
+      res.status(200).json(data);
+    } catch (error) {
+      console.error("Error favoriting book:", error);
+      res.status(400).json({ error: error });
+    }
   }
-});
+);
 
 app.post("/api/suggestions", requireLogin, async (req, res) => {
   console.log({ body: req.body });
