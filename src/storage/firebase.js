@@ -106,11 +106,22 @@ export const getBooks = async (userid) => {
 
 export const saveChapter = async (chapter) => {
   console.log("saving chapter");
-  console.log({ chapter });
+  //console.log({ chapter });
   if (!chapter) {
     console.log("no chapter to save");
     return;
   }
+
+  if (
+    settings.limits.chapterLength > 0 &&
+    chapter.text &&
+    chapter.text.length >= settings.limits.chapterLength
+  ) {
+    throw new Error(
+      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
+    );
+  }
+
   chapter.created_at = Date.now();
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   try {
@@ -139,7 +150,6 @@ export const deleteChapter = async (chapterid) => {
 };
 
 export const favoriteChapter = async (chapterid) => {
-  
   const chapter = await getChapter(chapterid);
   if (!chapter) {
     console.log("no chapter to favorite");
@@ -155,7 +165,6 @@ export const favoriteChapter = async (chapterid) => {
 };
 
 export const favoriteBook = async (bookid) => {
-  
   const book = await getBook(bookid);
   if (!book) {
     console.log("no book to favorite");
@@ -190,6 +199,15 @@ export const saveToHistory = async (chapterid, text) => {
     return;
   }
   const history = bookObj.data().history;
+
+  if (
+    settings.limits.historyLength > 0 &&
+    history.length >= settings.limits.historyLength
+  ) {
+    throw new Error(
+      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
+    );
+  }
 
   let old = history[0];
   history.slice(1).forEach((patch) => {

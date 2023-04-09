@@ -14,10 +14,13 @@
 - imports
 - drag n drop to import
 - figure out what code is saving chapters on a book object
-- dont save empty patches in history
-- limits on chapter and history length
 - admin page w usage stats for all users
 - clicking patch should save current state and load older state
 - search
 - text preview for chapters
 - move chapter to another book
+
+## Refactoring
+
+- clean up console.logs
+- lift state up to library

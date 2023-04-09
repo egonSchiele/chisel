@@ -12,4 +12,8 @@ export default {
     appId: "",
     measurementId: "",
   },
+  limits: {
+    chapterLength: -1, // in characters
+    historyLength: -1,
+  },
 };
