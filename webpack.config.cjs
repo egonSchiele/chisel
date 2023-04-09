@@ -7,7 +7,7 @@ const pages = fs.readdirSync(path.resolve(__dirname, "pages"));
 const htmlPages = pages.map((page) => {
   const name = page.split(".")[0];
   return new HtmlWebpackPlugin({
-    title: "Frisson Editor",
+    title: "Chisel Editor",
     filename: page,
     template: `./pages/${page}`,
     chunks: [`${name}`],

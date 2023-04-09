@@ -284,11 +284,19 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
             settings={settings}
             setSettings={setSettings}
             closeSidebar={() => setSidebarOpen(false)}
-            onSuggestionClick={addToContents}
+            onSuggestionClick={addToContents}          
             onSuggestionDelete={(index) => {
               dispatch({ type: "deleteSuggestion", payload: index });
             }}
             onSettingsSave={() => {}}
+            onHistoryClick={(newText) => {
+              console.log("newText", newText);
+              console.log("save");
+              
+              onTextEditorSave(state);
+              
+              dispatch({ type: "addToContents", payload: newText });
+            }}
             triggerHistoryRerender={triggerHistoryRerender}
           />
         </div>

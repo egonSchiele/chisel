@@ -66,6 +66,7 @@ export default function Sidebar({
   onSuggestionClick,
   onSuggestionDelete,
   onSettingsSave,
+  onHistoryClick,
   triggerHistoryRerender,
 }) {
   const [activePanel, setActivePanel] = useLocalStorage("activePanel", "suggestions")
@@ -91,7 +92,13 @@ export default function Sidebar({
 
         {activePanel === "history" && (
           <List title="History" items={[
-          <History key={"history"} chapterid={state.chapter.chapterid} bookid={state.chapter.bookid} onSave={() => {}} triggerHistoryRerender={triggerHistoryRerender} />
+          <History
+           key={"history"} 
+           chapterid={state.chapter.chapterid} 
+           bookid={state.chapter.bookid} 
+           onSave={() => {}} triggerHistoryRerender={triggerHistoryRerender} 
+           onClick={onHistoryClick}
+           />
           ]} />
         )}
 

@@ -4,6 +4,7 @@ import { EditorState, State } from "../Types";
 export const reducer = produce((draft: State, action: any) => {
     switch (action.type) {
         case "setText":
+            console.log("setText", action.payload);            
             draft.editor.text = action.payload;
             draft.chapter.text = action.payload;
             draft.saved = false;
@@ -40,7 +41,7 @@ export const reducer = produce((draft: State, action: any) => {
             break;
         case "addToContents":
             if (!draft.editor.contents.insert) return;
-
+            
             draft.editor.contents.insert(action.payload);
             draft.editor.text += action.payload;
             draft.saved = false;

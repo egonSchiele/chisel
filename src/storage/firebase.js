@@ -198,6 +198,10 @@ export const saveToHistory = async (chapterid, text) => {
 
   // const old = history[history.length - 1];
   console.log("old", old);
+  if (old === text) {
+    console.log("no change");
+    return;
+  }
   const patch = Diff.createPatch(chapterid, old, text, "-", "-");
   console.log("patch", patch);
   history.push(patch);
