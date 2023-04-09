@@ -17,9 +17,21 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavButton } from "./NavButton";
 
-
-
-export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOpen, openBookList, closeBookList }: { bookid:string; chapterid: string; bookListOpen: boolean; chapterListOpen: boolean; openBookList: () => void; closeBookList: () => void }) {
+export default function Editor({
+  bookid,
+  chapterid,
+  bookListOpen,
+  chapterListOpen,
+  openBookList,
+  closeBookList,
+}: {
+  bookid: string;
+  chapterid: string;
+  bookListOpen: boolean;
+  chapterListOpen: boolean;
+  openBookList: () => void;
+  closeBookList: () => void;
+}) {
   console.log("chapterid", chapterid);
   const [loaded, setLoaded] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
@@ -39,10 +51,10 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
     initialState(chapterid)
   );
 
-  const handleKeyDown = (event) => {    
+  const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {     
+      if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {
         setSidebarOpen(false);
         setPromptsOpen(false);
         closeBookList();
@@ -55,11 +67,11 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
     }
   };
 
-  useEffect(() => {    
-    document.addEventListener('keydown', handleKeyDown);
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
 
@@ -108,7 +120,7 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state);
     await saveToHistory(state);
-    setTriggerHistoryRerender(t => t + 1);
+    setTriggerHistoryRerender((t) => t + 1);
   }
 
   async function saveToHistory(state: t.State) {
@@ -164,7 +176,7 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
     syllables: selectedSyllables,
   };
 
- */  const addToContents = (text: string) => {
+ */ const addToContents = (text: string) => {
     dispatch({
       type: "addToContents",
       payload: text,
@@ -191,60 +203,65 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
       <div className={`w-full h-full ${editorColSpan}`}>
         <div className="h-18 xl:h-8 p-xs w-full xl:my-xs flex">
           <div className="flex flex-none">
-          <div className="flex-none">
-            {!bookListOpen && (
-        <button
-          type="button"
-          className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
-          onClick={openBookList}
-        >
-          <span className="sr-only">Close</span>
-            <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-          
-        </button>)}
-      </div>
-</div>
+            <div className="flex-none">
+              {!bookListOpen && (
+                <button
+                  type="button"
+                  className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0"
+                  onClick={openBookList}
+                >
+                  <span className="sr-only">Close</span>
+                  <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+          </div>
           <div className="flex flex-grow" />
           <div className="flex flex-none">
+            {!state.saved && (
+              <NavButton label="Unsaved" onClick={() => {}}>
+                <MinusIcon className="h-5 w-5" aria-hidden="true" />
+              </NavButton>
+            )}
 
-          {!state.saved && <NavButton label="Unsaved" onClick={() => {              
-              }}>
-          <MinusIcon className="h-5 w-5" aria-hidden="true" />
-        </NavButton>}
+            {state.saved && (
+              <NavButton label="Unsaved" onClick={() => {}}>
+                <CheckCircleIcon
+                  className="h-5 w-5 text-green-700 dark:text-green-300"
+                  aria-hidden="true"
+                />
+              </NavButton>
+            )}
 
-        {state.saved && <NavButton label="Unsaved" onClick={() => {              
-              }}>
-          <CheckCircleIcon className="h-5 w-5 text-green-700 dark:text-green-300" aria-hidden="true" />
-        </NavButton>}
-
-          <NavButton label="Prompts" onClick={() => {
-                setPromptsOpen((current) => !current)
+            <NavButton
+              label="Prompts"
+              onClick={() => {
+                setPromptsOpen((current) => !current);
                 if (!promptsOpen) {
                   closeBookList();
                 }
+              }}
+            >
+              <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+            </NavButton>
 
-              }}>
-          <SparklesIcon className="h-5 w-5" aria-hidden="true" />
-        </NavButton>
-           
-        <NavButton label="Sidebar" onClick={() => {
+            <NavButton
+              label="Sidebar"
+              onClick={() => {
                 setSidebarOpen((s) => !s);
                 if (!sidebarOpen) {
                   closeBookList();
                 }
-
-              }
-              }>
-                      <EllipsisHorizontalCircleIcon
+              }}
+            >
+              <EllipsisHorizontalCircleIcon
                 className="h-5 w-5"
                 aria-hidden="true"
               />
-        </NavButton>
-
-        
+            </NavButton>
           </div>
         </div>
-        <div className="h-full w-full">         
+        <div className="h-full w-full">
           {state.error && (
             <div className="m-0 p-sm bg-red-700 w-full">
               <p>{state.error}</p>
@@ -284,18 +301,17 @@ export default function Editor({ bookid, chapterid, bookListOpen,  chapterListOp
             settings={settings}
             setSettings={setSettings}
             closeSidebar={() => setSidebarOpen(false)}
-            onSuggestionClick={addToContents}          
+            onSuggestionClick={addToContents}
             onSuggestionDelete={(index) => {
               dispatch({ type: "deleteSuggestion", payload: index });
             }}
             onSettingsSave={() => {}}
-            onHistoryClick={(newText) => {
+            onHistoryClick={async (newText) => {
               console.log("newText", newText);
-              console.log("save");
-              
-              onTextEditorSave(state);
-              
-              dispatch({ type: "addToContents", payload: newText });
+
+              await onTextEditorSave(state);
+
+              dispatch({ type: "pushTextToEditor", payload: newText });
             }}
             triggerHistoryRerender={triggerHistoryRerender}
           />

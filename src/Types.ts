@@ -7,6 +7,7 @@ export type EditorState = {
   tooltipOpen: boolean;
   selectedText: { index: number; length: number; contents: string };
   cachedSelectedTextContents?: string;
+  _pushTextToEditor?: string;
   // selectedSyllables: number;
 };
 
@@ -131,12 +132,12 @@ export type History = string[];
 export type Error = {
   tag: "error";
   message: string;
-}
+};
 
 export type Success = {
   tag: "success";
   payload: any;
-}
+};
 
 export type Result = Error | Success;
 

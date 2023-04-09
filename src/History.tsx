@@ -36,6 +36,8 @@ const History = ({
   }, [triggerHistoryRerender]);
 
   const applyPatch = (index) => {
+    console.log("index", index);
+    console.log("history", history);
     if (index < 0) return "";
     if (!history || !history[index]) return "";
     let old = history[0];
@@ -62,7 +64,7 @@ const History = ({
           onClick={(e) => {
             e.stopPropagation();
             // account for history being reversed
-            const newText = applyPatch(history.length - i);
+            const newText = applyPatch(history.length - 1 - i);
             onClick(newText);
           }}
           className="cursor-pointer"

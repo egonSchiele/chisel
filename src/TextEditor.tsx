@@ -59,7 +59,7 @@ const TextEditor = ({
     dispatch({ type: "setContents", payload: editor.getContents() });
     // document.body.addEventListener("click", focus);
     // return () => window.removeEventListener("click", focus);
-  }, [quillRef.current, state.chapterid]);
+  }, [quillRef.current, state.chapterid, state._pushTextToEditor]);
 
   const focus = () => {
     if (!quillRef.current) return;
@@ -179,33 +179,32 @@ const TextEditor = ({
 
   return (
     <div className="h-full">
-      
-        {error !== "" && <p>Error: {error}</p>}
-        <div className="ql-editor hidden">hi</div>
-        <div className="ql-toolbar ql-snow hidden">hi</div>
-        <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
-          <ContentEditable
-            value={state.title}
-            className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
-            onSubmit={(title) => {
-              dispatch({ type: "setTitle", payload: title });
-            }}
-            nextFocus={focus}
+      {error !== "" && <p>Error: {error}</p>}
+      <div className="ql-editor hidden">hi</div>
+      <div className="ql-toolbar ql-snow hidden">hi</div>
+      <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
+        <ContentEditable
+          value={state.title}
+          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
+          onSubmit={(title) => {
+            dispatch({ type: "setTitle", payload: title });
+          }}
+          nextFocus={focus}
+        />
+        {/* <ClickAwayListener onClickAway={handleClickAway}> */}
+        <div onClick={onClickEditor} className="mb-md h-full w-full">
+          <ReactQuill
+            ref={quillRef}
+            value={state.contents}
+            placeholder="Write something..."
+            onChange={handleTextChange}
+            onKeyDown={handleKeyDown}
+            onChangeSelection={setSelection}
           />
-          {/* <ClickAwayListener onClickAway={handleClickAway}> */}
-            <div onClick={onClickEditor} className="mb-md h-full w-full">
-              <ReactQuill
-                ref={quillRef}
-                value={state.contents}
-                placeholder="Write something..."
-                onChange={handleTextChange}
-                onKeyDown={handleKeyDown}
-                onChangeSelection={setSelection}
-              />
-            </div>
-          {/* </ClickAwayListener> */}
         </div>
-        {/* <Tooltip
+        {/* </ClickAwayListener> */}
+      </div>
+      {/* <Tooltip
           open={state.tooltipOpen}
           title={state.synonyms.map((synonym, index) => (
             <div
