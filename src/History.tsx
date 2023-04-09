@@ -8,9 +8,15 @@ import * as t from "./Types";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Panel from "./components/Panel";
 
-const History = ({ bookid, chapterid, onSave, triggerHistoryRerender, onClick }) => {
+const History = ({
+  bookid,
+  chapterid,
+  onSave,
+  triggerHistoryRerender,
+  onClick,
+}) => {
   const [history, setHistory] = useState<t.History>([]);
-console.log("rerendering history");
+  console.log("rerendering history");
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
@@ -29,36 +35,37 @@ console.log("rerendering history");
     func();
   }, [triggerHistoryRerender]);
 
-const applyPatch = (index) => {
-  if (index < 0) return "";
-  if (!history || !history[index]) return "";
-  let old = history[0];
-  if (index === 0) return old;
-  
-  history.slice(1, index+1).forEach((patch) => {
-    console.log("old", old);
-    console.log("patch", patch);
-    const result = Diff.applyPatch(old, patch);
-    console.log("result", result);
-    if (result) old = result;
-  });
-  return old;
-}
+  const applyPatch = (index) => {
+    if (index < 0) return "";
+    if (!history || !history[index]) return "";
+    let old = history[0];
+    if (index === 0) return old;
 
-const reverseHistory = [...history].reverse();
+    history.slice(1, index + 1).forEach((patch) => {
+      console.log("old", old);
+      console.log("patch", patch);
+      const result = Diff.applyPatch(old, patch);
+      console.log("result", result);
+      if (result) old = result;
+    });
+    return old;
+  };
+
+  const reverseHistory = [...history].reverse();
   return (
     <div className="grid grid-cols-1 gap-3">
       {reverseHistory.map((patch, i) => (
-        <Panel key={i} title="History" onClick={
-          (e) => {
+        <Panel
+          key={i}
+          title="History"
+          // @ts-ignore
+          onClick={(e) => {
             e.stopPropagation();
             // account for history being reversed
             const newText = applyPatch(history.length - i);
             onClick(newText);
-          }
-
-        }
-        className= "cursor-pointer"
+          }}
+          className="cursor-pointer"
         >
           <pre className="text-xs xl:text-sm">{patch}</pre>
         </Panel>
