@@ -132,14 +132,14 @@ export default function ChapterList({
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
-    icon: <XMarkIcon className="w-4 h-4" />,
+    icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
     className: buttonStyles,
   };
 
   const newMenuItem = {
     label: "New",
-    icon: <PlusIcon className="w-4 h-4 mr-xs" />,
+    icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5 mr-xs" />,
     onClick: newChapter,
     className: buttonStyles,
   };
@@ -148,7 +148,7 @@ export default function ChapterList({
     label: "Grid",
     icon: (
       <Link to={`/grid/${bookid}`}>
-        <ViewColumnsIcon className="w-4 h-4" />
+        <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />
       </Link>
     ),
     onClick: () => {},

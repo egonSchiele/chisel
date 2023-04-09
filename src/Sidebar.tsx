@@ -35,24 +35,33 @@ function Suggestions({ suggestions, onClick, onDelete }) {
 
 function Navigation({ onClick, closeSidebar }) {
   return (
-    <div className="w-48 xl:w-48 items-center">
-      <div className="">
+    <div className="w-48 xl:w-48 flex">
+      <div className="flex-grow">
         <NavButton label="Close" onClick={closeSidebar}>
-        <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+          <ChevronRightIcon
+            className="h-4 w-4 xl:h-5 xl:w-5"
+            aria-hidden="true"
+          />
         </NavButton>
+      </div>
+      <div className="">
         <NavButton label="Info" onClick={() => onClick("info")}>
-          <InformationCircleIcon className="h-4 w-4" aria-hidden="true" />
-        </NavButton>       
+          <InformationCircleIcon
+            className="h-4 w-4 xl:h-5 xl:w-5"
+            aria-hidden="true"
+          />
+        </NavButton>
         <NavButton label="Suggestions" onClick={() => onClick("suggestions")}>
-          <ClipboardIcon className="h-4 w-4" aria-hidden="true" />
-        </NavButton>       
+          <ClipboardIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
+        </NavButton>
         <NavButton label="History" onClick={() => onClick("history")}>
-          <ClockIcon className="h-4 w-4" aria-hidden="true" />
-        </NavButton>       
+          <ClockIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
+        </NavButton>
         <NavButton label="Settings" onClick={() => onClick("settings")}>
-          <Cog6ToothIcon className="h-4 w-4" aria-hidden="true" />
-        </NavButton>       
-      </div>      
+          <Cog6ToothIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
+        </NavButton>
+      </div>
+      <div className="flex-grow"></div>
     </div>
   );
 }
@@ -69,48 +78,65 @@ export default function Sidebar({
   onHistoryClick,
   triggerHistoryRerender,
 }) {
-  const [activePanel, setActivePanel] = useLocalStorage("activePanel", "suggestions")
-    const infoText = state.editor.selectedText.length === 0 ? state.editor.text : state.editor.selectedText.contents;
+  const [activePanel, setActivePanel] = useLocalStorage(
+    "activePanel",
+    "suggestions"
+  );
+  const infoText =
+    state.editor.selectedText.length === 0
+      ? state.editor.text
+      : state.editor.selectedText.contents;
   return (
-    <div className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}>
+    <div
+      className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}
+    >
       <div className="pt-xs">
         <Navigation onClick={setActivePanel} closeSidebar={closeSidebar} />
         {activePanel === "info" && (
-          
           <List title="Info" key={"info"} items={[<Info text={infoText} />]} />
-          
         )}
         {activePanel === "suggestions" && (
-          <List title="Suggestions" items={[
-          <Suggestions
-            key={"suggestions"}
-            suggestions={state.suggestions}
-            onClick={onSuggestionClick}
-            onDelete={onSuggestionDelete}
-          />]} />
+          <List
+            title="Suggestions"
+            items={[
+              <Suggestions
+                key={"suggestions"}
+                suggestions={state.suggestions}
+                onClick={onSuggestionClick}
+                onDelete={onSuggestionDelete}
+              />,
+            ]}
+          />
         )}
 
         {activePanel === "history" && (
-          <List title="History" items={[
-          <History
-           key={"history"} 
-           chapterid={state.chapter.chapterid} 
-           bookid={state.chapter.bookid} 
-           onSave={() => {}} triggerHistoryRerender={triggerHistoryRerender} 
-           onClick={onHistoryClick}
-           />
-          ]} />
+          <List
+            title="History"
+            items={[
+              <History
+                key={"history"}
+                chapterid={state.chapter.chapterid}
+                bookid={state.chapter.bookid}
+                onSave={() => {}}
+                triggerHistoryRerender={triggerHistoryRerender}
+                onClick={onHistoryClick}
+              />,
+            ]}
+          />
         )}
 
         {activePanel === "settings" && (
-          <List title="Settings" items={[
-          <Settings
-          key={"settings"}
-            settings={settings}
-            setSettings={setSettings}
-            onSave={onSettingsSave}
+          <List
+            title="Settings"
+            items={[
+              <Settings
+                key={"settings"}
+                settings={settings}
+                setSettings={setSettings}
+                onSave={onSettingsSave}
+              />,
+            ]}
           />
-          ]} />
         )}
       </div>
       {/*         <div className="flex flex-shrink-0 border-t border-gray-200 p-4"> */}

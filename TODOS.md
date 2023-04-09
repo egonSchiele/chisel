@@ -24,6 +24,18 @@
 - tooltips?
 - light mode grid shows overlapping text
 
+- would it be good to set a file type for chapters, so I can do syntax highlighting?
+- markdown preview?
+- support other writing formats: comics, screenplays
+- translate to other languages
+- if I delete a chapter, it should no longer show in the editor
+- add whisper for speech-to-text
+- allow users to change font, font size
+- history is rendering multiple times
+- loading a chapter takes a long time. Can I preload all chapters for a given book?
+- allow full-screen history pane
+- clicking a prompt should only send selected text
+
 ## Refactoring
 
 - clean up console.logs
