@@ -169,14 +169,7 @@ export default function Editor({
     }
   }
 
-  //let selectedSyllables = countSyllables(state.editor.selectedText.contents);
-
-  /* const infoPanelState = {
-    ...state.infoPanel,
-    syllables: selectedSyllables,
-  };
-
- */ const addToContents = (text: string) => {
+  const addToContents = (text: string) => {
     dispatch({
       type: "addToContents",
       payload: text,

@@ -78,7 +78,6 @@ module.exports = {
         dmlistitemhoverSecondary: "#252525",
         listBorder: "rgb(203,213,226)",
         dmlistBorder: "rgb(19,19,21)",
-        
       },
       spacing: {
         xs: "0.5rem",
@@ -88,13 +87,10 @@ module.exports = {
         xl: "4rem",
       },
       width: {
-        
         history: "800px",
         historysmall: "760px",
       },
-      height: {
-        
-      },
+      height: {},
       /*   padding: {
         xs: "0.5rem",
         sm: "1rem",

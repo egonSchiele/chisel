@@ -14,11 +14,15 @@
 - imports
 - figure out what code is saving chapters on a book object
 - admin page w usage stats for all users
-- clicking patch should save current state and load older state
 - search
 - text preview for chapters
 - move chapter to another book
 - sort by: date, most recent
+- drag and drop should only work for text files
+- add GA
+- put actions as a separate tab on that panel
+- tooltips?
+- light mode grid shows overlapping text
 
 ## Refactoring
 
