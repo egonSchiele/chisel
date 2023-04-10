@@ -64,11 +64,12 @@ function Navigation({ onClick, closeSidebar }) {
   );
 }
 
-type ActivePanel = "info" | "suggestions" | "settings" | "history";
 export default function Sidebar({
   state,
   settings,
   setSettings,
+  activePanel,
+  setActivePanel,
   closeSidebar,
   onSuggestionClick,
   onSuggestionDelete,
@@ -76,10 +77,6 @@ export default function Sidebar({
   onHistoryClick,
   triggerHistoryRerender,
 }) {
-  const [activePanel, setActivePanel] = useLocalStorage(
-    "activePanel",
-    "suggestions"
-  );
   const infoText =
     state.editor.selectedText.length === 0
       ? state.editor.text

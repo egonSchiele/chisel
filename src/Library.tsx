@@ -2,9 +2,14 @@ import React, { Fragment, Reducer, useEffect, useState } from "react";
 import * as t from "./Types";
 import "./globals.css";
 import Button from "./components/Button";
-import { TrashIcon } from "@heroicons/react/24/solid";
+import {
+  ClipboardIcon,
+  ClockIcon,
+  InformationCircleIcon,
+  TrashIcon,
+} from "@heroicons/react/24/solid";
 import BookList from "./BookList";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
@@ -14,10 +19,13 @@ import Launcher from "./Launcher";
 import {
   CheckCircleIcon,
   ChevronRightIcon,
+  Cog6ToothIcon,
+  DocumentArrowDownIcon,
   EllipsisHorizontalCircleIcon,
   MinusIcon,
   PlusIcon,
   SparklesIcon,
+  ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
@@ -44,6 +52,11 @@ export default function Library() {
   );
   const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
   const [promptsOpen, setPromptsOpen] = useLocalStorage("promptsOpen", false);
+  const [activePanel, setActivePanel] = useLocalStorage(
+    "activePanel",
+    "suggestions"
+  );
+
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
   const { bookid, chapterid } = useParams();
@@ -220,19 +233,93 @@ export default function Library() {
     });
   };
 
+  const togglePanel = (panel: string) => {
+    if (sidebarOpen && activePanel === panel) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+      setActivePanel(panel);
+    }
+  };
+
+  const navigate = useNavigate();
   const launchItems = [
-    /* 
-        {
-          label: "Save",
-          onClick: () => {
-            saveBook(state);
-          },
-          icon: <SaveIcon className="h-4 w-4" aria-hidden="true" />,
-        }, */
+    {
+      label: "Save",
+      onClick: () => {
+        onTextEditorSave(state);
+      },
+      icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+    },
     {
       label: "New Chapter",
       onClick: () => {},
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+    {
+      label: "Grid",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        navigate(`/grid/${bookid}`);
+      },
+    },
+    {
+      label: bookListOpen ? "Close Book List" : "Open Book List",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        setBookListOpen(!bookListOpen);
+      },
+    },
+    {
+      label: chapterListOpen ? "Close Chapter List" : "Open Chapter List",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        setChapterListOpen(!chapterListOpen);
+      },
+    },
+    {
+      label: promptsOpen ? "Close Prompts" : "Open Prompts",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        setPromptsOpen(!promptsOpen);
+      },
+    },
+    {
+      label:
+        sidebarOpen && activePanel == "history"
+          ? "Close History"
+          : "Open History",
+      icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("history");
+      },
+    },
+    {
+      label: sidebarOpen && activePanel == "info" ? "Close Info" : "Open Info",
+      icon: <InformationCircleIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("info");
+      },
+    },
+    {
+      label:
+        sidebarOpen && activePanel == "suggestions"
+          ? "Close Suggestions"
+          : "Open Suggestions",
+      icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("suggestions");
+      },
+    },
+    {
+      label:
+        sidebarOpen && activePanel == "settings"
+          ? "Close Settings"
+          : "Open Settings",
+      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("settings");
+      },
     },
   ];
 
@@ -365,6 +452,8 @@ export default function Library() {
               state={state}
               settings={settings}
               setSettings={setSettings}
+              activePanel={activePanel}
+              setActivePanel={setActivePanel}
               closeSidebar={() => setSidebarOpen(false)}
               onSuggestionClick={addToContents}
               onSuggestionDelete={(index) => {

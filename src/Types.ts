@@ -157,3 +157,5 @@ export type ReducerAction = {
   type: string;
   payload?: any;
 };
+
+type ActivePanel = "info" | "suggestions" | "settings" | "history";

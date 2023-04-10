@@ -12,46 +12,51 @@
   }
   ```
 */
-import React, { Fragment, useState, useEffect } from 'react'
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { Combobox, Dialog, Transition } from '@headlessui/react'
-import { MenuItem } from './Types'
+import React, { Fragment, useState, useEffect } from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { MenuItem } from "./Types";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
-export default function Launcher({items}:{items: MenuItem[]}) {
-  const [query, setQuery] = useState('')
+export default function Launcher({ items }: { items: MenuItem[] }) {
+  const [query, setQuery] = useState("");
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const handleKeyDown = (event) => {
-    if (event.metaKey && event.key === "p") {
-        event.preventDefault();
-        setOpen(cur => {
-            return !cur;
-        });
+    if (event.metaKey && event.shiftKey && event.key === "p") {
+      event.preventDefault();
+      setOpen((cur) => {
+        return !cur;
+      });
     }
-  }
+  };
 
-useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-        document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-}, [handleKeyDown]);
+  }, [handleKeyDown]);
 
   const filteredItems =
-    query === ''
+    query === ""
       ? items
       : items.filter((item) => {
-          return item.label.toLowerCase().includes(query.toLowerCase())
-        })
+          return item.label.toLowerCase().includes(query.toLowerCase());
+        });
 
   return (
-    <Transition.Root show={open} as={Fragment} afterLeave={() => setQuery('')} appear>
+    <Transition.Root
+      show={open}
+      as={Fragment}
+      afterLeave={() => setQuery("")}
+      appear
+    >
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
@@ -76,7 +81,12 @@ useEffect(() => {
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-xl bg-white dark:bg-black shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
-              <Combobox onChange={(item:MenuItem) => item.onClick()}>
+              <Combobox
+                onChange={(item: MenuItem) => {
+                  item.onClick();
+                  setOpen(false);
+                }}
+              >
                 <div className="relative">
                   <MagnifyingGlassIcon
                     className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
@@ -90,26 +100,31 @@ useEffect(() => {
                 </div>
 
                 {filteredItems.length > 0 && (
-                  <Combobox.Options static className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800 dark:text-gray-200">
+                  <Combobox.Options
+                    static
+                    className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800 dark:text-gray-200"
+                  >
                     {filteredItems.map((item, i) => (
                       <Combobox.Option
                         key={i}
                         value={item}
                         className={({ active }) =>
-                          classNames('cursor-default select-none px-4 py-2', active && 'bg-gray-300 dark:bg-dmsidebar')
+                          classNames(
+                            "cursor-default select-none px-4 py-2",
+                            active && "bg-gray-300 dark:bg-dmsidebar"
+                          )
                         }
                       >
-                        <div className='flex'>
-                        <div className=' mt-0.5'>{item.icon} </div>
-                        <div className='ml-1 flex-grow'>{item.label}
-                        </div>
+                        <div className="flex">
+                          <div className=" mt-0.5">{item.icon} </div>
+                          <div className="ml-1 flex-grow">{item.label}</div>
                         </div>
                       </Combobox.Option>
                     ))}
                   </Combobox.Options>
                 )}
 
-                {query !== '' && filteredItems.length === 0 && (
+                {query !== "" && filteredItems.length === 0 && (
                   <p className="p-4 text-sm text-gray-500">No items found.</p>
                 )}
               </Combobox>
@@ -118,5 +133,5 @@ useEffect(() => {
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }
