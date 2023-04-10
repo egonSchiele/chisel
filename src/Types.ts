@@ -16,15 +16,17 @@ export type InfoPanelState = {
 };
 
 export type State = {
+  books: Book[];
+  error: string;
+  selectedBook: Book | null;
+  loading: boolean;
+
   editor: EditorState;
-  chapterid: string;
   chapter: Chapter | null;
   synonyms: string[];
   infoPanel: InfoPanelState;
   suggestions: Suggestion[];
   saved: boolean;
-  error: string;
-  loading: boolean;
 };
 export type ButtonSize = "small" | "medium" | "large";
 export type SuggestionType =
@@ -149,4 +151,9 @@ export type MenuItem = {
   icon: any;
   onClick: () => void;
   className?: string;
+};
+
+export type ReducerAction = {
+  type: string;
+  payload?: any;
 };

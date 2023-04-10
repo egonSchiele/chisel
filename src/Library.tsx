@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, Reducer, useEffect, useState } from "react";
 import * as t from "./Types";
 import "./globals.css";
 import Button from "./components/Button";
@@ -9,36 +9,77 @@ import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
-import { useLocalStorage } from "./utils";
+import {
+  initialState as initialEditorState,
+  reducer as editorReducer,
+} from "./reducers/editor";
+import { useInterval, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import PromptsSidebar from "./PromptsSidebar";
+import Sidebar from "./Sidebar";
 
 export default function Library() {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer<Reducer<t.State, t.ReducerAction>>(
+    reducer,
+    initialState(null)
+  );
+  const [settings, setSettings] = useState<t.UserSettings>({
+    model: "",
+    max_tokens: 0,
+    num_suggestions: 0,
+    theme: "default",
+    version_control: false,
+    prompts: [],
+  });
 
   const [bookListOpen, setBookListOpen] = useLocalStorage("bookListOpen", true);
   const [chapterListOpen, setChapterListOpen] = useLocalStorage(
     "chapterListOpen",
     true
   );
+  const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
+  const [promptsOpen, setPromptsOpen] = useLocalStorage("promptsOpen", false);
+  const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
+
   const { bookid, chapterid } = useParams();
 
-  /*   const handleKeyDown = (event) => {    
+  useEffect(() => {
+    if (chapterid && state.selectedBook) {
+      const chapter = state.selectedBook.chapters.find(
+        (c: t.Chapter) => c.chapterid === chapterid
+      );
+      if (chapter) {
+        dispatch({ type: "SET_CHAPTER", payload: chapter });
+        return;
+      }
+    }
+    dispatch({ type: "SET_NO_CHAPTER" });
+  }, [chapterid, state.selectedBook]);
+
+  const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      setBookListOpen(false);
-      setChapterListOpen(false);
+      if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {
+        setSidebarOpen(false);
+        setPromptsOpen(false);
+        //closeBookList();
+      } else {
+        setSidebarOpen(true);
+        setPromptsOpen(true);
+
+        //openBookList();
+      }
     }
   };
 
-  useEffect(() => {    
-    document.addEventListener('keydown', handleKeyDown);
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
- */
 
   const fetchBook = async () => {
     if (!bookid) {
@@ -100,6 +141,69 @@ export default function Library() {
     }
   }
 
+  async function onTextEditorSave(state: t.State) {
+    await saveChapter(state);
+    await saveToHistory(state);
+    setTriggerHistoryRerender((t) => t + 1);
+  }
+
+  async function saveToHistory(state: t.State) {
+    const body = JSON.stringify({
+      chapterid: state.chapter.chapterid,
+      text: state.chapter.text,
+    });
+
+    console.log(state.chapter.text, "!!");
+
+    const result = await fetch("/api/saveToHistory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body,
+    });
+  }
+
+  async function saveChapter(state: t.State) {
+    if (state.saved) return;
+    if (!state.chapter) {
+      console.log("no chapter");
+      return;
+    }
+
+    const chapter = { ...state.chapter };
+    chapter.suggestions = state.suggestions;
+    const body = JSON.stringify({ chapter });
+
+    const result = await fetch("/api/saveChapter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+
+    if (!result.ok) {
+      dispatch({ type: "SET_ERROR", payload: result.statusText });
+      return;
+    } else {
+      dispatch({ type: "CLEAR_ERROR" });
+      dispatch({ type: "SET_SAVED", payload: true });
+    }
+  }
+
+  useInterval(() => {
+    saveChapter(state);
+  }, 5000);
+
+  const addToContents = (text: string) => {
+    dispatch({
+      type: "ADD_TO_CONTENTS",
+      payload: text,
+    });
+  };
+
   const launchItems = [
     /* 
         {
@@ -117,13 +221,6 @@ export default function Library() {
   ];
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
-
-  let chapter;
-  if (chapterid && state.selectedBook) {
-    chapter = state.selectedBook.chapters.find(
-      (c: t.Chapter) => c.chapterid === chapterid
-    );
-  }
 
   return (
     <div className="h-screen">
@@ -155,10 +252,11 @@ export default function Library() {
         )}
 
         <div className={`h-full flex-grow`}>
-          {chapter && (
+          {state.chapter && (
             <Editor
               bookid={bookid}
-              chapter={chapter}
+              state={state}
+              dispatch={dispatch}
               openBookList={() => {
                 setBookListOpen(true);
                 setChapterListOpen(true);
@@ -173,6 +271,43 @@ export default function Library() {
           )}
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
+        {promptsOpen && (
+          <div className="w-36 xl:w-48 flex-none min-h-screen">
+            <PromptsSidebar
+              dispatch={dispatch as any}
+              state={state.editor}
+              settings={settings}
+              closeSidebar={() => setPromptsOpen(false)}
+              onLoad={() => {
+                setSidebarOpen(true);
+              }}
+            />
+          </div>
+        )}
+
+        {sidebarOpen && (
+          <div className="w-48 xl:w-48 flex-none min-h-screen">
+            <Sidebar
+              state={state}
+              settings={settings}
+              setSettings={setSettings}
+              closeSidebar={() => setSidebarOpen(false)}
+              onSuggestionClick={addToContents}
+              onSuggestionDelete={(index) => {
+                dispatch({ type: "DELETE_SUGGESTION", payload: index });
+              }}
+              onSettingsSave={() => {}}
+              onHistoryClick={async (newText) => {
+                console.log("newText", newText);
+
+                await onTextEditorSave(state);
+
+                dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
+              }}
+              triggerHistoryRerender={triggerHistoryRerender}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

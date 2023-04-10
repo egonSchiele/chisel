@@ -1,7 +1,7 @@
 import produce, { current } from "immer";
 import { Chapter, EditorState, State } from "../Types";
 
-export const reducer = produce((draft: State, action: any) => {
+export const reducer = produce((state: State, draft: State, action: any) => {
   switch (action.type) {
     case "setText":
       console.log("setText", action.payload);

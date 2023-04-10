@@ -35,17 +35,14 @@ const useStyles = makeStyles({
 const TextEditor = ({
   dispatch,
   state,
-  settings,
   saved,
   onSave,
 }: {
   dispatch: (action: any) => State;
   state: State;
-  settings: t.UserSettings;
   saved: boolean;
   onSave: () => void;
 }) => {
-  console.log("TextEditor", { state, settings, saved });
   const quillRef = useRef();
 
   const [edited, setEdited] = useState(false);
@@ -53,7 +50,7 @@ const TextEditor = ({
     if (!quillRef.current) return;
     const editor = quillRef.current.getEditor();
     editor.setText(state.editor.text);
-    dispatch({ type: "setContents", payload: editor.getContents() });
+    dispatch({ type: "SET_CONTENTS", payload: editor.getContents() });
   }, [quillRef.current, state.chapterid, state.editor._pushTextToEditor]);
 
   const focus = () => {
@@ -66,7 +63,7 @@ const TextEditor = ({
     const quill = quillRef.current.getEditor();
     quill.deleteText(selectedWord.index, selectedWord.length);
     quill.insertText(selectedWord.index, synonym);
-    dispatch({ type: "synonymSelected", payload: quill.getContents() });
+    dispatch({ type: "SYNONYM_SELECTED", payload: quill.getContents() });
   };
 
   const highlightFillerWords = () => {
@@ -99,20 +96,20 @@ const TextEditor = ({
   };
 
   const handleClickAway = () => {
-    dispatch({ type: "closeTooltip" });
+    dispatch({ type: "CLOSE_TOOLTIP" });
   };
 
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
     if (!edited) return;
     const editor = quillRef.current.getEditor();
-    dispatch({ type: "setSaved", payload: false });
+    dispatch({ type: "SET_SAVED", payload: false });
     dispatch({
-      type: "setContents",
+      type: "SET_CONTENTS",
       payload: editor.getContents(),
     });
     dispatch({
-      type: "setText",
+      type: "SET_TEXT",
       payload: editor.getText(),
     });
   };
@@ -124,10 +121,10 @@ const TextEditor = ({
       );
       const synonyms = response.data.map((item) => item.word);
       console.log("synonyms", synonyms);
-      dispatch({ type: "setSynonyms", payload: synonyms });
+      dispatch({ type: "SET_SYNONYMS", payload: synonyms });
     } catch (error) {
       console.error("Error fetching synonyms:", error);
-      dispatch({ type: "clearSynonyms" });
+      dispatch({ type: "CLEAR_SYNONYMS" });
     }
   };
 
@@ -140,12 +137,12 @@ const TextEditor = ({
     if (range) {
       const word = quill.getText(range.index, range.length).trim();
       dispatch({
-        type: "setSelectedText",
+        type: "SET_SELECTED_TEXT",
         payload: { index: range.index, length: range.length, contents: word },
       });
     } else {
       console.log("no range");
-      dispatch({ type: "clearSelectedText" });
+      dispatch({ type: "CLEAR_SELECTED_TEXT" });
     }
   };
   const onClickEditor = (event) => {
@@ -155,10 +152,10 @@ const TextEditor = ({
         fetchSynonyms(word);
         const bounds = quill.getBounds(range.index);
         dispatch({
-          type: "setTooltipPosition",
+          type: "SET_TOOLTIP_POSITION",
           payload: { top: bounds.top, left: bounds.left },
         });
-        dispatch({ type: "openTooltip" });
+        dispatch({ type: "OPEN_TOOLTIP" });
       }
     }
   };
@@ -181,7 +178,7 @@ const TextEditor = ({
           value={state.editor.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
           onSubmit={(title) => {
-            dispatch({ type: "setTitle", payload: title });
+            dispatch({ type: "SET_TITLE", payload: title });
           }}
           nextFocus={focus}
         />

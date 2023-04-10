@@ -24,7 +24,7 @@ const History = ({
       });
       if (!res.ok) {
         console.log(res.statusText);
-        //dispatch({ type: "setError", payload: res.statusText });
+        //dispatch({ type: "SET_ERROR", payload: res.statusText });
         return;
       }
       const data = await res.json();

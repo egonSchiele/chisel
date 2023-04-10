@@ -34,7 +34,7 @@ export default function PromptsSidebar({
       num_suggestions: settings.num_suggestions,
     });
     setLoading(true);
-    dispatch({ type: "clearError" });
+    dispatch({ type: "CLEAR_ERROR" });
     console.log({ body });
     fetch("/api/suggestions", {
       method: "POST",
@@ -46,7 +46,7 @@ export default function PromptsSidebar({
       .then((res) => {
         console.log({ res });
         /* if (!res.ok) {
-          dispatch({ type: "setError", payload: res.statusText });
+          dispatch({ type: "SET_ERROR", payload: res.statusText });
 
           setLoading(false);
           return;
@@ -54,14 +54,14 @@ export default function PromptsSidebar({
         res.json().then((data) => {
           console.log({ data });
           if (data.error) {
-            dispatch({ type: "setError", payload: data.error });
+            dispatch({ type: "SET_ERROR", payload: data.error });
 
             setLoading(false);
             return;
           }
 
           if (!data.choices) {
-            dispatch({ type: "setError", payload: "No choices returned." });
+            dispatch({ type: "SET_ERROR", payload: "No choices returned." });
 
             setLoading(false);
             return;
@@ -70,12 +70,12 @@ export default function PromptsSidebar({
           data.choices.forEach((choice) => {
             const generatedText = choice.text;
             dispatch({
-              type: "addSuggestion",
+              type: "ADD_SUGGESTION",
               label,
               payload: generatedText,
             });
           });
-          dispatch({ type: "setSaved", payload: false });
+          dispatch({ type: "SET_SAVED", payload: false });
           setLoading(false);
           onLoad();
         });
@@ -101,12 +101,12 @@ export default function PromptsSidebar({
     const synonyms = response.map((item) => item.word);
     console.log("synonyms", synonyms);
     dispatch({
-      type: "addSuggestion",
+      type: "ADD_SUGGESTION",
       label: "Synonyms",
       payload: synonyms.join(", "),
     });
 
-    dispatch({ type: "setSaved", payload: false });
+    dispatch({ type: "SET_SAVED", payload: false });
     setLoading(false);
     onLoad();
   };

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import PromptsSidebar from "./PromptsSidebar";
 import React, { useState, useRef, useReducer, useEffect } from "react";
 import "./globals.css";
@@ -7,7 +6,6 @@ import Sidebar from "./Sidebar";
 import { EditorState, State } from "./Types";
 import * as t from "./Types";
 import { useInterval, useLocalStorage } from "./utils";
-import { initialState, reducer } from "./reducers/editor";
 import {
   CheckCircleIcon,
   ChevronRightIcon,
@@ -20,68 +18,26 @@ import { NavButton } from "./NavButton";
 
 export default function Editor({
   bookid,
-  chapter,
+  state,
+  dispatch,
   bookListOpen,
   chapterListOpen,
   openBookList,
   closeBookList,
 }: {
   bookid: string;
-  chapter: t.Chapter;
+  state: t.State;
+  dispatch: React.Dispatch<t.ReducerAction>;
   bookListOpen: boolean;
   chapterListOpen: boolean;
   openBookList: () => void;
   closeBookList: () => void;
 }) {
-  console.log("chapter", chapter);
-  const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
-  const [promptsOpen, setPromptsOpen] = useLocalStorage("promptsOpen", false);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
-  const [settings, setSettings] = useState<t.UserSettings>({
-    model: "",
-    max_tokens: 0,
-    num_suggestions: 0,
-    theme: "default",
-    version_control: false,
-    prompts: [],
-  });
 
-  const [state, dispatch] = useReducer<(state: State, action: any) => State>(
-    reducer,
-    initialState(chapter)
-  );
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {
-        setSidebarOpen(false);
-        setPromptsOpen(false);
-        closeBookList();
-      } else {
-        setSidebarOpen(true);
-        setPromptsOpen(true);
-
-        openBookList();
-      }
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
-  useInterval(() => {
-    saveChapter(state);
-  }, 5000);
-
-  useEffect(() => {
-    dispatch({ type: "setAllNewState", payload: initialState(chapter) });
-  }, [chapter]);
+  /*   useEffect(() => {
+    dispatch({ type: "SET_ALL_NEW_STATE", payload: initialState(chapter) });
+  }, [chapter]); */
 
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state);
@@ -127,28 +83,28 @@ export default function Editor({
     });
 
     if (!result.ok) {
-      dispatch({ type: "setError", payload: result.statusText });
+      dispatch({ type: "SET_ERROR", payload: result.statusText });
       return;
     } else {
-      dispatch({ type: "clearError" });
-      dispatch({ type: "setSaved", payload: true });
+      dispatch({ type: "CLEAR_ERROR" });
+      dispatch({ type: "SET_SAVED", payload: true });
     }
   }
 
   const addToContents = (text: string) => {
     dispatch({
-      type: "addToContents",
+      type: "ADD_TO_CONTENTS",
       payload: text,
     });
   };
 
   let editorColSpan = "col-span-4";
-
+  /* 
   if (sidebarOpen && promptsOpen) {
     editorColSpan = "col-span-2";
   } else if (sidebarOpen || promptsOpen) {
     editorColSpan = "col-span-3";
-  }
+  } */
 
   return (
     <div className="flex w-full h-full">
@@ -170,7 +126,7 @@ export default function Editor({
           </div>
           <div className="flex flex-grow" />
           <div className="flex flex-none">
-            {!state.saved && (
+            {/*    {!state.saved && (
               <NavButton label="Unsaved" onClick={() => {}}>
                 <MinusIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
@@ -183,9 +139,9 @@ export default function Editor({
                   aria-hidden="true"
                 />
               </NavButton>
-            )}
+            )} */}
 
-            <NavButton
+            {/*    <NavButton
               label="Prompts"
               onClick={() => {
                 setPromptsOpen((current) => !current);
@@ -210,65 +166,18 @@ export default function Editor({
                 className="h-5 w-5"
                 aria-hidden="true"
               />
-            </NavButton>
+            </NavButton> */}
           </div>
         </div>
         <div className="h-full w-full">
-          {state.error && (
-            <div className="m-0 p-sm bg-red-700 w-full">
-              <p>{state.error}</p>
-              {/* <XMarkIcon
-                  className="h-sm"
-                  onClick={() => dispatch("clearError")}
-                /> */}
-            </div>
-          )}
-
           <TextEditor
             dispatch={dispatch as any}
             state={state}
             saved={state.saved}
-            settings={settings}
             onSave={() => onTextEditorSave(state)}
           />
         </div>
       </div>
-      {promptsOpen && (
-        <div className="w-36 xl:w-48 flex-none min-h-screen">
-          <PromptsSidebar
-            dispatch={dispatch as any}
-            state={state.editor}
-            settings={settings}
-            closeSidebar={() => setPromptsOpen(false)}
-            onLoad={() => {
-              setSidebarOpen(true);
-            }}
-          />
-        </div>
-      )}
-      {sidebarOpen && (
-        <div className="w-48 xl:w-48 flex-none min-h-screen">
-          <Sidebar
-            state={state}
-            settings={settings}
-            setSettings={setSettings}
-            closeSidebar={() => setSidebarOpen(false)}
-            onSuggestionClick={addToContents}
-            onSuggestionDelete={(index) => {
-              dispatch({ type: "deleteSuggestion", payload: index });
-            }}
-            onSettingsSave={() => {}}
-            onHistoryClick={async (newText) => {
-              console.log("newText", newText);
-
-              await onTextEditorSave(state);
-
-              dispatch({ type: "pushTextToEditor", payload: newText });
-            }}
-            triggerHistoryRerender={triggerHistoryRerender}
-          />
-        </div>
-      )}
     </div>
   );
 }
