@@ -15,9 +15,17 @@ import {
 } from "./reducers/editor";
 import { useInterval, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  ChevronRightIcon,
+  EllipsisHorizontalCircleIcon,
+  MinusIcon,
+  PlusIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
+import { NavButton } from "./NavButton";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer<Reducer<t.State, t.ReducerAction>>(
@@ -63,12 +71,13 @@ export default function Library() {
       if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {
         setSidebarOpen(false);
         setPromptsOpen(false);
-        //closeBookList();
+        setBookListOpen(false);
+        setChapterListOpen(false);
       } else {
         setSidebarOpen(true);
         setPromptsOpen(true);
-
-        //openBookList();
+        setBookListOpen(true);
+        setChapterListOpen(true);
       }
     }
   };
@@ -251,27 +260,83 @@ export default function Library() {
           </div>
         )}
 
-        <div className={`h-full flex-grow`}>
-          {state.chapter && (
-            <Editor
-              bookid={bookid}
-              state={state}
-              dispatch={dispatch}
-              openBookList={() => {
-                setBookListOpen(true);
-                setChapterListOpen(true);
-              }}
-              closeBookList={() => {
-                setBookListOpen(false);
-                setChapterListOpen(false);
-              }}
-              bookListOpen={bookListOpen}
-              chapterListOpen={chapterListOpen}
-            />
-          )}
+        <div className={`h-full flex flex-col flex-grow`}>
+          <div className="flex-none h-fit m-xs flex">
+            <div className="flex-none">
+              {(!bookListOpen || !chapterListOpen) && (
+                <button
+                  type="button"
+                  className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0 "
+                  onClick={() => {
+                    setBookListOpen(true);
+                    setChapterListOpen(true);
+                  }}
+                >
+                  <span className="sr-only">Open</span>
+                  <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+
+            <div className="flex-grow" />
+            <div className="flex-none">
+              {!state.saved && (
+                <NavButton label="Unsaved" onClick={() => {}}>
+                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
+
+              {state.saved && (
+                <NavButton label="Unsaved" onClick={() => {}}>
+                  <CheckCircleIcon
+                    className="h-5 w-5 text-green-700 dark:text-green-300"
+                    aria-hidden="true"
+                  />
+                </NavButton>
+              )}
+
+              <NavButton
+                label="Prompts"
+                onClick={() => {
+                  setPromptsOpen((current) => !current);
+                  if (!promptsOpen) {
+                    setBookListOpen(false);
+                    setChapterListOpen(false);
+                  }
+                }}
+              >
+                <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+              </NavButton>
+
+              <NavButton
+                label="Sidebar"
+                onClick={() => {
+                  setSidebarOpen((s) => !s);
+                  if (!sidebarOpen) {
+                    setBookListOpen(false);
+                    setChapterListOpen(false);
+                  }
+                }}
+              >
+                <EllipsisHorizontalCircleIcon
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                />
+              </NavButton>
+            </div>
+          </div>
+          <div className="flex-grow h-full w-full">
+            {state.chapter && (
+              <Editor
+                state={state}
+                dispatch={dispatch}
+                onSave={onTextEditorSave}
+              />
+            )}
+          </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
-        {promptsOpen && (
+        {promptsOpen && state.chapter && (
           <div className="w-36 xl:w-48 flex-none min-h-screen">
             <PromptsSidebar
               dispatch={dispatch as any}
@@ -285,7 +350,7 @@ export default function Library() {
           </div>
         )}
 
-        {sidebarOpen && (
+        {sidebarOpen && state.chapter && (
           <div className="w-48 xl:w-48 flex-none min-h-screen">
             <Sidebar
               state={state}
