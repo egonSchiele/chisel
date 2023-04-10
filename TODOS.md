@@ -32,7 +32,6 @@
 - add whisper for speech-to-text
 - allow users to change font, font size
 - history is rendering multiple times
-- loading a chapter takes a long time. Can I preload all chapters for a given book?
 - allow full-screen history pane
 - clicking a prompt should only send selected text
 

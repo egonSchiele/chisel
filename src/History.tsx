@@ -33,7 +33,7 @@ const History = ({
       setHistory(data);
     };
     func();
-  }, [triggerHistoryRerender]);
+  }, [chapterid, triggerHistoryRerender]);
 
   const applyPatch = (index) => {
     console.log("index", index);

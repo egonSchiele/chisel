@@ -9,10 +9,6 @@ import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
-import {
-  initialState as initialEditorState,
-  reducer as editorReducer,
-} from "./reducers/editor";
 import { useInterval, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 import {
@@ -230,7 +226,9 @@ export default function Library() {
   ];
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
-
+  try {
+    console.log(state.chapter.chapterid, "<<<");
+  } catch (e) {}
   return (
     <div className="h-screen">
       <Launcher items={launchItems} />

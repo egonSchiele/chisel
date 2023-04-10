@@ -1,5 +1,3 @@
-//@ts-nocheck
-
 import { fillers } from "fillers";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -48,25 +46,20 @@ const TextEditor = ({
   const [edited, setEdited] = useState(false);
   useEffect(() => {
     if (!quillRef.current) return;
+    // @ts-ignore
     const editor = quillRef.current.getEditor();
     editor.setText(state.editor.text);
     dispatch({ type: "SET_CONTENTS", payload: editor.getContents() });
-  }, [quillRef.current, state.chapterid, state.editor._pushTextToEditor]);
+  }, [quillRef.current, state.chapter, state.editor._pushTextToEditor]);
 
   const focus = () => {
     if (!quillRef.current) return;
+    // @ts-ignore
     const editor = quillRef.current.getEditor();
     editor.focus();
   };
 
-  const handleSynonymClick = (synonym) => {
-    const quill = quillRef.current.getEditor();
-    quill.deleteText(selectedWord.index, selectedWord.length);
-    quill.insertText(selectedWord.index, synonym);
-    dispatch({ type: "SYNONYM_SELECTED", payload: quill.getContents() });
-  };
-
-  const highlightFillerWords = () => {
+  /*   const highlightFillerWords = () => {
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
     const text = quill.getText();
@@ -94,14 +87,11 @@ const TextEditor = ({
       idx = end + 1;
     });
   };
-
-  const handleClickAway = () => {
-    dispatch({ type: "CLOSE_TOOLTIP" });
-  };
-
+ */
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
     if (!edited) return;
+    // @ts-ignore
     const editor = quillRef.current.getEditor();
     dispatch({ type: "SET_SAVED", payload: false });
     dispatch({
@@ -131,6 +121,7 @@ const TextEditor = ({
   const setSelection = (e) => {
     console.log("setSelection", e);
     if (!quillRef.current) return;
+    // @ts-ignore
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
 
@@ -145,8 +136,8 @@ const TextEditor = ({
       dispatch({ type: "CLEAR_SELECTED_TEXT" });
     }
   };
-  const onClickEditor = (event) => {
-    setSelection();
+  /*   const onClickEditor = (event) => {
+    setSelection(event);
     if (event.metaKey || event.ctrlKey) {
       if (range && range.length > 0) {
         fetchSynonyms(word);
@@ -158,7 +149,7 @@ const TextEditor = ({
         dispatch({ type: "OPEN_TOOLTIP" });
       }
     }
-  };
+  }; */
 
   const handleKeyDown = (event) => {
     setEdited(true);
@@ -182,7 +173,7 @@ const TextEditor = ({
           }}
           nextFocus={focus}
         />
-        <div onClick={onClickEditor} className="mb-md h-full w-full">
+        <div className="mb-md h-full w-full">
           <ReactQuill
             ref={quillRef}
             value={state.editor.contents}
