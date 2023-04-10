@@ -128,8 +128,19 @@ export default function Library() {
     }
   };
 
+  const fetchSettings = async () => {
+    const result = await fd.fetchSettings();
+    console.log("result", result);
+    if (result.tag === "success") {
+      setSettings(result.payload);
+    } else {
+      dispatch({ type: "SET_ERROR", payload: result.message });
+    }
+  };
+
   useEffect(() => {
     fetchBooks();
+    fetchSettings();
   }, []);
 
   async function deleteBook(bookid: string) {

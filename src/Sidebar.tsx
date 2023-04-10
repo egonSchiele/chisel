@@ -11,6 +11,7 @@ import {
   Cog6ToothIcon,
   Cog8ToothIcon,
   InformationCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Info from "./Info";
 import { useLocalStorage } from "./utils";
@@ -36,14 +37,7 @@ function Suggestions({ suggestions, onClick, onDelete }) {
 function Navigation({ onClick, closeSidebar }) {
   return (
     <div className="w-48 xl:w-48 flex">
-      <div className="flex-grow">
-        <NavButton label="Close" onClick={closeSidebar}>
-          <ChevronRightIcon
-            className="h-4 w-4 xl:h-5 xl:w-5"
-            aria-hidden="true"
-          />
-        </NavButton>
-      </div>
+      <div className="flex-grow"></div>
       <div className="">
         <NavButton label="Info" onClick={() => onClick("info")}>
           <InformationCircleIcon
@@ -61,7 +55,11 @@ function Navigation({ onClick, closeSidebar }) {
           <Cog6ToothIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
       </div>
-      <div className="flex-grow"></div>
+      <div className="flex-grow items-end">
+        <NavButton label="Close" onClick={closeSidebar}>
+          <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
+        </NavButton>
+      </div>
     </div>
   );
 }

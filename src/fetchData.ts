@@ -35,3 +35,17 @@ export const fetchBooks = async () => {
   }
   return t.success(data.books);
 };
+
+export const fetchSettings = async () => {
+  const res = await fetch(`/api/settings`, { credentials: "include" });
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+  const data = await res.json();
+  console.log("got settings");
+  console.log(data);
+  if (!data) {
+    return t.error("Settings not found");
+  }
+  return t.success(data.settings);
+};
