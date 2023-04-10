@@ -40,26 +40,21 @@ const TextEditor = ({
   onSave,
 }: {
   dispatch: (action: any) => State;
-  state: EditorState;
+  state: State;
   settings: t.UserSettings;
   saved: boolean;
   onSave: () => void;
 }) => {
   console.log("TextEditor", { state, settings, saved });
-  const classes = useStyles();
   const quillRef = useRef();
-
-  const [error, setError] = useState("");
 
   const [edited, setEdited] = useState(false);
   useEffect(() => {
     if (!quillRef.current) return;
     const editor = quillRef.current.getEditor();
-    editor.setText(state.text);
+    editor.setText(state.editor.text);
     dispatch({ type: "setContents", payload: editor.getContents() });
-    // document.body.addEventListener("click", focus);
-    // return () => window.removeEventListener("click", focus);
-  }, [quillRef.current, state.chapterid, state._pushTextToEditor]);
+  }, [quillRef.current, state.chapterid, state.editor._pushTextToEditor]);
 
   const focus = () => {
     if (!quillRef.current) return;
@@ -179,63 +174,28 @@ const TextEditor = ({
 
   return (
     <div className="h-full">
-      {error !== "" && <p>Error: {error}</p>}
       <div className="ql-editor hidden">hi</div>
       <div className="ql-toolbar ql-snow hidden">hi</div>
       <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
         <ContentEditable
-          value={state.title}
+          value={state.editor.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
           onSubmit={(title) => {
             dispatch({ type: "setTitle", payload: title });
           }}
           nextFocus={focus}
         />
-        {/* <ClickAwayListener onClickAway={handleClickAway}> */}
         <div onClick={onClickEditor} className="mb-md h-full w-full">
           <ReactQuill
             ref={quillRef}
-            value={state.contents}
+            value={state.editor.contents}
             placeholder="Write something..."
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}
             onChangeSelection={setSelection}
           />
         </div>
-        {/* </ClickAwayListener> */}
       </div>
-      {/* <Tooltip
-          open={state.tooltipOpen}
-          title={state.synonyms.map((synonym, index) => (
-            <div
-              key={index}
-              className={classes.tooltip}
-              onClick={() => handleSynonymClick(synonym)}
-            >
-              {synonym}
-              {index !== state.synonyms.length - 1 && <SwapHoriz />}
-            </div>
-          ))}
-          PopperProps={{
-            style: {
-              top: state.tooltipPosition.top,
-              left: state.tooltipPosition.left,
-              zIndex: 9999,
-            },
-          }}
-          interactive
-        >
-          <div />
-        </Tooltip> */}
-      {/*       <Box>
-        <Paper elevation={3}>
-          <Box p={2}>
-            <Typography variant="h6">Syllable Count</Typography>
-            <Typography variant="h4">{selectedSyllables}</Typography>
-          </Box>
-        </Paper>
-      </Box>
- */}{" "}
     </div>
   );
 };

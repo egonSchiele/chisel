@@ -1,5 +1,5 @@
 import produce, { current } from "immer";
-import { EditorState, State } from "../Types";
+import { Chapter, EditorState, State } from "../Types";
 
 export const reducer = produce((draft: State, action: any) => {
   switch (action.type) {
@@ -92,33 +92,31 @@ export const reducer = produce((draft: State, action: any) => {
       draft.suggestions.splice(action.payload, 1);
       draft.saved = false;
       break;
+    case "setAllNewState":
+      return action.payload;
   }
 });
 
-const initialEditorState: EditorState = {
-  title: "",
-  text: "",
-  contents: {},
-  chapterid: "",
-  tooltipPosition: { top: 0, left: 0 },
-  tooltipOpen: false,
-  selectedText: { index: 0, length: 0, contents: "" },
+const initialEditorState = (chapter: Chapter): EditorState => {
+  return {
+    title: chapter.title,
+    text: chapter.text,
+    contents: {},
+    chapterid: chapter.chapterid,
+    tooltipPosition: { top: 0, left: 0 },
+    tooltipOpen: false,
+    selectedText: { index: 0, length: 0, contents: "" },
+  };
 };
 
-export const initialState = (chapterid: string): State => {
+export const initialState = (chapter: Chapter): State => {
   return {
-    editor: initialEditorState,
-    chapterid,
-    chapter: null,
+    editor: initialEditorState(chapter),
+    chapterid: chapter.chapterid,
+    chapter,
     synonyms: [],
     infoPanel: { syllables: 0 },
-    suggestions: [
-      {
-        type: "expand",
-        contents:
-          "In a faraway kingdom, there lived a vibrant young princess who was beloved by her people. Despite her royal wealth, not to mention her long flowing hair, the young princess felt trapped in the castle walls. She was desperate to explore the      ",
-      },
-    ],
+    suggestions: chapter.suggestions,
     saved: true,
     error: "",
     loading: true,

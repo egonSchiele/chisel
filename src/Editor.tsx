@@ -1,3 +1,4 @@
+// @ts-nocheck
 import PromptsSidebar from "./PromptsSidebar";
 import React, { useState, useRef, useReducer, useEffect } from "react";
 import "./globals.css";
@@ -19,21 +20,20 @@ import { NavButton } from "./NavButton";
 
 export default function Editor({
   bookid,
-  chapterid,
+  chapter,
   bookListOpen,
   chapterListOpen,
   openBookList,
   closeBookList,
 }: {
   bookid: string;
-  chapterid: string;
+  chapter: t.Chapter;
   bookListOpen: boolean;
   chapterListOpen: boolean;
   openBookList: () => void;
   closeBookList: () => void;
 }) {
-  console.log("chapterid", chapterid);
-  const [loaded, setLoaded] = React.useState(false);
+  console.log("chapter", chapter);
   const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
   const [promptsOpen, setPromptsOpen] = useLocalStorage("promptsOpen", false);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
@@ -48,7 +48,7 @@ export default function Editor({
 
   const [state, dispatch] = useReducer<(state: State, action: any) => State>(
     reducer,
-    initialState(chapterid)
+    initialState(chapter)
   );
 
   const handleKeyDown = (event) => {
@@ -75,47 +75,13 @@ export default function Editor({
     };
   }, [handleKeyDown]);
 
-  useEffect(() => {
-    const func = async () => {
-      const res = await fetch(`/api/chapter/${bookid}/${chapterid}`, {
-        credentials: "include",
-      });
-      if (!res.ok) {
-        dispatch({ type: "setError", payload: res.statusText });
-        return;
-      }
-      const data: t.Chapter = await res.json();
-      console.log("got chapter");
-      console.log(data);
-
-      dispatch({
-        type: "setLoadedChapterData",
-        payload: {
-          chapter: data,
-          suggestions: data.suggestions,
-          text: data.text,
-          title: data.title,
-          chapterid: data.chapterid,
-        },
-      });
-
-      const response = await fetch("/api/settings", { credentials: "include" });
-      const settingsData = await response.json();
-      console.log("got settings", settingsData);
-      setSettings(settingsData.settings);
-      setLoaded(true);
-    };
-    try {
-      func();
-    } catch (error) {
-      console.error(error);
-      dispatch({ type: "setError", payload: error });
-    }
-  }, [chapterid]);
-
   useInterval(() => {
     saveChapter(state);
   }, 5000);
+
+  useEffect(() => {
+    dispatch({ type: "setAllNewState", payload: initialState(chapter) });
+  }, [chapter]);
 
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state);
@@ -175,13 +141,6 @@ export default function Editor({
       payload: text,
     });
   };
-
-  if (!loaded) {
-    if (state.error) {
-      return <div>{state.error}</div>;
-    }
-    return <div>Loading...</div>;
-  }
 
   let editorColSpan = "col-span-4";
 
@@ -267,7 +226,7 @@ export default function Editor({
 
           <TextEditor
             dispatch={dispatch as any}
-            state={state.editor}
+            state={state}
             saved={state.saved}
             settings={settings}
             onSave={() => onTextEditorSave(state)}

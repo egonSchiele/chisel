@@ -17,12 +17,13 @@ export default function Library() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const [bookListOpen, setBookListOpen] = useLocalStorage("bookListOpen", true);
-  const [chapterListOpen, setChapterListOpen] = useLocalStorage("chapterListOpen", true);
-  const { bookid } = useParams();
-  const { chapterid } = useParams();
+  const [chapterListOpen, setChapterListOpen] = useLocalStorage(
+    "chapterListOpen",
+    true
+  );
+  const { bookid, chapterid } = useParams();
 
-
-/*   const handleKeyDown = (event) => {    
+  /*   const handleKeyDown = (event) => {    
     if (event.key === "Escape") {
       event.preventDefault();
       setBookListOpen(false);
@@ -42,19 +43,19 @@ export default function Library() {
   const fetchBook = async () => {
     if (!bookid) {
       return;
-    };
+    }
     const result = await fd.fetchBook(bookid);
     if (result.tag === "success") {
       dispatch({ type: "SET_BOOK", payload: result.payload });
     } else {
       dispatch({ type: "SET_ERROR", payload: result.message });
     }
-  }
+  };
 
   useEffect(() => {
     fetchBook();
   }, [bookid]);
-  
+
   // if the chapter id is null set the book list open to true
   // so that we do not end up with an empty screen.
   useEffect(() => {
@@ -62,26 +63,23 @@ export default function Library() {
       setBookListOpen(true);
     }
   }, [chapterid]);
-  
+
   // Force the chapter list open if a chapter has not been selected but a
   // book has.
   useEffect(() => {
     if (!chapterid && state.selectedBook) {
       setChapterListOpen(true);
     }
-  }, [state.selectedBook, chapterid])
+  }, [state.selectedBook, chapterid]);
 
   const fetchBooks = async () => {
-    const res = await fetch(`/books`);
-    if (!res.ok) {
-      dispatch({ type: "SET_ERROR", payload: res.statusText });
-      return;
+    const result = await fd.fetchBooks();
+    console.log("result", result);
+    if (result.tag === "success") {
+      dispatch({ type: "SET_BOOKS", payload: result.payload });
+    } else {
+      dispatch({ type: "SET_ERROR", payload: result.message });
     }
-    const data = await res.json();
-    console.log("got books");
-    console.log(data);
-    dispatch({ type: "SET_BOOKS", payload: data.books });
-    dispatch({ type: "CLEAR_ERROR" });
   };
 
   useEffect(() => {
@@ -111,32 +109,38 @@ export default function Library() {
           },
           icon: <SaveIcon className="h-4 w-4" aria-hidden="true" />,
         }, */
-        {
-          label: "New Chapter",
-          onClick: () => {
-            
-          },
-          icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
-        }  
-    ]
-    
+    {
+      label: "New Chapter",
+      onClick: () => {},
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+  ];
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
-const bothListsClosed = !bookListOpen && !chapterListOpen;
+
+  let chapter;
+  if (chapterid && state.selectedBook) {
+    chapter = state.selectedBook.chapters.find(
+      (c: t.Chapter) => c.chapterid === chapterid
+    );
+  }
+
   return (
     <div className="h-screen">
       <Launcher items={launchItems} />
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="flex h-full">
-        {bookListOpen && <div className="flex-none w-36 xl:w-48 h-full">
-          <BookList
-            books={state.books}
-            selectedBookId={selectedBookId}
-            onChange={fetchBooks}
-            closeSidebar={() => setBookListOpen(false)}
-            canCloseSidebar={chapterid !== undefined}
-          />
-        </div>}
+        {bookListOpen && (
+          <div className="flex-none w-36 xl:w-48 h-full">
+            <BookList
+              books={state.books}
+              selectedBookId={selectedBookId}
+              onChange={fetchBooks}
+              closeSidebar={() => setBookListOpen(false)}
+              canCloseSidebar={chapterid !== undefined}
+            />
+          </div>
+        )}
         {chapterListOpen && state.selectedBook && (
           <div className="flex-none w-40 xl:w-48 h-full">
             <ChapterList
@@ -149,31 +153,27 @@ const bothListsClosed = !bookListOpen && !chapterListOpen;
             />
           </div>
         )}
-        
+
         <div className={`h-full flex-grow`}>
-          {chapterid && <Editor bookid={bookid} chapterid={chapterid} openBookList={() => {
-            setBookListOpen(true);
-            setChapterListOpen(true);
-          }} closeBookList={() => {
-            setBookListOpen(false);
-            setChapterListOpen(false);
-          }} bookListOpen={bookListOpen}
-           chapterListOpen={ chapterListOpen}
-          />}
+          {chapter && (
+            <Editor
+              bookid={bookid}
+              chapter={chapter}
+              openBookList={() => {
+                setBookListOpen(true);
+                setChapterListOpen(true);
+              }}
+              closeBookList={() => {
+                setBookListOpen(false);
+                setChapterListOpen(false);
+              }}
+              bookListOpen={bookListOpen}
+              chapterListOpen={chapterListOpen}
+            />
+          )}
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
       </div>
     </div>
   );
 }
-
-/* 
-<TrashIcon
-className="w-6 ml-xs absolute top-0 right-0 cursor-pointer hover:text-white"
-onClick={() => deleteBook(book.bookid)}
-/>
-
-<Button className="rounded mt-md" buttonType="submit">
-New Book...
-</Button> */
-//<form className="" action="/api/newBook" method="POST">

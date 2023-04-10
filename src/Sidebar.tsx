@@ -93,7 +93,11 @@ export default function Sidebar({
       <div className="pt-xs">
         <Navigation onClick={setActivePanel} closeSidebar={closeSidebar} />
         {activePanel === "info" && (
-          <List title="Info" key={"info"} items={[<Info text={infoText} />]} />
+          <List
+            title="Info"
+            key={"info"}
+            items={[<Info key="info" text={infoText} />]}
+          />
         )}
         {activePanel === "suggestions" && (
           <List
