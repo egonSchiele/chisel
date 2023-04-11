@@ -1,6 +1,6 @@
-# Frisson
+# Chisel
 
-A writing app with AI features.
+A writing app for disorganized writers.
 
 ### Installation
 
