@@ -17,6 +17,8 @@ import { initialState, reducer } from "./reducers/library";
 import { useInterval, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 import {
+  Bars3BottomLeftIcon,
+  BookOpenIcon,
   CheckCircleIcon,
   ChevronRightIcon,
   Cog6ToothIcon,
@@ -322,6 +324,30 @@ export default function Library() {
       },
     },
   ];
+
+  if (state.selectedBook) {
+    state.selectedBook.chapters.forEach((chapter, i) => {
+      launchItems.push({
+        label: chapter.title,
+        onClick: () => {
+          navigate(
+            `/book/${state.selectedBook.bookid}/chapter/${chapter.chapterid}`
+          );
+        },
+        icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    });
+  }
+
+  state.books.forEach((book, i) => {
+    launchItems.push({
+      label: book.title,
+      onClick: () => {
+        navigate(`/book/${book.bookid}`);
+      },
+      icon: <BookOpenIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  });
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
   try {
