@@ -317,7 +317,7 @@ export default function Book({}) {
       stackElements.push(
         <p
           key={key++}
-          className="absolute w-8 h-8 p-2 rounded-md bg-red-700 text-center content-center -m-xs"
+          className="absolute w-8 h-8 p-2 rounded-md bg-red-700 text-center content-center -m-xs text-white"
           style={{
             top: `${y * height}px`,
             left: `${x * width}px`,
@@ -414,7 +414,7 @@ export default function Book({}) {
     return <div>Loading...</div>;
   }
   return (
-    <div className="mx-auto mt-xs w-full h-full bg-dmbackground items-center justify-between p-6 lg:px-8">
+    <div className="mx-auto mt-xs w-full h-full bg-background dark:bg-dmbackground items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
       <Launcher items={launchItems} />
       <p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>

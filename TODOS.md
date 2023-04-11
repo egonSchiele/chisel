@@ -33,6 +33,9 @@
 - history is rendering multiple times
 - allow full-screen history pane
 - if title is "", it is not clickable
+- Ability to star history.
+- Show different versions of some text side-by-side.
+- Use advice from Steven pinker book advice.
 
 ## Refactoring
 
