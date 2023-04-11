@@ -93,12 +93,14 @@ export const reducer = produce<t.State>(
         draft.editor.title = action.payload;
         draft.chapter.title = action.payload;
         // find chapter and then update it so that the chapter list also receives the update.
-        const chapterIdx = draft.selectedBook.chapters.findIndex((chapter) => {
-          return chapter.chapterid === draft.chapter.chapterid;
-        });
-        
+        const chapterIdx = draft.selectedBook.chapterTitles.findIndex(
+          (chapter) => {
+            return chapter.chapterid === draft.chapter.chapterid;
+          }
+        );
+
         if (chapterIdx !== -1) {
-          draft.selectedBook.chapters[chapterIdx].title = action.payload;
+          draft.selectedBook.chapterTitles[chapterIdx].title = action.payload;
         }
         draft.saved = false;
         break;

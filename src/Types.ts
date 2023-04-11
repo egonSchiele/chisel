@@ -60,11 +60,17 @@ export type Column = {
   title: string;
 };
 
+export type ChapterTitle = {
+  chapterid: string;
+  title: string;
+};
+
 export type Book = {
   userid: string;
   bookid: string;
   title: string;
   author: string;
+  chapterTitles: ChapterTitle[];
   chapters: Chapter[];
   design: {
     coverColor: string;
@@ -148,7 +154,7 @@ export const success = (payload: any): Success => ({ tag: "success", payload });
 
 export type MenuItem = {
   label: string;
-  icon: any;
+  icon?: any;
   onClick: () => void;
   className?: string;
 };

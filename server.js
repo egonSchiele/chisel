@@ -332,9 +332,9 @@ app.post(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    let { chapterid } = req.body;
+    let { chapterid, bookid } = req.body;
     try {
-      const data = await deleteChapter(chapterid);
+      const data = await deleteChapter(chapterid, bookid);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error deleting chapter:", error);

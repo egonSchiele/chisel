@@ -21,7 +21,7 @@ export const saveBook = async (book) => {
     console.log("no book to save");
     return;
   }
-  book.chapters = [];
+
   book.created_at = Date.now();
   const docRef = db.collection("books").doc(book.bookid);
   try {
@@ -53,11 +53,9 @@ export const getBook = async (bookid) => {
   } else {
     chapters.forEach((chapter) => {
       const data = chapter.data();
-      console.log(">> data.bookid", data.bookid, data.chapterid);
       book.chapters.push(data);
     });
   }
-  console.log("chapters", book.chapters);
   return book;
 };
 
@@ -97,9 +95,29 @@ export const getBooks = async (userid) => {
     return [];
   } else {
     const allBooks = [];
-    books.forEach((book) => {
-      allBooks.push(book.data());
+    books.forEach(async (book) => {
+      const data = book.data();
+      // make sure book objs have chapter titles
+      /*   if (data.chapters.length === 0) {
+        const _book = await getBook(data.bookid);
+        if (_book.chapters.length > 0) {
+          _book.chapters.forEach((chapter) => {
+            data.chapters.push({
+              chapterid: chapter.chapterid,
+              title: chapter.title,
+            });
+          });
+          await saveBook(data);
+        }
+      } */
+      if (!data.chapterTitles) {
+        data.chapterTitles = data.chapters;
+        data.chapters = [];
+        await saveBook(data);
+      }
+      allBooks.push(data);
     });
+    console.log("allbooks", allBooks);
     return allBooks;
   }
 };
@@ -143,10 +161,19 @@ export const getChapter = async (chapterid) => {
   return chapter.data();
 };
 
-export const deleteChapter = async (chapterid) => {
+export const deleteChapter = async (chapterid, bookid) => {
   console.log("getting chapter");
   console.log({ chapterid });
   await db.collection("chapters").doc(chapterid).delete();
+  const book = await getBook(bookid);
+  if (!book) {
+    console.log("no book to update");
+    return;
+  }
+  book.chapterTitles = book.chapterTitles.filter((chapter) => {
+    return chapter.chapterid !== chapterid;
+  });
+  await saveBook(book);
 };
 
 export const favoriteChapter = async (chapterid) => {

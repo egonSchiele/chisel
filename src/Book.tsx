@@ -10,6 +10,7 @@ const initialState: t.Book = {
   bookid: "",
   title: "",
   author: "",
+  chapterTitles: [],
   chapters: [],
   design: {
     coverColor: "bg-red-700",

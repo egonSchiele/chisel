@@ -19,6 +19,16 @@ export function ListItem({
   const selectedCss = selected
     ? "bg-listitemhover dark:bg-dmlistitemhover"
     : "";
+  const listMenuItems: t.MenuItem[] = [
+    {
+      label: "Favorite",
+      onClick: onFavorite,
+    },
+    {
+      label: "Delete",
+      onClick: onDelete,
+    },
+  ];
   return (
     <div
       className={`flex py-xs text-black dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss}`}
@@ -32,7 +42,7 @@ export function ListItem({
         </div>
       </Link>
       <div className="flex flex-none cursor-pointer items-center mr-xs">
-        <ListMenu onFavorite={onFavorite} onDelete={onDelete} />
+        <ListMenu items={listMenuItems} />
       </div>
     </div>
   );

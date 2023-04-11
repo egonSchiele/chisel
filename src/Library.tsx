@@ -386,6 +386,21 @@ export default function Library() {
     });
   });
 
+  const chapterlistChapters = [];
+
+  if (state.selectedBook && state.selectedBook.chapterTitles) {
+    state.selectedBook.chapterTitles.forEach((chaptertitle) => {
+      const chapter = state.selectedBook.chapters.find(
+        (c) => c.chapterid === chaptertitle.chapterid
+      );
+      if (chapter) {
+        chapterlistChapters.push(chapter);
+      } else {
+        console.log("chapter not found", chaptertitle);
+      }
+    });
+  }
+
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
   try {
     console.log(state.chapter.chapterid, "<<<");
@@ -409,7 +424,7 @@ export default function Library() {
         {chapterListOpen && state.selectedBook && (
           <div className="flex-none w-40 xl:w-48 h-full">
             <ChapterList
-              chapters={state.selectedBook.chapters}
+              chapters={chapterlistChapters}
               bookid={state.selectedBook.bookid}
               selectedChapterId={chapterid || ""}
               onChange={() => fetchBook()}
