@@ -19,10 +19,8 @@
 - move chapter to another book
 - sort by: date, most recent
 - drag and drop should only work for text files
-- add GA
 - put actions as a separate tab on that panel
 - tooltips?
-- light mode grid shows overlapping text
 
 - would it be good to set a file type for chapters, so I can do syntax highlighting?
 - markdown preview?

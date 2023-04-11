@@ -2,9 +2,10 @@ import * as fd from "./fetchData";
 import * as t from "./Types";
 import React from "react";
 import List from "./components/List";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "./components/Button";
 import {
+  ArrowsUpDownIcon,
   EllipsisHorizontalIcon,
   PlusIcon,
   ViewColumnsIcon,
@@ -12,6 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
+import Draggable from "react-draggable";
 
 export default function ChapterList({
   chapters,
@@ -30,6 +32,7 @@ export default function ChapterList({
   dispatch: React.Dispatch<t.ReducerAction>;
   canCloseSidebar?: boolean;
 }) {
+  const [editing, setEditing] = React.useState(false);
   async function deleteChapter(chapterid: string) {
     console.log("delete chapter", chapterid);
     dispatch({ type: "LOADING" });
@@ -99,17 +102,35 @@ export default function ChapterList({
   };
 
   const sublist = (title, chapters: t.Chapter[]) => {
-    const items = chapters.map((chapter, index) => (
-      <li key={chapter.chapterid}>
-        <ListItem
-          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
-          title={chapter.title}
-          selected={chapter.chapterid === selectedChapterId}
-          onDelete={() => deleteChapter(chapter.chapterid)}
-          onFavorite={() => favoriteChapter(chapter.chapterid)}
-        />
-      </li>
-    ));
+    const items = chapters.map((chapter, index) => {
+      const item = (
+        <li key={chapter.chapterid}>
+          <ListItem
+            link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+            title={chapter.title}
+            selected={chapter.chapterid === selectedChapterId}
+            onDelete={() => deleteChapter(chapter.chapterid)}
+            onFavorite={() => favoriteChapter(chapter.chapterid)}
+          />
+        </li>
+      );
+      if (editing) {
+        return (
+          <Draggable
+            key={chapter.chapterid}
+            axis="y"
+            handle=".handle"
+            onStop={(...args) => console.log("onStop", args)}
+          >
+            <div className="bg-gray-600 handle cursor-pointer text-sm xl:text-md p-xs my-1">
+              {chapter.title}
+            </div>
+          </Draggable>
+        );
+      } else {
+        return item;
+      }
+    });
     return (
       <List
         key={title}
@@ -124,6 +145,7 @@ export default function ChapterList({
   const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
   const otherChapters = chapters.filter((chapter) => !chapter.favorite);
 
+  const navigate = useNavigate();
   const lists = [];
 
   if (favoriteChapters.length > 0) {
@@ -147,21 +169,48 @@ export default function ChapterList({
     className: buttonStyles,
   };
 
-  const showGrid = {
-    label: "Grid",
-    icon: (
-      <Link to={`/grid/${bookid}`}>
-        <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />
-      </Link>
-    ),
+  const dropdownMenuItems = [
+    {
+      label: "Grid mode",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => navigate(`/grid/${bookid}`),
+      className: buttonStyles,
+    },
+    {
+      label: "Import",
+      icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {},
+      className: buttonStyles,
+    },
+    {
+      label: "Reorder",
+      icon: <ArrowsUpDownIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => setEditing(true),
+      className: buttonStyles,
+    },
+  ];
+
+  const dropdownMenu = {
+    label: "Menu",
+    icon: <ListMenu items={dropdownMenuItems} />,
     onClick: () => {},
     className: buttonStyles,
   };
 
-  const leftMenuItem = [newMenuItem, showGrid];
+  let leftMenuItem = [newMenuItem, dropdownMenu];
+  if (editing) {
+    leftMenuItem = [
+      {
+        label: "End",
+        icon: <p>End</p>,
+        onClick: () => setEditing(false),
+        className: buttonStyles,
+      },
+    ];
+  }
   return (
     <List
-      title="Chapters"
+      title={editing ? "Editing" : "Chapters"}
       items={lists}
       rightMenuItem={rightMenuItem}
       leftMenuItem={leftMenuItem}
