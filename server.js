@@ -180,10 +180,16 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
     favorite: false,
   };
 
-  console.log(chapter);
-
-  //book.chapters.push(chapter);
   await saveChapter(chapter);
+
+  const book = await getBook(bookid);
+  if (!book) {
+    console.log("no book with id, " + bookid);
+    res.status(404).end();
+  }
+
+  book.chapterTitles.push({ chapterid, title });
+  await saveBook(book);
   res.redirect(`/book/${bookid}/chapter/${chapterid}`);
 });
 

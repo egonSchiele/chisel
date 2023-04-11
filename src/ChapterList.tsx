@@ -18,6 +18,7 @@ export default function ChapterList({
   selectedChapterId,
   onChange,
   closeSidebar,
+  dispatch,
   canCloseSidebar = true,
 }: {
   chapters: t.Chapter[];
@@ -25,10 +26,12 @@ export default function ChapterList({
   selectedChapterId: string;
   onChange: () => void;
   closeSidebar: () => void;
+  dispatch: React.Dispatch<t.ReducerAction>;
   canCloseSidebar?: boolean;
 }) {
   async function deleteChapter(chapterid: string) {
     console.log("delete chapter", chapterid);
+    dispatch({ type: "LOADING" });
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
       headers: {
@@ -36,6 +39,7 @@ export default function ChapterList({
       },
       body: JSON.stringify({ bookid, chapterid }),
     });
+    dispatch({ type: "LOADED" });
     if (!res.ok) {
       console.log(res.statusText);
       return;
@@ -45,6 +49,7 @@ export default function ChapterList({
 
   async function favoriteChapter(chapterid: string) {
     console.log("favorite chapter", chapterid);
+    dispatch({ type: "LOADING" });
     const res = await fetch(`/api/favoriteChapter`, {
       method: "POST",
       headers: {
@@ -52,6 +57,7 @@ export default function ChapterList({
       },
       body: JSON.stringify({ bookid, chapterid }),
     });
+    dispatch({ type: "LOADED" });
     if (!res.ok) {
       console.log(res.statusText);
       return;
@@ -62,7 +68,7 @@ export default function ChapterList({
   const newChapter = async (title = "New Chapter", text = "") => {
     console.log({ bookid, title, text });
     const body = JSON.stringify({ bookid, title, text });
-
+    dispatch({ type: "LOADING" });
     const res = await fetch("/api/newChapter", {
       method: "POST",
       headers: {
@@ -70,6 +76,7 @@ export default function ChapterList({
       },
       body,
     });
+    dispatch({ type: "LOADED" });
     if (!res.ok) {
       console.log("error");
       return;

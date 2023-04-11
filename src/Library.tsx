@@ -430,6 +430,7 @@ export default function Library() {
               onChange={() => fetchBook()}
               closeSidebar={() => setChapterListOpen(false)}
               canCloseSidebar={chapterid !== undefined || !state.selectedBook}
+              dispatch={dispatch}
             />
           </div>
         )}
