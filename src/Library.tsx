@@ -74,8 +74,8 @@ export default function Library() {
       }
     }
     dispatch({ type: "SET_NO_CHAPTER" });
-  }, [chapterid, state.selectedBook]);
-
+  }, [chapterid, state.selectedBook?.bookid]);
+  
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
