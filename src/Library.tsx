@@ -181,6 +181,7 @@ export default function Library() {
 
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state);
+    await saveBook(state.selectedBook);
     await saveToHistory(state);
     setTriggerHistoryRerender((t) => t + 1);
   }
@@ -232,8 +233,33 @@ export default function Library() {
   }
 
   useInterval(() => {
-    saveChapter(state);
+    const func = async () => {
+      await saveChapter(state);
+      await saveBook(state.selectedBook);
+    };
+    func();
   }, 5000);
+
+  async function saveBook(_book: t.Book) {
+    if (state.saved) return;
+    if (!_book) {
+      console.log("no book");
+      return;
+    }
+
+    const book = { ..._book };
+
+    console.log("saving book", book);
+    book.chapters = [];
+    const body = JSON.stringify({ book });
+    const result = await fetch("/api/saveBook", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+  }
 
   const addToContents = (text: string) => {
     dispatch({

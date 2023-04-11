@@ -1,3 +1,5 @@
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 import * as fd from "./fetchData";
 import * as t from "./Types";
 import React from "react";
@@ -13,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
-import Draggable from "react-draggable";
+//import Draggable from "react-draggable";
 
 export default function ChapterList({
   chapters,
@@ -101,6 +103,17 @@ export default function ChapterList({
     }
   };
 
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    console.log(result);
+    const ids = chapters.map((chapter) => chapter.chapterid);
+
+    const [removed] = ids.splice(result.source.index, 1);
+    ids.splice(result.destination.index, 0, removed);
+
+    dispatch({ type: "SET_CHAPTER_ORDER", payload: { bookid, ids } });
+  };
+
   const sublist = (title, chapters: t.Chapter[]) => {
     const items = chapters.map((chapter, index) => {
       const item = (
@@ -114,22 +127,7 @@ export default function ChapterList({
           />
         </li>
       );
-      if (editing) {
-        return (
-          <Draggable
-            key={chapter.chapterid}
-            axis="y"
-            handle=".handle"
-            onStop={(...args) => console.log("onStop", args)}
-          >
-            <div className="bg-gray-600 handle cursor-pointer text-sm xl:text-md p-xs my-1">
-              {chapter.title}
-            </div>
-          </Draggable>
-        );
-      } else {
-        return item;
-      }
+      return item;
     });
     return (
       <List
@@ -142,6 +140,40 @@ export default function ChapterList({
     );
   };
 
+  const sublistDraggable = (title, chapters: t.Chapter[]) => {
+    return (
+      <div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {chapters.map((chapter, index) => (
+                  <Draggable
+                    key={chapter.chapterid}
+                    draggableId={chapter.chapterid}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="bg-gray-600 p-xs my-1 text-sm border-y-2 border-dmsidebar rounded"
+                      >
+                        {chapter.title}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+    );
+  };
+
   const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
   const otherChapters = chapters.filter((chapter) => !chapter.favorite);
 
@@ -149,10 +181,17 @@ export default function ChapterList({
   const lists = [];
 
   if (favoriteChapters.length > 0) {
-    lists.push(sublist("Favorites", favoriteChapters));
+    if (editing) {
+      lists.push(sublistDraggable("Favorites", favoriteChapters));
+    } else {
+      lists.push(sublist("Favorites", favoriteChapters));
+    }
   }
-  lists.push(sublist("All", otherChapters));
-
+  if (editing) {
+    lists.push(sublistDraggable("All", otherChapters));
+  } else {
+    lists.push(sublist("All", otherChapters));
+  }
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = canCloseSidebar && {

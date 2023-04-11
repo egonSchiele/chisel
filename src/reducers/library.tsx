@@ -177,6 +177,21 @@ export const reducer = produce<t.State>(
         break;
       case "SET_ALL_NEW_STATE":
         return action.payload;
+      case "SET_CHAPTER_ORDER":
+        const { ids, bookid } = action.payload;
+        console.log(ids);
+        const newTitles = [];
+        ids.forEach((id) => {
+          const chapter = draft.selectedBook.chapterTitles.find(
+            (chapter) => chapter.chapterid === id
+          );
+          if (chapter) {
+            newTitles.push(chapter);
+          }
+        });
+        draft.selectedBook.chapterTitles = newTitles;
+        draft.saved = false;
+        break;
       default:
         return draft;
     }
