@@ -60,12 +60,15 @@ export default function ChapterList({
   }
 
   const newChapter = async (title = "New Chapter", text = "") => {
+    console.log({ bookid, title, text });
+    const body = JSON.stringify({ bookid, title, text });
+
     const res = await fetch("/api/newChapter", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid, title, text }),
+      body,
     });
     if (!res.ok) {
       console.log("error");
@@ -140,7 +143,7 @@ export default function ChapterList({
   const newMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5 mr-xs" />,
-    onClick: newChapter,
+    onClick: () => newChapter("Untitled"),
     className: buttonStyles,
   };
 

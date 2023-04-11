@@ -71,7 +71,8 @@ export default function Editor({
         <div className="h-full w-full">
           <TextEditor
             dispatch={dispatch as any}
-            state={state}
+            state={state.editor}
+            chapterid={state.chapter.chapterid}
             saved={state.saved}
             onSave={() => onSave(state)}
           />

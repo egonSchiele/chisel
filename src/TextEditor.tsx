@@ -33,14 +33,17 @@ const useStyles = makeStyles({
 const TextEditor = ({
   dispatch,
   state,
+  chapterid,
   saved,
   onSave,
 }: {
   dispatch: (action: any) => State;
-  state: State;
+  state: EditorState;
+  chapterid: string;
   saved: boolean;
   onSave: () => void;
 }) => {
+  console.log("TextEditor", chapterid);
   const quillRef = useRef();
 
   const [edited, setEdited] = useState(false);
@@ -48,9 +51,9 @@ const TextEditor = ({
     if (!quillRef.current) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    editor.setText(state.editor.text);
+    editor.setText(state.text);
     dispatch({ type: "SET_CONTENTS", payload: editor.getContents() });
-  }, [quillRef.current, state.chapter, state.editor._pushTextToEditor]);
+  }, [quillRef.current, chapterid, state._pushTextToEditor]);
 
   const focus = () => {
     if (!quillRef.current) return;
@@ -166,7 +169,7 @@ const TextEditor = ({
       <div className="ql-toolbar ql-snow hidden">hi</div>
       <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
         <ContentEditable
-          value={state.editor.title}
+          value={state.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
           onSubmit={(title) => {
             dispatch({ type: "SET_TITLE", payload: title });
@@ -176,7 +179,7 @@ const TextEditor = ({
         <div className="mb-md h-full w-full">
           <ReactQuill
             ref={quillRef}
-            value={state.editor.contents}
+            value={state.contents}
             placeholder="Write something..."
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}

@@ -28,7 +28,11 @@ import EditableInput from "./components/EditableInput";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import Select from "./components/Select";
 import ContentEditable from "./components/ContentEditable";
-import { Bars3BottomLeftIcon, ChevronLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3BottomLeftIcon,
+  ChevronLeftIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import { NavButton } from "./NavButton";
 import { useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
@@ -79,7 +83,7 @@ let reducer = produce((draft: t.Book, action: any) => {
       draft.design.labelColor = action.payload;
       break;
     case "SET_BOOK":
-      const book = {...action.payload};
+      const book = { ...action.payload };
       if (!book.columnHeadings || book.columnHeadings.length === 0) {
         book.columnHeadings = Array(12).fill("");
       }
@@ -88,7 +92,7 @@ let reducer = produce((draft: t.Book, action: any) => {
       }
       console.log("set book", book);
       return book;
-      
+
     case "SET_BOOK_TITLE":
       draft.title = action.payload;
       break;
@@ -109,7 +113,7 @@ export default function Book({}) {
   const [loaded, setLoaded] = React.useState(false);
   const [saved, setSaved] = React.useState(true);
 
-  const [size, setSize] = useLocalStorage("grid_size", "medium")
+  const [size, setSize] = useLocalStorage("grid_size", "medium");
 
   const widths = {
     small: 100,
@@ -126,7 +130,7 @@ export default function Book({}) {
   const width = widths[size];
   const height = heights[size];
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { bookid } = useParams();
 
@@ -152,27 +156,24 @@ export default function Book({}) {
 
   const handleKeyDown = (event) => {
     if (event.metaKey && event.key === "-") {
-        event.preventDefault();
-        setSize(zoomOut);
-    }
-    else if (event.metaKey && event.key === "=") {
+      event.preventDefault();
+      setSize(zoomOut);
+    } else if (event.metaKey && event.key === "=") {
       event.preventDefault();
       setSize(zoomIn);
-    }
-    else if (event.metaKey && event.key === "0") {
+    } else if (event.metaKey && event.key === "0") {
       event.preventDefault();
       setSize("medium");
     }
   };
 
-useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-        document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-}, [handleKeyDown]);
-
+  }, [handleKeyDown]);
 
   const fetchBook = async () => {
     const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
@@ -254,7 +255,7 @@ useEffect(() => {
     }
   }
 
-/*   const setCoverColor = async (e) => {
+  /*   const setCoverColor = async (e) => {
     dispatch({ type: "SET_COVER_COLOR", payload: e.target.value });
     setSaved(false);
   };
@@ -279,25 +280,24 @@ useEffect(() => {
   }
 
   const newChapter = async () => {
-    
-    
-      await fetch("/api/newChapter", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ bookid }),
-      });
-      await fetchBook();
-    
+    const title = "New Chapter";
+    const text = "";
+    await fetch("/api/newChapter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookid, title, text }),
+    });
+    await fetchBook();
   };
 
   const cell = useRef();
   const headings = []; // ["hi", "there", "how", "are", "you"];
   console.log("state", state);
- if (!state) {
+  if (!state) {
     return <div>Loading...</div>;
- }
+  }
   const positions = {};
   state.chapters.forEach((chapter, i) => {
     const key = [chapter.pos.x, chapter.pos.y].toString();
@@ -333,45 +333,45 @@ useEffect(() => {
   const chapterElements = [];
   key = 0;
 
-  for  (let x = 0; x < state.columnHeadings.length; x++) {
-  for  (let y = 0; y < state.rowHeadings.length; y++) {
-    const chapters = state.chapters.filter(c => c.pos.x === x && c.pos.y === y);
-    if (chapters.length > 0) {
-      chapters.forEach(chapter => {
-        chapterElements.push(
-          <Chapter
-          chapter={chapter}
-          key={chapter.chapterID}
-          dispatch={dispatch}
-          onChange={onChange}
-          // @ts-ignore
-          width={width}
-          // @ts-ignore
-          height={height}
-        />        
-        )
-          
-      });
-    } 
+  for (let x = 0; x < state.columnHeadings.length; x++) {
+    for (let y = 0; y < state.rowHeadings.length; y++) {
+      const chapters = state.chapters.filter(
+        (c) => c.pos.x === x && c.pos.y === y
+      );
+      if (chapters.length > 0) {
+        chapters.forEach((chapter) => {
+          chapterElements.push(
+            <Chapter
+              chapter={chapter}
+              key={chapter.chapterID}
+              dispatch={dispatch}
+              onChange={onChange}
+              // @ts-ignore
+              width={width}
+              // @ts-ignore
+              height={height}
+            />
+          );
+        });
+      }
       elements.push(
         <div
           key={key++}
-          className=" bg-background dark:bg-dmbackground border dark:border-gray-700 border-gray-300 absolute" 
+          className=" bg-background dark:bg-dmbackground border dark:border-gray-700 border-gray-300 absolute"
           style={{
             left: `${x * width}px`,
             top: `${y * height}px`,
             height: `${height}px`,
             width: `${width}px`,
           }}
-
-          />)
-    
+        />
+      );
+    }
   }
-}
-elements = [...elements, ...chapterElements];
+  elements = [...elements, ...chapterElements];
 
-const launchItems = [
-/* 
+  const launchItems = [
+    /* 
     {
       label: "Save",
       onClick: () => {
@@ -393,17 +393,17 @@ const launchItems = [
       },
       icon: <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />,
     },
-]
+  ];
 
-state.chapters.forEach((chapter, i) => {
-launchItems.push({
-  label: chapter.title,
-  onClick: () => {
-    navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
-  },
-  icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
-});
-});
+  state.chapters.forEach((chapter, i) => {
+    launchItems.push({
+      label: chapter.title,
+      onClick: () => {
+        navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
+      },
+      icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  });
 
   if (!loaded) {
     if (error) {
@@ -416,14 +416,14 @@ launchItems.push({
   return (
     <div className="mx-auto mt-xs w-full h-full bg-dmbackground items-center justify-between p-6 lg:px-8">
       {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
-<Launcher items={launchItems} />
-<p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>
-<div className="w-full text-sm dark:text-gray-300 my-xs flex">
-<Link to={`/book/${bookid}`}>
-<NavButton label="Back" onClick={() =>{}}>
-        <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-        </NavButton>
-</Link>
+      <Launcher items={launchItems} />
+      <p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>
+      <div className="w-full text-sm dark:text-gray-300 my-xs flex">
+        <Link to={`/book/${bookid}`}>
+          <NavButton label="Back" onClick={() => {}}>
+            <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+          </NavButton>
+        </Link>
 
         <ContentEditable
           className="col-span-9 flex-grow text-md align-text-top"
@@ -433,8 +433,8 @@ launchItems.push({
             setSaved(false);
           }}
         />
-   </div>
-   
+      </div>
+
       <div className="relative w-screen h-8">
         {state.columnHeadings.map((heading, i) => {
           return (
@@ -445,10 +445,13 @@ launchItems.push({
               style={{
                 left: `${i * width}px`,
                 height: `${height}px`,
-            width: `${width}px`,
+                width: `${width}px`,
               }}
               onSubmit={(newHeading) => {
-                dispatch({ type: "SET_COLUMN_HEADING", payload: { i, newHeading } });
+                dispatch({
+                  type: "SET_COLUMN_HEADING",
+                  payload: { i, newHeading },
+                });
                 setSaved(false);
               }}
             />

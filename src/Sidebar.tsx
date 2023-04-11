@@ -36,7 +36,7 @@ function Suggestions({ suggestions, onClick, onDelete }) {
 
 function Navigation({ onClick, closeSidebar }) {
   return (
-    <div className="w-48 xl:w-48 flex">
+    <div className="w-48 xl:w-72 flex">
       <div className="flex-grow"></div>
       <div className="">
         <NavButton label="Info" onClick={() => onClick("info")}>

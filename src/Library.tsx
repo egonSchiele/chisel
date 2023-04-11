@@ -473,7 +473,7 @@ export default function Library() {
         )}
 
         {sidebarOpen && state.chapter && (
-          <div className="w-48 xl:w-60 flex-none min-h-screen">
+          <div className="w-48 xl:w-72 flex-none min-h-screen">
             <Sidebar
               state={state}
               settings={settings}

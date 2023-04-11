@@ -28,14 +28,12 @@
 - markdown preview?
 - support other writing formats: comics, screenplays
 - translate to other languages
-- if I delete a chapter, it should no longer show in the editor
 - add whisper for speech-to-text
 - allow users to change font, font size
 - history is rendering multiple times
 - allow full-screen history pane
-- clicking a prompt should only send selected text
+- if title is "", it is not clickable
 
 ## Refactoring
 
 - clean up console.logs
-- more actions in launcher for library

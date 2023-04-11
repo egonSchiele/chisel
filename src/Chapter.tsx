@@ -62,9 +62,9 @@ export default function Chapter({
               {/*  | {chapter.chapterid} */}
             </div>
             <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-              <div className="text-sm m-xs overflow-hidden inline-block h-20">
+              <div className="text-sm m-xs overflow-hidden inline-block w-full h-20 dark:bg-dmsidebar dark:hover:bg-gray-600">
                 {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
-                {chapter.text}
+                {chapter.text || "..."}
               </div>
             </Link>
           </div>

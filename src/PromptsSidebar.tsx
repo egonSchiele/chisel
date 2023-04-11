@@ -22,8 +22,11 @@ export default function PromptsSidebar({
   const handleSuggestion = async (_prompt, label) => {
     const max_tokens_with_min = Math.min(settings.max_tokens, 500);
     let text = state.text;
-    if (state.selectedText && state.selectedText.length > 0) {
-      text = state.selectedText.contents;
+    if (
+      state.cachedSelectedTextContents &&
+      state.cachedSelectedTextContents.length > 0
+    ) {
+      text = state.cachedSelectedTextContents;
     }
     console.log({ text });
     let prompt = _prompt.replaceAll("{{text}}", text);
