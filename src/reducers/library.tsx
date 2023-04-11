@@ -92,6 +92,14 @@ export const reducer = produce<t.State>(
       case "SET_TITLE":
         draft.editor.title = action.payload;
         draft.chapter.title = action.payload;
+        // find chapter and then update it so that the chapter list also receives the update.
+        const chapterIdx = draft.selectedBook.chapters.findIndex((chapter) => {
+          return chapter.chapterid === draft.chapter.chapterid;
+        });
+        
+        if (chapterIdx !== -1) {
+          draft.selectedBook.chapters[chapterIdx].title = action.payload;
+        }
         draft.saved = false;
         break;
       case "SET_CONTENTS":
