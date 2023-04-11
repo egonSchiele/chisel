@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-
+import * as fd from "./fetchData";
 export function useInterval(fn, delay) {
   const saved = useRef();
   useEffect(() => {
@@ -60,3 +60,49 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   };
   return [storedValue, setValue] as const;
 }
+
+export const fetchSuggestionsWrapper = async (
+  state,
+  settings,
+  setLoading,
+  dispatch,
+  onLoad,
+  prompt,
+  label
+) => {
+  const max_tokens_with_min = Math.min(settings.max_tokens, 500);
+  let text = state.text;
+  if (
+    state.cachedSelectedTextContents &&
+    state.cachedSelectedTextContents.length > 0
+  ) {
+    text = state.cachedSelectedTextContents;
+  }
+  setLoading(true);
+  const result = await fd.fetchSuggestions(
+    text,
+    settings.model,
+    settings.num_suggestions,
+    max_tokens_with_min,
+    prompt,
+    label
+  );
+  setLoading(false);
+
+  if (result.tag === "error") {
+    dispatch({ type: "SET_ERROR", payload: result.message });
+    return;
+  }
+
+  result.payload.forEach((choice) => {
+    const generatedText = choice.text;
+    dispatch({
+      type: "ADD_SUGGESTION",
+      label,
+      payload: generatedText,
+    });
+  });
+  dispatch({ type: "SET_SAVED", payload: false });
+
+  onLoad();
+};

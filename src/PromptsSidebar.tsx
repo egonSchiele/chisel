@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import ButtonGroup from "./components/ButtonGroup";
 import Button from "./components/Button";
 import * as t from "./Types";
+import * as fd from "./fetchData";
 import List from "./components/List";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Spinner from "./components/Spinner";
+import { fetchSuggestionsWrapper } from "./utils";
 export default function PromptsSidebar({
   dispatch,
   state,
@@ -19,74 +21,6 @@ export default function PromptsSidebar({
   onLoad: () => void;
 }) {
   const [loading, setLoading] = useState(false);
-  const handleSuggestion = async (_prompt, label) => {
-    const max_tokens_with_min = Math.min(settings.max_tokens, 500);
-    let text = state.text;
-    if (
-      state.cachedSelectedTextContents &&
-      state.cachedSelectedTextContents.length > 0
-    ) {
-      text = state.cachedSelectedTextContents;
-    }
-    console.log({ text });
-    let prompt = _prompt.replaceAll("{{text}}", text);
-    const body = JSON.stringify({
-      prompt,
-      model: settings.model,
-      max_tokens: max_tokens_with_min,
-      num_suggestions: settings.num_suggestions,
-    });
-    setLoading(true);
-    dispatch({ type: "CLEAR_ERROR" });
-    console.log({ body });
-    fetch("/api/suggestions", {
-      method: "POST",
-      body,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        console.log({ res });
-        /* if (!res.ok) {
-          dispatch({ type: "SET_ERROR", payload: res.statusText });
-
-          setLoading(false);
-          return;
-        } */
-        res.json().then((data) => {
-          console.log({ data });
-          if (data.error) {
-            dispatch({ type: "SET_ERROR", payload: data.error });
-
-            setLoading(false);
-            return;
-          }
-
-          if (!data.choices) {
-            dispatch({ type: "SET_ERROR", payload: "No choices returned." });
-
-            setLoading(false);
-            return;
-          }
-
-          data.choices.forEach((choice) => {
-            const generatedText = choice.text;
-            dispatch({
-              type: "ADD_SUGGESTION",
-              label,
-              payload: generatedText,
-            });
-          });
-          dispatch({ type: "SET_SAVED", payload: false });
-          setLoading(false);
-          onLoad();
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
   const fetchSynonyms = async () => {
     const word = state.cachedSelectedTextContents;
@@ -118,7 +52,17 @@ export default function PromptsSidebar({
     return (
       <li
         key={i}
-        onClick={() => handleSuggestion(prompt.text, prompt.label)}
+        onClick={() =>
+          fetchSuggestionsWrapper(
+            state,
+            settings,
+            setLoading,
+            dispatch,
+            onLoad,
+            prompt.text,
+            prompt.label
+          )
+        }
         className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
       >
         <p className="px-xs">{prompt.label}</p>

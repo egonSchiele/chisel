@@ -49,3 +49,44 @@ export const fetchSettings = async () => {
   }
   return t.success(data.settings);
 };
+
+export const fetchSuggestions = async (
+  text: string,
+  model: string,
+  num_suggestions: number,
+  max_tokens: number,
+  _prompt: string,
+  label: string
+) => {
+  let prompt = _prompt.replaceAll("{{text}}", text);
+  const body = JSON.stringify({
+    prompt,
+    model,
+    max_tokens,
+    num_suggestions,
+  });
+
+  const res = await fetch("/api/suggestions", {
+    method: "POST",
+    body,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+
+  const data = await res.json();
+
+  if (!data) {
+    return t.error("Suggestions not found");
+  } else if (data.error) {
+    return t.error(data.error);
+  } else if (!data.choices) {
+    return t.error("No choices returned.");
+  }
+
+  return t.success(data.choices);
+};

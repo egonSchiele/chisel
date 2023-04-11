@@ -14,7 +14,7 @@ import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
-import { useInterval, useLocalStorage } from "./utils";
+import { fetchSuggestionsWrapper, useInterval, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 import {
   Bars3BottomLeftIcon,
@@ -32,6 +32,7 @@ import {
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
 import { NavButton } from "./NavButton";
+import Spinner from "./components/Spinner";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer<Reducer<t.State, t.ReducerAction>>(
@@ -75,7 +76,7 @@ export default function Library() {
     }
     dispatch({ type: "SET_NO_CHAPTER" });
   }, [chapterid, state.selectedBook?.bookid]);
-  
+
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -105,7 +106,9 @@ export default function Library() {
     if (!bookid) {
       return;
     }
+    setLoading(true);
     const result = await fd.fetchBook(bookid);
+    setLoading(false);
     if (result.tag === "success") {
       dispatch({ type: "SET_BOOK", payload: result.payload });
     } else {
@@ -134,7 +137,9 @@ export default function Library() {
   }, [state.selectedBook, chapterid]);
 
   const fetchBooks = async () => {
+    setLoading(true);
     const result = await fd.fetchBooks();
+    setLoading(false);
     console.log("result", result);
     if (result.tag === "success") {
       dispatch({ type: "SET_BOOKS", payload: result.payload });
@@ -144,7 +149,9 @@ export default function Library() {
   };
 
   const fetchSettings = async () => {
+    setLoading(true);
     const result = await fd.fetchSettings();
+    setLoading(false);
     console.log("result", result);
     if (result.tag === "success") {
       setSettings(result.payload);
@@ -243,6 +250,18 @@ export default function Library() {
       setActivePanel(panel);
     }
   };
+
+  function onSuggestionLoad() {
+    setSidebarOpen(true);
+  }
+
+  function setLoading(bool) {
+    if (bool) {
+      dispatch({ type: "LOADING" });
+    } else {
+      dispatch({ type: "LOADED" });
+    }
+  }
 
   const navigate = useNavigate();
   const launchItems = [
@@ -349,6 +368,24 @@ export default function Library() {
     });
   });
 
+  settings.prompts.forEach((prompt, i) => {
+    launchItems.push({
+      label: prompt.label,
+      onClick: () => {
+        fetchSuggestionsWrapper(
+          state.editor,
+          settings,
+          setLoading,
+          dispatch,
+          onSuggestionLoad,
+          prompt.text,
+          prompt.label
+        );
+      },
+      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  });
+
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
   try {
     console.log(state.chapter.chapterid, "<<<");
@@ -402,6 +439,12 @@ export default function Library() {
 
             <div className="flex-grow" />
             <div className="flex-none">
+              {state.loading && (
+                <NavButton label="Loading" onClick={() => {}} className="p-0">
+                  <Spinner className="w-5 h-5" />
+                </NavButton>
+              )}
+
               {!state.saved && (
                 <NavButton label="Unsaved" onClick={() => {}}>
                   <MinusIcon className="h-5 w-5" aria-hidden="true" />
