@@ -328,7 +328,7 @@ export default function Library() {
   if (state.selectedBook) {
     state.selectedBook.chapters.forEach((chapter, i) => {
       launchItems.push({
-        label: chapter.title,
+        label: chapter.title || "No title",
         onClick: () => {
           navigate(
             `/book/${state.selectedBook.bookid}/chapter/${chapter.chapterid}`
@@ -473,7 +473,7 @@ export default function Library() {
         )}
 
         {sidebarOpen && state.chapter && (
-          <div className="w-48 xl:w-48 flex-none min-h-screen">
+          <div className="w-48 xl:w-60 flex-none min-h-screen">
             <Sidebar
               state={state}
               settings={settings}

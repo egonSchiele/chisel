@@ -38,6 +38,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 app.use(express.static("dist"));
+
 app.use(cookieParser());
 
 export const noCache = (req, res, next) => {

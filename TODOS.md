@@ -38,5 +38,4 @@
 ## Refactoring
 
 - clean up console.logs
-- lift state up to library
 - more actions in launcher for library

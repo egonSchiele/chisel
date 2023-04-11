@@ -47,6 +47,7 @@ export default function Launcher({ items }: { items: MenuItem[] }) {
     query === ""
       ? items
       : items.filter((item) => {
+          console.log(item);
           return item.label.toLowerCase().includes(query.toLowerCase());
         });
 
