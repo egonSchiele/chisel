@@ -1,3 +1,4 @@
+import * as fd from "./fetchData";
 import * as t from "./Types";
 import React from "react";
 import List from "./components/List";
@@ -66,22 +67,14 @@ export default function ChapterList({
   }
 
   const newChapter = async (title = "New Chapter", text = "") => {
-    console.log({ bookid, title, text });
-    const body = JSON.stringify({ bookid, title, text });
     dispatch({ type: "LOADING" });
-    const res = await fetch("/api/newChapter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
+    const result = await fd.newChapter(bookid, title, text);
     dispatch({ type: "LOADED" });
-    if (!res.ok) {
-      console.log("error");
+    if (result.tag === "error") {
+      dispatch({ type: "SET_ERROR", payload: result.message });
       return;
     }
-    await onChange();
+    onChange();
   };
 
   const dropHandler = (ev) => {

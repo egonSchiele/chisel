@@ -90,3 +90,22 @@ export const fetchSuggestions = async (
 
   return t.success(data.choices);
 };
+
+export const newChapter = async (
+  bookid: string,
+  title: string,
+  text: string
+) => {
+  const body = JSON.stringify({ bookid, title, text });
+  const res = await fetch("/api/newChapter", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body,
+  });
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+  return t.success();
+};

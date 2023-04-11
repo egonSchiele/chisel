@@ -274,7 +274,15 @@ export default function Library() {
     },
     {
       label: "New Chapter",
-      onClick: () => {},
+      onClick: async () => {
+        dispatch({ type: "LOADING" });
+        const result = await fd.newChapter(bookid, "New Chapter", "");
+        dispatch({ type: "LOADED" });
+        if (result.tag === "error") {
+          dispatch({ type: "SET_ERROR", payload: result.message });
+        }
+        await fetchBook();
+      },
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
     },
     {

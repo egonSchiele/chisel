@@ -13,7 +13,7 @@ function MenuItem({
   className = "",
 }: {
   label: string;
-  icon: any;
+  icon?: any;
   onClick: () => void;
   className?: string;
 }) {
