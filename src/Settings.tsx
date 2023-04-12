@@ -5,10 +5,11 @@ import Input from "./components/Input";
 import Select from "./components/Select";
 import * as t from "./Types";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
+import TextArea from "./components/TextArea";
 
 const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
   return (
-    <div className="mb-sm p-3 rounded-md dark:bg-dmsettingspanel bg-settingspanel">
+    <div className="mb-sm p-3 rounded-md dark:bg-gray-600 bg-settingspanel">
       <div className="mb-sm w-full">
         <Input
           name="label"
@@ -20,7 +21,7 @@ const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
         />
       </div>
       <div className="w-full">
-        <Input
+        <TextArea
           name="text"
           title="Prompt (use {{text}} for input text)"
           value={text}
@@ -34,7 +35,7 @@ const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
         onClick={onDelete}
         style="secondary"
         rounded={true}
-        className="mt-sm"
+        className="mt-sm w-full dark:bg-gray-700 dark:border-gray-700 shadow-none"
       >
         Delete
       </Button>
@@ -153,10 +154,9 @@ const Settings = ({ settings, setSettings, onSave }) => {
             onDelete={() => deletePrompt(i)}
           />
         ))}
-     
       </div>
       <Button onClick={addPrompt} rounded={true} className="mt-0">
-      New Prompt
+        New Prompt
       </Button>
       <Button onClick={handleSave} rounded={true} className="mt-0">
         Save

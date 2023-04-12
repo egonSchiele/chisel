@@ -378,16 +378,16 @@ export default function Library() {
     },
   ];
 
-  if (state.selectedBook) {
-    state.selectedBook.chapters.forEach((chapter, i) => {
-      launchItems.push({
-        label: chapter.title || "No title",
-        onClick: () => {
-          navigate(
-            `/book/${state.selectedBook.bookid}/chapter/${chapter.chapterid}`
-          );
-        },
-        icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+  if (state.books) {
+    state.books.forEach((book, i) => {
+      book.chapterTitles.forEach((chapter, i) => {
+        launchItems.push({
+          label: chapter.title || "(No title)",
+          onClick: () => {
+            navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
+          },
+          icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+        });
       });
     });
   }

@@ -1,5 +1,5 @@
 import React from "react";
-export default function Input({
+export default function TextArea({
   name,
   value,
   onChange,
@@ -12,6 +12,7 @@ export default function Input({
   placeholder = "",
   onBlur = null,
   onKeyDown = null,
+  rows = 4,
 }) {
   const roundedCss = rounded ? "rounded-md" : "";
   return (
@@ -25,8 +26,7 @@ export default function Input({
         </label>
       )}
       <div className="mt-xs mb-sm">
-        <input
-          type="input"
+        <textarea
           ref={ref}
           name={name}
           id={name}
@@ -35,7 +35,8 @@ export default function Input({
           onBlur={onBlur}
           placeholder={placeholder}
           onKeyDown={onKeyDown}
-          className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+          className={`block w-full py-1 px-2 text-gray-900 shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+          rows={rows}
         />
       </div>
     </div>

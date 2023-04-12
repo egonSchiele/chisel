@@ -56,13 +56,13 @@ export default function Chapter({
         {!small && (
           <div>
             <div
-              className={`handle cursor-move uppercase font-semibold p-xs text-black dark:text-black dark:bg-slate-400 text-sm bg-slate-400`}
+              className={`handle cursor-move uppercase font-semibold p-xs text-black dark:text-white dark:bg-slate-400 text-sm bg-slate-400`}
             >
               {chapter.title}
               {/*  | {chapter.chapterid} */}
             </div>
             <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
-              <div className="text-sm m-xs overflow-hidden inline-block w-full h-20 dark:bg-dmsidebar dark:hover:bg-gray-600 bg-sidebar hover:bg-gray-200 text-text">
+              <div className="text-sm m-xs overflow-hidden inline-block w-full h-20 dark:bg-dmsidebar dark:hover:bg-gray-600 bg-sidebar hover:bg-gray-200 text-text dark:text-dmtext px-xs">
                 {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
                 {chapter.text || "..."}
               </div>
