@@ -37,7 +37,7 @@ function Suggestions({ suggestions, onClick, onDelete }) {
 }
 
 function Navigation({ onClick, closeSidebar, maximize, setMaximize }) {
-  const width = maximize ? "w-96" : "w-48 xl:w-72";
+  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
   return (
     <div className={`${width} flex`}>
       <div className="flex-grow"></div>

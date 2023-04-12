@@ -83,7 +83,14 @@ export default function Library() {
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      if (sidebarOpen || promptsOpen || bookListOpen || chapterListOpen) {
+      if (maximize) {
+        setMaximize(false);
+      } else if (
+        sidebarOpen ||
+        promptsOpen ||
+        bookListOpen ||
+        chapterListOpen
+      ) {
         setSidebarOpen(false);
         setPromptsOpen(false);
         setBookListOpen(false);
@@ -458,6 +465,36 @@ export default function Library() {
 
   const sidebarWidth = maximize ? "w-96" : "w-48 xl:w-72";
 
+  if (maximize && state.chapter && state.chapter.chapterid) {
+    return (
+      <div className={`w-3/4 mx-auto flex-none min-h-screen`}>
+        <Sidebar
+          state={state}
+          settings={settings}
+          setSettings={setSettings}
+          activePanel={activePanel}
+          setActivePanel={setActivePanel}
+          closeSidebar={() => setSidebarOpen(false)}
+          maximize={maximize}
+          setMaximize={setMaximize}
+          onSuggestionClick={addToContents}
+          onSuggestionDelete={(index) => {
+            dispatch({ type: "DELETE_SUGGESTION", payload: index });
+          }}
+          onSettingsSave={() => {}}
+          onHistoryClick={async (newText) => {
+            console.log("newText", newText);
+
+            await onTextEditorSave(state);
+
+            dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
+          }}
+          triggerHistoryRerender={triggerHistoryRerender}
+        />
+      </div>
+    );
+  }
+
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
   try {
     console.log(state.chapter.chapterid, "<<<");
@@ -511,57 +548,59 @@ export default function Library() {
             </div>
 
             <div className="flex-grow" />
-            <div className="flex-none">
-              {state.loading && (
-                <NavButton label="Loading" onClick={() => {}} className="p-0">
-                  <Spinner className="w-5 h-5" />
-                </NavButton>
-              )}
+            {chapterid && (
+              <div className="flex-none">
+                {state.loading && (
+                  <NavButton label="Loading" onClick={() => {}} className="p-0">
+                    <Spinner className="w-5 h-5" />
+                  </NavButton>
+                )}
 
-              {!state.saved && (
-                <NavButton label="Unsaved" onClick={() => {}}>
-                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                </NavButton>
-              )}
+                {!state.saved && (
+                  <NavButton label="Unsaved" onClick={() => {}}>
+                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                  </NavButton>
+                )}
 
-              {state.saved && (
-                <NavButton label="Unsaved" onClick={() => {}}>
-                  <CheckCircleIcon
-                    className="h-5 w-5 text-green-700 dark:text-green-300"
+                {state.saved && (
+                  <NavButton label="Unsaved" onClick={() => {}}>
+                    <CheckCircleIcon
+                      className="h-5 w-5 text-green-700 dark:text-green-300"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+
+                <NavButton
+                  label="Prompts"
+                  onClick={() => {
+                    setPromptsOpen((current) => !current);
+                    if (!promptsOpen) {
+                      setBookListOpen(false);
+                      setChapterListOpen(false);
+                    }
+                  }}
+                >
+                  <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+
+                <NavButton
+                  label="Sidebar"
+                  onClick={() => {
+                    setSidebarOpen((s) => !s);
+                    if (!sidebarOpen) {
+                      setBookListOpen(false);
+                      setChapterListOpen(false);
+                    }
+                  }}
+                >
+                  <EllipsisHorizontalCircleIcon
+                    className="h-5 w-5"
                     aria-hidden="true"
                   />
                 </NavButton>
-              )}
-
-              <NavButton
-                label="Prompts"
-                onClick={() => {
-                  setPromptsOpen((current) => !current);
-                  if (!promptsOpen) {
-                    setBookListOpen(false);
-                    setChapterListOpen(false);
-                  }
-                }}
-              >
-                <SparklesIcon className="h-5 w-5" aria-hidden="true" />
-              </NavButton>
-
-              <NavButton
-                label="Sidebar"
-                onClick={() => {
-                  setSidebarOpen((s) => !s);
-                  if (!sidebarOpen) {
-                    setBookListOpen(false);
-                    setChapterListOpen(false);
-                  }
-                }}
-              >
-                <EllipsisHorizontalCircleIcon
-                  className="h-5 w-5"
-                  aria-hidden="true"
-                />
-              </NavButton>
-            </div>
+              </div>
+            )}
           </div>
           <div className="flex-grow h-full w-full">
             {state.chapter && (
