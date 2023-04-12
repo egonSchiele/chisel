@@ -114,9 +114,9 @@ export default function ChapterList({
     dispatch({ type: "SET_CHAPTER_ORDER", payload: { bookid, ids } });
   };
 
-  const sublist = (title, chapters: t.Chapter[]) => {
-    const items = chapters.map((chapter, index) => {
-      const item = (
+  const sublist = () => {
+    return chapters.map((chapter, index) => {
+      return (
         <li key={chapter.chapterid}>
           <ListItem
             link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
@@ -127,21 +127,11 @@ export default function ChapterList({
           />
         </li>
       );
-      return item;
     });
-    return (
-      <List
-        key={title}
-        title={title}
-        items={items}
-        level={2}
-        className="p-0 m-0 border-0 text-lg pt-0 pl-0 pr-0 border-r-0 mb-sm"
-      />
-    );
   };
 
-  const sublistDraggable = (title, chapters: t.Chapter[]) => {
-    return (
+  const sublistDraggable = () => {
+    return [
       <div>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
@@ -170,14 +160,15 @@ export default function ChapterList({
             )}
           </Droppable>
         </DragDropContext>
-      </div>
-    );
+      </div>,
+    ];
   };
 
-  const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
+  const navigate = useNavigate();
+
+  /*   const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
   const otherChapters = chapters.filter((chapter) => !chapter.favorite);
 
-  const navigate = useNavigate();
   const lists = [];
 
   if (favoriteChapters.length > 0) {
@@ -191,7 +182,8 @@ export default function ChapterList({
     lists.push(sublistDraggable("All", otherChapters));
   } else {
     lists.push(sublist("All", otherChapters));
-  }
+  } */
+
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = canCloseSidebar && {
@@ -240,8 +232,8 @@ export default function ChapterList({
   if (editing) {
     leftMenuItem = [
       {
-        label: "End",
-        icon: <p>End</p>,
+        label: "Done",
+        icon: <p>Done</p>,
         onClick: () => setEditing(false),
         className: buttonStyles,
       },
@@ -250,7 +242,7 @@ export default function ChapterList({
   return (
     <List
       title={editing ? "Editing" : "Chapters"}
-      items={lists}
+      items={editing ? sublistDraggable() : sublist()}
       rightMenuItem={rightMenuItem}
       leftMenuItem={leftMenuItem}
       className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"

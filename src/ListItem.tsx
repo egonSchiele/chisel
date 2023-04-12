@@ -20,10 +20,10 @@ export function ListItem({
     ? "bg-listitemhover dark:bg-dmlistitemhover"
     : "";
   const listMenuItems: t.MenuItem[] = [
-    {
+    /*  {
       label: "Favorite",
       onClick: onFavorite,
-    },
+    }, */
     {
       label: "Delete",
       onClick: onDelete,
