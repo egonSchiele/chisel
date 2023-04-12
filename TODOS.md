@@ -3,14 +3,16 @@
 - walkthrough video
 - focus mode
 - images are not showing
-
+- use new dnd library for grid
+- security audit
+  - https://www.veracode.com/security/owasp-top-10
 - favicon
 - ask ai to outline entire book
 - download all data
 - imports
 - move chapter to another book
-- security audit
 - accessibility audit
+- cache synonyms
 
 ## P3
 

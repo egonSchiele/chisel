@@ -26,6 +26,7 @@ import {
   Cog6ToothIcon,
   DocumentArrowDownIcon,
   EllipsisHorizontalCircleIcon,
+  EyeIcon,
   MinusIcon,
   PlusIcon,
   SparklesIcon,
@@ -35,6 +36,7 @@ import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
 import { NavButton } from "./NavButton";
 import Spinner from "./components/Spinner";
+import FocusMode from "./FocusMode";
 
 export default function Library() {
   const [state, dispatch] = React.useReducer<Reducer<t.State, t.ReducerAction>>(
@@ -65,7 +67,8 @@ export default function Library() {
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
   const [maximize, setMaximize] = useLocalStorage("maximize", false);
-  const width = maximize ? "w-96" : "w-48 xl:w-72";
+
+  const [focusMode, setFocusMode] = useState(false);
 
   const { bookid, chapterid } = useParams();
 
@@ -485,6 +488,25 @@ export default function Library() {
 
   const sidebarWidth = maximize ? "w-96" : "w-48 xl:w-72";
 
+  /*   return (
+    <FocusMode
+      text={
+        "Hi how are you sometimes very a far cry. This is a long ssentence of text. Hi how are you sometimes very a far cry. This is a long ssentence of text."
+      }
+      onClose={() => setFocusMode(false)}
+    />
+  );
+ */
+  if (focusMode && state.chapter && state.chapter.chapterid) {
+    console.log("focusMode", state.editor);
+    return (
+      <FocusMode
+        text={state.editor.selectedText.contents}
+        onClose={() => setFocusMode(false)}
+      />
+    );
+  }
+
   if (maximize && state.chapter && state.chapter.chapterid) {
     return (
       <div className={`w-3/4 mx-auto flex-none min-h-screen`}>
@@ -577,6 +599,16 @@ export default function Library() {
                     <Spinner className="w-5 h-5" />
                   </NavButton>
                 )}
+
+                <NavButton
+                  label="Focus Mode"
+                  onClick={() => setFocusMode(true)}
+                >
+                  <p className="mr-xs">
+                    {state.editor.selectedText.contents.length}
+                  </p>
+                  <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
 
                 {!state.saved && (
                   <NavButton label="Unsaved" onClick={() => {}}>
