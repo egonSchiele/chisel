@@ -62,6 +62,9 @@ export default function Library() {
 
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
+  const [maximize, setMaximize] = useLocalStorage("maximize", false);
+  const width = maximize ? "w-96" : "w-48 xl:w-72";
+
   const { bookid, chapterid } = useParams();
 
   useEffect(() => {
@@ -420,6 +423,24 @@ export default function Library() {
     });
   });
 
+  if (sidebarOpen) {
+    launchItems.push({
+      label: "Close Sidebar",
+      onClick: () => {
+        setSidebarOpen(false);
+      },
+      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  } else {
+    launchItems.push({
+      label: "Open Sidebar",
+      onClick: () => {
+        setSidebarOpen(true);
+      },
+      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
   const chapterlistChapters = [];
 
   if (state.selectedBook && state.selectedBook.chapterTitles) {
@@ -434,6 +455,8 @@ export default function Library() {
       }
     });
   }
+
+  const sidebarWidth = maximize ? "w-96" : "w-48 xl:w-72";
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
   try {
@@ -566,7 +589,7 @@ export default function Library() {
         )}
 
         {sidebarOpen && state.chapter && (
-          <div className="w-48 xl:w-72 flex-none min-h-screen">
+          <div className={`${sidebarWidth} flex-none min-h-screen`}>
             <Sidebar
               state={state}
               settings={settings}
@@ -574,6 +597,8 @@ export default function Library() {
               activePanel={activePanel}
               setActivePanel={setActivePanel}
               closeSidebar={() => setSidebarOpen(false)}
+              maximize={maximize}
+              setMaximize={setMaximize}
               onSuggestionClick={addToContents}
               onSuggestionDelete={(index) => {
                 dispatch({ type: "DELETE_SUGGESTION", payload: index });

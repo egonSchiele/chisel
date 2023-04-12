@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import Button from "./components/Button";
 import SuggestionPanel from "./SuggestionPanel";
 import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
   ChevronRightIcon,
   ClipboardIcon,
   ClockIcon,
@@ -34,9 +36,10 @@ function Suggestions({ suggestions, onClick, onDelete }) {
   );
 }
 
-function Navigation({ onClick, closeSidebar }) {
+function Navigation({ onClick, closeSidebar, maximize, setMaximize }) {
+  const width = maximize ? "w-96" : "w-48 xl:w-72";
   return (
-    <div className="w-48 xl:w-72 flex">
+    <div className={`${width} flex`}>
       <div className="flex-grow"></div>
       <div className="">
         <NavButton label="Info" onClick={() => onClick("info")}>
@@ -56,6 +59,23 @@ function Navigation({ onClick, closeSidebar }) {
         </NavButton>
       </div>
       <div className="flex-grow items-end">
+        {maximize && (
+          <NavButton label="Minimize" onClick={() => setMaximize(false)}>
+            <ArrowsPointingInIcon
+              className="h-4 w-4 xl:h-5 xl:w-5"
+              aria-hidden="true"
+            />
+          </NavButton>
+        )}
+        {!maximize && (
+          <NavButton label="Maximize" onClick={() => setMaximize(true)}>
+            <ArrowsPointingOutIcon
+              className="h-4 w-4 xl:h-5 xl:w-5"
+              aria-hidden="true"
+            />
+          </NavButton>
+        )}
+
         <NavButton label="Close" onClick={closeSidebar}>
           <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
@@ -76,6 +96,8 @@ export default function Sidebar({
   onSettingsSave,
   onHistoryClick,
   triggerHistoryRerender,
+  maximize,
+  setMaximize,
 }) {
   const infoText =
     state.editor.selectedText.length === 0
@@ -86,7 +108,12 @@ export default function Sidebar({
       className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}
     >
       <div className="pt-xs">
-        <Navigation onClick={setActivePanel} closeSidebar={closeSidebar} />
+        <Navigation
+          onClick={setActivePanel}
+          closeSidebar={closeSidebar}
+          maximize={maximize}
+          setMaximize={setMaximize}
+        />
         {activePanel === "info" && (
           <List
             title="Info"

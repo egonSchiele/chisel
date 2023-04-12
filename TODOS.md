@@ -17,7 +17,6 @@
 - search
 - text preview for chapters
 - move chapter to another book
-- sort by: date, most recent
 - drag and drop should only work for text files
 - put actions as a separate tab on that panel
 - tooltips?
@@ -29,12 +28,11 @@
 - add whisper for speech-to-text
 - allow users to change font, font size
 - history is rendering multiple times
-- allow full-screen history pane
-- if title is "", it is not clickable
 - Ability to star history.
 - Show different versions of some text side-by-side.
-- Use advice from Steven pinker book advice.
+- Use advice from Steven pinker book.
 - images are not showing
+- bookmark sections of a chapter? or highlights?
 
 ## Refactoring
 

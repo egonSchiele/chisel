@@ -117,10 +117,15 @@ export default function ChapterList({
   const sublist = () => {
     return chapters.map((chapter, index) => {
       return (
-        <li key={chapter.chapterid}>
+        <li
+          key={chapter.chapterid}
+          className={
+            !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
+          }
+        >
           <ListItem
             link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
-            title={chapter.title}
+            title={chapter.title || "(no title)"}
             selected={chapter.chapterid === selectedChapterId}
             onDelete={() => deleteChapter(chapter.chapterid)}
             onFavorite={() => favoriteChapter(chapter.chapterid)}
