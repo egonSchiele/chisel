@@ -17,6 +17,8 @@ import { initialState, reducer } from "./reducers/library";
 import { fetchSuggestionsWrapper, useInterval, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
   Bars3BottomLeftIcon,
   BookOpenIcon,
   CheckCircleIcon,
@@ -448,6 +450,24 @@ export default function Library() {
     });
   }
 
+  if (maximize) {
+    launchItems.push({
+      label: "Exit Fullscreen",
+      onClick: () => {
+        setMaximize(false);
+      },
+      icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  } else {
+    launchItems.push({
+      label: "View Sidebar In Fullscreen",
+      onClick: () => {
+        setMaximize(true);
+      },
+      icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
   const chapterlistChapters = [];
 
   if (state.selectedBook && state.selectedBook.chapterTitles) {
@@ -468,6 +488,8 @@ export default function Library() {
   if (maximize && state.chapter && state.chapter.chapterid) {
     return (
       <div className={`w-3/4 mx-auto flex-none min-h-screen`}>
+        <Launcher items={launchItems} />
+
         <Sidebar
           state={state}
           settings={settings}
