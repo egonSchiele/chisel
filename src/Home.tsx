@@ -26,27 +26,27 @@ type FeatureData = {
 
 const features: FeatureData[] = [
   {
-    image: "https://i.imgur.com/ZB50euK.png",
+    image: "/public/images/history.png",
     title: "History",
     text: "Git-like history lets you track every change, so nothing is ever lost.",
   },
   {
-    image: "https://i.imgur.com/uOU8cMY.png",
+    image: "/public/images/prompts.png",
     title: "AI prompts",
     text: "Built-in AI prompts like expand, contract, and rewrite... and it's easy to add your own.",
   },
   {
-    image: "https://i.imgur.com/67XHyto.png",
+    image: "/public/images/launcher.png",
     title: "Quick-launch",
     text: "Navigate the UI, go to a chapter, or run an AI prompt, all without touching the mouse.",
   },
   {
-    image: "https://i.imgur.com/oe0crNl.png",
+    image: "/public/images/gridmode.png",
     title: "Grid mode",
     text: "Organize your chapters by act or by beat using grid mode.",
   },
   {
-    image: "https://i.imgur.com/eMVvIJx.png",
+    image: "/public/images/focusmode.png",
     title: "Focus mode",
     text: "Get feedback on your writing.",
   },
@@ -60,7 +60,7 @@ export default function Home() {
           Chisel editor
         </h1>
         <p className="mt-xs text-lg leading-8 text-gray-800 dark:text-gray-300 ">
-          A writing app for cutting through text
+          An writing app for cutting through text
         </p>
         <div className="my-10 flex gap-x-6">
           <a
