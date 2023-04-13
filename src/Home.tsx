@@ -65,13 +65,13 @@ export default function Home() {
         <div className="my-10 flex gap-x-6">
           <a
             href="https://github.com/egonSchiele/chisel"
-            className="rounded-md bg-dmsidebar dark:bg-dmsidebar px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="rounded-md bg-dmsidebar dark:bg-dmsidebar px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             View on GitHub
           </a>
           <a
             href="/login.html"
-            className="rounded-md bg-dmsidebar dark:bg-dmsidebar px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="rounded-md bg-dmsidebar dark:bg-dmsidebar px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             Try demo
           </a>
@@ -81,12 +81,12 @@ export default function Home() {
           start my work... I just have to chisel away the superfluous material.
           - Michaelangelo
         </blockquote> */}
-        <p className="text-xl">
+        <p className="text-xl mb-lg">
           Chisel is for writers who believe 90% of writing is editing. It helps
           you generate text, and then it helps you refine it, like you're
           chiselling away at a block of marble. Chisel is free and open source.
         </p>
-        <h2 className="text-2xl mt-lg font-bold tracking-tight">
+        <h2 className="text-2xl mb-sm font-bold tracking-tight">
           Video walkthrough
         </h2>
         <iframe
