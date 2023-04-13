@@ -8,6 +8,7 @@ import List from "./components/List";
 import { syllable } from "syllable";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
+import jargon from "./jargon";
 
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
@@ -48,6 +49,24 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
           label: "part of a cliche",
           value: clicheString.join(" "),
         });
+      } else if (annotation.type === "jargon") {
+        let clicheString = [];
+        let _index = annotation.startIndex;
+        let i = 0;
+        while (i < annotation.length) {
+          clicheString.push(words[_index]);
+          _index++;
+          i++;
+        }
+        let replacementTuple = jargon.find((tuple) => {
+          return normalize(tuple[0]) === normalize(clicheString.join(" "));
+        });
+        let replacement = replacementTuple ? replacementTuple[1] : "";
+        annotationItems.push({
+          label: "jargon",
+          value: clicheString.join(" "),
+          replacement,
+        });
       }
     });
     items.push(
@@ -82,6 +101,11 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
               <div key={i}>
                 <p className="text-md uppercase">{item.label}</p>
                 <p>{item.value}</p>
+                {item.replacement && (
+                  <p className="text-sm dark:text-gray-300">
+                    Suggested replacement: {item.replacement}
+                  </p>
+                )}
               </div>
             );
           })}
@@ -236,6 +260,25 @@ export default function FocusMode({ text, onClose, onChange }) {
           groupid,
           startIndex: index,
           length: clicheTextAsWord.length,
+        });
+      }
+      groupid++;
+    }
+  });
+
+  jargon.forEach((tuple) => {
+    const [jargonText, alternative] = tuple;
+    const jargonTextAsWords = jargonText.split(" ").map(normalize);
+    const index = findSubarray(normalizedWords, jargonTextAsWords);
+    if (index !== -1) {
+      console.log("found jargon at index", index);
+      console.log("jargon is", jargonTextAsWords);
+      for (let i = index; i < index + jargonTextAsWords.length; i++) {
+        wordAnnotations[i].push({
+          type: "jargon",
+          groupid,
+          startIndex: index,
+          length: jargonTextAsWords.length,
         });
       }
       groupid++;
