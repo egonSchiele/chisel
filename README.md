@@ -34,3 +34,9 @@ You can use watch mode for faster development locally.
 yarn watch # for webpack
 yarn nodemon # for the server
 ```
+
+### Running tests
+
+```
+NODE_OPTIONS=--experimental-vm-modules yarn test
+```
