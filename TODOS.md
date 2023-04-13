@@ -5,7 +5,9 @@
 - images are not showing
 - use new dnd library for grid
 - security audit
+
   - https://www.veracode.com/security/owasp-top-10
+
 - favicon
 - ask ai to outline entire book
 - download all data

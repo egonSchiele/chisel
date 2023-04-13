@@ -9,6 +9,7 @@ import { syllable } from "syllable";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
 import jargon from "./jargon";
+import { normalize, findSubarray, split } from "./utils";
 
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
@@ -133,22 +134,8 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   );
 }
 
-function normalize(word: string) {
-  return word.toLowerCase().replace(/[^a-z]/g, "");
-}
-
-function findSubarray(array: any[], subarray: any[]) {
-  const subarrayLength = subarray.length;
-  for (let i = 0; i < array.length; i++) {
-    if (array.slice(i, i + subarrayLength).join(" ") === subarray.join(" ")) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 const clicheTextAsWords = cliches.map((fragment) =>
-  fragment.split(" ").map(normalize)
+  split(fragment).map(normalize)
 );
 
 type Annotation = {
@@ -240,7 +227,7 @@ export default function FocusMode({ text, onClose, onChange }) {
   const mostRecentText = history[history.length - 1];
   const [activeGroups, setActiveGroups] = useState([]);
   const [currentWord, setCurrentWord] = useState(null);
-  const words = mostRecentText.split(" ");
+  const words = split(mostRecentText);
   const normalizedWords = words.map(normalize);
   const wordAnnotations = {};
 
@@ -268,7 +255,7 @@ export default function FocusMode({ text, onClose, onChange }) {
 
   jargon.forEach((tuple) => {
     const [jargonText, alternative] = tuple;
-    const jargonTextAsWords = jargonText.split(" ").map(normalize);
+    const jargonTextAsWords = split(jargonText).map(normalize);
     const index = findSubarray(normalizedWords, jargonTextAsWords);
     if (index !== -1) {
       console.log("found jargon at index", index);
@@ -318,6 +305,23 @@ export default function FocusMode({ text, onClose, onChange }) {
     replaceWord(index, "");
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      if (currentWord) {
+        onDelete(currentWord);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   const wordComponents = words.map((word: string, i: number) => {
     const annotations = wordAnnotations[i] || [];
     return (
@@ -352,7 +356,7 @@ export default function FocusMode({ text, onClose, onChange }) {
         <div className="flex-grow flex max-w-screen-md mx-auto flex-wrap gap-xs">
           {wordComponents}
         </div>
-        <div className="flex-none w-48">
+        <div className="flex-none w-48 sticky top-0">
           <FocusList
             words={words}
             index={currentWord}

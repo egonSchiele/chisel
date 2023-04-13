@@ -27,7 +27,7 @@ export default function ListMenu({ items }: { items: MenuItem[] }) {
             {items.map((item, index) => (
               <p
                 key={index}
-                className="px-sm py-xs rounded-md hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary flex"
+                className="px-sm py-xs rounded-md hover:bg-gray-700 dark:hover:bg-dmlistitemhoverSecondary flex"
                 onClick={item.onClick}
               >
                 <div className=" mt-0">{item.icon} </div>

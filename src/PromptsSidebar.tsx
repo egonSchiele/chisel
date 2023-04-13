@@ -109,12 +109,12 @@ export default function PromptsSidebar({
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
       />
-      <List
+      {/*  <List
         title="Actions"
         items={actions}
         className="border-l border-r-0 h-auto"
         leftMenuItem={leftMenuItem}
-      />
+      /> */}
     </div>
   );
 }

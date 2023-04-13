@@ -501,12 +501,19 @@ export default function Library() {
 
   const sidebarWidth = maximize ? "w-96" : "w-48 xl:w-72";
 
-  /*   return (
+  /*  return (
     <FocusMode
       text={
         "Hi how are you sometimes very a far cry. This is a long ssentence of text. Hi how are you sometimes very a far cry. This is a long ssentence of text."
       }
       onClose={() => setFocusMode(false)}
+      onChange={(text) => {
+        console.log("text", text);
+        dispatch({
+          type: "SET_TEMPORARY_FOCUS_MODE_STATE",
+          payload: text,
+        });
+      }}
     />
   );
  */
@@ -539,6 +546,9 @@ export default function Library() {
     let text = state.editor.selectedText.contents;
     if (!text && state.editor._cachedSelectedText) {
       text = state.editor._cachedSelectedText.contents;
+    }
+    if (!text) {
+      text = state.editor.text;
     }
     return (
       <div>

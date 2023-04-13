@@ -212,12 +212,12 @@ export default function ChapterList({
       onClick: () => navigate(`/grid/${bookid}`),
       className: buttonStyles,
     },
-    {
+    /*  {
       label: "Import",
       icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {},
       className: buttonStyles,
-    },
+    }, */
     {
       label: "Reorder",
       icon: <ArrowsUpDownIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
