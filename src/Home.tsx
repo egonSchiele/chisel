@@ -26,22 +26,22 @@ type FeatureData = {
 
 const features: FeatureData[] = [
   {
-    image: "http://s.adit.io/history.png",
+    image: "https://i.imgur.com/ZB50euK.png",
     title: "History",
     text: "Git-like history lets you track every change, so nothing is ever lost.",
   },
   {
-    image: "http://s.adit.io/prompts.png",
+    image: "https://i.imgur.com/uOU8cMY.png",
     title: "AI prompts",
     text: "Built-in AI prompts like expand, contract, and rewrite... and it's easy to add your own.",
   },
   {
-    image: "http://s.adit.io/launcher.png",
+    image: "https://i.imgur.com/67XHyto.png",
     title: "Quick-launch",
     text: "Navigate the UI, go to a chapter, or run an AI prompt, all without touching the mouse.",
   },
   {
-    image: "http://s.adit.io/gridmode.png",
+    image: "https://i.imgur.com/oe0crNl.png",
     title: "Grid mode",
     text: "Organize your chapters by act or by beat using grid mode.",
   },
