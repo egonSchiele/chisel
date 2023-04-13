@@ -37,7 +37,7 @@ module.exports = {
     chapter: "./chapter.tsx",
     login: "./empty.tsx",
     register: "./empty.tsx",
-    home: "./empty.tsx",
+    home: "./home.tsx",
     404: "./empty.tsx",
   },
   output: {
