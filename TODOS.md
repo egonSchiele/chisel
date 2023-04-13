@@ -1,7 +1,4 @@
 - add tests
-- home page
-- walkthrough video
-- images are not showing
 - use new dnd library for grid
 - security audit
 
