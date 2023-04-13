@@ -157,7 +157,7 @@ export default function Library() {
     setLoading(true);
     const result = await fd.fetchBooks();
     setLoading(false);
-    console.log("result", result);
+
     if (result.tag === "success") {
       dispatch({ type: "SET_BOOKS", payload: result.payload });
     } else {
@@ -169,7 +169,7 @@ export default function Library() {
     setLoading(true);
     const result = await fd.fetchSettings();
     setLoading(false);
-    console.log("result", result);
+
     if (result.tag === "success") {
       setSettings(result.payload);
     } else {
@@ -208,8 +208,6 @@ export default function Library() {
       chapterid: state.chapter.chapterid,
       text: state.chapter.text,
     });
-
-    console.log(state.chapter.text, "!!");
 
     const result = await fetch("/api/saveToHistory", {
       method: "POST",
@@ -266,7 +264,6 @@ export default function Library() {
 
     const book = { ..._book };
 
-    console.log("saving book", book);
     book.chapters = [];
     const body = JSON.stringify({ book });
     const result = await fetch("/api/saveBook", {
@@ -519,21 +516,32 @@ export default function Library() {
  */
   function focusModeClose() {
     setFocusMode(false);
-    console.log(state.editor.selectedText, "<<");
-    console.log(state._temporaryFocusModeState, "<<");
     let selected = state.editor.selectedText;
     if (
       state.editor.selectedText.contents == "" &&
       state.editor._cachedSelectedText
     ) {
-      selected = state.editor._cachedSelectedText;
+      if (state.editor._cachedSelectedText.contents != "") {
+        selected = state.editor._cachedSelectedText;
+      } else {
+        selected = { index: 0, length: 0, contents: "" };
+      }
     }
-    const replacement = replace(
-      state.editor.text,
-      selected.index,
-      selected.index + selected.length,
-      state._temporaryFocusModeState
-    );
+
+    let replacement;
+    if (selected.length > 0) {
+      replacement = replace(
+        state.editor.text,
+        selected.index,
+        selected.index + selected.length,
+        state._temporaryFocusModeState
+      );
+    } else {
+      // no selection, just replace the whole thing,
+      // Because we went into focus mode with no selection
+      replacement = state._temporaryFocusModeState;
+    }
+
     dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: replacement });
   }
 
@@ -542,7 +550,6 @@ export default function Library() {
   }
 
   if (focusMode && state.chapter && state.chapter.chapterid) {
-    console.log("focusMode", state.editor);
     let text = state.editor.selectedText.contents;
     if (!text && state.editor._cachedSelectedText) {
       text = state.editor._cachedSelectedText.contents;
@@ -556,7 +563,6 @@ export default function Library() {
           text={text}
           onClose={focusModeClose}
           onChange={(text) => {
-            console.log("text", text);
             dispatch({
               type: "SET_TEMPORARY_FOCUS_MODE_STATE",
               payload: text,
@@ -598,8 +604,6 @@ export default function Library() {
           }}
           onSettingsSave={() => {}}
           onHistoryClick={async (newText) => {
-            console.log("newText", newText);
-
             await onTextEditorSave(state);
 
             dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
@@ -611,19 +615,10 @@ export default function Library() {
   }
 
   const selectedBookId = state.selectedBook ? state.selectedBook.bookid : "";
-  try {
-    console.log(state.chapter.chapterid, "<<<");
-  } catch (e) {}
+
   return (
     <div className="h-screen">
-      <Launcher
-        items={launchItems}
-        onLaunch={() => {
-          /* dispatch({ type: "CLEAR_SELECTED_TEXT" }); */
-          console.log("launch");
-          console.log(state.editor);
-        }}
-      />
+      <Launcher items={launchItems} onLaunch={() => {}} />
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="flex h-full">
         {bookListOpen && (
@@ -682,9 +677,9 @@ export default function Library() {
                   label="Focus Mode"
                   onClick={() => setFocusMode(true)}
                 >
-                  <p className="mr-xs">
+                  {/*                   <p className="mr-xs">
                     {state.editor.selectedText.contents.length}
-                  </p>
+                  </p> */}
                   <EyeIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
 
@@ -776,8 +771,6 @@ export default function Library() {
               }}
               onSettingsSave={() => {}}
               onHistoryClick={async (newText) => {
-                console.log("newText", newText);
-
                 await onTextEditorSave(state);
 
                 dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });

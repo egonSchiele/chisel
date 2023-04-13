@@ -16,6 +16,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const [synonyms, setSynonyms] = useState([]);
   const fetchSynonyms = async (word) => {
     if (!selected) return;
+    if (selected.length < 3) return;
     try {
       const res = await fetch(
         `https://api.datamuse.com/words?ml=${selected}&max=20`
@@ -36,7 +37,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   if (selected) {
     const syllableCount = syllable(selected);
     const annotationItems = [];
-    annotations.forEach((annotation) => {
+    annotations.forEach((annotation, annotation_index) => {
       if (annotation.type === "cliche") {
         let clicheString = [];
         let _index = annotation.startIndex;
@@ -71,7 +72,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
       }
     });
     items.push(
-      <div className="grid grid-cols-1">
+      <div className="grid grid-cols-1" key={1}>
         <h1 className="text-4xl font-georgia my-sm antialiased font-light">
           {selected}
         </h1>
@@ -175,13 +176,11 @@ function Word({
   const tagsWithGroupid = annotations.filter((tag) => tag.groupid);
   const complexTags = tagsWithGroupid.map((tag) => tag.type);
   const groupids = tagsWithGroupid.map((tag) => tag.groupid);
-  /* console.log("groupids", groupids); */
+
   const activeGroupids = groupids.filter((groupid) =>
     activeGroups.includes(groupid)
   );
-  /*   console.log("activeGroupids", activeGroupids);
-  console.log("activeGroups", activeGroups);
- */ let className = "";
+  let className = "";
   if (isCurrentWord) {
     className = "bg-gray-300 dark:bg-gray-600";
   }
@@ -228,6 +227,7 @@ export default function FocusMode({ text, onClose, onChange }) {
   const [activeGroups, setActiveGroups] = useState([]);
   const [currentWord, setCurrentWord] = useState(null);
   const words = split(mostRecentText);
+
   const normalizedWords = words.map(normalize);
   const wordAnnotations = {};
 
@@ -239,8 +239,6 @@ export default function FocusMode({ text, onClose, onChange }) {
   clicheTextAsWords.forEach((clicheTextAsWord) => {
     const index = findSubarray(normalizedWords, clicheTextAsWord);
     if (index !== -1) {
-      console.log("found cliche at index", index);
-      console.log("cliche is", clicheTextAsWord);
       for (let i = index; i < index + clicheTextAsWord.length; i++) {
         wordAnnotations[i].push({
           type: "cliche",
@@ -258,8 +256,6 @@ export default function FocusMode({ text, onClose, onChange }) {
     const jargonTextAsWords = split(jargonText).map(normalize);
     const index = findSubarray(normalizedWords, jargonTextAsWords);
     if (index !== -1) {
-      console.log("found jargon at index", index);
-      console.log("jargon is", jargonTextAsWords);
       for (let i = index; i < index + jargonTextAsWords.length; i++) {
         wordAnnotations[i].push({
           type: "jargon",
@@ -288,7 +284,9 @@ export default function FocusMode({ text, onClose, onChange }) {
     } else {
       newWords[index] = newWord;
     }
+
     const newText = newWords.join(" ") + "\n";
+
     setHistory([...history, newText]);
     setCurrentWord(null);
   }

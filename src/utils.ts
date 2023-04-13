@@ -109,7 +109,8 @@ export const fetchSuggestionsWrapper = async (
 };
 
 export function split(text) {
-  const parts = text.replaceAll("\n", "\n ").split(" ");
+  let parts = text.replaceAll("\n", "\n ").split(" ");
+  parts = parts.filter((part) => part !== "");
   return parts;
 }
 
