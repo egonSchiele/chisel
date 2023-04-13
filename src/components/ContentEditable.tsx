@@ -1,7 +1,6 @@
 import React from "react";
 
-
-const DEFAULT_CLASSES = "focus:outline-none"
+const DEFAULT_CLASSES = "focus:outline-none";
 
 export default function ContentEditable({
   value,
@@ -11,25 +10,26 @@ export default function ContentEditable({
   nextFocus = null,
 }) {
   const [content, setContent] = React.useState(value);
-  
-  const handleChange = evt => {
-    setContent(evt.target.innerHTML);
-  }
-  
+
+  const handleChange = (evt) => {
+    setContent(evt.target.innerHTML.replace(/<br>/g, " "));
+  };
+
   const handleSubmit = () => {
     onSubmit(content);
   };
-  
+
   const onKeyDown = (evt) => {
     if ((evt.metaKey && evt.code == "KeyS") || evt.key === "Enter") {
       evt.preventDefault();
+      console.log("submitting", content);
       onSubmit(content);
       if (nextFocus) {
         nextFocus();
       }
     }
-  }
-  
+  };
+
   return (
     <div
       className={`${DEFAULT_CLASSES} ${className}`}
@@ -42,5 +42,5 @@ export default function ContentEditable({
     >
       {value}
     </div>
-  )
+  );
 }

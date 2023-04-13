@@ -21,7 +21,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Launcher({ items }: { items: MenuItem[] }) {
+export default function Launcher({
+  items,
+  onLaunch = null,
+}: {
+  items: MenuItem[];
+  onLaunch?: any;
+}) {
   const [query, setQuery] = useState("");
 
   const [open, setOpen] = useState(false);
@@ -29,6 +35,10 @@ export default function Launcher({ items }: { items: MenuItem[] }) {
   const handleKeyDown = (event) => {
     if (event.metaKey && event.shiftKey && event.key === "p") {
       event.preventDefault();
+      if (!open) {
+        onLaunch();
+        console.log("onLaunch!!!!");
+      }
       setOpen((cur) => {
         return !cur;
       });
@@ -47,7 +57,6 @@ export default function Launcher({ items }: { items: MenuItem[] }) {
     query === ""
       ? items
       : items.filter((item) => {
-          console.log(item);
           return item.label.toLowerCase().includes(query.toLowerCase());
         });
 

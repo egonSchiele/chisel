@@ -6,8 +6,10 @@ import { fillers } from "fillers";
 import cliches from "./cliches";
 import List from "./components/List";
 import { syllable } from "syllable";
+import Button from "./components/Button";
+import ContentEditable from "./components/ContentEditable";
 
-function FocusList({ words, index, onSynonymClick, annotations }) {
+function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
   const fetchSynonyms = async (word) => {
@@ -49,7 +51,7 @@ function FocusList({ words, index, onSynonymClick, annotations }) {
       }
     });
     items.push(
-      <div>
+      <div className="grid grid-cols-1">
         <h1 className="text-4xl font-georgia my-sm antialiased font-light">
           {selected}
         </h1>
@@ -57,18 +59,21 @@ function FocusList({ words, index, onSynonymClick, annotations }) {
           {syllableCount} <span className="dark:text-gray-300">syllables</span>
         </p>
         {synonyms && (
-          <div className="mt-md">
+          <div className="grid grid-cols-1">
             <p className="text-md dark:text-white">Synonyms:</p>
-            {synonyms.map((synonym) => {
-              return (
-                <p
-                  onClick={() => onSynonymClick(synonym)}
-                  className="dark:text-gray-300 cursor-pointer"
-                >
-                  {synonym}
-                </p>
-              );
-            })}
+            <ul>
+              {synonyms.map((synonym, i) => {
+                return (
+                  <li
+                    key={i}
+                    onClick={() => onSynonymClick(synonym)}
+                    className="dark:text-gray-300 cursor-pointer max-w-fit h-5"
+                  >
+                    {synonym}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         )}
         <div className="mt-md">
@@ -80,6 +85,15 @@ function FocusList({ words, index, onSynonymClick, annotations }) {
               </div>
             );
           })}
+        </div>
+        <div className="mt-md">
+          <Button
+            onClick={() => {
+              onDelete(index);
+            }}
+          >
+            Delete
+          </Button>
         </div>
       </div>
     );
@@ -128,6 +142,7 @@ function Word({
   onHover,
   onLeave,
   index,
+  onChange,
   isCurrentWord,
   setCurrentWord,
 }: {
@@ -137,20 +152,16 @@ function Word({
   onHover: any;
   onLeave: any;
   index: number;
+  onChange: any;
   isCurrentWord: boolean;
   setCurrentWord: any;
 }) {
-  const tags: Annotation[] = [];
-  tags.push(...annotations);
   const normalized = normalize(word);
-  if (hedges.includes(normalized)) {
-    tags.push({ type: "hedge" });
-  }
-  if (fillers.includes(normalized)) {
-    tags.push({ type: "filler" });
-  }
-  const simpleTags = tags.filter((tag) => !tag.groupid).map((tag) => tag.type);
-  const tagsWithGroupid = tags.filter((tag) => tag.groupid);
+
+  const simpleTags = annotations
+    .filter((tag) => !tag.groupid)
+    .map((tag) => tag.type);
+  const tagsWithGroupid = annotations.filter((tag) => tag.groupid);
   const complexTags = tagsWithGroupid.map((tag) => tag.type);
   const groupids = tagsWithGroupid.map((tag) => tag.groupid);
   /* console.log("groupids", groupids); */
@@ -178,11 +189,18 @@ function Word({
       onClick={() => {
         setCurrentWord(index);
       }}
-      className={`flex-none cursor-pointer max-w-fit max-h-fit m-0 p-0 ${className}`}
+      className={`flex-none max-w-fit cursor-pointer max-h-fit m-0 p-0 ${className}`}
     >
       <div className="text-4xl font-georgia font-light antialiased dark:text-white">
         {word}
       </div>
+      {/*  <ContentEditable
+        className="col-span-9 flex-grow text-md align-text-top"
+        value={word}
+        onSubmit={(newWord) => {
+          onChange(index, newWord);
+        }}
+      /> */}
       <div className="text-sm font-light antialiased dark:text-gray-300">
         {simpleTags.join(" ")}
         {complexTags.join(" ")}
@@ -193,14 +211,19 @@ function Word({
   );
 }
 
-export default function FocusMode({ text, onClose }) {
+export default function FocusMode({ text, onClose, onChange }) {
   const [history, setHistory] = useState([text]);
   const mostRecentText = history[history.length - 1];
   const [activeGroups, setActiveGroups] = useState([]);
   const [currentWord, setCurrentWord] = useState(null);
   const words = mostRecentText.split(" ");
   const normalizedWords = words.map(normalize);
-  const groupMap = {};
+  const wordAnnotations = {};
+
+  for (let i = 0; i < words.length; i++) {
+    wordAnnotations[i] = [];
+  }
+
   let groupid = 1;
   clicheTextAsWords.forEach((clicheTextAsWord) => {
     const index = findSubarray(normalizedWords, clicheTextAsWord);
@@ -208,47 +231,60 @@ export default function FocusMode({ text, onClose }) {
       console.log("found cliche at index", index);
       console.log("cliche is", clicheTextAsWord);
       for (let i = index; i < index + clicheTextAsWord.length; i++) {
-        if (!groupMap[i]) {
-          groupMap[i] = [
-            {
-              type: "cliche",
-              groupid,
-              startIndex: index,
-              length: clicheTextAsWord.length,
-            },
-          ];
-        } else {
-          groupMap[i].push({
-            type: "cliche",
-            groupid,
-            startIndex: index,
-            length: clicheTextAsWord.length,
-          });
-        }
+        wordAnnotations[i].push({
+          type: "cliche",
+          groupid,
+          startIndex: index,
+          length: clicheTextAsWord.length,
+        });
       }
       groupid++;
     }
   });
 
+  normalizedWords.forEach((word, i) => {
+    if (hedges.includes(word)) {
+      wordAnnotations[i].push({ type: "hedge" });
+    }
+    if (fillers.includes(word)) {
+      wordAnnotations[i].push({ type: "filler" });
+    }
+  });
+
   function replaceWord(index, newWord) {
     const newWords = [...words];
-    newWords[index] = newWord;
-    const newText = newWords.join(" ");
+    if (newWord === "") {
+      newWords.splice(index, 1);
+    } else {
+      newWords[index] = newWord;
+    }
+    const newText = newWords.join(" ") + "\n";
     setHistory([...history, newText]);
+    setCurrentWord(null);
   }
+
+  useEffect(() => {
+    onChange(mostRecentText);
+  }, [mostRecentText]);
 
   function onSynonymClick(synonym) {
     replaceWord(currentWord, synonym);
   }
 
+  function onDelete(index) {
+    replaceWord(index, "");
+  }
+
   const wordComponents = words.map((word: string, i: number) => {
-    const annotations = groupMap[i] || [];
+    const annotations = wordAnnotations[i] || [];
     return (
       <Word
+        key={i}
         word={word}
         annotations={annotations}
         onHover={setActiveGroups}
         onLeave={() => setActiveGroups([])}
+        onChange={replaceWord}
         activeGroups={activeGroups}
         index={i}
         isCurrentWord={currentWord === i}
@@ -278,7 +314,8 @@ export default function FocusMode({ text, onClose }) {
             words={words}
             index={currentWord}
             onSynonymClick={onSynonymClick}
-            annotations={groupMap[currentWord] || []}
+            onDelete={onDelete}
+            annotations={wordAnnotations[currentWord] || []}
           />
         </div>
       </div>

@@ -1,3 +1,9 @@
+export type SelectedText = {
+  index: number;
+  length: number;
+  contents: string;
+};
+
 export type EditorState = {
   title: string;
   text: string;
@@ -5,9 +11,10 @@ export type EditorState = {
   chapterid: string;
   tooltipPosition: { top: number; left: number };
   tooltipOpen: boolean;
-  selectedText: { index: number; length: number; contents: string };
-  cachedSelectedTextContents?: string;
+  selectedText: SelectedText;
+  _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
+
   // selectedSyllables: number;
 };
 
@@ -27,6 +34,7 @@ export type State = {
   infoPanel: InfoPanelState;
   suggestions: Suggestion[];
   saved: boolean;
+  _temporaryFocusModeState?: string;
 };
 export type ButtonSize = "small" | "medium" | "large";
 export type SuggestionType =

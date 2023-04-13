@@ -29,7 +29,6 @@ const History = ({
       }
       const data = await res.json();
       console.log("got history");
-      console.log(data);
       setHistory(data);
     };
     func();

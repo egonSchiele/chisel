@@ -23,7 +23,9 @@ export default function PromptsSidebar({
   const [loading, setLoading] = useState(false);
 
   const fetchSynonyms = async () => {
-    const word = state.cachedSelectedTextContents;
+    const word = state._cachedSelectedText
+      ? state._cachedSelectedText.contents
+      : "";
     console.log("word", word);
     if (!word) return;
     setLoading(true);

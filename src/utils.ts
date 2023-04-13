@@ -73,10 +73,11 @@ export const fetchSuggestionsWrapper = async (
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let text = state.text;
   if (
-    state.cachedSelectedTextContents &&
-    state.cachedSelectedTextContents.length > 0
+    state._cachedSelectedText &&
+    state._cachedSelectedText.contents &&
+    state._cachedSelectedText.contents.length > 0
   ) {
-    text = state.cachedSelectedTextContents;
+    text = state._cachedSelectedText.contents;
   }
   setLoading(true);
   const result = await fd.fetchSuggestions(

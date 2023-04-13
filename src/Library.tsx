@@ -90,6 +90,8 @@ export default function Library() {
       event.preventDefault();
       if (maximize) {
         setMaximize(false);
+      } else if (focusMode) {
+        focusModeClose();
       } else if (
         sidebarOpen ||
         promptsOpen ||
@@ -471,6 +473,17 @@ export default function Library() {
     });
   }
 
+  if (focusMode) {
+  } else {
+    launchItems.push({
+      label: "Focus Mode",
+      onClick: () => {
+        setFocusMode(true);
+      },
+      icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
   const chapterlistChapters = [];
 
   if (state.selectedBook && state.selectedBook.chapterTitles) {
@@ -497,13 +510,61 @@ export default function Library() {
     />
   );
  */
+  function focusModeClose() {
+    setFocusMode(false);
+    console.log(state.editor.selectedText, "<<");
+    console.log(state._temporaryFocusModeState, "<<");
+    let selected = state.editor.selectedText;
+    if (
+      state.editor.selectedText.contents == "" &&
+      state.editor._cachedSelectedText
+    ) {
+      selected = state.editor._cachedSelectedText;
+    }
+    const replacement = replace(
+      state.editor.text,
+      selected.index,
+      selected.index + selected.length,
+      state._temporaryFocusModeState
+    );
+    dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: replacement });
+  }
+
+  function replace(full, start, end, replacement) {
+    return full.substring(0, start) + replacement + full.substring(end);
+  }
+
   if (focusMode && state.chapter && state.chapter.chapterid) {
     console.log("focusMode", state.editor);
+    let text = state.editor.selectedText.contents;
+    if (!text && state.editor._cachedSelectedText) {
+      text = state.editor._cachedSelectedText.contents;
+    }
     return (
-      <FocusMode
-        text={state.editor.selectedText.contents}
-        onClose={() => setFocusMode(false)}
-      />
+      <div>
+        <FocusMode
+          text={text}
+          onClose={focusModeClose}
+          onChange={(text) => {
+            console.log("text", text);
+            dispatch({
+              type: "SET_TEMPORARY_FOCUS_MODE_STATE",
+              payload: text,
+            });
+          }}
+        />
+        <Launcher
+          items={[
+            {
+              label: "Exit Focus Mode",
+              onClick: () => {
+                focusModeClose();
+              },
+              icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
+            },
+          ]}
+        />
+      </div>
     );
   }
 
@@ -545,7 +606,14 @@ export default function Library() {
   } catch (e) {}
   return (
     <div className="h-screen">
-      <Launcher items={launchItems} />
+      <Launcher
+        items={launchItems}
+        onLaunch={() => {
+          /* dispatch({ type: "CLEAR_SELECTED_TEXT" }); */
+          console.log("launch");
+          console.log(state.editor);
+        }}
+      />
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="flex h-full">
         {bookListOpen && (

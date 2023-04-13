@@ -156,9 +156,13 @@ export const reducer = produce<t.State>(
         draft.editor.selectedText = action.payload;
         break;
       case "CLEAR_SELECTED_TEXT":
-        draft.editor.cachedSelectedTextContents =
-          draft.editor.selectedText.contents;
+        draft.editor._cachedSelectedText = draft.editor.selectedText;
         draft.editor.selectedText = { index: 0, length: 0, contents: "" };
+        console.log(
+          "clearing selected text",
+          draft.editor._cachedSelectedText,
+          draft.editor.selectedText
+        );
         break;
       case "SYNONYM_SELECTED":
         draft.editor.selectedText = action.payload;
@@ -191,6 +195,9 @@ export const reducer = produce<t.State>(
         });
         draft.selectedBook.chapterTitles = newTitles;
         draft.saved = false;
+        break;
+      case "SET_TEMPORARY_FOCUS_MODE_STATE":
+        draft._temporaryFocusModeState = action.payload;
         break;
       default:
         return draft;
