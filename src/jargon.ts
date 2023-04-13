@@ -35,6 +35,7 @@ const jargon = [
   ["Run it up the flagpole", "Ask management or leadership"],
   ["Strategic partnership", "partnership"],
   ["Synergy", "Collaboration"],
+  ["Think outside the box", "New idea or thought"],
   ["Thinking outside the box", "New idea or thought"],
   ["Thought leader", "Expert or authority"],
   ["Top of mind", "Most important idea or thought"],
