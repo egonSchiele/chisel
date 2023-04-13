@@ -46,7 +46,7 @@ const features: FeatureData[] = [
     text: "Organize your chapters by act or by beat using grid mode.",
   },
   {
-    image: "http://s.adit.io/focusmode.png",
+    image: "https://i.imgur.com/eMVvIJx.png",
     title: "Focus mode",
     text: "Get feedback on your writing.",
   },
