@@ -201,6 +201,9 @@ function Word({
       }}
       className={`flex-none max-w-fit cursor-pointer max-h-fit m-0 p-0 ${className}`}
     >
+      {/*   <p className="text-sm font-light antialiased dark:text-gray-300 text-end">
+        {syllable(word)}
+      </p> */}
       <div className="text-4xl font-georgia font-light antialiased dark:text-white">
         {word}
       </div>
@@ -212,8 +215,8 @@ function Word({
         }}
       /> */}
       <div className="text-sm font-light antialiased dark:text-gray-300">
-        {simpleTags.join(" ")}
-        {complexTags.join(" ")}
+        {simpleTags.join(", ")}
+        {complexTags.join(", ")}
         {/*         {JSON.stringify(annotations)}
          */}{" "}
       </div>

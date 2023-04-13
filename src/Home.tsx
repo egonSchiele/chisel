@@ -55,7 +55,7 @@ const features: FeatureData[] = [
 export default function Home() {
   return (
     <div className="grid grid-cols-1 m-md mt-xl">
-      <div className="col-span-1 w-1/2 mx-auto">
+      <div className="col-span-1 w-full lg:w-1/2 mx-auto">
         <h1 className="text-4xl font-bold tracking-tight  sm:text-6xl">
           Chisel editor
         </h1>
