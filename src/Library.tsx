@@ -197,7 +197,7 @@ export default function Library() {
   }
 
   async function onTextEditorSave(state: t.State) {
-    await saveChapter(state);
+    await saveChapter(state.chapter, state.suggestions);
     await saveBook(state.selectedBook);
     await saveToHistory(state);
     setTriggerHistoryRerender((t) => t + 1);
@@ -219,15 +219,11 @@ export default function Library() {
     });
   }
 
-  async function saveChapter(state: t.State) {
-    if (state.saved) return;
-    if (!state.chapter) {
-      console.log("no chapter");
-      return;
+  async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
+    const chapter = { ..._chapter };
+    if (suggestions.length > 0) {
+      chapter.suggestions = state.suggestions;
     }
-
-    const chapter = { ...state.chapter };
-    chapter.suggestions = state.suggestions;
     const body = JSON.stringify({ chapter });
 
     const result = await fetch("/api/saveChapter", {
@@ -249,14 +245,15 @@ export default function Library() {
 
   useInterval(() => {
     const func = async () => {
-      await saveChapter(state);
+      if (state.saved) return;
+      await saveChapter(state.chapter, state.suggestions);
+
       await saveBook(state.selectedBook);
     };
     func();
   }, 5000);
 
   async function saveBook(_book: t.Book) {
-    if (state.saved) return;
     if (!_book) {
       console.log("no book");
       return;
@@ -629,6 +626,7 @@ export default function Library() {
               onChange={fetchBooks}
               closeSidebar={() => setBookListOpen(false)}
               canCloseSidebar={chapterid !== undefined}
+              saveBook={saveBook}
             />
           </div>
         )}
@@ -638,7 +636,8 @@ export default function Library() {
               chapters={chapterlistChapters}
               bookid={state.selectedBook.bookid}
               selectedChapterId={chapterid || ""}
-              onChange={() => fetchBook()}
+              onChange={async () => await fetchBook()}
+              saveChapter={(chapter) => saveChapter(chapter, [])}
               closeSidebar={() => setChapterListOpen(false)}
               canCloseSidebar={chapterid !== undefined || !state.selectedBook}
               dispatch={dispatch}

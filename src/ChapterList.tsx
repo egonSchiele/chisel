@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
+import Popup from "./Popup";
 //import Draggable from "react-draggable";
 
 export default function ChapterList({
@@ -22,6 +23,7 @@ export default function ChapterList({
   bookid,
   selectedChapterId,
   onChange,
+  saveChapter,
   closeSidebar,
   dispatch,
   canCloseSidebar = true,
@@ -29,12 +31,16 @@ export default function ChapterList({
   chapters: t.Chapter[];
   bookid: string;
   selectedChapterId: string;
-  onChange: () => void;
+  onChange: any;
+  saveChapter: any;
   closeSidebar: () => void;
   dispatch: React.Dispatch<t.ReducerAction>;
   canCloseSidebar?: boolean;
 }) {
   const [editing, setEditing] = React.useState(false);
+  const [showPopup, setShowPopup] = React.useState(false);
+  const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);
+
   async function deleteChapter(chapterid: string) {
     console.log("delete chapter", chapterid);
     dispatch({ type: "LOADING" });
@@ -50,7 +56,7 @@ export default function ChapterList({
       console.log(res.statusText);
       return;
     }
-    onChange();
+    await onChange();
   }
 
   async function favoriteChapter(chapterid: string) {
@@ -68,7 +74,7 @@ export default function ChapterList({
       console.log(res.statusText);
       return;
     }
-    onChange();
+    await onChange();
   }
 
   const newChapter = async (title = "New Chapter", text = "") => {
@@ -79,7 +85,7 @@ export default function ChapterList({
       dispatch({ type: "SET_ERROR", payload: result.message });
       return;
     }
-    onChange();
+    await onChange();
   };
 
   const dropHandler = (ev) => {
@@ -129,11 +135,24 @@ export default function ChapterList({
             selected={chapter.chapterid === selectedChapterId}
             onDelete={() => deleteChapter(chapter.chapterid)}
             onFavorite={() => favoriteChapter(chapter.chapterid)}
+            onRename={() => startRenameChapter(chapter)}
           />
         </li>
       );
     });
   };
+
+  async function renameChapter(chapter, newTitle) {
+    const newChapter = { ...chapter, title: newTitle };
+    saveChapter(newChapter);
+    setShowPopup(false);
+    await onChange();
+  }
+
+  function startRenameChapter(chapter) {
+    setCurrentChapter(chapter);
+    setShowPopup(true);
+  }
 
   const sublistDraggable = () => {
     return [
@@ -170,24 +189,6 @@ export default function ChapterList({
   };
 
   const navigate = useNavigate();
-
-  /*   const favoriteChapters = chapters.filter((chapter) => chapter.favorite);
-  const otherChapters = chapters.filter((chapter) => !chapter.favorite);
-
-  const lists = [];
-
-  if (favoriteChapters.length > 0) {
-    if (editing) {
-      lists.push(sublistDraggable("Favorites", favoriteChapters));
-    } else {
-      lists.push(sublist("Favorites", favoriteChapters));
-    }
-  }
-  if (editing) {
-    lists.push(sublistDraggable("All", otherChapters));
-  } else {
-    lists.push(sublist("All", otherChapters));
-  } */
 
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
@@ -245,13 +246,23 @@ export default function ChapterList({
     ];
   }
   return (
-    <List
-      title={editing ? "Editing" : "Chapters"}
-      items={editing ? sublistDraggable() : sublist()}
-      rightMenuItem={rightMenuItem}
-      leftMenuItem={leftMenuItem}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
-      onDrop={dropHandler}
-    />
+    <div>
+      {showPopup && (
+        <Popup
+          title="Rename Chapter"
+          inputValue={currentChapter.title}
+          onClose={() => setShowPopup(false)}
+          onChange={(newTitle) => renameChapter(currentChapter, newTitle)}
+        />
+      )}
+      <List
+        title={editing ? "Editing" : "Chapters"}
+        items={editing ? sublistDraggable() : sublist()}
+        rightMenuItem={rightMenuItem}
+        leftMenuItem={leftMenuItem}
+        className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+        onDrop={dropHandler}
+      />
+    </div>
   );
 }

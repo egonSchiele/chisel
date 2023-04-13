@@ -9,12 +9,14 @@ export function ListItem({
   selected,
   onFavorite,
   onDelete,
+  onRename,
 }: {
   link: string;
   title: string;
   selected: boolean;
   onFavorite: () => void;
   onDelete: () => void;
+  onRename: () => void;
 }) {
   const selectedCss = selected
     ? "bg-listitemhover dark:bg-dmlistitemhover"
@@ -27,6 +29,10 @@ export function ListItem({
     {
       label: "Delete",
       onClick: onDelete,
+    },
+    {
+      label: "Rename",
+      onClick: onRename,
     },
   ];
   return (

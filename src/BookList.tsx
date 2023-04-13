@@ -6,20 +6,24 @@ import Button from "./components/Button";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
-
+import Popup from "./Popup";
 export default function BookList({
   books,
   selectedBookId,
   onChange,
   closeSidebar,
+  saveBook,
   canCloseSidebar = true,
 }: {
   books: t.Book[];
   selectedBookId: string;
   onChange: () => void;
   closeSidebar: () => void;
+  saveBook: (book: t.Book) => void;
   canCloseSidebar?: boolean;
 }) {
+  const [showPopup, setShowPopup] = React.useState(false);
+  const [currentBook, setCurrentBook] = React.useState(books[0]);
   async function deleteBook(bookid: string) {
     const res = await fetch(`/api/deleteBook`, {
       method: "POST",
@@ -49,6 +53,18 @@ export default function BookList({
     await onChange();
   }
 
+  async function renameBook(book, newTitle) {
+    const newBook = { ...book, title: newTitle };
+    saveBook(newBook);
+    setShowPopup(false);
+    await onChange();
+  }
+
+  function startRenameBook(book) {
+    setCurrentBook(book);
+    setShowPopup(true);
+  }
+
   const newBook = async () => {
     const res = await fetch("/api/newBook", {
       method: "POST",
@@ -59,6 +75,7 @@ export default function BookList({
     }
     await onChange();
   };
+
   const sublist = (title, books: t.Book[]) => {
     const items = books.map((book, index) => (
       <li key={book.bookid}>
@@ -68,18 +85,28 @@ export default function BookList({
           selected={book.bookid === selectedBookId}
           onDelete={() => deleteBook(book.bookid)}
           onFavorite={() => favoriteBook(book.bookid)}
+          onRename={() => startRenameBook(book)}
         />
       </li>
     ));
 
     return (
-      <List
-        key={title}
-        title={title}
-        items={items}
-        level={2}
-        className="p-0 m-0 border-0 text-lg pt-0 pl-0 pr-0 border-r-0 mb-sm"
-      />
+      <div key={title}>
+        {showPopup && (
+          <Popup
+            title="Rename Book"
+            inputValue={currentBook.title}
+            onClose={() => setShowPopup(false)}
+            onChange={(newTitle) => renameBook(currentBook, newTitle)}
+          />
+        )}
+        <List
+          title={title}
+          items={items}
+          level={2}
+          className="p-0 m-0 border-0 text-lg pt-0 pl-0 pr-0 border-r-0 mb-sm"
+        />
+      </div>
     );
   };
 

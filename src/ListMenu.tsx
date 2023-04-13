@@ -25,7 +25,7 @@ export default function ListMenu({ items }: { items: MenuItem[] }) {
         <Popover.Panel className="absolute left-1/2 z-10 mt-5 flex w-screen max-w-min -translate-x-1/2 px-4">
           <div className="rounded-md bg-dmmenu p-xs text-sm text-gray-300 gap-1">
             {items.map((item, index) => (
-              <p
+              <div
                 key={index}
                 className="px-sm py-xs rounded-md hover:bg-gray-700 dark:hover:bg-dmlistitemhoverSecondary flex"
                 onClick={item.onClick}
@@ -34,7 +34,7 @@ export default function ListMenu({ items }: { items: MenuItem[] }) {
                 <div className="ml-1 flex-grow whitespace-nowrap">
                   {item.label}
                 </div>
-              </p>
+              </div>
             ))}
           </div>
         </Popover.Panel>
