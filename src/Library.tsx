@@ -69,6 +69,7 @@ export default function Library() {
   const [maximize, setMaximize] = useLocalStorage("maximize", false);
 
   const [focusMode, setFocusMode] = useState(false);
+  const [chapterlistChapters, setChapterListChapters] = useState([]);
 
   const { bookid, chapterid } = useParams();
 
@@ -478,20 +479,24 @@ export default function Library() {
     });
   }
 
-  const chapterlistChapters = [];
+  useEffect(() => {
+    const localChapterListChapters = [];
 
-  if (state.selectedBook && state.selectedBook.chapterTitles) {
-    state.selectedBook.chapterTitles.forEach((chaptertitle) => {
-      const chapter = state.selectedBook.chapters.find(
-        (c) => c.chapterid === chaptertitle.chapterid
-      );
-      if (chapter) {
-        chapterlistChapters.push(chapter);
-      } else {
-        console.log("chapter not found", chaptertitle);
-      }
-    });
-  }
+    if (state.selectedBook && state.selectedBook.chapterTitles) {
+      state.selectedBook.chapterTitles.forEach((chaptertitle) => {
+        const chapter = state.selectedBook.chapters.find(
+          (c) => c.chapterid === chaptertitle.chapterid
+        );
+        if (chapter) {
+          localChapterListChapters.push(chapter);
+        } else {
+          console.log("chapter not found", chaptertitle);
+        }
+      });
+    }
+
+    setChapterListChapters(localChapterListChapters);
+  }, [state.selectedBook?.chapters])
 
   const sidebarWidth = maximize ? "w-96" : "w-48 xl:w-72";
 
