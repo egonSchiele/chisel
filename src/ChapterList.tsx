@@ -242,7 +242,7 @@ export default function ChapterList({
       className = `${className} mr-xs`;
     }
 
-    return Object.assign({}, item, { className });
+    return { ...item, className };
   });
 
   if (editing) {
