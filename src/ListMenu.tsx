@@ -7,7 +7,7 @@ import { MenuItem } from "./Types";
 
 export default function ListMenu({ items }: { items: MenuItem[] }) {
   return (
-    <Popover className="relative">
+    <Popover className="relative flex">
       <Popover.Button className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
         <span className="sr-only">Menu</span>
         <EllipsisHorizontalIcon className="w-4 h-4 text-slate-400" />

@@ -64,7 +64,7 @@ export default function Editor({
   return (
     <div className="flex w-full h-full">
       <div className={`w-full h-full ${editorColSpan}`}>
-        <div className="h-18 xl:h-8 p-xs w-full xl:my-xs flex">
+        <div className="h-0 pb-1 w-full flex">
           <div className="flex flex-none"></div>
           <div className="flex flex-grow" />
         </div>

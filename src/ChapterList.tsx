@@ -201,7 +201,7 @@ export default function ChapterList({
 
   const newMenuItem = {
     label: "New",
-    icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5 mr-xs" />,
+    icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => newChapter("Untitled"),
     className: buttonStyles,
   };
@@ -235,6 +235,16 @@ export default function ChapterList({
   };
 
   let leftMenuItem = [newMenuItem, dropdownMenu];
+  
+  leftMenuItem = leftMenuItem.map((item, idx) => {
+    let className = item.className;
+    if (idx !== leftMenuItem.length - 1) {
+      className = `${className} mr-xs`;
+    }
+
+    return Object.assign({}, item, { className });
+  });
+
   if (editing) {
     leftMenuItem = [
       {
