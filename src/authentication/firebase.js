@@ -279,25 +279,31 @@ export const getUsers = async () => {
     const data = user.data();
     userData.push(data);
   });
-  userData.forEach(async (user) => {
-    /*     console.log(data);
-     */ /* const books = await db
-      .collection("books")
-      .where("userid", "==", user.userid)
-      .get();
-    console.log(user.userid); */
-
-    userMap[user.userid] = {
-      books: [],
-      userid: user.userid,
-      usage: user.usage,
-    };
-    /*     books.forEach((book) => {
-      const bookData = book.data();
-      userMap[user.userid].books.push(bookData);
-    }); */
-  });
+  const withBooks = await Promise.all(
+    userData.map(async (user) => {
+      const books = await getBooksForUser(user.userid);
+      return {
+        books,
+        email: user.email,
+        userid: user.userid,
+        usage: user.usage,
+      };
+    })
+  );
   /*   console.log(">>", userMap);
   console.log("2>>", userData);
- */ return userMap;
+ */ return withBooks;
+};
+
+export const getBooksForUser = async (userid) => {
+  const books = await db
+    .collection("books")
+    .where("userid", "==", userid)
+    .get();
+  const arr = [];
+  books.forEach((book) => {
+    const bookData = book.data();
+    arr.push(bookData);
+  });
+  return arr;
 };

@@ -32,6 +32,7 @@ module.exports = {
   mode: "development",
   entry: {
     //server: "./server.js",
+    admin: "./admin.tsx",
     library: "./library.tsx",
     book: "./book.tsx",
     chapter: "./chapter.tsx",

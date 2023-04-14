@@ -29,6 +29,7 @@ import {
   getUser,
   getUsers,
   saveUser,
+  getBooksForUser,
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
 
@@ -473,6 +474,9 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     });
 });
 
+app.get("/admin", requireAdmin, async (req, res) => {
+  res.sendFile(path.resolve("./dist/admin.html"));
+});
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   const data = await getUsers();
   res.status(200).json(data);
