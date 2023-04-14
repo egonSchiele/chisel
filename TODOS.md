@@ -42,3 +42,6 @@
 - presing esc hides panels, pressing again should only show the panels that were already open.
 - color diff in history, hard to read right now.
 - error handling w boundaries? Currently they show in console
+- When adding a book and chapter, the process is slow. For the short term change the + button to a loading spinner so people don’t double click it
+- by double clicking on the book, it will bring up the modal to change the name.
+- light mode: Note you cannot tell that Book On is highlighted, And then there is the weird line gap for chapters.
