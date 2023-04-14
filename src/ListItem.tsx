@@ -37,11 +37,11 @@ export function ListItem({
   ];
   return (
     <div
-      className={`flex py-xs text-black dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss}`}
+      className={`flex text-black dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss}`}
     >
       <Link
         to={link}
-        className="flex flex-grow items-center overflow-hidden text-ellipsis whitespace-nowrap mr-xs"
+        className="flex flex-grow items-center overflow-hidden  py-xs text-ellipsis whitespace-nowrap mr-xs"
       >
         <div className="">
           <div className="px-xs">{title}</div>
