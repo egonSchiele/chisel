@@ -22,10 +22,12 @@ import cookieParser from "cookie-parser";
 //import * as t from "./src/Types";
 import {
   requireLogin,
+  requireAdmin,
   submitLogin,
   submitRegister,
   getUserId,
   getUser,
+  getUsers,
   saveUser,
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
@@ -469,6 +471,11 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
       console.log({ error });
       res.status(400).json({ error: error.message });
     });
+});
+
+app.get("/api/admin/users", requireAdmin, async (req, res) => {
+  const data = await getUsers();
+  res.status(200).json(data);
 });
 
 const port = process.env.PORT || 80;

@@ -38,6 +38,29 @@ export const requireLogin = (req, res, next) => {
   }
 };
 
+export const requireAdmin = (req, res, next) => {
+  const c = req.cookies;
+  /*   console.log({ req });
+   */
+  if (!req.cookies.userid) {
+    console.log("no userid");
+    res.redirect("/home.html");
+  } else {
+    stringToHash(req.cookies.userid).then(async (hash) => {
+      if (hash !== req.cookies.token) {
+        res.redirect("/home.html");
+      } else {
+        const user = await getUser(req);
+        if (!user.admin) {
+          res.redirect("/home.html");
+        } else {
+          next();
+        }
+      }
+    });
+  }
+};
+
 export const getUserId = (req) => {
   if (!req.cookies.userid) {
     return null;
@@ -244,4 +267,37 @@ const createUser = async (email) => {
     console.error("Error syncing user to Firestore:", error);
     return null;
   }
+};
+
+export const getUsers = async () => {
+  const users = await db.collection("users").get();
+
+  const userMap = {};
+
+  const userData = [];
+  const res = users.forEach(async (user) => {
+    const data = user.data();
+    userData.push(data);
+  });
+  userData.forEach(async (user) => {
+    /*     console.log(data);
+     */ /* const books = await db
+      .collection("books")
+      .where("userid", "==", user.userid)
+      .get();
+    console.log(user.userid); */
+
+    userMap[user.userid] = {
+      books: [],
+      userid: user.userid,
+      usage: user.usage,
+    };
+    /*     books.forEach((book) => {
+      const bookData = book.data();
+      userMap[user.userid].books.push(bookData);
+    }); */
+  });
+  /*   console.log(">>", userMap);
+  console.log("2>>", userData);
+ */ return userMap;
 };
