@@ -115,7 +115,7 @@ export function split(text) {
 }
 
 export function normalize(word: string) {
-  return word.toLowerCase().replace(/[^a-z]/g, "");
+  return word.toLowerCase().replace(/[^a-z ]/g, "");
 }
 
 export function findSubarray(array: any[], subarray: any[]) {
