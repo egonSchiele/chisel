@@ -1,6 +1,5 @@
 - add tests
 - use new dnd library for grid
-- favicon
 - ask ai to outline entire book
 - download all data
 - imports
@@ -15,7 +14,6 @@
 - tags
 - offline mode
 - figure out what code is saving chapters on a book object
-- admin page w usage stats for all users
 - search
 - text preview for chapters
 - drag and drop should only work for text files
