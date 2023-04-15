@@ -13,13 +13,13 @@ export const fetchBook = async (bookid: string): Promise<t.Result> => {
     return t.error("Book not found");
   }
 
-  if (!data.design) {
+  /* if (!data.design) {
     data.design = {
       coverColor: "bg-dmlistitem2",
       labelColor: "bg-blue-700",
       labelLinesColor: "border-yellow-400",
     };
-  }
+  } */
   return t.success(data);
 };
 
