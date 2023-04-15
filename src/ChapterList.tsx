@@ -16,6 +16,7 @@ import {
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 import Popup from "./Popup";
+import { getCsrfToken } from "./utils";
 //import Draggable from "react-draggable";
 
 export default function ChapterList({
@@ -49,7 +50,7 @@ export default function ChapterList({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid, chapterid }),
+      body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
     });
     dispatch({ type: "LOADED" });
     if (!res.ok) {
@@ -67,7 +68,7 @@ export default function ChapterList({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid, chapterid }),
+      body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
     });
     dispatch({ type: "LOADED" });
     if (!res.ok) {
@@ -235,7 +236,7 @@ export default function ChapterList({
   };
 
   let leftMenuItem = [newMenuItem, dropdownMenu];
-  
+
   leftMenuItem = leftMenuItem.map((item, idx) => {
     let className = item.className;
     if (idx !== leftMenuItem.length - 1) {

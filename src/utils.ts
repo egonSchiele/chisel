@@ -127,3 +127,10 @@ export function findSubarray(array: any[], subarray: any[]) {
   }
   return -1;
 }
+
+export function getCsrfToken() {
+  const token = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+  return token;
+}

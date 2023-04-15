@@ -1,4 +1,5 @@
 import * as t from "./Types";
+import { getCsrfToken } from "./utils";
 export const fetchBook = async (bookid: string): Promise<t.Result> => {
   if (!bookid) return;
   const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
@@ -64,6 +65,7 @@ export const fetchSuggestions = async (
     model,
     max_tokens,
     num_suggestions,
+    csrfToken: getCsrfToken(),
   });
 
   const res = await fetch("/api/suggestions", {
@@ -96,7 +98,12 @@ export const newChapter = async (
   title: string,
   text: string
 ) => {
-  const body = JSON.stringify({ bookid, title, text });
+  const body = JSON.stringify({
+    bookid,
+    title,
+    text,
+    csrfToken: getCsrfToken(),
+  });
   const res = await fetch("/api/newChapter", {
     method: "POST",
     headers: {

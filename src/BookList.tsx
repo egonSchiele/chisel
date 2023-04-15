@@ -7,6 +7,7 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 import Popup from "./Popup";
+import { getCsrfToken } from "./utils";
 export default function BookList({
   books,
   selectedBookId,
@@ -30,7 +31,7 @@ export default function BookList({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid }),
+      body: JSON.stringify({ bookid, csrfToken: getCsrfToken() }),
     });
     if (!res.ok) {
       console.log(res.statusText);
@@ -44,7 +45,7 @@ export default function BookList({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid }),
+      body: JSON.stringify({ bookid, csrfToken: getCsrfToken() }),
     });
     if (!res.ok) {
       console.log(res.statusText);
@@ -68,6 +69,7 @@ export default function BookList({
   const newBook = async () => {
     const res = await fetch("/api/newBook", {
       method: "POST",
+      body: JSON.stringify({ csrfToken: getCsrfToken() }),
     });
     if (!res.ok) {
       console.log("error");

@@ -14,7 +14,12 @@ import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
 import { initialState, reducer } from "./reducers/library";
-import { fetchSuggestionsWrapper, useInterval, useLocalStorage } from "./utils";
+import {
+  fetchSuggestionsWrapper,
+  getCsrfToken,
+  useInterval,
+  useLocalStorage,
+} from "./utils";
 import Launcher from "./Launcher";
 import {
   ArrowsPointingInIcon,
@@ -189,7 +194,7 @@ export default function Library() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid }),
+      body: JSON.stringify({ bookid, csrfToken: getCsrfToken() }),
     });
     if (!res.ok) {
       dispatch({ type: "SET_ERROR", payload: res.statusText });
@@ -208,6 +213,7 @@ export default function Library() {
     const body = JSON.stringify({
       chapterid: state.chapter.chapterid,
       text: state.chapter.text,
+      csrfToken: getCsrfToken(),
     });
 
     const result = await fetch("/api/saveToHistory", {
@@ -225,7 +231,7 @@ export default function Library() {
     if (suggestions.length > 0) {
       chapter.suggestions = state.suggestions;
     }
-    const body = JSON.stringify({ chapter });
+    const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 
     const result = await fetch("/api/saveChapter", {
       method: "POST",
@@ -263,7 +269,7 @@ export default function Library() {
     const book = { ..._book };
 
     book.chapters = [];
-    const body = JSON.stringify({ book });
+    const body = JSON.stringify({ book, csrfToken: getCsrfToken() });
     const result = await fetch("/api/saveBook", {
       method: "POST",
       headers: {
@@ -496,7 +502,7 @@ export default function Library() {
     }
 
     setChapterListChapters(localChapterListChapters);
-  }, [state.selectedBook?.chapters])
+  }, [state.selectedBook?.chapters]);
 
   const sidebarWidth = maximize ? "w-96" : "w-48 xl:w-72";
 

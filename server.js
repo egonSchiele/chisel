@@ -68,10 +68,23 @@ const noCache = (req, res, next) => {
 };
 
 const csrf = (req, res, next) => {
-  const token = nanoid();
-  res.cookie("csrfToken", token);
-  res.locals.csrfToken = token;
-  next();
+  if (req.method !== "GET") {
+    const c = req.cookies;
+    if (c.csrfToken === req.body.csrfToken) {
+      next();
+    } else {
+      console.log(
+        "csrf failed",
+        req.url,
+        req.method,
+        c.csrfToken,
+        req.body.csrfToken
+      );
+      res.send("csrf failed").end();
+    }
+  } else {
+    next();
+  }
 };
 
 app.use(csrf);
@@ -256,24 +269,28 @@ const render = (filename, _data) => {
   return result;
 };
 
+function serveFile(filename, res) {
+  const token = nanoid();
+  res.cookie("csrfToken", token);
+
+  const rendered = render(path.resolve("./dist/" + filename), {
+    csrfToken: token,
+  });
+  res.send(rendered).end();
+}
+
 app.get(
   "/book/:bookid/chapter/:chapterid",
   requireLogin,
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const rendered = render(path.resolve("./dist/chapter.html"), {
-      csrfToken: res.locals.csrfToken,
-    });
-    res.send(rendered).end();
+    serveFile("chapter.html", res);
   }
 );
 
 app.get("/", requireLogin, async (req, res) => {
-  const rendered = render(path.resolve("./dist/library.html"), {
-    csrfToken: res.locals.csrfToken,
-  });
-  res.send(rendered).end();
+  serveFile("library.html", res);
 });
 
 app.get("/404", async (req, res) => {
@@ -328,17 +345,11 @@ app.get("/books", requireLogin, noCache, async (req, res) => {
 });
 
 app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  const rendered = render(path.resolve("./dist/book.html"), {
-    csrfToken: res.locals.csrfToken,
-  });
-  res.send(rendered).end();
+  serveFile("book.html", res);
 });
 
 app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  const rendered = render(path.resolve("./dist/book.html"), {
-    csrfToken: res.locals.csrfToken,
-  });
-  res.send(rendered).end();
+  serveFile("book.html", res);
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
@@ -520,10 +531,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
 });
 
 app.get("/admin", requireAdmin, async (req, res) => {
-  const rendered = render(path.resolve("./dist/admin.html"), {
-    csrfToken: res.locals.csrfToken,
-  });
-  res.send(rendered).end();
+  serveFile("admin.html", res);
 });
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   const data = await getUsers();

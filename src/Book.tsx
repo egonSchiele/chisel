@@ -35,7 +35,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import { NavButton } from "./NavButton";
-import { useLocalStorage } from "./utils";
+import { getCsrfToken, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 //import { useInterval } from "./utils";
 
@@ -205,7 +205,7 @@ export default function Book({}) {
   }, []);
 
   async function saveChapter(chapter) {
-    const body = JSON.stringify({ chapter });
+    const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 
     const result = await fetch("/api/saveChapter", {
       method: "POST",
@@ -239,7 +239,7 @@ export default function Book({}) {
 
     console.log("saving book", book);
     book.chapters = [];
-    const body = JSON.stringify({ book });
+    const body = JSON.stringify({ book, csrfToken: getCsrfToken() });
     const result = await fetch("/api/saveBook", {
       method: "POST",
       headers: {
@@ -272,7 +272,7 @@ export default function Book({}) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ chapterid }),
+      body: JSON.stringify({ chapterid, csrfToken: getCsrfToken() }),
     });
     if (!res.ok) {
       setError(res.statusText);
@@ -288,7 +288,7 @@ export default function Book({}) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid, title, text }),
+      body: JSON.stringify({ bookid, title, text, csrfToken: getCsrfToken() }),
     });
     await fetchBook();
   };

@@ -5,7 +5,7 @@ import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
 import { EditorState, State } from "./Types";
 import * as t from "./Types";
-import { useInterval, useLocalStorage } from "./utils";
+import { getCsrfToken, useInterval, useLocalStorage } from "./utils";
 import {
   CheckCircleIcon,
   ChevronRightIcon,
@@ -34,7 +34,7 @@ export default function Editor({
 
     const chapter = { ...state.chapter };
     chapter.suggestions = state.suggestions;
-    const body = JSON.stringify({ chapter });
+    const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 
     const result = await fetch("/api/saveChapter", {
       method: "POST",

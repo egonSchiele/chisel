@@ -6,6 +6,7 @@ import Select from "./components/Select";
 import * as t from "./Types";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import TextArea from "./components/TextArea";
+import { getCsrfToken } from "./utils";
 
 const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
   return (
@@ -87,7 +88,7 @@ const Settings = ({ settings, setSettings, onSave }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ settings }),
+      body: JSON.stringify({ settings, csrfToken: getCsrfToken() }),
     });
     onSave();
   };
