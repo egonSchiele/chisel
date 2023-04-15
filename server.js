@@ -33,6 +33,7 @@ import {
   getBooksForUser,
 } from "./src/authentication/firebase.js";
 import { nanoid } from "nanoid";
+import handlebars from "handlebars";
 
 dotenv.config();
 
@@ -55,7 +56,7 @@ const apiLimiter = rateLimit({
 // Apply the rate limiting middleware to API calls only
 app.use("/api", apiLimiter);
 
-export const noCache = (req, res, next) => {
+const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
   res.setHeader(
     "Cache-Control",
@@ -65,6 +66,15 @@ export const noCache = (req, res, next) => {
   res.setHeader("Expires", "0");
   next();
 };
+
+const csrf = (req, res, next) => {
+  const token = nanoid();
+  res.cookie("csrfToken", token);
+  res.locals.csrfToken = token;
+  next();
+};
+
+app.use(csrf);
 
 const checkBookAccess = async (req, res, next) => {
   const c = req.cookies;
@@ -231,18 +241,39 @@ app.get(
   }
 );
 
+const fileCache = {};
+const render = (filename, _data) => {
+  let template;
+  const data = { ..._data };
+  if (!fileCache[filename]) {
+    const source = fs.readFileSync(filename, { encoding: "utf8", flag: "r" });
+    template = handlebars.compile(source);
+    fileCache[filename] = template;
+  } else {
+    template = fileCache[filename];
+  }
+  const result = template(data);
+  return result;
+};
+
 app.get(
   "/book/:bookid/chapter/:chapterid",
   requireLogin,
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    res.sendFile(path.resolve("./dist/chapter.html"));
+    const rendered = render(path.resolve("./dist/chapter.html"), {
+      csrfToken: res.locals.csrfToken,
+    });
+    res.send(rendered).end();
   }
 );
 
 app.get("/", requireLogin, async (req, res) => {
-  res.sendFile(path.resolve("./dist/library.html"));
+  const rendered = render(path.resolve("./dist/library.html"), {
+    csrfToken: res.locals.csrfToken,
+  });
+  res.send(rendered).end();
 });
 
 app.get("/404", async (req, res) => {
@@ -297,11 +328,17 @@ app.get("/books", requireLogin, noCache, async (req, res) => {
 });
 
 app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  res.sendFile(path.resolve("./dist/book.html"));
+  const rendered = render(path.resolve("./dist/book.html"), {
+    csrfToken: res.locals.csrfToken,
+  });
+  res.send(rendered).end();
 });
 
 app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  res.sendFile(path.resolve("./dist/book.html"));
+  const rendered = render(path.resolve("./dist/book.html"), {
+    csrfToken: res.locals.csrfToken,
+  });
+  res.send(rendered).end();
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
@@ -483,7 +520,10 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
 });
 
 app.get("/admin", requireAdmin, async (req, res) => {
-  res.sendFile(path.resolve("./dist/admin.html"));
+  const rendered = render(path.resolve("./dist/admin.html"), {
+    csrfToken: res.locals.csrfToken,
+  });
+  res.send(rendered).end();
 });
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   const data = await getUsers();
