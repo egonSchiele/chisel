@@ -1,3 +1,4 @@
+import rateLimit from "express-rate-limit";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -43,6 +44,16 @@ app.use(express.urlencoded());
 app.use(express.static("dist"));
 
 app.use(cookieParser());
+app.disable("x-powered-by");
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply the rate limiting middleware to API calls only
+app.use("/api", apiLimiter);
 
 export const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
@@ -198,9 +209,6 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
   let { chapterid, text } = req.body;
-
-  console.log("saving to history");
-  console.log(chapterid, text);
 
   await saveToHistory(chapterid, text);
   res.status(200).end();
