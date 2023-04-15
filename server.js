@@ -198,7 +198,8 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       favorite: false,
     };
     await saveBook(book);
-    res.redirect(`/book/${bookid}`);
+    res.status(200).end();
+    //res.redirect(`/book/${bookid}`);
   }
 });
 
@@ -227,7 +228,8 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 
   book.chapterTitles.push({ chapterid, title });
   await saveBook(book);
-  res.redirect(`/book/${bookid}/chapter/${chapterid}`);
+  res.status(200).end();
+  //res.redirect(`/book/${bookid}/chapter/${chapterid}`);
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
@@ -355,7 +357,8 @@ app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid } = req.body;
   await deleteBook(bookid);
-  res.redirect("/");
+  res.status(200).end();
+  //res.redirect("/");
 });
 
 app.get(
