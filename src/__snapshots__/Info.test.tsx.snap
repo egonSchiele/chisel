@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shows the info panel 1`] = `
+<div
+  className="text-sm xl:text-md"
+>
+  <p>
+    3
+     
+    <span
+      className="text-gray-400"
+    >
+      words
+    </span>
+  </p>
+  <p>
+    5
+     
+    <span
+      className="text-gray-400"
+    >
+      syllables
+    </span>
+  </p>
+</div>
+`;
