@@ -41,10 +41,10 @@ export function ListItem({
     >
       <Link
         to={link}
-        className="flex flex-grow items-center overflow-hidden  py-xs text-ellipsis whitespace-nowrap mr-xs"
+        className="flex flex-grow items-center overflow-hidden py-xs mr-xs"
       >
-        <div className="">
-          <div className="px-xs">{title}</div>
+        <div className="w-full">
+          <div className="px-xs overflow-hidden text-ellipsis whitespace-nowrap">{title}</div>
         </div>
       </Link>
       <div className="flex flex-none cursor-pointer items-center mr-xs">
