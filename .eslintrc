@@ -2,9 +2,20 @@
 // Copy this file, and add rule overrides as needed.
 {
   "extends": "airbnb",
+  "ignorePatterns": ["node_modules/*", "dist/*"],
   "rules": {
     "quotes": "off",
     "react/prop-types": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "max-len": "off",
+    "no-underscore-dangle": "off",
+    "no-plusplus": "off",
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "react/jsx-filename-extension": "off",
+    "no-tabs": "off",
+    "camelcase": "off"
   }
 }
