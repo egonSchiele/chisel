@@ -69,6 +69,11 @@ const noCache = (req, res, next) => {
 
 const csrf = (req, res, next) => {
   if (req.method !== "GET") {
+    const excluded = ["/submitLogin", "/submitRegister"];
+    if (excluded.includes(req.url)) {
+      next();
+      return;
+    }
     const c = req.cookies;
     if (c.csrfToken === req.body.csrfToken) {
       next();
