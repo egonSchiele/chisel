@@ -312,7 +312,7 @@ export default function Book({}) {
   let key = 0;
   for (const pos in positions) {
     if (positions[pos] > 1) {
-      const [x, y] = pos.split(",").map((n) => parseInt(n));
+      const [x, y] = pos.split(",").map((n) => parseInt(n, 10));
       stackElements.push(
         <p
           key={key++}

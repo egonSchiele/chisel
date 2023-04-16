@@ -42,7 +42,7 @@
     "no-constant-condition": "off",
     "no-restricted-syntax": "off",
     "no-empty-pattern": "off",
-    "radix": "off",
+    /* "radix": "off", */
     "no-empty": "off",
     /* "import/prefer-default-export": "off", */
     "react/button-has-type": "off",
