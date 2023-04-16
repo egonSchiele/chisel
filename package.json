@@ -1,8 +1,8 @@
 {
-  "name": "chisel",
-  "version": "1.0.0",
+  "name": "chisel-editor",
+  "version": "0.1.0",
   "type": "module",
-  "license": "MIT",
+  "license": "custom",
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
