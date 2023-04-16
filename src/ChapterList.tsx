@@ -263,7 +263,7 @@ export default function ChapterList({
     ];
   }
   return (
-    <div>
+    <>
       {showPopup && (
         <Popup
           title="Rename Chapter"
@@ -280,6 +280,6 @@ export default function ChapterList({
         className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
         onDrop={dropHandler}
       />
-    </div>
+    </>
   );
 }

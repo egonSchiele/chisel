@@ -52,6 +52,7 @@ module.exports = {
 
         //dmbuttonhover: "#598669",
         sidebar: "rgb(242,241,247)",
+        menu: "rgb(242,241,247)",
         sidebarSecondary: "#FFF",
         dmsidebar: "rgb(28,27,30)",
         dmsidebarSecondary: "#000",
@@ -72,8 +73,8 @@ module.exports = {
         dmchaptercard: "#2d695e",
         dmchaptercardhover: "#357a6e",
 
-        listitemhover: "rgb(240,238,244)",
-        listitemhoverSecondary: "rgb(240,238,244)",
+        listitemhover: "rgb(222,221,226)",
+        listitemhoverSecondary: "rgb(222,221,226)",
         dmlistitemhover: "rgb(56,60,72)",
         dmlistitemhoverSecondary: "#252525",
         listBorder: "rgb(203,213,226)",
