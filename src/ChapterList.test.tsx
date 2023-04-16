@@ -38,14 +38,14 @@ describe("ChapterList", () => {
     const res = render(
       <BrowserRouter>
         <ChapterList {...props} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     container = res.container;
   });
   it("has chapter titles", () => {
     expect(screen.getByText("New job")).toBeInTheDocument();
     expect(
-      screen.getByText("new chapter fresh from the oven")
+      screen.getByText("new chapter fresh from the oven"),
     ).toBeInTheDocument();
   });
   /*  it("switches to edit mode when user clicks reorder", () => {

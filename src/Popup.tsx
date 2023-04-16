@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import Input from "./components/Input";
 import Button from "./components/Button";
 
-const Popup = ({ onClose, title, inputValue, onChange }) => {
+function Popup({
+  onClose, title, inputValue, onChange,
+}) {
   const [inputValueState, setInputValueState] = useState(inputValue);
 
   useEffect(() => {
@@ -42,6 +44,6 @@ const Popup = ({ onClose, title, inputValue, onChange }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Popup;

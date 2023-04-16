@@ -1,21 +1,21 @@
 import * as Diff from "diff";
 import React, { useState, useEffect } from "react";
 import { produce } from "immer";
+import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import Select from "./components/Select";
 import * as t from "./Types";
-import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Panel from "./components/Panel";
 
-const History = ({
+function History({
   bookid,
   chapterid,
   onSave,
   triggerHistoryRerender,
   onClick,
-}) => {
-  const [history, setHistory] = useState<t.History>([]);
+}) {
+  const [history, setHistory] = useState < t.History > ([]);
   console.log("rerendering history");
   useEffect(() => {
     const func = async () => {
@@ -24,7 +24,7 @@ const History = ({
       });
       if (!res.ok) {
         console.log(res.statusText);
-        //dispatch({ type: "SET_ERROR", payload: res.statusText });
+        // dispatch({ type: "SET_ERROR", payload: res.statusText });
         return;
       }
       const data = await res.json();
@@ -73,6 +73,6 @@ const History = ({
       ))}
     </div>
   );
-};
+}
 
 export default History;

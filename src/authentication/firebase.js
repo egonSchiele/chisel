@@ -1,10 +1,10 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { nanoid } from "nanoid";
 
-import settings from "../../settings.js";
-
 import * as firebaseAuth from "@firebase/auth";
 import * as firebaseApp from "firebase/app";
+import settings from "../../settings.js";
+
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
@@ -22,7 +22,7 @@ async function stringToHash(str) {
 
 export const requireLogin = (req, res, next) => {
   const c = req.cookies;
-  //console.log({ req });
+  // console.log({ req });
 
   if (!req.cookies.userid) {
     console.log("no userid");
@@ -64,9 +64,8 @@ export const requireAdmin = (req, res, next) => {
 export const getUserId = (req) => {
   if (!req.cookies.userid) {
     return null;
-  } else {
-    return req.cookies.userid;
   }
+  return req.cookies.userid;
 };
 
 export const submitLogin = async (req, res) => {
@@ -76,7 +75,7 @@ export const submitLogin = async (req, res) => {
     const credentials = await firebaseAuth.signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const firebaseUser = credentials.user;
     /* console.log(firebaseUser);
@@ -98,7 +97,7 @@ export const submitLogin = async (req, res) => {
     res.redirect("/");
   } catch (err) {
     console.log(err);
-    res.redirect("/login.html?err=" + err);
+    res.redirect(`/login.html?err=${err}`);
   }
 };
 
@@ -109,7 +108,7 @@ export const submitRegister = async (req, res) => {
     const credentials = await firebaseAuth.createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const firebaseUser = credentials.user;
 
@@ -121,7 +120,7 @@ export const submitRegister = async (req, res) => {
     res.redirect("/");
   } catch (err) {
     console.log(err);
-    res.redirect("/register.html?err=" + err);
+    res.redirect(`/register.html?err=${err}`);
   }
 };
 
@@ -288,7 +287,7 @@ export const getUsers = async () => {
         userid: user.userid,
         usage: user.usage,
       };
-    })
+    }),
   );
   /*   console.log(">>", userMap);
   console.log("2>>", userData);

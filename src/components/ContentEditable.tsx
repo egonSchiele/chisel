@@ -33,7 +33,7 @@ export default function ContentEditable({
   return (
     <div
       className={`${DEFAULT_CLASSES} ${className}`}
-      contentEditable={true}
+      contentEditable
       suppressContentEditableWarning
       onBlur={handleSubmit}
       onKeyDown={onKeyDown}

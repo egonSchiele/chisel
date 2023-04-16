@@ -2,9 +2,12 @@
 import Draggable from "react-draggable"; // The default
 import { Routes, Route, Link } from "react-router-dom";
 
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, {
+  useEffect, useReducer, useRef, useState,
+} from "react";
 import Panel from "./components/Panel";
 import * as t from "./Types";
+
 export default function Chapter({
   chapter,
   onChange,
@@ -27,11 +30,11 @@ export default function Chapter({
       "new",
       newChapter.chapterid,
       newChapter.pos.x,
-      newChapter.pos.y
+      newChapter.pos.y,
     );
     onChange(newChapter);
-    //dispatch({ type: "SET_CHAPTER", payload: chapter });
-    //saveChapter();
+    // dispatch({ type: "SET_CHAPTER", payload: chapter });
+    // saveChapter();
   };
   const def = JSON.stringify({
     x: chapter.pos.x * width,
@@ -47,7 +50,7 @@ export default function Chapter({
       bounds="parent"
     >
       <div
-        className={`shadow absolute m-0 bg-sidebar hover:bg-gray-200 text-text dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext select-none overflow-hidden border dark:border-dmlistBorder border-listBorder`}
+        className="shadow absolute m-0 bg-sidebar hover:bg-gray-200 text-text dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext select-none overflow-hidden border dark:border-dmlistBorder border-listBorder"
         style={{
           height: `${height}px`,
           width: `${width}px`,
@@ -56,7 +59,7 @@ export default function Chapter({
         {!small && (
           <div>
             <div
-              className={`handle cursor-move uppercase font-semibold p-xs text-black dark:text-white dark:bg-slate-400 text-sm bg-slate-400`}
+              className="handle cursor-move uppercase font-semibold p-xs text-black dark:text-white dark:bg-slate-400 text-sm bg-slate-400"
             >
               {chapter.title}
               {/*  | {chapter.chapterid} */}
@@ -73,7 +76,7 @@ export default function Chapter({
         {small && (
           <div className="h-18 text-center">
             <div
-              className={`handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-9 max-h-9 overflow-hidden pt-1`}
+              className="handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-9 max-h-9 overflow-hidden pt-1"
             >
               {chapter.title}
             </div>

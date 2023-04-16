@@ -2,12 +2,10 @@ import { jest } from "@jest/globals";
 import { fetchBook } from "./fetchData";
 import { mockBook } from "../__mocks__/mocks";
 // @ts-ignore
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve(mockBook),
-  })
-);
+global.fetch = jest.fn(() => Promise.resolve({
+  ok: true,
+  json: () => Promise.resolve(mockBook),
+}));
 
 describe("fetchBook", () => {
   it("fetches successfully data from an API", async () => {

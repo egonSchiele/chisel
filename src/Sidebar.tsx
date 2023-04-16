@@ -1,9 +1,5 @@
-import History from "./History";
-import Settings from "./Settings";
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "./components/Button";
-import SuggestionPanel from "./SuggestionPanel";
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
@@ -15,6 +11,10 @@ import {
   InformationCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import History from "./History";
+import Settings from "./Settings";
+import Button from "./components/Button";
+import SuggestionPanel from "./SuggestionPanel";
 import Info from "./Info";
 import { useLocalStorage } from "./utils";
 import List from "./components/List";
@@ -36,11 +36,13 @@ function Suggestions({ suggestions, onClick, onDelete }) {
   );
 }
 
-function Navigation({ onClick, closeSidebar, maximize, setMaximize }) {
+function Navigation({
+  onClick, closeSidebar, maximize, setMaximize,
+}) {
   const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
   return (
     <div className={`${width} flex`}>
-      <div className="flex-grow"></div>
+      <div className="flex-grow" />
       <div className="">
         <NavButton label="Info" onClick={() => onClick("info")}>
           <InformationCircleIcon
@@ -99,13 +101,12 @@ export default function Sidebar({
   maximize,
   setMaximize,
 }) {
-  const infoText =
-    state.editor.selectedText.length === 0
-      ? state.editor.text
-      : state.editor.selectedText.contents;
+  const infoText = state.editor.selectedText.length === 0
+    ? state.editor.text
+    : state.editor.selectedText.contents;
   return (
     <div
-      className={`min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder`}
+      className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder"
     >
       <div className="pt-xs">
         <Navigation
@@ -117,7 +118,7 @@ export default function Sidebar({
         {activePanel === "info" && (
           <List
             title="Info"
-            key={"info"}
+            key="info"
             items={[<Info key="info" text={infoText} />]}
           />
         )}
@@ -126,7 +127,7 @@ export default function Sidebar({
             title="Suggestions"
             items={[
               <Suggestions
-                key={"suggestions"}
+                key="suggestions"
                 suggestions={state.suggestions}
                 onClick={onSuggestionClick}
                 onDelete={onSuggestionDelete}
@@ -140,7 +141,7 @@ export default function Sidebar({
             title="History"
             items={[
               <History
-                key={"history"}
+                key="history"
                 chapterid={state.chapter.chapterid}
                 bookid={state.chapter.bookid}
                 onSave={() => {}}
@@ -156,7 +157,7 @@ export default function Sidebar({
             title="Settings"
             items={[
               <Settings
-                key={"settings"}
+                key="settings"
                 settings={settings}
                 setSettings={setSettings}
                 onSave={onSettingsSave}
