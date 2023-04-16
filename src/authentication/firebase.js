@@ -18,10 +18,9 @@ async function stringToHash(str) {
     .join("");
 }
 
-const isTestEnv =
-  process.env.NODE_ENV === "test" &&
-  process.env.CHISEL_CONFIRM === "yes_i_am_sure" &&
-  settings.testUser;
+const isTestEnv = process.env.NODE_ENV === "test"
+  && process.env.CHISEL_CONFIRM === "yes_i_am_sure"
+  && settings.testUser;
 
 export const requireLogin = (req, res, next) => {
   const c = req.cookies;
@@ -82,7 +81,7 @@ export const submitLogin = async (req, res) => {
     const credentials = await firebaseAuth.signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const firebaseUser = credentials.user;
     /* console.log(firebaseUser);
@@ -115,7 +114,7 @@ export const submitRegister = async (req, res) => {
     const credentials = await firebaseAuth.createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const firebaseUser = credentials.user;
 
@@ -304,7 +303,7 @@ export const getUsers = async () => {
         userid: user.userid,
         usage: user.usage,
       };
-    })
+    }),
   );
   /*   console.log(">>", userMap);
   console.log("2>>", userData);
