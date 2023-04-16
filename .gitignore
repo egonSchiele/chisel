@@ -9,3 +9,4 @@ settings.ts
 settings.js
 yarn.lock
 tmp/*
+yarn-error.log
