@@ -64,3 +64,16 @@ export const chapter1: Chapter = {
   suggestions: [{ type: "expand", contents: "Hi there" }],
   favorite: false,
 };
+
+export const chapter2: Chapter = {
+  bookid: "book_1",
+  chapterid: "chapter_2",
+  title: "new chapter fresh from the oven",
+  text: "hi there\n\n",
+  pos: {
+    x: 0,
+    y: 0,
+  },
+  suggestions: [],
+  favorite: false,
+};

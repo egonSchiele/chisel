@@ -5,11 +5,22 @@ import React from "react";
 import { EllipsisHorizontalIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { MenuItem } from "./Types";
 
-export default function ListMenu({ items }: { items: MenuItem[] }) {
+export default function ListMenu({
+  items,
+  label = "Menu",
+  selector = "menu",
+}: {
+  items: MenuItem[];
+  label?: string;
+  selector?: string;
+}) {
   return (
     <Popover className="relative flex">
-      <Popover.Button className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
-        <span className="sr-only">Menu</span>
+      <Popover.Button
+        className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+        data-selector={selector}
+      >
+        <span className="sr-only">{label}</span>
         <EllipsisHorizontalIcon className="w-4 h-4 text-slate-400" />
       </Popover.Button>
 

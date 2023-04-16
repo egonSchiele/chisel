@@ -13,6 +13,7 @@ exports[`shows the ChapterList panel 1`] = `
     >
       <button
         className="relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar mr-xs"
+        data-label="New"
         onClick={[Function]}
         type="button"
       >
@@ -39,6 +40,7 @@ exports[`shows the ChapterList panel 1`] = `
       </button>
       <button
         className="relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar"
+        data-label="Menu"
         onClick={[Function]}
         type="button"
       >
@@ -55,6 +57,7 @@ exports[`shows the ChapterList panel 1`] = `
             aria-expanded={false}
             className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
             data-headlessui-state=""
+            data-selector="chapter-menu"
             id={null}
             onClick={[Function]}
             onKeyDown={[Function]}
@@ -65,7 +68,7 @@ exports[`shows the ChapterList panel 1`] = `
             <span
               className="sr-only"
             >
-              Menu
+              Chapter Menu
             </span>
             <svg
               aria-hidden="true"
@@ -96,6 +99,7 @@ exports[`shows the ChapterList panel 1`] = `
       </div>
       <button
         className="relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar"
+        data-label="Close"
         onClick={[Function]}
         type="button"
       >
@@ -156,6 +160,72 @@ exports[`shows the ChapterList panel 1`] = `
                 aria-expanded={false}
                 className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
                 data-headlessui-state=""
+                data-selector="menu"
+                id={null}
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                type="button"
+              >
+                <span
+                  className="sr-only"
+                >
+                  Menu
+                </span>
+                <svg
+                  aria-hidden="true"
+                  className="w-4 h-4 text-slate-400"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li
+        className=""
+      >
+        <div
+          className="flex text-black dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover "
+        >
+          <a
+            className="flex flex-grow items-center overflow-hidden  py-xs text-ellipsis whitespace-nowrap mr-xs"
+            href="/book/book_1/chapter/chapter_2"
+            onClick={[Function]}
+          >
+            <div
+              className=""
+            >
+              <div
+                className="px-xs"
+              >
+                new chapter fresh from the oven
+              </div>
+            </div>
+          </a>
+          <div
+            className="flex flex-none cursor-pointer items-center mr-xs"
+          >
+            <div
+              className="relative flex"
+              data-headlessui-state=""
+            >
+              <button
+                aria-expanded={false}
+                className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+                data-headlessui-state=""
+                data-selector="menu"
                 id={null}
                 onClick={[Function]}
                 onKeyDown={[Function]}

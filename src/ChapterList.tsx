@@ -230,7 +230,13 @@ export default function ChapterList({
 
   const dropdownMenu = {
     label: "Menu",
-    icon: <ListMenu items={dropdownMenuItems} />,
+    icon: (
+      <ListMenu
+        items={dropdownMenuItems}
+        label="Chapter Menu"
+        selector="chapter-menu"
+      />
+    ),
     onClick: () => {},
     className: buttonStyles,
   };

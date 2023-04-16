@@ -22,6 +22,7 @@ function MenuItem({
       type="button"
       className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 ${className}`}
       onClick={onClick}
+      data-label={label}
     >
       <span className="sr-only">{label}</span>
       {icon}
