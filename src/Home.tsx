@@ -97,7 +97,7 @@ export default function Home() {
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
-        ></iframe>
+        />
         <h2 className="text-2xl mt-lg font-bold tracking-tight">Features</h2>
         {features.map((feature, i) => (
           <Feature key={i} {...feature} />

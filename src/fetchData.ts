@@ -1,5 +1,6 @@
 import * as t from "./Types";
 import { getCsrfToken } from "./utils";
+
 export const fetchBook = async (bookid: string): Promise<t.Result> => {
   if (!bookid) return;
   const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
@@ -57,9 +58,9 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
-  label: string
+  label: string,
 ) => {
-  let prompt = _prompt.replaceAll("{{text}}", text);
+  const prompt = _prompt.replaceAll("{{text}}", text);
   const body = JSON.stringify({
     prompt,
     model,
@@ -84,9 +85,9 @@ export const fetchSuggestions = async (
 
   if (!data) {
     return t.error("Suggestions not found");
-  } else if (data.error) {
+  } if (data.error) {
     return t.error(data.error);
-  } else if (!data.choices) {
+  } if (!data.choices) {
     return t.error("No choices returned.");
   }
 
@@ -96,7 +97,7 @@ export const fetchSuggestions = async (
 export const newChapter = async (
   bookid: string,
   title: string,
-  text: string
+  text: string,
 ) => {
   const body = JSON.stringify({
     bookid,

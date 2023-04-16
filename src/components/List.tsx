@@ -3,8 +3,8 @@ import {
   ChevronRightIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import * as t from "../Types";
 import React from "react";
+import * as t from "../Types";
 
 function MenuItem({
   label,
@@ -69,9 +69,9 @@ export default function List({
       }}
     >
       <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
-        {leftMenuItem &&
-          Array.isArray(leftMenuItem) &&
-          leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
+        {leftMenuItem
+          && Array.isArray(leftMenuItem)
+          && leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
         {leftMenuItem && !Array.isArray(leftMenuItem) && (
           <MenuItem {...leftMenuItem} />
         )}

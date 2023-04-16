@@ -3,7 +3,7 @@ import * as Diff from "diff";
 import admin from "firebase-admin";
 import settings from "../../settings.js";
 import serviceAccountKey from "../../serviceAccountKey.json" assert { type: "json" };
-//const serviceAccountKey = await import(settings.firebaseServiceAccountKeyPath);
+// const serviceAccountKey = await import(settings.firebaseServiceAccountKeyPath);
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey),
@@ -42,7 +42,7 @@ export const getBook = async (bookid) => {
   }
   const book = bookObj.data();
   book.chapters = [];
-  //console.log("1chapters", book.chapters);
+  // console.log("1chapters", book.chapters);
   const chapters = await db
     .collection("chapters")
     .where("bookid", "==", bookid)
@@ -93,12 +93,12 @@ export const getBooks = async (userid) => {
   if (books.empty) {
     console.log("No books found.");
     return [];
-  } else {
-    const allBooks = [];
-    books.forEach(async (book) => {
-      const data = book.data();
-      // make sure book objs have chapter titles
-      /*   if (data.chapters.length === 0) {
+  }
+  const allBooks = [];
+  books.forEach(async (book) => {
+    const data = book.data();
+    // make sure book objs have chapter titles
+    /*   if (data.chapters.length === 0) {
         const _book = await getBook(data.bookid);
         if (_book.chapters.length > 0) {
           _book.chapters.forEach((chapter) => {
@@ -110,33 +110,32 @@ export const getBooks = async (userid) => {
           await saveBook(data);
         }
       } */
-      if (!data.chapterTitles) {
-        data.chapterTitles = data.chapters;
-        data.chapters = [];
-        await saveBook(data);
-      }
-      allBooks.push(data);
-    });
-    console.log("allbooks", allBooks);
-    return allBooks;
-  }
+    if (!data.chapterTitles) {
+      data.chapterTitles = data.chapters;
+      data.chapters = [];
+      await saveBook(data);
+    }
+    allBooks.push(data);
+  });
+  console.log("allbooks", allBooks);
+  return allBooks;
 };
 
 export const saveChapter = async (chapter) => {
   console.log("saving chapter");
-  //console.log({ chapter });
+  // console.log({ chapter });
   if (!chapter) {
     console.log("no chapter to save");
     return;
   }
 
   if (
-    settings.limits.chapterLength > 0 &&
-    chapter.text &&
-    chapter.text.length >= settings.limits.chapterLength
+    settings.limits.chapterLength > 0
+    && chapter.text
+    && chapter.text.length >= settings.limits.chapterLength
   ) {
     throw new Error(
-      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
+      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`,
     );
   }
 
@@ -170,9 +169,7 @@ export const deleteChapter = async (chapterid, bookid) => {
     console.log("no book to update");
     return;
   }
-  book.chapterTitles = book.chapterTitles.filter((chapter) => {
-    return chapter.chapterid !== chapterid;
-  });
+  book.chapterTitles = book.chapterTitles.filter((chapter) => chapter.chapterid !== chapterid);
   await saveBook(book);
 };
 
@@ -225,14 +222,14 @@ export const saveToHistory = async (chapterid, text) => {
     await docRef.set({ history });
     return;
   }
-  const history = bookObj.data().history;
+  const { history } = bookObj.data();
 
   if (
-    settings.limits.historyLength > 0 &&
-    history.length >= settings.limits.historyLength
+    settings.limits.historyLength > 0
+    && history.length >= settings.limits.historyLength
   ) {
     throw new Error(
-      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
+      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`,
     );
   }
 

@@ -1,4 +1,5 @@
 import React from "react";
+
 type TableRow = [string, string];
 export default function Table({ rows }: { rows: TableRow[] }) {
   return (

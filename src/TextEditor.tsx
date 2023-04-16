@@ -12,7 +12,7 @@ import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
 
-const TextEditor = ({
+function TextEditor({
   dispatch,
   state,
   chapterid,
@@ -24,7 +24,7 @@ const TextEditor = ({
   chapterid: string;
   saved: boolean;
   onSave: () => void;
-}) => {
+}) {
   console.log("TextEditor", chapterid);
   const quillRef = useRef();
 
@@ -157,6 +157,6 @@ const TextEditor = ({
       </div>
     </div>
   );
-};
+}
 
 export default TextEditor;

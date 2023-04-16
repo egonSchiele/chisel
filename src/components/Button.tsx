@@ -1,5 +1,6 @@
 import React from "react";
 import { ButtonSize } from "../Types";
+
 export default function Button({
   children,
   onClick = () => {},
@@ -19,12 +20,10 @@ export default function Button({
   style?: "primary" | "secondary";
   buttonType?: "button" | "submit";
 }) {
-  let colors =
-    "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
+  let colors = "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
 
   if (style === "secondary") {
-    colors =
-      "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbuttonsecondary dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary border border-dmbackground";
+    colors = "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbuttonsecondary dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary border border-dmbackground";
   }
 
   const sizes = {

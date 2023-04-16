@@ -1,7 +1,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
-import { NavButton } from "./NavButton";
 import { hedges } from "hedges";
+import { NavButton } from "./NavButton";
 import { fillers } from "fillers";
 import cliches from "./cliches";
 import List from "./components/List";
@@ -11,7 +11,9 @@ import ContentEditable from "./components/ContentEditable";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 
-function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
+function FocusList({
+ words, index, onSynonymClick, onDelete, annotations 
+}) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
   const fetchSynonyms = async (word) => {
@@ -19,7 +21,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
     if (selected.length < 3) return;
     try {
       const res = await fetch(
-        `https://api.datamuse.com/words?ml=${selected}&max=20`
+        `https://api.datamuse.com/words?ml=${selected}&max=20`,
       );
       const data = await res.json();
       const synonyms = data.map((item) => item.word);
@@ -33,13 +35,13 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
     fetchSynonyms(selected);
   }, [selected]);
 
-  let items = [];
+  const items = [];
   if (selected) {
     const syllableCount = syllable(selected);
     const annotationItems = [];
     annotations.forEach((annotation, annotation_index) => {
       if (annotation.type === "cliche") {
-        let clicheString = [];
+        const clicheString = [];
         let _index = annotation.startIndex;
         let i = 0;
         while (i < annotation.length) {
@@ -52,7 +54,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
           value: clicheString.join(" "),
         });
       } else if (annotation.type === "jargon") {
-        let clicheString = [];
+        const clicheString = [];
         let _index = annotation.startIndex;
         let i = 0;
         while (i < annotation.length) {
@@ -60,10 +62,10 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
           _index++;
           i++;
         }
-        let replacementTuple = jargon.find((tuple) => {
+        const replacementTuple = jargon.find((tuple) => {
           return normalize(tuple[0]) === normalize(clicheString.join(" "));
         });
-        let replacement = replacementTuple ? replacementTuple[1] : "";
+        const replacement = replacementTuple ? replacementTuple[1] : "";
         annotationItems.push({
           label: "jargon",
           value: clicheString.join(" "),
@@ -77,14 +79,15 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
           {selected}
         </h1>
         <p className="text-md dark:text-white">
-          {syllableCount} <span className="dark:text-gray-300">syllables</span>
+          {syllableCount} 
+{' '}
+<span className="dark:text-gray-300">syllables</span>
         </p>
         {synonyms && (
           <div className="grid grid-cols-1">
             <p className="text-md dark:text-white">Synonyms:</p>
             <ul>
-              {synonyms.map((synonym, i) => {
-                return (
+              {synonyms.map((synonym, i) => (
                   <li
                     key={i}
                     onClick={() => onSynonymClick(synonym)}
@@ -92,14 +95,12 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
                   >
                     {synonym}
                   </li>
-                );
-              })}
+                ))}
             </ul>
           </div>
         )}
         <div className="mt-md">
-          {annotationItems.map((item, i) => {
-            return (
+          {annotationItems.map((item, i) => (
               <div key={i}>
                 <p className="text-md uppercase">{item.label}</p>
                 <p>{item.value}</p>
@@ -109,8 +110,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
                   </p>
                 )}
               </div>
-            );
-          })}
+            ))}
         </div>
         <div className="mt-md">
           <Button
@@ -121,7 +121,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
             Delete
           </Button>
         </div>
-      </div>
+      </div>,
     );
   }
   return (
@@ -130,13 +130,12 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
       items={items}
       /*       rightMenuItem={rightMenuItem}
       leftMenuItem={leftMenuItem}
- */ className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
     />
   );
 }
 
-const clicheTextAsWords = cliches.map((fragment) =>
-  split(fragment).map(normalize)
+const clicheTextAsWords = cliches.map((fragment) => split(fragment).map(normalize),
 );
 
 type Annotation = {
@@ -177,8 +176,7 @@ function Word({
   const complexTags = tagsWithGroupid.map((tag) => tag.type);
   const groupids = tagsWithGroupid.map((tag) => tag.groupid);
 
-  const activeGroupids = groupids.filter((groupid) =>
-    activeGroups.includes(groupid)
+  const activeGroupids = groupids.filter((groupid) => activeGroups.includes(groupid),
   );
   let className = "";
   if (isCurrentWord) {
@@ -218,7 +216,8 @@ function Word({
         {simpleTags.join(", ")}
         {complexTags.join(", ")}
         {/*         {JSON.stringify(annotations)}
-         */}{" "}
+         */}
+{" "}
       </div>
     </div>
   );
@@ -288,7 +287,7 @@ export default function FocusMode({ text, onClose, onChange }) {
       newWords[index] = newWord;
     }
 
-    const newText = newWords.join(" ") + "\n";
+    const newText = `${newWords.join(" ")  }\n`;
 
     setHistory([...history, newText]);
     setCurrentWord(null);

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import ButtonGroup from "./components/ButtonGroup";
 import Button from "./components/Button";
 import * as t from "./Types";
 import * as fd from "./fetchData";
 import List from "./components/List";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import Spinner from "./components/Spinner";
 import { fetchSuggestionsWrapper } from "./utils";
+
 export default function PromptsSidebar({
   dispatch,
   state,
@@ -50,30 +51,25 @@ export default function PromptsSidebar({
     onLoad();
   };
 
-  const prompts = settings.prompts.map((prompt, i) => {
-    return (
-      <li
-        key={i}
-        onClick={() =>
-          fetchSuggestionsWrapper(
-            state,
-            settings,
-            setLoading,
-            dispatch,
-            onLoad,
-            prompt.text,
-            prompt.label
-          )
-        }
-        className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
-      >
-        <p className="px-xs">{prompt.label}</p>
-      </li>
-    );
-  });
+  const prompts = settings.prompts.map((prompt, i) => (
+    <li
+      key={i}
+      onClick={() => fetchSuggestionsWrapper(
+        state,
+        settings,
+        setLoading,
+        dispatch,
+        onLoad,
+        prompt.text,
+        prompt.label,
+      )}
+      className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
+    >
+      <p className="px-xs">{prompt.label}</p>
+    </li>
+  ));
 
-  const buttonStyles =
-    "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -83,11 +79,11 @@ export default function PromptsSidebar({
 
   const leftMenuItem = loading
     ? {
-        label: "Loading",
-        icon: <Spinner />,
-        onClick: () => {},
-        className: buttonStyles,
-      }
+      label: "Loading",
+      icon: <Spinner />,
+      onClick: () => {},
+      className: buttonStyles,
+    }
     : null;
 
   const actions = [

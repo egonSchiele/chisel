@@ -1,4 +1,6 @@
-import React, { Fragment, Reducer, useEffect, useState } from "react";
+import React, {
+  Fragment, Reducer, useEffect, useState,
+} from "react";
 import * as t from "./Types";
 import "./globals.css";
 import Button from "./components/Button";
@@ -46,7 +48,7 @@ import FocusMode from "./FocusMode";
 export default function Library() {
   const [state, dispatch] = React.useReducer<Reducer<t.State, t.ReducerAction>>(
     reducer,
-    initialState(null)
+    initialState(null),
   );
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -60,13 +62,13 @@ export default function Library() {
   const [bookListOpen, setBookListOpen] = useLocalStorage("bookListOpen", true);
   const [chapterListOpen, setChapterListOpen] = useLocalStorage(
     "chapterListOpen",
-    true
+    true,
   );
   const [sidebarOpen, setSidebarOpen] = useLocalStorage("sidebarOpen", false);
   const [promptsOpen, setPromptsOpen] = useLocalStorage("promptsOpen", false);
   const [activePanel, setActivePanel] = useLocalStorage(
     "activePanel",
-    "suggestions"
+    "suggestions",
   );
 
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
@@ -81,7 +83,7 @@ export default function Library() {
   useEffect(() => {
     if (chapterid && state.selectedBook) {
       const chapter = state.selectedBook.chapters.find(
-        (c: t.Chapter) => c.chapterid === chapterid
+        (c: t.Chapter) => c.chapterid === chapterid,
       );
       if (chapter) {
         dispatch({ type: "SET_CHAPTER", payload: chapter });
@@ -99,10 +101,10 @@ export default function Library() {
       } else if (focusMode) {
         focusModeClose();
       } else if (
-        sidebarOpen ||
-        promptsOpen ||
-        bookListOpen ||
-        chapterListOpen
+        sidebarOpen
+        || promptsOpen
+        || bookListOpen
+        || chapterListOpen
       ) {
         setSidebarOpen(false);
         setPromptsOpen(false);
@@ -198,7 +200,6 @@ export default function Library() {
     });
     if (!res.ok) {
       dispatch({ type: "SET_ERROR", payload: res.statusText });
-      return;
     }
   }
 
@@ -243,7 +244,6 @@ export default function Library() {
 
     if (!result.ok) {
       dispatch({ type: "SET_ERROR", payload: result.statusText });
-      return;
     } else {
       dispatch({ type: "CLEAR_ERROR" });
       dispatch({ type: "SET_SAVED", payload: true });
@@ -431,7 +431,7 @@ export default function Library() {
           dispatch,
           onSuggestionLoad,
           prompt.text,
-          prompt.label
+          prompt.label,
         );
       },
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
@@ -491,7 +491,7 @@ export default function Library() {
     if (state.selectedBook && state.selectedBook.chapterTitles) {
       state.selectedBook.chapterTitles.forEach((chaptertitle) => {
         const chapter = state.selectedBook.chapters.find(
-          (c) => c.chapterid === chaptertitle.chapterid
+          (c) => c.chapterid === chaptertitle.chapterid,
         );
         if (chapter) {
           localChapterListChapters.push(chapter);
@@ -526,8 +526,8 @@ export default function Library() {
     setFocusMode(false);
     let selected = state.editor.selectedText;
     if (
-      state.editor.selectedText.contents == "" &&
-      state.editor._cachedSelectedText
+      state.editor.selectedText.contents == ""
+      && state.editor._cachedSelectedText
     ) {
       if (state.editor._cachedSelectedText.contents != "") {
         selected = state.editor._cachedSelectedText;
@@ -542,7 +542,7 @@ export default function Library() {
         state.editor.text,
         selected.index,
         selected.index + selected.length,
-        state._temporaryFocusModeState
+        state._temporaryFocusModeState,
       );
     } else {
       // no selection, just replace the whole thing,
@@ -594,7 +594,7 @@ export default function Library() {
 
   if (maximize && state.chapter && state.chapter.chapterid) {
     return (
-      <div className={`w-3/4 mx-auto flex-none min-h-screen`}>
+      <div className="w-3/4 mx-auto flex-none min-h-screen">
         <Launcher items={launchItems} />
 
         <Sidebar
@@ -656,7 +656,7 @@ export default function Library() {
           </div>
         )}
 
-        <div className={`h-full flex flex-col flex-grow`}>
+        <div className="h-full flex flex-col flex-grow">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
               {(!bookListOpen || !chapterListOpen) && (

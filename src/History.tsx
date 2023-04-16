@@ -15,7 +15,7 @@ function History({
   triggerHistoryRerender,
   onClick,
 }) {
-  const [history, setHistory] = useState < t.History > ([]);
+  const [history, setHistory] = useState < t.History >([]);
   console.log("rerendering history");
   useEffect(() => {
     const func = async () => {

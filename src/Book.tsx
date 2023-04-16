@@ -5,6 +5,21 @@ import Chapter from "./Chapter";
 import "./globals.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import produce, { current } from "immer";
+import Button from "./components/Button";
+import EditableInput from "./components/EditableInput";
+import { TrashIcon } from "@heroicons/react/24/solid";
+import Select from "./components/Select";
+import ContentEditable from "./components/ContentEditable";
+import {
+  Bars3BottomLeftIcon,
+  ChevronLeftIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
+import { NavButton } from "./NavButton";
+import { getCsrfToken, useLocalStorage } from "./utils";
+import Launcher from "./Launcher";
+
 const initialState: t.Book = {
   userid: "",
   bookid: "",
@@ -22,29 +37,14 @@ const initialState: t.Book = {
 
   favorite: false,
 };
+// import { useInterval } from "./utils";
 
-import produce, { current } from "immer";
-import Button from "./components/Button";
-import EditableInput from "./components/EditableInput";
-import { TrashIcon } from "@heroicons/react/24/solid";
-import Select from "./components/Select";
-import ContentEditable from "./components/ContentEditable";
-import {
-  Bars3BottomLeftIcon,
-  ChevronLeftIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
-import { NavButton } from "./NavButton";
-import { getCsrfToken, useLocalStorage } from "./utils";
-import Launcher from "./Launcher";
-//import { useInterval } from "./utils";
-
-let reducer = produce((draft: t.Book, action: any) => {
+const reducer = produce((draft: t.Book, action: any) => {
   switch (action.type) {
     case "SET_TITLE":
       {
         const chapter = draft.chapters.find(
-          (ch) => ch.chapterid === action.payload.chapterID
+          (ch) => ch.chapterid === action.payload.chapterID,
         );
         if (chapter) {
           chapter.title = action.payload.newTitle;
@@ -54,7 +54,7 @@ let reducer = produce((draft: t.Book, action: any) => {
     case "SET_TEXT":
       {
         const chapter = draft.chapters.find(
-          (ch) => ch.chapterid === action.payload.chapterID
+          (ch) => ch.chapterid === action.payload.chapterID,
         );
         if (chapter) {
           chapter.text = action.payload.newText;
@@ -62,7 +62,7 @@ let reducer = produce((draft: t.Book, action: any) => {
           console.log(
             "Chapter not found",
             current(draft.chapters),
-            action.payload.chapterID
+            action.payload.chapterID,
           );
         }
       }
@@ -71,9 +71,8 @@ let reducer = produce((draft: t.Book, action: any) => {
       draft.chapters = draft.chapters.map((ch) => {
         if (ch.chapterid === action.payload.chapterID) {
           return action.payload.chapter;
-        } else {
-          return ch;
         }
+        return ch;
       });
 
       break;
@@ -106,9 +105,8 @@ let reducer = produce((draft: t.Book, action: any) => {
 });
 
 export default function Book({}) {
-  const [state, dispatch] = React.useReducer<
-    (state: t.Book, action: any) => any
-  >(reducer, initialState);
+  const [state, dispatch] = React.useReducer<(state: t.Book, action: any) => any
+    >(reducer, initialState);
   const [error, setError] = React.useState("");
 
   const [loaded, setLoaded] = React.useState(false);
@@ -138,21 +136,19 @@ export default function Book({}) {
   const zoomOut = (val) => {
     if (val === "large") {
       return "medium";
-    } else if (val === "medium") {
-      return "small";
-    } else {
+    } if (val === "medium") {
       return "small";
     }
+    return "small";
   };
 
   const zoomIn = (val) => {
     if (val === "small") {
       return "medium";
-    } else if (val === "medium") {
-      return "large";
-    } else {
+    } if (val === "medium") {
       return "large";
     }
+    return "large";
   };
 
   const handleKeyDown = (event) => {
@@ -250,7 +246,6 @@ export default function Book({}) {
 
     if (!result.ok) {
       setError(result.statusText);
-      return;
     } else {
       setError("");
     }
@@ -276,7 +271,6 @@ export default function Book({}) {
     });
     if (!res.ok) {
       setError(res.statusText);
-      return;
     }
   }
 
@@ -288,7 +282,9 @@ export default function Book({}) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid, title, text, csrfToken: getCsrfToken() }),
+      body: JSON.stringify({
+        bookid, title, text, csrfToken: getCsrfToken(),
+      }),
     });
     await fetchBook();
   };
@@ -325,7 +321,7 @@ export default function Book({}) {
           }}
         >
           {positions[pos]}
-        </p>
+        </p>,
       );
     }
   }
@@ -337,7 +333,7 @@ export default function Book({}) {
   for (let x = 0; x < state.columnHeadings.length; x++) {
     for (let y = 0; y < state.rowHeadings.length; y++) {
       const chapters = state.chapters.filter(
-        (c) => c.pos.x === x && c.pos.y === y
+        (c) => c.pos.x === x && c.pos.y === y,
       );
       if (chapters.length > 0) {
         chapters.forEach((chapter) => {
@@ -351,7 +347,7 @@ export default function Book({}) {
               width={width}
               // @ts-ignore
               height={height}
-            />
+            />,
           );
         });
       }
@@ -365,14 +361,14 @@ export default function Book({}) {
             height: `${height}px`,
             width: `${width}px`,
           }}
-        />
+        />,
       );
     }
   }
   elements = [...elements, ...chapterElements];
 
   const launchItems = [
-    /* 
+    /*
     {
       label: "Save",
       onClick: () => {
@@ -409,14 +405,22 @@ export default function Book({}) {
   if (!loaded) {
     if (error) {
       return (
-        <p className="p-sm bg-red-700 text-white w-full">Error: {error}</p>
+        <p className="p-sm bg-red-700 text-white w-full">
+          Error:
+          {error}
+        </p>
       );
     }
     return <div>Loading...</div>;
   }
   return (
     <div className="mx-auto mt-xs w-full h-full bg-background dark:bg-dmbackground items-center justify-between p-6 lg:px-8">
-      {error && <p className="p-sm bg-red-700 w-full">Error: {error}</p>}
+      {error && (
+      <p className="p-sm bg-red-700 w-full">
+        Error:
+        {error}
+      </p>
+      )}
       <Launcher items={launchItems} />
       <p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>
       <div className="w-full text-sm dark:text-gray-300 my-xs flex">
@@ -437,27 +441,25 @@ export default function Book({}) {
       </div>
 
       <div className="relative w-screen h-8">
-        {state.columnHeadings.map((heading, i) => {
-          return (
-            <ContentEditable
-              key={i}
-              value={heading}
-              className="text-center text-sm dark:bg-dmsidebar dark:text-dmtext absolute top-0 h-full leading-8"
-              style={{
-                left: `${i * width}px`,
-                height: `${height}px`,
-                width: `${width}px`,
-              }}
-              onSubmit={(newHeading) => {
-                dispatch({
-                  type: "SET_COLUMN_HEADING",
-                  payload: { i, newHeading },
-                });
-                setSaved(false);
-              }}
-            />
-          );
-        })}
+        {state.columnHeadings.map((heading, i) => (
+          <ContentEditable
+            key={i}
+            value={heading}
+            className="text-center text-sm dark:bg-dmsidebar dark:text-dmtext absolute top-0 h-full leading-8"
+            style={{
+              left: `${i * width}px`,
+              height: `${height}px`,
+              width: `${width}px`,
+            }}
+            onSubmit={(newHeading) => {
+              dispatch({
+                type: "SET_COLUMN_HEADING",
+                payload: { i, newHeading },
+              });
+              setSaved(false);
+            }}
+          />
+        ))}
       </div>
       <div className="relative  h-screen w-screen">
         <div className="h-screen w-screen chaptergrid ">
@@ -487,7 +489,7 @@ export default function Book({}) {
             ))}
         </ul> */}
 
-      {/*book.chapters.map((chapter, index) => (
+      {/* book.chapters.map((chapter, index) => (
         /*        <div
           key={cindex}
           className="rounded-lg w-56 h-full odd:bg-gray-300 even:bg-gray-100 mr-md shadow-sm"

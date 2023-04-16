@@ -1,13 +1,14 @@
-import * as t from "./Types";
 import React from "react";
-import List from "./components/List";
 import { Link } from "react-router-dom";
-import Button from "./components/Button";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import * as t from "./Types";
+import List from "./components/List";
+import Button from "./components/Button";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
+
 export default function BookList({
   books,
   selectedBookId,
@@ -126,8 +127,7 @@ export default function BookList({
   }
   lists.push(sublist("All", otherBooks));
 
-  const buttonStyles =
-    "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+  const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
   const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
   const rightMenuItem = canCloseSidebar && {
     label: "Close",

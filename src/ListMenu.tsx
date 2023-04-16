@@ -1,7 +1,6 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import React from "react";
 import { EllipsisHorizontalIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { MenuItem } from "./Types";
 
@@ -41,7 +40,10 @@ export default function ListMenu({
                 className="px-sm py-xs rounded-md hover:bg-listitemhoverSecondary dark:hover:bg-gray-700 dark:hover:bg-dmlistitemhoverSecondary flex"
                 onClick={item.onClick}
               >
-                <div className=" mt-0">{item.icon} </div>
+                <div className=" mt-0">
+                  {item.icon}
+                  {' '}
+                </div>
                 <div className="ml-1 flex-grow whitespace-nowrap">
                   {item.label}
                 </div>

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { produce } from "immer";
+import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import Select from "./components/Select";
 import * as t from "./Types";
-import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import TextArea from "./components/TextArea";
 import { getCsrfToken } from "./utils";
 
-const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
+function Prompt({
+  label, text, onLabelChange, onTextChange, onDelete,
+}) {
   return (
     <div className="mb-sm p-3 rounded-md dark:bg-gray-600 bg-settingspanel">
       <div className="mb-sm w-full">
@@ -35,22 +37,22 @@ const Prompt = ({ label, text, onLabelChange, onTextChange, onDelete }) => {
         size="small"
         onClick={onDelete}
         style="secondary"
-        rounded={true}
+        rounded
         className="mt-sm w-full dark:bg-gray-700 dark:border-gray-700 shadow-none"
       >
         Delete
       </Button>
     </div>
   );
-};
+}
 
-const Settings = ({ settings, setSettings, onSave }) => {
+function Settings({ settings, setSettings, onSave }) {
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
         // @ts-ignore
         draft[key] = value;
-      })
+      }),
     );
   };
 
@@ -59,7 +61,7 @@ const Settings = ({ settings, setSettings, onSave }) => {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts[index][key] = value;
-      })
+      }),
     );
   };
 
@@ -68,7 +70,7 @@ const Settings = ({ settings, setSettings, onSave }) => {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts.splice(index, 1);
-      })
+      }),
     );
   };
 
@@ -77,7 +79,7 @@ const Settings = ({ settings, setSettings, onSave }) => {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts.push({ label: "", text: "" });
-      })
+      }),
     );
   };
 
@@ -111,17 +113,13 @@ const Settings = ({ settings, setSettings, onSave }) => {
         title="Max Tokens"
         name="max_tokens"
         value={settings.max_tokens}
-        onChange={(e) =>
-          handleChange("max_tokens", parseInt(e.target.value, 10))
-        }
+        onChange={(e) => handleChange("max_tokens", parseInt(e.target.value, 10))}
       />
       <Input
         title="Num Suggestions"
         name="num_suggestions"
         value={settings.num_suggestions}
-        onChange={(e) =>
-          handleChange("num_suggestions", parseInt(e.target.value, 10))
-        }
+        onChange={(e) => handleChange("num_suggestions", parseInt(e.target.value, 10))}
       />
 
       <Select
@@ -156,14 +154,14 @@ const Settings = ({ settings, setSettings, onSave }) => {
           />
         ))}
       </div>
-      <Button onClick={addPrompt} rounded={true} className="mt-0">
+      <Button onClick={addPrompt} rounded className="mt-0">
         New Prompt
       </Button>
-      <Button onClick={handleSave} rounded={true} className="mt-0">
+      <Button onClick={handleSave} rounded className="mt-0">
         Save
       </Button>
     </form>
   );
-};
+}
 
 export default Settings;

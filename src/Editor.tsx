@@ -1,5 +1,7 @@
+import React, {
+  useState, useRef, useReducer, useEffect,
+} from "react";
 import PromptsSidebar from "./PromptsSidebar";
-import React, { useState, useRef, useReducer, useEffect } from "react";
 import "./globals.css";
 import TextEditor from "./TextEditor";
 import Sidebar from "./Sidebar";
@@ -46,15 +48,14 @@ export default function Editor({
 
     if (!result.ok) {
       dispatch({ type: "SET_ERROR", payload: result.statusText });
-      return;
     } else {
       dispatch({ type: "CLEAR_ERROR" });
       dispatch({ type: "SET_SAVED", payload: true });
     }
   }
 
-  let editorColSpan = "col-span-4";
-  /* 
+  const editorColSpan = "col-span-4";
+  /*
   if (sidebarOpen && promptsOpen) {
     editorColSpan = "col-span-2";
   } else if (sidebarOpen || promptsOpen) {
@@ -65,7 +66,7 @@ export default function Editor({
     <div className="flex w-full h-full">
       <div className={`w-full h-full ${editorColSpan}`}>
         <div className="h-0 pb-1 w-full flex">
-          <div className="flex flex-none"></div>
+          <div className="flex flex-none" />
           <div className="flex flex-grow" />
         </div>
         <div className="h-full w-full">

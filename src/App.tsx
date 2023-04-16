@@ -6,7 +6,6 @@ import * as t from "./Types";
 import Library from "./Library";
 
 export default function App() {
-
   const [error, setError] = React.useState("");
   function setTitle(chapterID: string, newTitle: string) {
     //    dispatch({ type: "SET_TITLE", payload: { chapterID, newTitle } });

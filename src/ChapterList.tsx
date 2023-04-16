@@ -1,11 +1,7 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import * as fd from "./fetchData";
-import * as t from "./Types";
 import React from "react";
-import List from "./components/List";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "./components/Button";
 import {
   ArrowsUpDownIcon,
   EllipsisHorizontalIcon,
@@ -13,11 +9,15 @@ import {
   ViewColumnsIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import * as fd from "./fetchData";
+import * as t from "./Types";
+import List from "./components/List";
+import Button from "./components/Button";
 import ListMenu from "./ListMenu";
 import { ListItem } from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
-//import Draggable from "react-draggable";
+// import Draggable from "react-draggable";
 
 export default function ChapterList({
   chapters,
@@ -121,27 +121,23 @@ export default function ChapterList({
     dispatch({ type: "SET_CHAPTER_ORDER", payload: { bookid, ids } });
   };
 
-  const sublist = () => {
-    return chapters.map((chapter, index) => {
-      return (
-        <li
-          key={chapter.chapterid}
-          className={
+  const sublist = () => chapters.map((chapter, index) => (
+    <li
+      key={chapter.chapterid}
+      className={
             !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
           }
-        >
-          <ListItem
-            link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
-            title={chapter.title || "(no title)"}
-            selected={chapter.chapterid === selectedChapterId}
-            onDelete={() => deleteChapter(chapter.chapterid)}
-            onFavorite={() => favoriteChapter(chapter.chapterid)}
-            onRename={() => startRenameChapter(chapter)}
-          />
-        </li>
-      );
-    });
-  };
+    >
+      <ListItem
+        link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+        title={chapter.title || "(no title)"}
+        selected={chapter.chapterid === selectedChapterId}
+        onDelete={() => deleteChapter(chapter.chapterid)}
+        onFavorite={() => favoriteChapter(chapter.chapterid)}
+        onRename={() => startRenameChapter(chapter)}
+      />
+    </li>
+  ));
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
@@ -155,44 +151,41 @@ export default function ChapterList({
     setShowPopup(true);
   }
 
-  const sublistDraggable = () => {
-    return [
-      <div>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {chapters.map((chapter, index) => (
-                  <Draggable
-                    key={chapter.chapterid}
-                    draggableId={chapter.chapterid}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="bg-gray-600 p-xs my-1 text-sm border-y-2 border-dmsidebar rounded"
-                      >
-                        {chapter.title}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </div>,
-    ];
-  };
+  const sublistDraggable = () => [
+    <div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {chapters.map((chapter, index) => (
+                <Draggable
+                  key={chapter.chapterid}
+                  draggableId={chapter.chapterid}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="bg-gray-600 p-xs my-1 text-sm border-y-2 border-dmsidebar rounded"
+                    >
+                      {chapter.title}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>,
+  ];
 
   const navigate = useNavigate();
 
-  const buttonStyles =
-    "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -244,7 +237,7 @@ export default function ChapterList({
   let leftMenuItem = [newMenuItem, dropdownMenu];
 
   leftMenuItem = leftMenuItem.map((item, idx) => {
-    let className = item.className;
+    let { className } = item;
     if (idx !== leftMenuItem.length - 1) {
       className = `${className} mr-xs`;
     }

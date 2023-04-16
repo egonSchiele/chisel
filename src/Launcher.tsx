@@ -1,6 +1,6 @@
 /*
   This example requires some changes to your config:
-  
+
   ```
   // tailwind.config.js
   module.exports = {
@@ -39,9 +39,7 @@ export default function Launcher({
         onLaunch();
         console.log("onLaunch!!!!");
       }
-      setOpen((cur) => {
-        return !cur;
-      });
+      setOpen((cur) => !cur);
     }
   };
 
@@ -53,12 +51,9 @@ export default function Launcher({
     };
   }, [handleKeyDown]);
 
-  const filteredItems =
-    query === ""
-      ? items
-      : items.filter((item) => {
-          return item.label.toLowerCase().includes(query.toLowerCase());
-        });
+  const filteredItems = query === ""
+    ? items
+    : items.filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <Transition.Root
@@ -118,15 +113,16 @@ export default function Launcher({
                       <Combobox.Option
                         key={i}
                         value={item}
-                        className={({ active }) =>
-                          classNames(
-                            "cursor-default select-none px-4 py-2",
-                            active && "bg-gray-300 dark:bg-dmsidebar"
-                          )
-                        }
+                        className={({ active }) => classNames(
+                          "cursor-default select-none px-4 py-2",
+                          active && "bg-gray-300 dark:bg-dmsidebar",
+                        )}
                       >
                         <div className="flex">
-                          <div className=" mt-0.5">{item.icon} </div>
+                          <div className=" mt-0.5">
+                            {item.icon}
+                            {' '}
+                          </div>
                           <div className="ml-1 flex-grow">{item.label}</div>
                         </div>
                       </Combobox.Option>
