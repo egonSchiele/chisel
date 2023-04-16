@@ -1,3 +1,5 @@
+import { Chapter } from "../src/Types";
+
 export const mockBook = {
   chapters: [
     {
@@ -48,4 +50,17 @@ export const mockBook = {
   ],
   userid: "user_1",
   bookid: "book_1",
+};
+
+export const chapter1: Chapter = {
+  bookid: "book_1",
+  chapterid: "chapter_1",
+  title: "New job",
+  text: "A man moves to San Francisco for a new job.\n",
+  pos: {
+    x: 0,
+    y: 0,
+  },
+  suggestions: [{ type: "expand", contents: "Hi there" }],
+  favorite: false,
 };
