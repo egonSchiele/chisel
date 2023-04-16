@@ -41,3 +41,4 @@
 - light mode: Note you cannot tell that Book On is highlighted, And then there is the weird line gap for chapters.
 - prompt library
 - write a guide
+- need to clear the cached selected data at some point, maybe once the user starts typing again.

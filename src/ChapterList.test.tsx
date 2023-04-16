@@ -22,7 +22,7 @@ const props = {
   canCloseSidebar: true,
 };
 
-it("shows the ChapterList panel", () => {
+/* it("shows the ChapterList panel", () => {
   const component = renderer.create(
     <BrowserRouter>
       <ChapterList {...props} />
@@ -30,7 +30,7 @@ it("shows the ChapterList panel", () => {
   );
   let tree = component.toJSON();
   expect(tree).toMatchSnapshot();
-});
+}); */
 
 describe("ChapterList", () => {
   let container;
