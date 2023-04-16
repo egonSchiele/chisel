@@ -4,11 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./globals.css";
-import { Box, Paper, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import axios from "axios";
 import Button from "./components/Button";
 import ButtonGroup from "./components/ButtonGroup";
 import { EditorState, State } from "./Types";
@@ -16,19 +11,6 @@ import Select from "./components/Select";
 import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
-
-const useStyles = makeStyles({
-  generatedText: {
-    animation: "$fadeIn 5s",
-  },
-  "@keyframes fadeIn": {
-    "0%": { backgroundColor: "yellow" },
-    "100%": { backgroundColor: "white" },
-  },
-  tooltip: {
-    cursor: "pointer",
-  },
-});
 
 const TextEditor = ({
   dispatch,
@@ -105,20 +87,6 @@ const TextEditor = ({
       type: "SET_TEXT",
       payload: editor.getText(),
     });
-  };
-
-  const fetchSynonyms = async (word) => {
-    try {
-      const response = await axios.get(
-        `https://api.datamuse.com/words?ml=${word}&max=10`
-      );
-      const synonyms = response.data.map((item) => item.word);
-      console.log("synonyms", synonyms);
-      dispatch({ type: "SET_SYNONYMS", payload: synonyms });
-    } catch (error) {
-      console.error("Error fetching synonyms:", error);
-      dispatch({ type: "CLEAR_SYNONYMS" });
-    }
   };
 
   const setSelection = (e) => {
