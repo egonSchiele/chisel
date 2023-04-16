@@ -124,7 +124,7 @@ function TextEditor({
 
   const handleKeyDown = (event) => {
     setEdited(true);
-    if (event.metaKey && event.code == "KeyS") {
+    if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
       console.log("saving!");
       onSave();

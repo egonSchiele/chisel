@@ -359,7 +359,7 @@ export default function Library() {
     },
     {
       label:
-        sidebarOpen && activePanel == "history"
+        sidebarOpen && activePanel === "history"
           ? "Close History"
           : "Open History",
       icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -368,7 +368,7 @@ export default function Library() {
       },
     },
     {
-      label: sidebarOpen && activePanel == "info" ? "Close Info" : "Open Info",
+      label: sidebarOpen && activePanel === "info" ? "Close Info" : "Open Info",
       icon: <InformationCircleIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("info");
@@ -376,7 +376,7 @@ export default function Library() {
     },
     {
       label:
-        sidebarOpen && activePanel == "suggestions"
+        sidebarOpen && activePanel === "suggestions"
           ? "Close Suggestions"
           : "Open Suggestions",
       icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -386,7 +386,7 @@ export default function Library() {
     },
     {
       label:
-        sidebarOpen && activePanel == "settings"
+        sidebarOpen && activePanel === "settings"
           ? "Close Settings"
           : "Open Settings",
       icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -526,10 +526,10 @@ export default function Library() {
     setFocusMode(false);
     let selected = state.editor.selectedText;
     if (
-      state.editor.selectedText.contents == ""
+      state.editor.selectedText.contents === ""
       && state.editor._cachedSelectedText
     ) {
-      if (state.editor._cachedSelectedText.contents != "") {
+      if (state.editor._cachedSelectedText.contents !== "") {
         selected = state.editor._cachedSelectedText;
       } else {
         selected = { index: 0, length: 0, contents: "" };

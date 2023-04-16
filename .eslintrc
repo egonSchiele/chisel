@@ -8,13 +8,13 @@
     "no-console": "off",
     "max-len": "off",
     "no-underscore-dangle": "off",
-    "no-plusplus": "off",
+    "no-plusplus": "off", // i++
     "no-unused-vars": "off",
     "no-undef": "off",
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "react/jsx-filename-extension": "off",
-    "no-tabs": "off",
+    /* "no-tabs": "off", */
     "camelcase": "off",
     "no-param-reassign": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -22,7 +22,7 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "no-use-before-define": "off",
     "react/require-default-props": "off",
-    "eqeqeq": "off",
+    /* "eqeqeq": "off", */
     "no-shadow": "off",
     "import/order": "off",
     "@typescript-eslint/no-empty-function": "off",

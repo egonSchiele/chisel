@@ -20,7 +20,7 @@ export default function ContentEditable({
   };
 
   const onKeyDown = (evt) => {
-    if ((evt.metaKey && evt.code == "KeyS") || evt.key === "Enter") {
+    if ((evt.metaKey && evt.code === "KeyS") || evt.key === "Enter") {
       evt.preventDefault();
       console.log("submitting", content);
       onSubmit(content);

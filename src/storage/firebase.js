@@ -169,7 +169,9 @@ export const deleteChapter = async (chapterid, bookid) => {
     console.log("no book to update");
     return;
   }
-  book.chapterTitles = book.chapterTitles.filter((chapter) => chapter.chapterid !== chapterid);
+  book.chapterTitles = book.chapterTitles.filter(
+    (chapter) => chapter.chapterid !== chapterid,
+  );
   await saveBook(book);
 };
 
@@ -249,26 +251,4 @@ export const saveToHistory = async (chapterid, text) => {
   history.push(patch);
   docRef = db.collection("history").doc(chapterid);
   await docRef.set({ history });
-
-  /*
-  patch Index: n2rViOebV8aCrxEeIR4e7
-===================================================================
---- n2rViOebV8aCrxEeIR4e7	-
-+++ n2rViOebV8aCrxEeIR4e7	-
-@@ -1,1 +1,1 @@
--Once upon a time...
-\ No newline at end of file
-+Once  a time... there was
-*/
-  /* diff [
-    { count: 2, value: 'Once  ' },
-    { count: 2, added: undefined, removed: true, value: 'upon ' },
-    { count: 4, value: 'a time...' },
-    { count: 5, added: true, removed: undefined, value: ' there was\n' }
-  ] */
-  /* const theDiff = Diff.diffWords(old, text);
-  console.log("diff", theDiff);
-  history.push(theDiff);
-  docRef = db.collection("history").doc(chapterid);
-  await docRef.set({ history }); */
 };
