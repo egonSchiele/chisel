@@ -56,7 +56,7 @@ export class MockDocRef {
     if (this.options.allowedMethods.includes("set")) {
       this.calls.set.push(data);
       return data;
-    } else if (this.options.allowedMethods.includes("logEmailSent")) {
+    } if (this.options.allowedMethods.includes("logEmailSent")) {
       const validCollections = [
         "email_order_complete_email_sent",
         "email_upload_email_sent",
@@ -69,13 +69,13 @@ export class MockDocRef {
       } else {
         throw new MockFirebaseMethodError(
           `logEmailSent method is allowed, but you are doing more than logging. Data: ${JSON.stringify(
-            data
-          )} collection: ${this.collectionName}`
+            data,
+          )} collection: ${this.collectionName}`,
         );
       }
     } else {
       throw new MockFirebaseMethodError(
-        `Cannot set in MockDocRef. Data: ${JSON.stringify(data)}`
+        `Cannot set in MockDocRef. Data: ${JSON.stringify(data)}`,
       );
     }
   }
@@ -84,21 +84,21 @@ export class MockDocRef {
     if (this.options.allowedMethods.includes("update")) {
       this.calls.update.push(data);
       return data;
-    } else if (this.options.allowedMethods.includes("updateOrderStatus")) {
+    } if (this.options.allowedMethods.includes("updateOrderStatus")) {
       if (true) {
         // isEqual(Object.keys(data), ["status"])) {
         this.calls.update.push(data);
       } else {
         throw new MockFirebaseMethodError(
           `update order status method is allowed, but you are updating more than the order status. Data: ${JSON.stringify(
-            data
-          )}`
+            data,
+          )}`,
         );
       }
       return data;
     }
     throw new MockFirebaseMethodError(
-      `Cannot update in MockDocRef. Data: ${JSON.stringify(data)}`
+      `Cannot update in MockDocRef. Data: ${JSON.stringify(data)}`,
     );
   }
 
@@ -109,11 +109,11 @@ export class MockDocRef {
         return new MockResult(true, testOrder);
       }
       throw new Error(
-        `not sure what to get for collection: ${this.collectionName}`
+        `not sure what to get for collection: ${this.collectionName}`,
       );
     } else {
       throw new MockFirebaseMethodError(
-        `Cannot get in MockDocRef. Params: ${JSON.stringify(params)}`
+        `Cannot get in MockDocRef. Params: ${JSON.stringify(params)}`,
       );
     }
   }
