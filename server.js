@@ -94,6 +94,7 @@ const csrf = (req, res, next) => {
 
 app.use(csrf);
 
+// eslint-disable-next-line consistent-return
 const checkBookAccess = async (req, res, next) => {
   const c = req.cookies;
 
@@ -125,8 +126,8 @@ const checkBookAccess = async (req, res, next) => {
 const checkChapterAccess = async (req, res, next) => {
   const c = req.cookies;
 
-  let bookid; let
-    chapterid;
+  let bookid;
+  let chapterid;
   if (req.body) {
     bookid = req.body.bookid;
     chapterid = req.body.chapterid;

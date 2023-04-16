@@ -1,24 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
-  ChevronRightIcon,
   ClipboardIcon,
   ClockIcon,
   Cog6ToothIcon,
-  Cog8ToothIcon,
   InformationCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import History from "./History";
 import Settings from "./Settings";
-import Button from "./components/Button";
 import SuggestionPanel from "./SuggestionPanel";
 import Info from "./Info";
-import { useLocalStorage } from "./utils";
 import List from "./components/List";
-import { NavButton } from "./NavButton";
+import NavButton from "./NavButton";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -105,9 +100,7 @@ export default function Sidebar({
     ? state.editor.text
     : state.editor.selectedText.contents;
   return (
-    <div
-      className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder"
-    >
+    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder">
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}

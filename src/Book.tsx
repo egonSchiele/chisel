@@ -6,17 +6,13 @@ import "./globals.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import produce, { current } from "immer";
-import Button from "./components/Button";
-import EditableInput from "./components/EditableInput";
-import { TrashIcon } from "@heroicons/react/24/solid";
-import Select from "./components/Select";
 import ContentEditable from "./components/ContentEditable";
 import {
   Bars3BottomLeftIcon,
   ChevronLeftIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { NavButton } from "./NavButton";
+import NavButton from "./NavButton";
 import { getCsrfToken, useLocalStorage } from "./utils";
 import Launcher from "./Launcher";
 
@@ -39,6 +35,7 @@ const initialState: t.Book = {
 };
 // import { useInterval } from "./utils";
 
+// eslint-disable-next-line consistent-return
 const reducer = produce((draft: t.Book, action: any) => {
   switch (action.type) {
     case "SET_TITLE":
@@ -136,7 +133,8 @@ export default function Book({}) {
   const zoomOut = (val) => {
     if (val === "large") {
       return "medium";
-    } if (val === "medium") {
+    }
+    if (val === "medium") {
       return "small";
     }
     return "small";
@@ -145,7 +143,8 @@ export default function Book({}) {
   const zoomIn = (val) => {
     if (val === "small") {
       return "medium";
-    } if (val === "medium") {
+    }
+    if (val === "medium") {
       return "large";
     }
     return "large";
@@ -283,7 +282,10 @@ export default function Book({}) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        bookid, title, text, csrfToken: getCsrfToken(),
+        bookid,
+        title,
+        text,
+        csrfToken: getCsrfToken(),
       }),
     });
     await fetchBook();
@@ -416,10 +418,10 @@ export default function Book({}) {
   return (
     <div className="mx-auto mt-xs w-full h-full bg-background dark:bg-dmbackground items-center justify-between p-6 lg:px-8">
       {error && (
-      <p className="p-sm bg-red-700 w-full">
-        Error:
-        {error}
-      </p>
+        <p className="p-sm bg-red-700 w-full">
+          Error:
+          {error}
+        </p>
       )}
       <Launcher items={launchItems} />
       <p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>

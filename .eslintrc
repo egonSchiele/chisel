@@ -29,7 +29,7 @@
     "import/no-extraneous-dependencies": "off",
     "no-duplicate-case": "off",
     "no-case-declarations": "off",
-    "consistent-return": "off",
+    /* "consistent-return": "off", */
     "react/jsx-props-no-spreading": "off",
     "react/style-prop-object": "off",
     "react/no-array-index-key": "off",
@@ -44,7 +44,7 @@
     "no-empty-pattern": "off",
     "radix": "off",
     "no-empty": "off",
-    "import/prefer-default-export": "off",
+    /* "import/prefer-default-export": "off", */
     "react/button-has-type": "off",
     "jsx-a11y/no-static-element-interactions": "off"
   },

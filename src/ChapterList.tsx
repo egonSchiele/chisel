@@ -14,7 +14,7 @@ import * as t from "./Types";
 import List from "./components/List";
 import Button from "./components/Button";
 import ListMenu from "./ListMenu";
-import { ListItem } from "./ListItem";
+import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
 // import Draggable from "react-draggable";
@@ -125,8 +125,8 @@ export default function ChapterList({
     <li
       key={chapter.chapterid}
       className={
-            !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
-          }
+          !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
+        }
     >
       <ListItem
         link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}

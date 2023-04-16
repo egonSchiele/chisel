@@ -1,22 +1,8 @@
-import React, {
-  useState, useRef, useReducer, useEffect,
-} from "react";
-import PromptsSidebar from "./PromptsSidebar";
+import React from "react";
 import "./globals.css";
 import TextEditor from "./TextEditor";
-import Sidebar from "./Sidebar";
-import { EditorState, State } from "./Types";
 import * as t from "./Types";
-import { getCsrfToken, useInterval, useLocalStorage } from "./utils";
-import {
-  CheckCircleIcon,
-  ChevronRightIcon,
-  EllipsisHorizontalCircleIcon,
-  MinusIcon,
-  SparklesIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { NavButton } from "./NavButton";
+import { getCsrfToken } from "./utils";
 
 export default function Editor({
   state,

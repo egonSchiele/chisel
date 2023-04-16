@@ -4,7 +4,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import * as t from "./Types";
 import ListMenu from "./ListMenu";
 
-export function ListItem({
+export default function ListItem({
   link,
   title,
   selected,
@@ -45,7 +45,9 @@ export function ListItem({
         className="flex flex-grow items-center overflow-hidden py-xs mr-xs"
       >
         <div className="w-full">
-          <div className="px-xs overflow-hidden text-ellipsis whitespace-nowrap">{title}</div>
+          <div className="px-xs overflow-hidden text-ellipsis whitespace-nowrap">
+            {title}
+          </div>
         </div>
       </Link>
       <div className="flex flex-none cursor-pointer items-center mr-xs">

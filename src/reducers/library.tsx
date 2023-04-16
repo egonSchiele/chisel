@@ -178,6 +178,7 @@ export const reducer = produce<t.State>(
         draft.saved = false;
         break;
       case "SET_ALL_NEW_STATE":
+        // eslint-disable-next-line
         return action.payload;
       case "SET_CHAPTER_ORDER":
         const { ids, bookid } = action.payload;
@@ -198,6 +199,7 @@ export const reducer = produce<t.State>(
         draft._temporaryFocusModeState = action.payload;
         break;
       default:
+        // eslint-disable-next-line
         return draft;
     }
   },

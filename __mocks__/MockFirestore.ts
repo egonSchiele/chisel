@@ -52,11 +52,13 @@ export class MockDocRef {
     };
   }
 
+  // eslint-disable-next-line consistent-return
   async set(data: any) {
     if (this.options.allowedMethods.includes("set")) {
       this.calls.set.push(data);
       return data;
-    } if (this.options.allowedMethods.includes("logEmailSent")) {
+    }
+    if (this.options.allowedMethods.includes("logEmailSent")) {
       const validCollections = [
         "email_order_complete_email_sent",
         "email_upload_email_sent",
@@ -84,7 +86,8 @@ export class MockDocRef {
     if (this.options.allowedMethods.includes("update")) {
       this.calls.update.push(data);
       return data;
-    } if (this.options.allowedMethods.includes("updateOrderStatus")) {
+    }
+    if (this.options.allowedMethods.includes("updateOrderStatus")) {
       if (true) {
         // isEqual(Object.keys(data), ["status"])) {
         this.calls.update.push(data);

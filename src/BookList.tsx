@@ -5,7 +5,7 @@ import * as t from "./Types";
 import List from "./components/List";
 import Button from "./components/Button";
 import ListMenu from "./ListMenu";
-import { ListItem } from "./ListItem";
+import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
 

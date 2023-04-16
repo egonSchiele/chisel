@@ -1,14 +1,11 @@
-import React, {
-  Fragment, Reducer, useEffect, useState,
-} from "react";
+import React, { Reducer, useEffect, useState } from "react";
 import * as t from "./Types";
 import "./globals.css";
-import Button from "./components/Button";
+
 import {
   ClipboardIcon,
   ClockIcon,
   InformationCircleIcon,
-  TrashIcon,
 } from "@heroicons/react/24/solid";
 import BookList from "./BookList";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,7 +38,7 @@ import {
 } from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
-import { NavButton } from "./NavButton";
+import NavButton from "./NavButton";
 import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
 

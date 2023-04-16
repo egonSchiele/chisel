@@ -1,13 +1,12 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import { hedges } from "hedges";
-import { NavButton } from "./NavButton";
+import NavButton from "./NavButton";
 import { fillers } from "fillers";
 import cliches from "./cliches";
 import List from "./components/List";
 import { syllable } from "syllable";
 import Button from "./components/Button";
-import ContentEditable from "./components/ContentEditable";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 

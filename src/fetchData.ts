@@ -2,7 +2,7 @@ import * as t from "./Types";
 import { getCsrfToken } from "./utils";
 
 export const fetchBook = async (bookid: string): Promise<t.Result> => {
-  if (!bookid) return;
+  if (!bookid) return t.error("No bookid");
   const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
   if (!res.ok) {
     return t.error(res.statusText);
@@ -85,9 +85,11 @@ export const fetchSuggestions = async (
 
   if (!data) {
     return t.error("Suggestions not found");
-  } if (data.error) {
+  }
+  if (data.error) {
     return t.error(data.error);
-  } if (!data.choices) {
+  }
+  if (!data.choices) {
     return t.error("No choices returned.");
   }
 
