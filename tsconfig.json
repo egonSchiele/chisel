@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "noImplicitAny": false,
-    "sourceMap": true,
+    //"sourceMap": true,
     "module": "esnext",
     "target": "es2021",
     "jsx": "react",
@@ -11,6 +11,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },
-  
-  "exclude": ["node_modules"],
+
+  "exclude": ["node_modules"]
 }
