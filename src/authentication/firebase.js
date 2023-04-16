@@ -18,11 +18,17 @@ async function stringToHash(str) {
     .join("");
 }
 
+const isTestEnv =
+  process.env.NODE_ENV === "test" &&
+  process.env.CHISEL_CONFIRM === "yes_i_am_sure" &&
+  settings.testUser;
+
 export const requireLogin = (req, res, next) => {
   const c = req.cookies;
   // console.log({ req });
-
-  if (!req.cookies.userid) {
+  if (isTestEnv) {
+    next();
+  } else if (!req.cookies.userid) {
     console.log("no userid");
     res.redirect("/home.html");
   } else {
@@ -60,6 +66,9 @@ export const requireAdmin = (req, res, next) => {
 };
 
 export const getUserId = (req) => {
+  if (isTestEnv) {
+    return settings.testUser.userid;
+  }
   if (!req.cookies.userid) {
     return null;
   }
@@ -73,7 +82,7 @@ export const submitLogin = async (req, res) => {
     const credentials = await firebaseAuth.signInWithEmailAndPassword(
       auth,
       email,
-      password,
+      password
     );
     const firebaseUser = credentials.user;
     /* console.log(firebaseUser);
@@ -106,7 +115,7 @@ export const submitRegister = async (req, res) => {
     const credentials = await firebaseAuth.createUserWithEmailAndPassword(
       auth,
       email,
-      password,
+      password
     );
     const firebaseUser = credentials.user;
 
@@ -123,10 +132,12 @@ export const submitRegister = async (req, res) => {
 };
 
 const _getUser = async (userid) => {
-  console.log("getting user");
-  console.log({ userid });
+  let _userid = userid;
+  if (isTestEnv) {
+    _userid = settings.testUser.userid;
+  }
   const db = getFirestore();
-  const userRef = db.collection("users").doc(userid);
+  const userRef = db.collection("users").doc(_userid);
   const user = await userRef.get();
   if (!user.exists) {
     return null;
@@ -193,6 +204,7 @@ export const saveUser = async (user) => {
     console.log("no user to save");
     return false;
   }
+
   user.created_at = Date.now();
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
@@ -207,10 +219,12 @@ export const saveUser = async (user) => {
 };
 
 const getUserWithEmail = async (email) => {
-  console.log("getting user");
-  console.log({ email });
+  let _email = email;
+  if (isTestEnv) {
+    _email = settings.testUser.email;
+  }
   const db = getFirestore();
-  const userRef = db.collection("users").where("email", "==", email);
+  const userRef = db.collection("users").where("email", "==", _email);
   const user = await userRef.get();
   console.log({ user });
   if (user.empty) {
@@ -221,7 +235,7 @@ const getUserWithEmail = async (email) => {
     users.push(doc.data());
   });
   if (users.length > 1) {
-    console.log("Multiple users with same email:", email);
+    console.log("Multiple users with same email:", _email);
     return null;
   }
   return users[0];
@@ -290,7 +304,7 @@ export const getUsers = async () => {
         userid: user.userid,
         usage: user.usage,
       };
-    }),
+    })
   );
   /*   console.log(">>", userMap);
   console.log("2>>", userData);

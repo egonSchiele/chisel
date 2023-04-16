@@ -10,6 +10,8 @@
     "no-underscore-dangle": "off",
     "no-plusplus": "off", // i++
     "no-unused-vars": "off",
+
+    // gives too many false positives, ts checks this anyway
     "no-undef": "off",
     "import/extensions": "off",
     "import/no-unresolved": "off",

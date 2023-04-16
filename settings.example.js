@@ -16,4 +16,10 @@ export default {
     chapterLength: -1, // in characters
     historyLength: -1,
   },
+  // optional, needed for integration testing
+  /* testuser: {
+    userid: '',
+    email: '',
+    password: ''
+  } */
 };
