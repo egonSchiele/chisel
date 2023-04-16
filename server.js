@@ -2,7 +2,24 @@ import rateLimit from "express-rate-limit";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import settings from "./settings.js";
+// import fs from "fs"
+import * as fs from "fs";
+import path from "path";
+import cookieParser from "cookie-parser";
+// import * as t from "./src/Types";
+import { nanoid } from "nanoid";
+import handlebars from "handlebars";
+import {
+  requireLogin,
+  requireAdmin,
+  submitLogin,
+  submitRegister,
+  getUserId,
+  getUser,
+  getUsers,
+  saveUser,
+  getBooksForUser,
+} from "./src/authentication/firebase.js";
 import {
   saveBook,
   getBook,
@@ -16,24 +33,7 @@ import {
   saveToHistory,
   getHistory,
 } from "./src/storage/firebase.js";
-//import fs from "fs"
-import * as fs from "fs";
-import path from "path";
-import cookieParser from "cookie-parser";
-//import * as t from "./src/Types";
-import {
-  requireLogin,
-  requireAdmin,
-  submitLogin,
-  submitRegister,
-  getUserId,
-  getUser,
-  getUsers,
-  saveUser,
-  getBooksForUser,
-} from "./src/authentication/firebase.js";
-import { nanoid } from "nanoid";
-import handlebars from "handlebars";
+import settings from "./settings.js";
 
 dotenv.config();
 
@@ -60,7 +60,7 @@ const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
   res.setHeader(
     "Cache-Control",
-    "no-store, no-cache, must-revalidate, proxy-revalidate"
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
   );
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
@@ -83,7 +83,7 @@ const csrf = (req, res, next) => {
         req.url,
         req.method,
         c.csrfToken,
-        req.body.csrfToken
+        req.body.csrfToken,
       );
       res.send("csrf failed").end();
     }
@@ -112,7 +112,7 @@ const checkBookAccess = async (req, res, next) => {
   const book = await getBook(bookid);
 
   if (!book) {
-    console.log("no book with id, " + bookid);
+    console.log(`no book with id, ${bookid}`);
     res.redirect("/404");
   } else if (book.userid !== c.userid) {
     console.log("no access to book");
@@ -125,7 +125,8 @@ const checkBookAccess = async (req, res, next) => {
 const checkChapterAccess = async (req, res, next) => {
   const c = req.cookies;
 
-  let bookid, chapterid;
+  let bookid; let
+    chapterid;
   if (req.body) {
     bookid = req.body.bookid;
     chapterid = req.body.chapterid;
@@ -140,7 +141,7 @@ const checkChapterAccess = async (req, res, next) => {
   const chapter = await getChapter(chapterid);
 
   if (!chapter) {
-    console.log("no chapter with id, " + chapterid);
+    console.log(`no chapter with id, ${chapterid}`);
     res.redirect("/404");
   } else if (chapter.bookid !== bookid) {
     console.log("chapter is not part of book", chapterid, bookid);
@@ -167,14 +168,14 @@ app.get("/logout", async (req, res) => {
 });
 
 app.post("/api/saveBook", requireLogin, async (req, res) => {
-  let { book } = req.body;
+  const { book } = req.body;
 
   await saveBook(book);
   res.status(200).end();
 });
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
-  let { chapter } = req.body;
+  const { chapter } = req.body;
   console.log(chapter);
   await saveChapter(chapter);
   res.status(200).end();
@@ -188,7 +189,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
   } else {
     const bookid = nanoid();
     const book = {
-      userid: userid,
+      userid,
       bookid,
       title: "Untitled",
       author: "Unknown",
@@ -204,7 +205,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
     };
     await saveBook(book);
     res.status(200).end();
-    //res.redirect(`/book/${bookid}`);
+    // res.redirect(`/book/${bookid}`);
   }
 });
 
@@ -227,18 +228,18 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 
   const book = await getBook(bookid);
   if (!book) {
-    console.log("no book with id, " + bookid);
+    console.log(`no book with id, ${bookid}`);
     res.status(404).end();
   }
 
   book.chapterTitles.push({ chapterid, title });
   await saveBook(book);
   res.status(200).end();
-  //res.redirect(`/book/${bookid}/chapter/${chapterid}`);
+  // res.redirect(`/book/${bookid}/chapter/${chapterid}`);
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
-  let { chapterid, text } = req.body;
+  const { chapterid, text } = req.body;
 
   await saveToHistory(chapterid, text);
   res.status(200).end();
@@ -253,12 +254,12 @@ app.get(
     const { chapterid } = req.params;
     const history = await getHistory(chapterid);
     if (!history) {
-      console.log("no history with id, " + chapterid);
+      console.log(`no history with id, ${chapterid}`);
       res.status(404).end();
     } else {
       res.json(history);
     }
-  }
+  },
 );
 
 const fileCache = {};
@@ -280,7 +281,7 @@ function serveFile(filename, res) {
   const token = nanoid();
   res.cookie("csrfToken", token);
 
-  const rendered = render(path.resolve("./dist/" + filename), {
+  const rendered = render(path.resolve(`./dist/${filename}`), {
     csrfToken: token,
   });
   res.send(rendered).end();
@@ -293,7 +294,7 @@ app.get(
   checkChapterAccess,
   async (req, res) => {
     serveFile("chapter.html", res);
-  }
+  },
 );
 
 app.get("/", requireLogin, async (req, res) => {
@@ -363,7 +364,7 @@ app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid } = req.body;
   await deleteBook(bookid);
   res.status(200).end();
-  //res.redirect("/");
+  // res.redirect("/");
 });
 
 app.get(
@@ -371,15 +372,15 @@ app.get(
   requireLogin,
   checkBookAccess,
   async (req, res) => {
-    let { bookid } = req.params;
+    const { bookid } = req.params;
     try {
       const data = await getBook(bookid);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error getting book:", error);
-      res.status(400).json({ error: error });
+      res.status(400).json({ error });
     }
-  }
+  },
 );
 
 app.get(
@@ -388,15 +389,15 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    let { chapterid } = req.params;
+    const { chapterid } = req.params;
     try {
       const data = await getChapter(chapterid);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error getting chapter:", error);
-      res.status(400).json({ error: error });
+      res.status(400).json({ error });
     }
-  }
+  },
 );
 
 app.post(
@@ -405,15 +406,15 @@ app.post(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    let { chapterid, bookid } = req.body;
+    const { chapterid, bookid } = req.body;
     try {
       const data = await deleteChapter(chapterid, bookid);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error deleting chapter:", error);
-      res.status(400).json({ error: error });
+      res.status(400).json({ error });
     }
-  }
+  },
 );
 
 app.post(
@@ -422,15 +423,15 @@ app.post(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    let { chapterid } = req.body;
+    const { chapterid } = req.body;
     try {
       const data = await favoriteChapter(chapterid);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error favoriting chapter:", error);
-      res.status(400).json({ error: error });
+      res.status(400).json({ error });
     }
-  }
+  },
 );
 
 app.post(
@@ -438,15 +439,15 @@ app.post(
   requireLogin,
   checkBookAccess,
   async (req, res) => {
-    let { bookid } = req.body;
+    const { bookid } = req.body;
     try {
       const data = await favoriteBook(bookid);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error favoriting book:", error);
-      res.status(400).json({ error: error });
+      res.status(400).json({ error });
     }
-  }
+  },
 );
 
 app.post("/api/suggestions", requireLogin, async (req, res) => {
@@ -481,10 +482,10 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
       model: req.body.model,
       n: req.body.num_suggestions,
     };
-    //"messages": [{"role": "user", "content": "Hello!"}]
+    // "messages": [{"role": "user", "content": "Hello!"}]
   }
 
-  //console.log({ prompt: JSON.parse(req.body) });
+  // console.log({ prompt: JSON.parse(req.body) });
   fetch(endpoint, {
     method: "POST",
     headers: {
@@ -503,12 +504,12 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
           return;
         }
         user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.month.completion +=
-          json.usage.completion_tokens;
+        user.usage.openai_api.tokens.month.completion
+          += json.usage.completion_tokens;
 
         user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.total.completion +=
-          json.usage.completion_tokens;
+        user.usage.openai_api.tokens.total.completion
+          += json.usage.completion_tokens;
 
         await saveUser(user);
         /* {
