@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
+// @ts-nocheck
 import renderer from "react-test-renderer";
 import ChapterList from "./ChapterList";
 import React from "react";

@@ -1,4 +1,4 @@
- import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import { hedges } from "hedges";
 import { NavButton } from "./NavButton";
@@ -11,9 +11,7 @@ import ContentEditable from "./components/ContentEditable";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 
-function FocusList({
- words, index, onSynonymClick, onDelete, annotations 
-}) {
+function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
   const fetchSynonyms = async (word) => {
@@ -21,7 +19,7 @@ function FocusList({
     if (selected.length < 3) return;
     try {
       const res = await fetch(
-        `https://api.datamuse.com/words?ml=${selected}&max=20`,
+        `https://api.datamuse.com/words?ml=${selected}&max=20`
       );
       const data = await res.json();
       const synonyms = data.map((item) => item.word);
@@ -79,38 +77,36 @@ function FocusList({
           {selected}
         </h1>
         <p className="text-md dark:text-white">
-          {syllableCount} 
-{' '}
-<span className="dark:text-gray-300">syllables</span>
+          {syllableCount} <span className="dark:text-gray-300">syllables</span>
         </p>
         {synonyms && (
           <div className="grid grid-cols-1">
             <p className="text-md dark:text-white">Synonyms:</p>
             <ul>
               {synonyms.map((synonym, i) => (
-                  <li
-                    key={i}
-                    onClick={() => onSynonymClick(synonym)}
-                    className="dark:text-gray-300 cursor-pointer max-w-fit h-5"
-                  >
-                    {synonym}
-                  </li>
-                ))}
+                <li
+                  key={i}
+                  onClick={() => onSynonymClick(synonym)}
+                  className="dark:text-gray-300 cursor-pointer max-w-fit h-5"
+                >
+                  {synonym}
+                </li>
+              ))}
             </ul>
           </div>
         )}
         <div className="mt-md">
           {annotationItems.map((item, i) => (
-              <div key={i}>
-                <p className="text-md uppercase">{item.label}</p>
-                <p>{item.value}</p>
-                {item.replacement && (
-                  <p className="text-sm dark:text-gray-300">
-                    Suggested replacement: {item.replacement}
-                  </p>
-                )}
-              </div>
-            ))}
+            <div key={i}>
+              <p className="text-md uppercase">{item.label}</p>
+              <p>{item.value}</p>
+              {item.replacement && (
+                <p className="text-sm dark:text-gray-300">
+                  Suggested replacement: {item.replacement}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
         <div className="mt-md">
           <Button
@@ -121,7 +117,7 @@ function FocusList({
             Delete
           </Button>
         </div>
-      </div>,
+      </div>
     );
   }
   return (
@@ -129,13 +125,14 @@ function FocusList({
       title={selected ? "Info" : "Select a word"}
       items={items}
       /*       rightMenuItem={rightMenuItem}
-      leftMenuItem={leftMenuItem}
+      leftMenuItem={leftMenuItem}*/
       className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
     />
   );
 }
 
-const clicheTextAsWords = cliches.map((fragment) => split(fragment).map(normalize),
+const clicheTextAsWords = cliches.map((fragment) =>
+  split(fragment).map(normalize)
 );
 
 type Annotation = {
@@ -176,7 +173,8 @@ function Word({
   const complexTags = tagsWithGroupid.map((tag) => tag.type);
   const groupids = tagsWithGroupid.map((tag) => tag.groupid);
 
-  const activeGroupids = groupids.filter((groupid) => activeGroups.includes(groupid),
+  const activeGroupids = groupids.filter((groupid) =>
+    activeGroups.includes(groupid)
   );
   let className = "";
   if (isCurrentWord) {
@@ -216,8 +214,7 @@ function Word({
         {simpleTags.join(", ")}
         {complexTags.join(", ")}
         {/*         {JSON.stringify(annotations)}
-         */}
-{" "}
+         */}{" "}
       </div>
     </div>
   );
@@ -287,7 +284,7 @@ export default function FocusMode({ text, onClose, onChange }) {
       newWords[index] = newWord;
     }
 
-    const newText = `${newWords.join(" ")  }\n`;
+    const newText = `${newWords.join(" ")}\n`;
 
     setHistory([...history, newText]);
     setCurrentWord(null);

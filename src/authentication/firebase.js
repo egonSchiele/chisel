@@ -8,8 +8,6 @@ import settings from "../../settings.js";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
-const db = getFirestore();
-
 async function stringToHash(str) {
   const encoder = new TextEncoder();
   const salt = settings.tokenSalt;
@@ -127,6 +125,7 @@ export const submitRegister = async (req, res) => {
 const _getUser = async (userid) => {
   console.log("getting user");
   console.log({ userid });
+  const db = getFirestore();
   const userRef = db.collection("users").doc(userid);
   const user = await userRef.get();
   if (!user.exists) {
@@ -195,6 +194,7 @@ export const saveUser = async (user) => {
     return false;
   }
   user.created_at = Date.now();
+  const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
   try {
     await docRef.set(user);
@@ -209,6 +209,7 @@ export const saveUser = async (user) => {
 const getUserWithEmail = async (email) => {
   console.log("getting user");
   console.log({ email });
+  const db = getFirestore();
   const userRef = db.collection("users").where("email", "==", email);
   const user = await userRef.get();
   console.log({ user });
@@ -256,6 +257,7 @@ const createUser = async (email) => {
     created_at: Date.now(),
   };
 
+  const db = getFirestore();
   const userRef = db.collection("users").doc(userid);
 
   try {
@@ -269,6 +271,7 @@ const createUser = async (email) => {
 };
 
 export const getUsers = async () => {
+  const db = getFirestore();
   const users = await db.collection("users").get();
 
   const userMap = {};
@@ -295,6 +298,7 @@ export const getUsers = async () => {
 };
 
 export const getBooksForUser = async (userid) => {
+  const db = getFirestore();
   const books = await db
     .collection("books")
     .where("userid", "==", userid)

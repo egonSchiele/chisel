@@ -1,3 +1,4 @@
+// @ts-nocheck
 import renderer from "react-test-renderer";
 import React from "react";
 import Info from "./Info";
