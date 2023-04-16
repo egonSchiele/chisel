@@ -69,6 +69,10 @@ export default function BookList({
   const newBook = async () => {
     const res = await fetch("/api/newBook", {
       method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ csrfToken: getCsrfToken() }),
     });
     if (!res.ok) {
