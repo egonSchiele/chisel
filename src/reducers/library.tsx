@@ -124,6 +124,14 @@ export const reducer = produce<t.State>(
       case "SET_ERROR":
         draft.error = action.payload;
         break;
+      case "SET_SELECTED_BOOK_CHAPTER":
+        const _chapter = action.payload;
+        const idx = draft.selectedBook.chapters.findIndex((sbChapter) => sbChapter.chapterid === _chapter.chapterid);
+
+        if (idx >= 0) {
+          draft.selectedBook.chapters[idx] = _chapter;
+        }
+        break;
       case "CLEAR_ERROR":
         // draft.error = "";
         break;
