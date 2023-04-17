@@ -424,10 +424,10 @@ export default function Book({}) {
         </p>
       )}
       <Launcher items={launchItems} />
-      <p className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</p>
+      <h1 className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</h1>
       <div className="w-full text-sm dark:text-gray-300 my-xs flex">
         <Link to={`/book/${bookid}`}>
-          <NavButton label="Back" onClick={() => {}}>
+          <NavButton label="Back" onClick={() => {}} selector="back-button">
             <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
           </NavButton>
         </Link>
