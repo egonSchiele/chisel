@@ -1,11 +1,10 @@
+// @ts-nocheck
 import settings from "../../settings.js";
 
 describe("chapters", () => {
   it("lets you add, rename, and delete a chapter", () => {
     cy.login();
 
-    // UI should reflect this user being logged in
-    cy.contains("h3", "Books");
     cy.contains("h3", "Chapters").should("not.exist");
 
     cy.newBook();

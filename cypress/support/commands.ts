@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-
+// @ts-nocheck
 import settings from "../../settings";
 
 Cypress.Commands.add("login", (user) => {
@@ -13,6 +13,9 @@ Cypress.Commands.add("login", (user) => {
   // our auth cookie should be present
   cy.getCookie("userid").should("exist");
   cy.getCookie("token").should("exist");
+
+  // UI should reflect this user being logged in
+  cy.contains("h3", "Books");
 });
 
 Cypress.Commands.add("newBook", (user) => {
@@ -40,7 +43,21 @@ Cypress.Commands.add("newChapter", (user) => {
 
   cy.get("p[data-selector='chapterlist-list-item']").contains("New chapter");
 });
-Cypress.Commands.add("renameBook", (user) => {});
+
+Cypress.Commands.add("renameBook", (user) => {
+  cy.get("button[data-selector='booklist-list-item-menu-button']").click();
+
+  cy.contains("div", "Rename");
+  cy.get("div[data-selector='booklist-list-item-button-Rename']").click();
+  cy.get("input[name='Rename Book']").type("test book");
+  cy.get("button[data-selector='popup-ok-button']").click();
+
+  cy.wait(5000);
+
+  cy.visit("http://localhost:80/");
+  cy.get("p[data-selector='booklist-list-item']").contains("test book");
+});
+
 Cypress.Commands.add("renameChapter", (user) => {
   cy.get("button[data-selector='chapterlist-list-item-menu-button']").click();
 
@@ -51,6 +68,7 @@ Cypress.Commands.add("renameChapter", (user) => {
 
   cy.get("p[data-selector='chapterlist-list-item']").contains("test chapter");
 });
+
 Cypress.Commands.add("deleteBook", (user) => {
   cy.intercept({
     method: "GET",
