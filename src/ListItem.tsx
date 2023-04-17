@@ -41,6 +41,7 @@ export default function ListItem({
       <Link
         to={link}
         className="flex flex-grow items-center overflow-hidden py-xs mr-xs"
+        data-selector={`${selector}-list-item-link`}
       >
         <div className="w-full">
           <p

@@ -34,6 +34,7 @@ export default function List({
   rightMenuItem = null,
   level = 1,
   onDrop = (e) => {},
+  selector = "list",
 }: {
   title: string;
   items: any[];
@@ -42,6 +43,7 @@ export default function List({
   rightMenuItem?: t.MenuItem | null;
   level?: number;
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
+  selector?: string;
 }) {
   const [dragOver, setDragOver] = React.useState(false);
   return (
@@ -63,11 +65,12 @@ export default function List({
         setDragOver(false);
         onDrop(e);
       }}
+      data-selector={`${selector}-list`}
     >
       <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
-        {leftMenuItem
-          && Array.isArray(leftMenuItem)
-          && leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
+        {leftMenuItem &&
+          Array.isArray(leftMenuItem) &&
+          leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
         {leftMenuItem && !Array.isArray(leftMenuItem) && (
           <MenuItem {...leftMenuItem} />
         )}

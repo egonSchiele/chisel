@@ -1,7 +1,7 @@
 import settings from "../../settings.js";
 
 describe("books", () => {
-  it("lets you add a book", () => {
+  it("lets you add, rename, and delete a book", () => {
     cy.intercept({
       method: "GET",
       url: "/books",
