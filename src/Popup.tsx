@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import Input from "./components/Input";
 import Button from "./components/Button";
 
-function Popup({
-  onClose, title, inputValue, onChange,
-}) {
+function Popup({ onClose, title, inputValue, onChange }) {
   const [inputValueState, setInputValueState] = useState(inputValue);
 
   useEffect(() => {
@@ -37,6 +35,7 @@ function Popup({
           <Button
             onClick={() => onChange(inputValueState)}
             className="bg-blue-500 text-white font-semibold py-2 px-4 rounded"
+            selector="popup-ok-button"
           >
             OK
           </Button>

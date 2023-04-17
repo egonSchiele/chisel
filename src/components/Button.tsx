@@ -10,6 +10,7 @@ export default function Button({
   size = "medium",
   style = "primary",
   buttonType = "button",
+  selector = "",
 }: {
   size?: ButtonSize;
   children: string;
@@ -19,11 +20,14 @@ export default function Button({
   rounded?: boolean;
   style?: "primary" | "secondary";
   buttonType?: "button" | "submit";
+  selector?: string;
 }) {
-  let colors = "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
+  let colors =
+    "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
 
   if (style === "secondary") {
-    colors = "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbuttonsecondary dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary border border-dmbackground";
+    colors =
+      "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbuttonsecondary dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary border border-dmbackground";
   }
 
   const sizes = {
@@ -47,6 +51,7 @@ export default function Button({
       type={buttonType}
       disabled={disabled}
       className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${colors} ${sizeCss} ${roundedCss} ${className}`}
+      data-selector={selector}
       onClick={onClick}
     >
       {children}

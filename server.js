@@ -60,7 +60,7 @@ const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
   res.setHeader(
     "Cache-Control",
-    "no-store, no-cache, must-revalidate, proxy-revalidate",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
   );
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
@@ -83,7 +83,7 @@ const csrf = (req, res, next) => {
         req.url,
         req.method,
         c.csrfToken,
-        req.body.csrfToken,
+        req.body.csrfToken
       );
       res.send("csrf failed").end();
     }
@@ -260,7 +260,7 @@ app.get(
     } else {
       res.json(history);
     }
-  },
+  }
 );
 
 const fileCache = {};
@@ -295,7 +295,7 @@ app.get(
   checkChapterAccess,
   async (req, res) => {
     serveFile("chapter.html", res);
-  },
+  }
 );
 
 app.get("/", requireLogin, async (req, res) => {
@@ -314,7 +314,6 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
     console.log("no user");
     res.status(404).end();
   } else {
-    console.log(user);
     res.status(200).json({ settings: user.settings });
   }
 });
@@ -381,7 +380,7 @@ app.get(
       console.error("Error getting book:", error);
       res.status(400).json({ error });
     }
-  },
+  }
 );
 
 app.get(
@@ -398,7 +397,7 @@ app.get(
       console.error("Error getting chapter:", error);
       res.status(400).json({ error });
     }
-  },
+  }
 );
 
 app.post(
@@ -415,7 +414,7 @@ app.post(
       console.error("Error deleting chapter:", error);
       res.status(400).json({ error });
     }
-  },
+  }
 );
 
 app.post(
@@ -432,7 +431,7 @@ app.post(
       console.error("Error favoriting chapter:", error);
       res.status(400).json({ error });
     }
-  },
+  }
 );
 
 app.post(
@@ -448,7 +447,7 @@ app.post(
       console.error("Error favoriting book:", error);
       res.status(400).json({ error });
     }
-  },
+  }
 );
 
 app.post("/api/suggestions", requireLogin, async (req, res) => {
@@ -505,12 +504,12 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
           return;
         }
         user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.month.completion
-          += json.usage.completion_tokens;
+        user.usage.openai_api.tokens.month.completion +=
+          json.usage.completion_tokens;
 
         user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.total.completion
-          += json.usage.completion_tokens;
+        user.usage.openai_api.tokens.total.completion +=
+          json.usage.completion_tokens;
 
         await saveUser(user);
         /* {

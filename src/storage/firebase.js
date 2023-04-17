@@ -15,8 +15,8 @@ const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
 export const saveBook = async (book) => {
-  console.log("saving book");
-  console.log({ book });
+  console.log("saving book " + book.bookid);
+
   if (!book) {
     console.log("no book to save");
     return;
@@ -49,7 +49,7 @@ export const getBook = async (bookid) => {
     .get();
 
   if (chapters.empty) {
-    console.log("No chapters found.");
+    console.log("No chapters found for this book.");
   } else {
     chapters.forEach((chapter) => {
       const data = chapter.data();
@@ -69,7 +69,7 @@ export const deleteBook = async (bookid) => {
     .get();
 
   if (chapters.empty) {
-    console.log("No chapters found.");
+    console.log("No chapters found to delete.");
   } else {
     const batch = db.batch();
     chapters.docs.forEach((doc) => {
@@ -84,12 +84,12 @@ export const deleteBook = async (bookid) => {
 
 export const getBooks = async (userid) => {
   console.log("getting books");
-  console.log({ userid });
+
   const books = await db
     .collection("books")
     .where("userid", "==", userid)
     .get();
-  console.log(books);
+
   if (books.empty) {
     console.log("No books found.");
     return [];
@@ -97,19 +97,6 @@ export const getBooks = async (userid) => {
   const allBooks = [];
   books.forEach(async (book) => {
     const data = book.data();
-    // make sure book objs have chapter titles
-    /*   if (data.chapters.length === 0) {
-        const _book = await getBook(data.bookid);
-        if (_book.chapters.length > 0) {
-          _book.chapters.forEach((chapter) => {
-            data.chapters.push({
-              chapterid: chapter.chapterid,
-              title: chapter.title,
-            });
-          });
-          await saveBook(data);
-        }
-      } */
     if (!data.chapterTitles) {
       data.chapterTitles = data.chapters;
       data.chapters = [];
@@ -117,25 +104,28 @@ export const getBooks = async (userid) => {
     }
     allBooks.push(data);
   });
-  console.log("allbooks", allBooks);
+  console.log(
+    "allBooks",
+    allBooks.map((book) => book.bookid)
+  );
   return allBooks;
 };
 
 export const saveChapter = async (chapter) => {
-  console.log("saving chapter");
-  // console.log({ chapter });
+  console.log("saving chapter " + chapter.chapterid);
+
   if (!chapter) {
     console.log("no chapter to save");
     return;
   }
 
   if (
-    settings.limits.chapterLength > 0
-    && chapter.text
-    && chapter.text.length >= settings.limits.chapterLength
+    settings.limits.chapterLength > 0 &&
+    chapter.text &&
+    chapter.text.length >= settings.limits.chapterLength
   ) {
     throw new Error(
-      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`,
+      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
     );
   }
 
@@ -170,7 +160,7 @@ export const deleteChapter = async (chapterid, bookid) => {
     return;
   }
   book.chapterTitles = book.chapterTitles.filter(
-    (chapter) => chapter.chapterid !== chapterid,
+    (chapter) => chapter.chapterid !== chapterid
   );
   await saveBook(book);
 };
@@ -227,11 +217,11 @@ export const saveToHistory = async (chapterid, text) => {
   const { history } = bookObj.data();
 
   if (
-    settings.limits.historyLength > 0
-    && history.length >= settings.limits.historyLength
+    settings.limits.historyLength > 0 &&
+    history.length >= settings.limits.historyLength
   ) {
     throw new Error(
-      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`,
+      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
     );
   }
 
