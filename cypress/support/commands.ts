@@ -39,7 +39,7 @@ Cypress.Commands.add("newChapter", (user) => {
     cy.get("button[data-label=New]").click();
   });
 
-  cy.wait(5000);
+  cy.wait(2000);
 
   cy.get("p[data-selector='chapterlist-list-item']").contains("New chapter");
 });
@@ -91,8 +91,18 @@ Cypress.Commands.add("deleteChapter", (user) => {
   cy.get("button[data-selector='chapterlist-list-item-menu-button']").click();
   cy.contains("div", "Delete");
   cy.get("div[data-selector='chapterlist-list-item-button-Delete']").click();
-  cy.wait(5000);
+  cy.wait(2000);
   cy.get("p[data-selector='chapterlist-list-item']").should("not.exist");
+});
+
+Cypress.Commands.add("deleteFirstChapter", (user) => {
+  cy.get("button[data-selector='chapterlist-list-item-menu-button']")
+    .first()
+    .click();
+  cy.contains("div", "Delete");
+  cy.get("div[data-selector='chapterlist-list-item-button-Delete']").click();
+  cy.wait(2000);
+  /* cy.get("p[data-selector='chapterlist-list-item']").should("not.exist"); */
 });
 
 // ***********************************************
