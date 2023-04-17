@@ -15,7 +15,7 @@ const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
 export const saveBook = async (book) => {
-  console.log("saving book " + book.bookid);
+  console.log(`saving book ${book.bookid}`);
 
   if (!book) {
     console.log("no book to save");
@@ -106,13 +106,13 @@ export const getBooks = async (userid) => {
   });
   console.log(
     "allBooks",
-    allBooks.map((book) => book.bookid)
+    allBooks.map((book) => book.bookid),
   );
   return allBooks;
 };
 
 export const saveChapter = async (chapter) => {
-  console.log("saving chapter " + chapter.chapterid);
+  console.log(`saving chapter ${chapter.chapterid}`);
 
   if (!chapter) {
     console.log("no chapter to save");
@@ -120,12 +120,12 @@ export const saveChapter = async (chapter) => {
   }
 
   if (
-    settings.limits.chapterLength > 0 &&
-    chapter.text &&
-    chapter.text.length >= settings.limits.chapterLength
+    settings.limits.chapterLength > 0
+    && chapter.text
+    && chapter.text.length >= settings.limits.chapterLength
   ) {
     throw new Error(
-      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
+      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`,
     );
   }
 
@@ -160,7 +160,7 @@ export const deleteChapter = async (chapterid, bookid) => {
     return;
   }
   book.chapterTitles = book.chapterTitles.filter(
-    (chapter) => chapter.chapterid !== chapterid
+    (chapter) => chapter.chapterid !== chapterid,
   );
   await saveBook(book);
 };
@@ -217,11 +217,11 @@ export const saveToHistory = async (chapterid, text) => {
   const { history } = bookObj.data();
 
   if (
-    settings.limits.historyLength > 0 &&
-    history.length >= settings.limits.historyLength
+    settings.limits.historyLength > 0
+    && history.length >= settings.limits.historyLength
   ) {
     throw new Error(
-      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
+      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`,
     );
   }
 
