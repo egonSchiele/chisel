@@ -27,7 +27,7 @@ describe("books", () => {
         cy.wait("@getBooks");
         cy.get("p[data-selector='booklist-list-item']").contains("Untitled");
         cy.get(
-          "button[data-selector='booklist-list-item-menu-button']"
+          "button[data-selector='booklist-list-item-menu-button']",
         ).click();
         cy.contains("div", "Delete");
         cy.get("div[data-selector='booklist-list-item-button-Delete']")

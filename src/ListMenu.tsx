@@ -3,7 +3,6 @@ import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { EllipsisHorizontalIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { MenuItem } from "./Types";
-import React from "react";
 
 export default function ListMenu({
   items,
@@ -42,7 +41,10 @@ export default function ListMenu({
                 onClick={item.onClick}
                 data-selector={`${selector}-list-item-button-${item.label}`}
               >
-                <div className=" mt-0">{item.icon} </div>
+                <div className=" mt-0">
+                  {item.icon}
+                  {' '}
+                </div>
                 <div className="ml-1 flex-grow whitespace-nowrap">
                   {item.label}
                 </div>
