@@ -133,8 +133,6 @@ function TextEditor({
 
   return (
     <div className="h-full">
-      <div className="ql-editor hidden">hi</div>
-      <div className="ql-toolbar ql-snow hidden">hi</div>
       <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
         <ContentEditable
           value={state.title}
@@ -143,6 +141,7 @@ function TextEditor({
             dispatch({ type: "SET_TITLE", payload: title });
           }}
           nextFocus={focus}
+          selector="text-editor-title"
         />
         <div className="mb-md h-full w-full">
           <ReactQuill

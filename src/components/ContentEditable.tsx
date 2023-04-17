@@ -8,6 +8,7 @@ export default function ContentEditable({
   className = "",
   style = {},
   nextFocus = null,
+  selector = "",
 }) {
   const [content, setContent] = React.useState(value);
 
@@ -39,6 +40,7 @@ export default function ContentEditable({
       onKeyDown={onKeyDown}
       style={style}
       onInput={handleChange}
+      data-selector={selector}
     >
       {value}
     </div>
