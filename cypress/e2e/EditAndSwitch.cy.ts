@@ -22,7 +22,7 @@ describe("edit and switch", () => {
     cy.get("a[data-selector='chapterlist-list-item-link']").first().click();
 
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
-    cy.get(".ql-editor").type(`${text}{enter}`);
+    cy.get(".ql-editor").last().type(`${text}{enter}`);
 
     // should auto save
     cy.wait(5000);

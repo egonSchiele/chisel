@@ -134,6 +134,8 @@ function TextEditor({
   return (
     <div className="h-full">
       <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
+        <div className="ql-editor hidden">hi</div>
+        <div className="ql-toolbar ql-snow hidden">hi</div>
         <ContentEditable
           value={state.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
