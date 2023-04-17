@@ -102,28 +102,11 @@ export default function Home() {
         {features.map((feature, i) => (
           <Feature key={i} {...feature} />
         ))}
-      </div>
-      {/*      <div className="col-span-1">
-        <img src="http://s.adit.io/full.png" alt="Chisel editor" width={600} />
-        <h2 className="text-2xl font-bold tracking-tight">Features</h2>
-        <ul className="text-base leading-7">
-          <li>Built-in git-like history</li>
-          <li>Expand text, shorten, rewrite, and more</li>
-          <li>VS Code-like launcher for quick navigation</li>
-          <li>Dark mode</li>
-          <li>Grid mode</li>
 
-          <li>Easily add your own AI functionality</li>
-          <li>Support for multiple engines</li>
-        </ul>
-        <a
-          className="underline text-gray-700 dark:text-gray-300"
-          href="https://www.youtube.com/watch?v=RAu7k8PwusE"
-        >
-          Watch the video walkthrough here
+        <a href="/privacy.html" className="my-2xl underline">
+          Privacy policy
         </a>
-        .
-      </div> */}
+      </div>
     </div>
   );
 }
