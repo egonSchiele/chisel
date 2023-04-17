@@ -60,7 +60,7 @@ export default function Home() {
           Chisel editor
         </h1>
         <p className="mt-xs text-lg leading-8 text-gray-800 dark:text-gray-300 ">
-          An writing app for cutting through text
+          A community of 18 writers and counting
         </p>
         <div className="my-10 flex gap-x-6">
           <a
