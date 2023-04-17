@@ -58,7 +58,7 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
-  label: string,
+  label: string
 ) => {
   const prompt = _prompt.replaceAll("{{text}}", text);
   const body = JSON.stringify({
@@ -99,7 +99,7 @@ export const fetchSuggestions = async (
 export const newChapter = async (
   bookid: string,
   title: string,
-  text: string,
+  text: string
 ) => {
   const body = JSON.stringify({
     bookid,
@@ -119,3 +119,40 @@ export const newChapter = async (
   }
   return t.success();
 };
+
+export async function deleteBook(bookid: string) {
+  const res = await postWithCsrf(`/api/deleteBook`, { bookid });
+
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+  return t.success();
+}
+
+export async function favoriteBook(bookid: string) {
+  const res = await postWithCsrf(`/api/favoriteBook`, { bookid });
+
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+  return t.success();
+}
+
+export async function newBook() {
+  const res = await postWithCsrf(`/api/newBook`, {});
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+  return t.success();
+}
+
+export async function postWithCsrf(url: string, body: any) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...body, csrfToken: getCsrfToken() }),
+  });
+  return res;
+}

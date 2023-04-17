@@ -1,11 +1,7 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
 import React from "react";
 import * as t from "../Types";
 
+// Top left and top right menu items
 function MenuItem({
   label,
   icon,
@@ -69,9 +65,9 @@ export default function List({
       }}
     >
       <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
-        {leftMenuItem
-          && Array.isArray(leftMenuItem)
-          && leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
+        {leftMenuItem &&
+          Array.isArray(leftMenuItem) &&
+          leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
         {leftMenuItem && !Array.isArray(leftMenuItem) && (
           <MenuItem {...leftMenuItem} />
         )}
@@ -87,7 +83,9 @@ export default function List({
         )}
         {rightMenuItem && <MenuItem {...rightMenuItem} />}
       </div>
-      <ul className="pt-xs">{items}</ul>
+      <ul className="pt-xs" data-title={title}>
+        {items}
+      </ul>
     </div>
   );
 }

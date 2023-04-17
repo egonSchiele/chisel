@@ -3,6 +3,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { EllipsisHorizontalIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { MenuItem } from "./Types";
+import React from "react";
 
 export default function ListMenu({
   items,
@@ -17,7 +18,7 @@ export default function ListMenu({
     <Popover className="relative flex">
       <Popover.Button
         className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-        data-selector={selector}
+        data-selector={`${selector}-list-item-menu-button`}
       >
         <span className="sr-only">{label}</span>
         <EllipsisHorizontalIcon className="w-4 h-4 text-slate-400" />
@@ -37,13 +38,11 @@ export default function ListMenu({
             {items.map((item, index) => (
               <div
                 key={index}
-                className="px-sm py-xs rounded-md hover:bg-listitemhoverSecondary dark:hover:bg-gray-700 dark:hover:bg-dmlistitemhoverSecondary flex"
+                className="px-sm py-xs rounded-md hover:bg-listitemhoverSecondary  dark:hover:bg-dmlistitemhoverSecondary flex"
                 onClick={item.onClick}
+                data-selector={`${selector}-list-item-button-${item.label}`}
               >
-                <div className=" mt-0">
-                  {item.icon}
-                  {' '}
-                </div>
+                <div className=" mt-0">{item.icon} </div>
                 <div className="ml-1 flex-grow whitespace-nowrap">
                   {item.label}
                 </div>

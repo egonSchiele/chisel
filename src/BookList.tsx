@@ -8,6 +8,39 @@ import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
+import * as fd from "./fetchData";
+
+async function deleteBook(bookid: string, onChange) {
+  const res = await fd.deleteBook(bookid);
+  if (res.tag === "error") {
+    console.log(res.message);
+    return;
+  }
+  await onChange();
+}
+
+async function favoriteBook(bookid: string, onChange) {
+  const res = await fd.favoriteBook(bookid);
+  if (res.tag === "error") {
+    console.log(res.message);
+    return;
+  }
+
+  await onChange();
+}
+
+async function newBook(onChange) {
+  const res = await fd.newBook();
+  if (res.tag === "error") {
+    console.log(res.message);
+    return;
+  }
+  await onChange();
+}
+
+const buttonStyles =
+  "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList({
   books,
@@ -26,109 +59,33 @@ export default function BookList({
 }) {
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentBook, setCurrentBook] = React.useState(books[0]);
-  async function deleteBook(bookid: string) {
-    const res = await fetch(`/api/deleteBook`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ bookid, csrfToken: getCsrfToken() }),
-    });
-    if (!res.ok) {
-      console.log(res.statusText);
-      return;
-    }
-    await onChange();
-  }
-  async function favoriteBook(bookid: string) {
-    const res = await fetch(`/api/favoriteBook`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ bookid, csrfToken: getCsrfToken() }),
-    });
-    if (!res.ok) {
-      console.log(res.statusText);
-      return;
-    }
-    await onChange();
-  }
-
-  async function renameBook(book, newTitle) {
-    const newBook = { ...book, title: newTitle };
-    saveBook(newBook);
-    setShowPopup(false);
-    await onChange();
-  }
 
   function startRenameBook(book) {
     setCurrentBook(book);
     setShowPopup(true);
   }
 
-  const newBook = async () => {
-    const res = await fetch("/api/newBook", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ csrfToken: getCsrfToken() }),
-    });
-    if (!res.ok) {
-      console.log("error");
-      return;
-    }
+  async function renameBook(book, newTitle, onChange) {
+    const newBook = { ...book, title: newTitle };
+    saveBook(newBook);
+    setShowPopup(false);
     await onChange();
-  };
-
-  const sublist = (title, books: t.Book[]) => {
-    const items = books.map((book, index) => (
-      <li key={book.bookid}>
-        <ListItem
-          link={`/book/${book.bookid}`}
-          title={book.title}
-          selected={book.bookid === selectedBookId}
-          onDelete={() => deleteBook(book.bookid)}
-          onFavorite={() => favoriteBook(book.bookid)}
-          onRename={() => startRenameBook(book)}
-        />
-      </li>
-    ));
-
-    return (
-      <div key={title}>
-        {showPopup && (
-          <Popup
-            title="Rename Book"
-            inputValue={currentBook.title}
-            onClose={() => setShowPopup(false)}
-            onChange={(newTitle) => renameBook(currentBook, newTitle)}
-          />
-        )}
-        <List
-          title={title}
-          items={items}
-          level={2}
-          className="p-0 m-0 border-0 text-lg pt-0 pl-0 pr-0 border-r-0 mb-sm"
-        />
-      </div>
-    );
-  };
-
-  const favoriteBooks = books.filter((book) => book.favorite);
-  const otherBooks = books.filter((book) => !book.favorite);
-
-  const lists = [];
-
-  if (favoriteBooks.length > 0) {
-    lists.push(sublist("Favorites", favoriteBooks));
   }
-  lists.push(sublist("All", otherBooks));
 
-  const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
-  const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
+  const items = books.map((book) => (
+    <li key={book.bookid}>
+      <ListItem
+        link={`/book/${book.bookid}`}
+        title={book.title}
+        selected={book.bookid === selectedBookId}
+        onDelete={() => deleteBook(book.bookid, onChange)}
+        onFavorite={() => favoriteBook(book.bookid, onChange)}
+        onRename={() => startRenameBook(book)}
+        selector="booklist"
+      />
+    </li>
+  ));
+
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -139,16 +96,27 @@ export default function BookList({
   const leftMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-    onClick: newBook,
+    onClick: () => newBook(onChange),
     className: buttonStyles,
   };
+
   return (
-    <List
-      title="Books"
-      items={lists}
-      rightMenuItem={rightMenuItem}
-      leftMenuItem={leftMenuItem}
-      className="bg-sidebar dark:bg-dmsidebar"
-    />
+    <>
+      {showPopup && (
+        <Popup
+          title="Rename Book"
+          inputValue={currentBook.title}
+          onClose={() => setShowPopup(false)}
+          onChange={(newTitle) => renameBook(currentBook, newTitle, onChange)}
+        />
+      )}
+      <List
+        title="Books"
+        items={items}
+        rightMenuItem={rightMenuItem}
+        leftMenuItem={leftMenuItem}
+        className="bg-sidebar dark:bg-dmsidebar"
+      />
+    </>
   );
 }

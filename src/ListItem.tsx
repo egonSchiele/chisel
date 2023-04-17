@@ -11,6 +11,7 @@ export default function ListItem({
   onFavorite,
   onDelete,
   onRename,
+  selector = "listitem",
 }: {
   link: string;
   title: string;
@@ -18,15 +19,12 @@ export default function ListItem({
   onFavorite: () => void;
   onDelete: () => void;
   onRename: () => void;
+  selector?: string;
 }) {
   const selectedCss = selected
     ? "bg-listitemhover dark:bg-dmlistitemhover"
     : "";
   const listMenuItems: t.MenuItem[] = [
-    /*  {
-      label: "Favorite",
-      onClick: onFavorite,
-    }, */
     {
       label: "Delete",
       onClick: onDelete,
@@ -45,13 +43,16 @@ export default function ListItem({
         className="flex flex-grow items-center overflow-hidden py-xs mr-xs"
       >
         <div className="w-full">
-          <div className="px-xs overflow-hidden text-ellipsis whitespace-nowrap">
+          <p
+            className="px-xs overflow-hidden text-ellipsis whitespace-nowrap"
+            data-selector={`${selector}-list-item`}
+          >
             {title}
-          </div>
+          </p>
         </div>
       </Link>
       <div className="flex flex-none cursor-pointer items-center mr-xs">
-        <ListMenu items={listMenuItems} />
+        <ListMenu items={listMenuItems} selector={selector} />
       </div>
     </div>
   );
