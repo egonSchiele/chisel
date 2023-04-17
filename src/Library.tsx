@@ -244,6 +244,10 @@ export default function Library() {
     } else {
       dispatch({ type: "CLEAR_ERROR" });
       dispatch({ type: "SET_SAVED", payload: true });
+      // Since we depend on a cache version of the selected book when picking a chapter
+      // we must also set the chapter on said cache whenever save occurs.
+      // This avoids the issue in which switching a chapter looses your last saved work.
+      dispatch({ type: "SET_SELECTED_BOOK_CHAPTER", payload: chapter });
     }
   }
 
