@@ -621,7 +621,9 @@ export default function Library() {
         open={state.launcherOpen}
         close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
       />
-      {state.error && <div className="text-red-500">{state.error}</div>}
+      {state.error && (
+        <div className="bg-red-700 p-2 text-white">{state.error}</div>
+      )}
       <div className="flex h-full">
         {state.panels.bookList.open && (
           <div className="flex-none w-36 xl:w-48 h-full">
@@ -629,6 +631,7 @@ export default function Library() {
               books={state.books}
               selectedBookId={selectedBookId}
               onChange={fetchBooks}
+              onNewBook={(book) => dispatch({ type: "ADD_BOOK", payload: book })}
               closeSidebar={() => dispatch({ type: "CLOSE_BOOK_LIST" })}
               canCloseSidebar={chapterid !== undefined}
               saveBook={saveBook}

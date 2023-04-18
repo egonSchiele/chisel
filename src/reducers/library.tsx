@@ -70,6 +70,9 @@ export const reducer = produce<t.State>(
       case "SET_BOOKS":
         draft.books = action.payload;
         break;
+      case "ADD_BOOK":
+        draft.books.push(action.payload);
+        break;
       case "SET_BOOK":
         draft.selectedBook = action.payload;
         break;

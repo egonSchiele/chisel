@@ -143,7 +143,8 @@ export async function newBook() {
   if (!res.ok) {
     return t.error(res.statusText);
   }
-  return t.success();
+  const book = await res.json();
+  return t.success(book);
 }
 
 export async function postWithCsrf(url: string, body: any) {

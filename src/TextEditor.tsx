@@ -25,7 +25,6 @@ function TextEditor({
   saved: boolean;
   onSave: () => void;
 }) {
-  console.log("TextEditor", chapterid);
   const quillRef = useRef();
 
   const [edited, setEdited] = useState(false);

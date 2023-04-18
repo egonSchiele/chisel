@@ -197,6 +197,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       title: "Untitled",
       author: "Unknown",
       chapters: [],
+      chapterTitles: [],
       design: {
         coverColor: "bg-dmlistitem2",
         labelColor: "bg-blue-700",
@@ -207,7 +208,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       favorite: false,
     };
     await saveBook(book);
-    res.status(200).end();
+    res.send(book);
     // res.redirect(`/book/${bookid}`);
   }
 });

@@ -29,13 +29,15 @@ async function favoriteBook(bookid: string, onChange) {
   await onChange();
 }
 
-async function newBook(onChange) {
+async function newBook(onNewBook) {
   const res = await fd.newBook();
   if (res.tag === "error") {
     console.log(res.message);
-    return;
+  } else {
+    const book = res.payload;
+    console.log("new book", book);
+    await onNewBook(book);
   }
-  await onChange();
 }
 
 const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
@@ -45,6 +47,7 @@ export default function BookList({
   books,
   selectedBookId,
   onChange,
+  onNewBook,
   closeSidebar,
   saveBook,
   canCloseSidebar = true,
@@ -52,6 +55,7 @@ export default function BookList({
   books: t.Book[];
   selectedBookId: string;
   onChange: () => void;
+  onNewBook: (book: t.Book) => void;
   closeSidebar: () => void;
   saveBook: (book: t.Book) => void;
   canCloseSidebar?: boolean;
@@ -95,7 +99,7 @@ export default function BookList({
   const leftMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-    onClick: () => newBook(onChange),
+    onClick: () => newBook(onNewBook),
     className: buttonStyles,
   };
 
