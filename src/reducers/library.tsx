@@ -1,5 +1,6 @@
 import produce, { Draft } from "immer";
 import * as t from "../Types";
+import { localStorageOrDefault } from "../utils";
 
 type DefaultChapter = {
   title: string;
@@ -39,10 +40,26 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     chapter: _chapter,
     synonyms: [],
     infoPanel: { syllables: 0 },
+    panels: {
+      bookList: {
+        open: localStorageOrDefault("bookListOpen", true),
+      },
+      chapterList: {
+        open: localStorageOrDefault("chapterListOpen", true),
+      },
+      sidebar: {
+        open: localStorageOrDefault("sidebarOpen", false),
+        activePanel: localStorageOrDefault("activePanel", "suggestions"),
+      },
+      prompts: {
+        open: localStorageOrDefault("promptsOpen", false),
+      },
+    },
     suggestions: chapter.suggestions,
     saved: true,
     error: "",
     loading: true,
+    viewMode: "default",
   };
 };
 
@@ -126,7 +143,9 @@ export const reducer = produce<t.State>(
         break;
       case "SET_SELECTED_BOOK_CHAPTER":
         const _chapter = action.payload;
-        const idx = draft.selectedBook.chapters.findIndex((sbChapter) => sbChapter.chapterid === _chapter.chapterid);
+        const idx = draft.selectedBook.chapters.findIndex(
+          (sbChapter) => sbChapter.chapterid === _chapter.chapterid,
+        );
 
         if (idx >= 0) {
           draft.selectedBook.chapters[idx] = _chapter;
@@ -206,6 +225,97 @@ export const reducer = produce<t.State>(
       case "SET_TEMPORARY_FOCUS_MODE_STATE":
         draft._temporaryFocusModeState = action.payload;
         break;
+      case "SET_VIEW_MODE":
+        draft.viewMode = action.payload;
+        break;
+      case "OPEN_BOOK_LIST":
+        draft.panels.bookList.open = true;
+        localStorage.setItem("bookListOpen", "true");
+        break;
+      case "CLOSE_BOOK_LIST":
+        draft.panels.bookList.open = false;
+        localStorage.setItem("bookListOpen", "false");
+        break;
+      case "OPEN_CHAPTER_LIST":
+        draft.panels.chapterList.open = true;
+        localStorage.setItem("chapterListOpen", "true");
+        break;
+      case "CLOSE_CHAPTER_LIST":
+        draft.panels.chapterList.open = false;
+        localStorage.setItem("chapterListOpen", "false");
+        break;
+      case "OPEN_SIDEBAR":
+        draft.panels.sidebar.open = true;
+        localStorage.setItem("sidebarOpen", "true");
+        break;
+      case "CLOSE_SIDEBAR":
+        draft.panels.sidebar.open = false;
+        localStorage.setItem("sidebarOpen", "false");
+        break;
+      case "OPEN_PROMPTS":
+        draft.panels.prompts.open = true;
+        localStorage.setItem("promptsOpen", "true");
+        break;
+      case "CLOSE_PROMPTS":
+        draft.panels.prompts.open = false;
+        localStorage.setItem("promptsOpen", "false");
+        break;
+      case "TOGGLE_BOOK_LIST":
+        draft.panels.bookList.open = !draft.panels.bookList.open;
+        localStorage.setItem(
+          "bookListOpen",
+          draft.panels.bookList.open ? "true" : "false",
+        );
+        break;
+      case "TOGGLE_CHAPTER_LIST":
+        draft.panels.chapterList.open = !draft.panels.chapterList.open;
+        localStorage.setItem(
+          "chapterListOpen",
+          draft.panels.chapterList.open ? "true" : "false",
+        );
+        break;
+      case "TOGGLE_SIDEBAR":
+        draft.panels.sidebar.open = !draft.panels.sidebar.open;
+        localStorage.setItem(
+          "sidebarOpen",
+          draft.panels.sidebar.open ? "true" : "false",
+        );
+        break;
+      case "TOGGLE_PROMPTS":
+        draft.panels.prompts.open = !draft.panels.prompts.open;
+        localStorage.setItem(
+          "promptsOpen",
+          draft.panels.prompts.open ? "true" : "false",
+        );
+        break;
+      case "CLOSE_ALL_PANELS":
+        draft.panels.bookList.open = false;
+        draft.panels.chapterList.open = false;
+        draft.panels.sidebar.open = false;
+        draft.panels.prompts.open = false;
+        localStorage.setItem("bookListOpen", "false");
+        localStorage.setItem("chapterListOpen", "false");
+        localStorage.setItem("sidebarOpen", "false");
+        localStorage.setItem("promptsOpen", "false");
+        break;
+      case "OPEN_ALL_PANELS":
+        draft.panels.bookList.open = true;
+        draft.panels.chapterList.open = true;
+        draft.panels.sidebar.open = true;
+        draft.panels.prompts.open = true;
+        localStorage.setItem("bookListOpen", "true");
+        localStorage.setItem("chapterListOpen", "true");
+        localStorage.setItem("sidebarOpen", "true");
+        localStorage.setItem("promptsOpen", "true");
+        break;
+      case "SET_ACTIVE_PANEL":
+        draft.panels.sidebar.activePanel = action.payload;
+        localStorage.setItem("activePanel", action.payload);
+        break;
+      case "SET_VIEW_MODE":
+        draft.viewMode = action.payload;
+        break;
+
       default:
         // eslint-disable-next-line
         return draft;

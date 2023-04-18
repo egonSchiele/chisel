@@ -1,3 +1,31 @@
+export type State = {
+  books: Book[];
+  error: string;
+  loading: boolean;
+
+  selectedBook: Book | null;
+  editor: EditorState;
+  chapter: Chapter | null;
+  synonyms: string[];
+  infoPanel: InfoPanelState;
+  panels: PanelState;
+  suggestions: Suggestion[];
+  saved: boolean;
+  _temporaryFocusModeState?: string;
+  viewMode: ViewMode;
+};
+
+export type ViewMode = "default" | "focus" | "fullscreen" | "grid";
+
+export type Panel = {
+  open: boolean;
+  activePanel?: string;
+};
+
+export type PanelState = {
+  [key: string]: Panel;
+};
+
 export type SelectedText = {
   index: number;
   length: number;
@@ -22,20 +50,6 @@ export type InfoPanelState = {
   syllables: number;
 };
 
-export type State = {
-  books: Book[];
-  error: string;
-  selectedBook: Book | null;
-  loading: boolean;
-
-  editor: EditorState;
-  chapter: Chapter | null;
-  synonyms: string[];
-  infoPanel: InfoPanelState;
-  suggestions: Suggestion[];
-  saved: boolean;
-  _temporaryFocusModeState?: string;
-};
 export type ButtonSize = "small" | "medium" | "large";
 export type SuggestionType =
   | "expand"

@@ -22,6 +22,19 @@ export function useInterval(fn, delay) {
     };
   }, [delay]);
 }
+
+export function localStorageOrDefault(key: string, defaultValue: any) {
+  const value = localStorage.getItem(key);
+  if (value === null) {
+    return defaultValue;
+  }
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
+}
+
 // Hook
 export function useLocalStorage<T>(key: string, initialValue: T) {
   // State to store our value

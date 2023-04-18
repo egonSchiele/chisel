@@ -32,7 +32,11 @@ function Suggestions({ suggestions, onClick, onDelete }) {
 }
 
 function Navigation({
-  onClick, closeSidebar, maximize, setMaximize,
+  onClick,
+  closeSidebar,
+  maximize,
+  fullscreen,
+  exitFullscreen,
 }) {
   const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
   return (
@@ -75,7 +79,7 @@ function Navigation({
         {maximize && (
           <NavButton
             label="Minimize"
-            onClick={() => setMaximize(false)}
+            onClick={exitFullscreen}
             selector="minimize-button"
           >
             <ArrowsPointingInIcon
@@ -87,7 +91,7 @@ function Navigation({
         {!maximize && (
           <NavButton
             label="Maximize"
-            onClick={() => setMaximize(true)}
+            onClick={fullscreen}
             selector="maximize-button"
           >
             <ArrowsPointingOutIcon
@@ -115,14 +119,13 @@ export default function Sidebar({
   setSettings,
   activePanel,
   setActivePanel,
-  closeSidebar,
   onSuggestionClick,
   onSuggestionDelete,
   onSettingsSave,
   onHistoryClick,
   triggerHistoryRerender,
   maximize,
-  setMaximize,
+  dispatch,
 }) {
   const infoText = state.editor.selectedText.length === 0
     ? state.editor.text
@@ -132,9 +135,10 @@ export default function Sidebar({
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}
-          closeSidebar={closeSidebar}
+          closeSidebar={() => dispatch({ type: "CLOSE_SIDEBAR" })}
           maximize={maximize}
-          setMaximize={setMaximize}
+          fullscreen={() => dispatch({ type: "SET_VIEW_MODE", payload: "fullscreen" })}
+          exitFullscreen={() => dispatch({ type: "SET_VIEW_MODE", payload: "default" })}
         />
         {activePanel === "info" && (
           <List
