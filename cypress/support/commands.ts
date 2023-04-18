@@ -105,6 +105,24 @@ Cypress.Commands.add("deleteFirstChapter", (user) => {
   /* cy.get("p[data-selector='chapterlist-list-item']").should("not.exist"); */
 });
 
+Cypress.Commands.add("selectChapter", (user) => {
+  cy.get("a[data-selector='chapterlist-list-item-link']").click();
+});
+
+Cypress.Commands.add("toggleSidebar", (user) => {
+  cy.get("button[data-selector='sidebar-button']").click();
+});
+
+Cypress.Commands.add("showHistory", (user) => {
+  cy.get("button[data-selector='history-button']").click();
+  cy.contains("h3", "History");
+});
+
+Cypress.Commands.add("manuallySave", (user) => {
+  cy.get(".ql-editor").last().type(`{command+shift+s}`);
+  cy.wait(2000);
+});
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite

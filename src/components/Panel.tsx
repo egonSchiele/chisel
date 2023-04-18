@@ -8,6 +8,7 @@ export default function Panel({
   onClick = () => {},
   onDelete = null,
   className = "",
+  selector = "",
 }) {
   return (
     <div className="mb-md">
@@ -24,7 +25,11 @@ export default function Panel({
       <div
         className={`rounded-md bg-panel-background hover:bg-panel-background-hover dark:bg-dmpanel-background dark:hover:bg-dmpanel-background-hover ${className}`}
       >
-        <div className="p-sm text-md leading-6 text-darkest dark:text-gray-300" onClick={onClick}>
+        <div
+          className="p-sm text-md leading-6 text-darkest dark:text-gray-300"
+          onClick={onClick}
+          data-selector={selector}
+        >
           {children}
         </div>
       </div>

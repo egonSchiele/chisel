@@ -15,7 +15,7 @@ function History({
   triggerHistoryRerender,
   onClick,
 }) {
-  const [history, setHistory] = useState < t.History >([]);
+  const [history, setHistory] = useState<t.History>([]);
   console.log("rerendering history");
   useEffect(() => {
     const func = async () => {
@@ -67,6 +67,7 @@ function History({
             onClick(newText);
           }}
           className="cursor-pointer"
+          selector="history-panel"
         >
           <pre className="text-xs xl:text-sm">{patch}</pre>
         </Panel>
