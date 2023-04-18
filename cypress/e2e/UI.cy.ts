@@ -22,6 +22,18 @@ describe("UI", () => {
     cy.get("button[data-selector='sidebar-button']").click();
     cy.contains("h3", "Suggestions");
 
+    cy.get("button[data-selector='info-button']").click();
+    cy.contains("h3", "Info");
+
+    cy.get("button[data-selector='history-button']").click();
+    cy.contains("h3", "History");
+
+    cy.get("button[data-selector='settings-button']").click();
+    cy.contains("h3", "Settings");
+
+    cy.get("button[data-selector='suggestions-button']").click();
+    cy.contains("h3", "Suggestions");
+
     // hide sidebar
     cy.get("button[data-selector='sidebar-button']").click();
     cy.contains("h3", "Suggestions").should("not.exist");

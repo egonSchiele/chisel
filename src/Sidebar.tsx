@@ -39,25 +39,45 @@ function Navigation({
     <div className={`${width} flex`}>
       <div className="flex-grow" />
       <div className="">
-        <NavButton label="Info" onClick={() => onClick("info")}>
+        <NavButton
+          label="Info"
+          onClick={() => onClick("info")}
+          selector="info-button"
+        >
           <InformationCircleIcon
             className="h-4 w-4 xl:h-5 xl:w-5"
             aria-hidden="true"
           />
         </NavButton>
-        <NavButton label="Suggestions" onClick={() => onClick("suggestions")}>
+        <NavButton
+          label="Suggestions"
+          onClick={() => onClick("suggestions")}
+          selector="suggestions-button"
+        >
           <ClipboardIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
-        <NavButton label="History" onClick={() => onClick("history")}>
+        <NavButton
+          label="History"
+          onClick={() => onClick("history")}
+          selector="history-button"
+        >
           <ClockIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
-        <NavButton label="Settings" onClick={() => onClick("settings")}>
+        <NavButton
+          label="Settings"
+          onClick={() => onClick("settings")}
+          selector="settings-button"
+        >
           <Cog6ToothIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
       </div>
       <div className="flex-grow items-end">
         {maximize && (
-          <NavButton label="Minimize" onClick={() => setMaximize(false)}>
+          <NavButton
+            label="Minimize"
+            onClick={() => setMaximize(false)}
+            selector="minimize-button"
+          >
             <ArrowsPointingInIcon
               className="h-4 w-4 xl:h-5 xl:w-5"
               aria-hidden="true"
@@ -65,7 +85,11 @@ function Navigation({
           </NavButton>
         )}
         {!maximize && (
-          <NavButton label="Maximize" onClick={() => setMaximize(true)}>
+          <NavButton
+            label="Maximize"
+            onClick={() => setMaximize(true)}
+            selector="maximize-button"
+          >
             <ArrowsPointingOutIcon
               className="h-4 w-4 xl:h-5 xl:w-5"
               aria-hidden="true"
@@ -73,7 +97,11 @@ function Navigation({
           </NavButton>
         )}
 
-        <NavButton label="Close" onClick={closeSidebar}>
+        <NavButton
+          label="Close"
+          onClick={closeSidebar}
+          selector="close-sidebar-button"
+        >
           <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
       </div>
