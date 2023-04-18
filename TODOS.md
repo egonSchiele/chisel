@@ -42,3 +42,7 @@
 - prompt library
 - write a guide
 - need to clear the cached selected data at some point, maybe once the user starts typing again.
+- After creating a new book, you need to refresh to see it
+- Functionality for taking notes with no organization
+- Daily log functionality
+- close button doesnt work in full screen mode
