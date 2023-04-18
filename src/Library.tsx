@@ -701,7 +701,7 @@ export default function Library() {
                 )}
 
                 {state.saved && (
-                  <NavButton label="Unsaved" onClick={() => {}}>
+                  <NavButton label="Saved" onClick={() => {}}>
                     <CheckCircleIcon
                       className="h-5 w-5 text-green-700 dark:text-green-300"
                       aria-hidden="true"
@@ -718,6 +718,7 @@ export default function Library() {
                       setChapterListOpen(false);
                     }
                   }}
+                  selector="prompts-button"
                 >
                   <SparklesIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
@@ -731,6 +732,7 @@ export default function Library() {
                       setChapterListOpen(false);
                     }
                   }}
+                  selector="sidebar-button"
                 >
                   <EllipsisHorizontalCircleIcon
                     className="h-5 w-5"

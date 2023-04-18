@@ -27,7 +27,7 @@ Cypress.Commands.add("newBook", (user) => {
   // Click the New button to add a new book
   cy.get("button[data-label=New]").click();
 
-  cy.wait(5000);
+  cy.wait(2000);
 
   cy.visit("http://localhost:80/");
 
@@ -52,7 +52,7 @@ Cypress.Commands.add("renameBook", (user) => {
   cy.get("input[name='Rename Book']").type("test book");
   cy.get("button[data-selector='popup-ok-button']").click();
 
-  cy.wait(5000);
+  cy.wait(2000);
 
   cy.visit("http://localhost:80/");
   cy.get("p[data-selector='booklist-list-item']").contains("test book");
