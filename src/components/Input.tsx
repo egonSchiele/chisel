@@ -13,6 +13,7 @@ export default function Input({
   placeholder = "",
   onBlur = null,
   onKeyDown = null,
+  selector = "",
 }) {
   const roundedCss = rounded ? "rounded-md" : "";
   return (
@@ -37,6 +38,7 @@ export default function Input({
           placeholder={placeholder}
           onKeyDown={onKeyDown}
           className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+          data-selector={selector}
         />
       </div>
     </div>

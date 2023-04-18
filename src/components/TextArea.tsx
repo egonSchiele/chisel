@@ -14,6 +14,7 @@ export default function TextArea({
   onBlur = null,
   onKeyDown = null,
   rows = 4,
+  selector = "",
 }) {
   const roundedCss = rounded ? "rounded-md" : "";
   return (
@@ -38,6 +39,7 @@ export default function TextArea({
           onKeyDown={onKeyDown}
           className={`block w-full py-1 px-2 text-gray-900 shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
           rows={rows}
+          data-selector={selector}
         />
       </div>
     </div>

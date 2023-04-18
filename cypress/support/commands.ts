@@ -109,6 +109,11 @@ Cypress.Commands.add("selectChapter", (user) => {
   cy.get("a[data-selector='chapterlist-list-item-link']").click();
 });
 
+Cypress.Commands.add("selectBook", (user) => {
+  cy.get("a[data-selector='booklist-list-item-link']").click();
+  cy.contains("h3", "Chapters");
+});
+
 Cypress.Commands.add("toggleSidebar", (user) => {
   cy.get("button[data-selector='sidebar-button']").click();
 });
@@ -116,6 +121,16 @@ Cypress.Commands.add("toggleSidebar", (user) => {
 Cypress.Commands.add("showHistory", (user) => {
   cy.get("button[data-selector='history-button']").click();
   cy.contains("h3", "History");
+});
+
+Cypress.Commands.add("showSettings", (user) => {
+  cy.get("button[data-selector='settings-button']").click();
+  cy.contains("h3", "Settings");
+});
+
+Cypress.Commands.add("showSuggestions", (user) => {
+  cy.get("button[data-selector='suggestions-button']").click();
+  cy.contains("h3", "Suggestions");
 });
 
 Cypress.Commands.add("manuallySave", (user) => {

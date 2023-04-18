@@ -7,9 +7,9 @@
 - Can hide and show prompts and sidebar panels using their icons. Pressing escape hides and shows the user interface. Pressing command shift P hides and shows the launcher: UI
 - Logging in works: Login
 - Home page loads: Home
+- Manually saving should create a new history element. Editing and saving again should create another element with a diff. Clicking the older element should restore that state, but not create another entry in the history ; History
 
 ## TODO
-- Manually saving should create a new history element. Editing and saving again should create another element with a diff. Clicking the older element should restore that state, but not create another entry in the history.
 - Reordering chapters
 - Clicking a prompt fetches ai suggestions
 - focus mode

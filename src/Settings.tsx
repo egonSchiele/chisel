@@ -21,6 +21,7 @@ function Prompt({
           className=" w-full"
           labelClassName="dark:text-black"
           onChange={(e) => onLabelChange(e.target.value)}
+          selector={`prompt-${label}-label`}
         />
       </div>
       <div className="w-full">
@@ -31,6 +32,7 @@ function Prompt({
           className="w-full"
           labelClassName="dark:text-black"
           onChange={(e) => onTextChange(e.target.value)}
+          selector={`prompt-${label}-text`}
         />
       </div>
       <Button
@@ -39,6 +41,7 @@ function Prompt({
         style="secondary"
         rounded
         className="mt-sm w-full dark:bg-gray-700 dark:border-gray-700 shadow-none"
+        selector={`prompt-${label}-delete-button`}
       >
         Delete
       </Button>
@@ -78,7 +81,7 @@ function Settings({ settings, setSettings, onSave }) {
     setSettings(
       produce(settings, (draft) => {
         // @ts-ignore
-        draft.prompts.push({ label: "", text: "" });
+        draft.prompts.push({ label: "NewPrompt", text: "" });
       }),
     );
   };
@@ -154,10 +157,20 @@ function Settings({ settings, setSettings, onSave }) {
           />
         ))}
       </div>
-      <Button onClick={addPrompt} rounded className="mt-0">
+      <Button
+        onClick={addPrompt}
+        rounded
+        className="mt-0"
+        selector="sidebar-new-prompt-button"
+      >
         New Prompt
       </Button>
-      <Button onClick={handleSave} rounded className="mt-0">
+      <Button
+        onClick={handleSave}
+        rounded
+        className="mt-0"
+        selector="sidebar-save-button"
+      >
         Save
       </Button>
     </form>
