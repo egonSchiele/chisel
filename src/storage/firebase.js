@@ -35,18 +35,20 @@ export const saveBook = async (book) => {
 export const getBook = async (bookid) => {
   console.log("getting book");
   console.log({ bookid });
-  const docRef = db.collection("books").doc(bookid);
-  const bookObj = await docRef.get();
+  const bookRef = db.collection("books").doc(bookid);
+
+  const chapterRef = db
+    .collection("chapters")
+    .where("bookid", "==", bookid);
+
+  const [bookObj, chapters] = await Promise.all([bookRef.get(), chapterRef.get()]);
+
   if (!bookObj.exists) {
     return null;
   }
+
   const book = bookObj.data();
   book.chapters = [];
-  // console.log("1chapters", book.chapters);
-  const chapters = await db
-    .collection("chapters")
-    .where("bookid", "==", bookid)
-    .get();
 
   if (chapters.empty) {
     console.log("No chapters found for this book.");
