@@ -103,7 +103,7 @@ function Navigation({
 
         <NavButton
           label="Close"
-          onClick={closeSidebar}
+          onClick={maximize ? exitFullscreen : closeSidebar}
           selector="close-sidebar-button"
         >
           <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />

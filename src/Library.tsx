@@ -658,17 +658,28 @@ export default function Library() {
             <div className="flex-none">
               {(!state.panels.bookList.open
                 || !state.panels.chapterList.open) && (
-                <button
+              /*       <button
                   type="button"
                   className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0 "
+                  onClick={() => {
+
+                  }}
+                  data-selector
+                >
+                  <span className="sr-only">Open</span>
+                </button> */
+
+                <NavButton
+                  label="Open"
                   onClick={() => {
                     dispatch({ type: "OPEN_BOOK_LIST" });
                     dispatch({ type: "OPEN_CHAPTER_LIST" });
                   }}
+                  className="p-0"
+                  selector="open-lists-button"
                 >
-                  <span className="sr-only">Open</span>
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
+                </NavButton>
               )}
             </div>
 
