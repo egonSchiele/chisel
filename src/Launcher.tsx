@@ -23,33 +23,14 @@ function classNames(...classes) {
 
 export default function Launcher({
   items,
-  onLaunch = null,
+  open,
+  close,
 }: {
   items: MenuItem[];
-  onLaunch?: any;
+  open: boolean;
+  close: () => void;
 }) {
   const [query, setQuery] = useState("");
-
-  const [open, setOpen] = useState(false);
-
-  const handleKeyDown = (event) => {
-    if (event.metaKey && event.shiftKey && event.key === "p") {
-      event.preventDefault();
-      if (!open) {
-        onLaunch();
-        console.log("onLaunch!!!!");
-      }
-      setOpen((cur) => !cur);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
 
   const filteredItems = query === ""
     ? items
@@ -62,7 +43,7 @@ export default function Launcher({
       afterLeave={() => setQuery("")}
       appear
     >
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      <Dialog as="div" className="relative z-10" onClose={close}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -89,7 +70,7 @@ export default function Launcher({
               <Combobox
                 onChange={(item: MenuItem) => {
                   item.onClick();
-                  setOpen(false);
+                  close();
                 }}
               >
                 <div className="relative">

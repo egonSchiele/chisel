@@ -1,4 +1,3 @@
-- add tests
 - use new dnd library for grid
 - ask ai to outline entire book
 - download all data

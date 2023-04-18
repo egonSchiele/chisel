@@ -13,6 +13,7 @@ export type State = {
   saved: boolean;
   _temporaryFocusModeState?: string;
   viewMode: ViewMode;
+  launcherOpen: boolean;
 };
 
 export type ViewMode = "default" | "focus" | "fullscreen" | "grid";

@@ -77,7 +77,9 @@ export default function Library() {
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      if (state.viewMode === "fullscreen") {
+      if (state.launcherOpen) {
+        dispatch({ type: "TOGGLE_LAUNCHER" });
+      } else if (state.viewMode === "fullscreen") {
         dispatch({ type: "SET_VIEW_MODE", payload: "default" });
       } else if (state.viewMode === "focus") {
         focusModeClose();
@@ -91,6 +93,9 @@ export default function Library() {
       } else {
         dispatch({ type: "OPEN_ALL_PANELS" });
       }
+    } else if (event.metaKey && event.shiftKey && event.key === "p") {
+      event.preventDefault();
+      dispatch({ type: "TOGGLE_LAUNCHER" });
     }
   };
 
@@ -207,6 +212,7 @@ export default function Library() {
     if (suggestions.length > 0) {
       chapter.suggestions = state.suggestions;
     }
+
     const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 
     const result = await fetch("/api/saveChapter", {
@@ -562,6 +568,8 @@ export default function Library() {
               icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
             },
           ]}
+          open={state.launcherOpen}
+          close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
         />
       </div>
     );
@@ -574,7 +582,11 @@ export default function Library() {
   ) {
     return (
       <div className="w-3/4 mx-auto flex-none min-h-screen">
-        <Launcher items={launchItems} />
+        <Launcher
+          items={launchItems}
+          open={state.launcherOpen}
+          close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
+        />
 
         <Sidebar
           state={state}
@@ -604,7 +616,11 @@ export default function Library() {
 
   return (
     <div className="h-screen">
-      <Launcher items={launchItems} onLaunch={() => {}} />
+      <Launcher
+        items={launchItems}
+        open={state.launcherOpen}
+        close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
+      />
       {state.error && <div className="text-red-500">{state.error}</div>}
       <div className="flex h-full">
         {state.panels.bookList.open && (

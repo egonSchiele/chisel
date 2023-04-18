@@ -60,6 +60,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     error: "",
     loading: true,
     viewMode: "default",
+    launcherOpen: false,
   };
 };
 
@@ -110,12 +111,20 @@ export const reducer = produce<t.State>(
         draft.editor.title = action.payload;
         draft.chapter.title = action.payload;
         // find chapter and then update it so that the chapter list also receives the update.
-        const chapterIdx = draft.selectedBook.chapters.findIndex(
+        let chapterIdx = draft.selectedBook.chapters.findIndex(
           (chapter) => chapter.chapterid === draft.chapter.chapterid,
         );
 
         if (chapterIdx !== -1) {
           draft.selectedBook.chapters[chapterIdx].title = action.payload;
+        }
+
+        chapterIdx = draft.selectedBook.chapterTitles.findIndex(
+          (chapter) => chapter.chapterid === draft.chapter.chapterid,
+        );
+
+        if (chapterIdx !== -1) {
+          draft.selectedBook.chapterTitles[chapterIdx].title = action.payload;
         }
         draft.saved = false;
         break;
@@ -314,6 +323,9 @@ export const reducer = produce<t.State>(
         break;
       case "SET_VIEW_MODE":
         draft.viewMode = action.payload;
+        break;
+      case "TOGGLE_LAUNCHER":
+        draft.launcherOpen = !draft.launcherOpen;
         break;
 
       default:
