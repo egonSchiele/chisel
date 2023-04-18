@@ -29,7 +29,7 @@ Cypress.Commands.add("newBook", (user) => {
 
   cy.wait(2000);
 
-  cy.visit("http://localhost:80/");
+  // cy.visit("http://localhost:80/");
 
   cy.get("p[data-selector='booklist-list-item']").contains("Untitled");
 });
