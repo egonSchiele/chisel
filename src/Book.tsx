@@ -41,7 +41,7 @@ const reducer = produce((draft: t.Book, action: any) => {
     case "SET_TITLE":
       {
         const chapter = draft.chapters.find(
-          (ch) => ch.chapterid === action.payload.chapterID
+          (ch) => ch.chapterid === action.payload.chapterID,
         );
         if (chapter) {
           chapter.title = action.payload.newTitle;
@@ -51,7 +51,7 @@ const reducer = produce((draft: t.Book, action: any) => {
     case "SET_TEXT":
       {
         const chapter = draft.chapters.find(
-          (ch) => ch.chapterid === action.payload.chapterID
+          (ch) => ch.chapterid === action.payload.chapterID,
         );
         if (chapter) {
           chapter.text = action.payload.newText;
@@ -59,7 +59,7 @@ const reducer = produce((draft: t.Book, action: any) => {
           console.log(
             "Chapter not found",
             current(draft.chapters),
-            action.payload.chapterID
+            action.payload.chapterID,
           );
         }
       }
@@ -102,9 +102,8 @@ const reducer = produce((draft: t.Book, action: any) => {
 });
 
 export default function Book({}) {
-  const [state, dispatch] = React.useReducer<
-    (state: t.Book, action: any) => any
-  >(reducer, initialState);
+  const [state, dispatch] = React.useReducer<(state: t.Book, action: any) => any
+    >(reducer, initialState);
   const [error, setError] = React.useState("");
 
   const [loaded, setLoaded] = React.useState(false);
@@ -324,7 +323,7 @@ export default function Book({}) {
           }}
         >
           {positions[pos]}
-        </p>
+        </p>,
       );
     }
   }
@@ -336,7 +335,7 @@ export default function Book({}) {
   for (let x = 0; x < state.columnHeadings.length; x++) {
     for (let y = 0; y < state.rowHeadings.length; y++) {
       const chapters = state.chapters.filter(
-        (c) => c.pos.x === x && c.pos.y === y
+        (c) => c.pos.x === x && c.pos.y === y,
       );
       if (chapters.length > 0) {
         chapters.forEach((chapter) => {
@@ -350,7 +349,7 @@ export default function Book({}) {
               width={width}
               // @ts-ignore
               height={height}
-            />
+            />,
           );
         });
       }
@@ -364,7 +363,7 @@ export default function Book({}) {
             height: `${height}px`,
             width: `${width}px`,
           }}
-        />
+        />,
       );
     }
   }
