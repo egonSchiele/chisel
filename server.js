@@ -119,6 +119,7 @@ const checkBookAccess = async (req, res, next) => {
     console.log("no access to book");
     res.redirect("/404");
   } else {
+    res.locals.book = book;
     next();
   }
 };
@@ -148,6 +149,7 @@ const checkChapterAccess = async (req, res, next) => {
     console.log("chapter is not part of book", chapterid, bookid);
     res.redirect("/404");
   } else {
+    res.locals.chapter = chapter;
     next();
   }
 };
@@ -227,7 +229,13 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 
   await saveChapter(chapter);
 
-  const book = await getBook(bookid);
+  let { book } = res.locals;
+  // This should not be needed as long as the checkBookAccess middleware is called
+  if (!book) {
+    book = await getBook(bookid);
+  }
+
+  // This should not be needed as long as the checkBookAccess middleware is called
   if (!book) {
     console.log(`no book with id, ${bookid}`);
     res.status(404).end();
@@ -236,7 +244,6 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   book.chapterTitles.push({ chapterid, title });
   await saveBook(book);
   res.status(200).end();
-  // res.redirect(`/book/${bookid}/chapter/${chapterid}`);
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
@@ -374,8 +381,12 @@ app.get(
   async (req, res) => {
     const { bookid } = req.params;
     try {
-      const data = await getBook(bookid);
-      res.status(200).json(data);
+      let { book } = res.locals;
+      // Should always be set by the `checkBookAccess` middleware
+      if (!book) {
+        book = await getBook(bookid);
+      }
+      res.status(200).json(book);
     } catch (error) {
       console.error("Error getting book:", error);
       res.status(400).json({ error });
@@ -391,8 +402,12 @@ app.get(
   async (req, res) => {
     const { chapterid } = req.params;
     try {
-      const data = await getChapter(chapterid);
-      res.status(200).json(data);
+      let { chapter } = res.locals;
+      // Not needed if checkChapterAccess occurs
+      if (!chapter) {
+        chapter = await getChapter(chapterid);
+      }
+      res.status(200).json(chapter);
     } catch (error) {
       console.error("Error getting chapter:", error);
       res.status(400).json({ error });
