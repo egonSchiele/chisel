@@ -46,3 +46,4 @@
 - Daily log functionality
 - close button doesnt work in full screen mode
 - should be able to change settings without a chapter selected
+- add launcher back to grid mode
