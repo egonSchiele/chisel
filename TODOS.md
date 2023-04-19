@@ -43,6 +43,6 @@
 - need to clear the cached selected data at some point, maybe once the user starts typing again.
 - Functionality for taking notes with no organization
 - Daily log functionality
-- close button doesnt work in full screen mode
 - should be able to change settings without a chapter selected
 - add launcher back to grid mode
+- deleting a book doesn't clear the editor

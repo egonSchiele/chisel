@@ -9,12 +9,13 @@
 - Home page loads: Home
 - Manually saving should create a new history element. Editing and saving again should create another element with a diff. Clicking the older element should restore that state, but not create another entry in the history: History
 - editing a prompt in settings: Settings
+- full screen mode: Fullscreen
 
 ## TODO
 - Reordering chapters
 - Clicking a prompt fetches ai suggestions
 - focus mode
 
-- full screen mode
+
 - close chapter/book by clicking X
 - if chapter/book is closed, you can click the arrow to open

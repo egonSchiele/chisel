@@ -12,14 +12,10 @@ describe("editor", () => {
 
     cy.newBook();
 
-    cy.get("a[data-selector='booklist-list-item-link']").click();
-
-    cy.contains("h3", "Chapters");
-
+    cy.selectBook();
     cy.newChapter();
 
-    cy.get("a[data-selector='chapterlist-list-item-link']").click();
-
+    cy.selectChapter();
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
     cy.get(".ql-editor").last().type(`${text}{enter}`);
 

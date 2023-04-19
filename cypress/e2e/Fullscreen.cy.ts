@@ -6,8 +6,8 @@ const text = "some text";
 const text2 = "another brilliant change";
 const historyPanel = "div[data-selector='history-panel']";
 
-describe("history", () => {
-  it("adds to history on save", () => {
+describe("fullscreen", () => {
+  it("lets you enter and exit full screen mode", () => {
     cy.login();
 
     cy.newBook();

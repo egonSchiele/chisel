@@ -170,19 +170,6 @@ export default function Library() {
     fetchSettings();
   }, []);
 
-  async function deleteBook(bookid: string) {
-    const res = await fetch(`/api/deleteBook`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ bookid, csrfToken: getCsrfToken() }),
-    });
-    if (!res.ok) {
-      dispatch({ type: "SET_ERROR", payload: res.statusText });
-    }
-  }
-
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state.chapter, state.suggestions);
     await saveBook(state.selectedBook);
@@ -238,9 +225,12 @@ export default function Library() {
   useInterval(() => {
     const func = async () => {
       if (state.saved) return;
-      await saveChapter(state.chapter, state.suggestions);
-
-      await saveBook(state.selectedBook);
+      if (state.chapter) {
+        await saveChapter(state.chapter, state.suggestions);
+      }
+      if (state.selectedBook) {
+        await saveBook(state.selectedBook);
+      }
     };
     func();
   }, 5000);
@@ -631,8 +621,14 @@ export default function Library() {
               books={state.books}
               selectedBookId={selectedBookId}
               onChange={fetchBooks}
-              onNewBook={(book) => dispatch({ type: "ADD_BOOK", payload: book })}
-              closeSidebar={() => dispatch({ type: "CLOSE_BOOK_LIST" })}
+              onDelete={(deletedBookid) => {
+                dispatch({ type: "DELETE_BOOK", payload: deletedBookid });
+                if (deletedBookid === bookid) {
+                  dispatch({ type: "NO_BOOK_SELECTED" });
+                  navigate("/");
+                }
+              }}
+              dispatch={dispatch}
               canCloseSidebar={chapterid !== undefined}
               saveBook={saveBook}
             />
@@ -645,6 +641,13 @@ export default function Library() {
               bookid={state.selectedBook.bookid}
               selectedChapterId={chapterid || ""}
               onChange={async () => await fetchBook()}
+              onDelete={(deletedChapterid) => {
+                dispatch({ type: "DELETE_CHAPTER", payload: deletedChapterid });
+                if (deletedChapterid === chapterid) {
+                  dispatch({ type: "NO_CHAPTER_SELECTED" });
+                  navigate(`/book/${state.selectedBook.bookid}`);
+                }
+              }}
               saveChapter={(chapter) => saveChapter(chapter, [])}
               closeSidebar={() => dispatch({ type: "CLOSE_CHAPTER_LIST" })}
               canCloseSidebar={chapterid !== undefined || !state.selectedBook}

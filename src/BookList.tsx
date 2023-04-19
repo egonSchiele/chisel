@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import * as t from "./Types";
 import List from "./components/List";
@@ -10,13 +10,13 @@ import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
 import * as fd from "./fetchData";
 
-async function deleteBook(bookid: string, onChange) {
+async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
   if (res.tag === "error") {
     console.log(res.message);
     return;
   }
-  await onChange();
+  onDelete(bookid);
 }
 
 async function favoriteBook(bookid: string, onChange) {
@@ -29,14 +29,14 @@ async function favoriteBook(bookid: string, onChange) {
   await onChange();
 }
 
-async function newBook(onNewBook) {
+async function newBook(dispatch) {
   const res = await fd.newBook();
   if (res.tag === "error") {
     console.log(res.message);
   } else {
     const book = res.payload;
     console.log("new book", book);
-    await onNewBook(book);
+    dispatch({ type: "ADD_BOOK", payload: book });
   }
 }
 
@@ -47,17 +47,17 @@ export default function BookList({
   books,
   selectedBookId,
   onChange,
-  onNewBook,
-  closeSidebar,
+  onDelete,
   saveBook,
+  dispatch,
   canCloseSidebar = true,
 }: {
   books: t.Book[];
   selectedBookId: string;
   onChange: () => void;
-  onNewBook: (book: t.Book) => void;
-  closeSidebar: () => void;
+  onDelete: (bookid: string) => void;
   saveBook: (book: t.Book) => void;
+  dispatch: React.Dispatch<any>;
   canCloseSidebar?: boolean;
 }) {
   const [showPopup, setShowPopup] = React.useState(false);
@@ -81,7 +81,7 @@ export default function BookList({
         link={`/book/${book.bookid}`}
         title={book.title}
         selected={book.bookid === selectedBookId}
-        onDelete={() => deleteBook(book.bookid, onChange)}
+        onDelete={() => deleteBook(book.bookid, onDelete)}
         onFavorite={() => favoriteBook(book.bookid, onChange)}
         onRename={() => startRenameBook(book)}
         selector="booklist"
@@ -92,14 +92,14 @@ export default function BookList({
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-    onClick: closeSidebar,
+    onClick: () => dispatch({ type: "CLOSE_BOOK_LIST" }),
     className: buttonStyles,
   };
 
   const leftMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-    onClick: () => newBook(onNewBook),
+    onClick: () => newBook(dispatch),
     className: buttonStyles,
   };
 

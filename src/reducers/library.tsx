@@ -76,6 +76,22 @@ export const reducer = produce<t.State>(
       case "SET_BOOK":
         draft.selectedBook = action.payload;
         break;
+      case "DELETE_BOOK":
+        const _bookid = action.payload;
+        draft.books = draft.books.filter((book) => book.bookid !== _bookid);
+        break;
+      case "DELETE_CHAPTER":
+        {
+          const chapterid = action.payload;
+          draft.selectedBook.chapters = draft.selectedBook.chapters.filter(
+            (chapter) => chapter.chapterid !== chapterid,
+          );
+          draft.selectedBook.chapterTitles = draft.selectedBook.chapterTitles.filter(
+            (chapter) => chapter.chapterid !== chapterid,
+          );
+        }
+        break;
+
       case "SET_CHAPTER":
         const chapter = action.payload;
         draft.editor = initialEditorState(chapter);
@@ -329,6 +345,13 @@ export const reducer = produce<t.State>(
         break;
       case "TOGGLE_LAUNCHER":
         draft.launcherOpen = !draft.launcherOpen;
+        break;
+      case "NO_BOOK_SELECTED":
+        draft.selectedBook = null;
+        draft.chapter = null;
+        break;
+      case "NO_CHAPTER_SELECTED":
+        draft.chapter = null;
         break;
 
       default:

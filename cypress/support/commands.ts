@@ -70,21 +70,10 @@ Cypress.Commands.add("renameChapter", (user) => {
 });
 
 Cypress.Commands.add("deleteBook", (user) => {
-  cy.intercept({
-    method: "GET",
-    url: "/books",
-  }).as("getBooks");
-
   cy.get("button[data-selector='booklist-list-item-menu-button']").click();
   cy.contains("div", "Delete");
-  cy.get("div[data-selector='booklist-list-item-button-Delete']")
-    .click()
-    .then(() => {
-      cy.wait("@getBooks").then((interception) => {
-        console.log(interception.response.body);
-      });
-      cy.get("p[data-selector='booklist-list-item']").should("not.exist");
-    });
+  cy.get("div[data-selector='booklist-list-item-button-Delete']").click();
+  cy.get("p[data-selector='booklist-list-item']").should("not.exist");
 });
 
 Cypress.Commands.add("deleteChapter", (user) => {

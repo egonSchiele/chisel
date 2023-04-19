@@ -24,6 +24,7 @@ export default function ChapterList({
   bookid,
   selectedChapterId,
   onChange,
+  onDelete,
   saveChapter,
   closeSidebar,
   dispatch,
@@ -33,6 +34,7 @@ export default function ChapterList({
   bookid: string;
   selectedChapterId: string;
   onChange: any;
+  onDelete: any;
   saveChapter: any;
   closeSidebar: () => void;
   dispatch: React.Dispatch<t.ReducerAction>;
@@ -57,7 +59,7 @@ export default function ChapterList({
       console.log(res.statusText);
       return;
     }
-    await onChange();
+    onDelete(chapterid);
   }
 
   async function favoriteChapter(chapterid: string) {
