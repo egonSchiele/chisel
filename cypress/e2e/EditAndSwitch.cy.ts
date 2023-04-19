@@ -22,7 +22,7 @@ describe("edit and switch", () => {
     cy.get("a[data-selector='chapterlist-list-item-link']").first().click();
 
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
-    cy.get(".ql-editor").last().type(`${text}{enter}`);
+    cy.get("div[data-lexical-editor=true]").last().type(`${text}{enter}`);
 
     // should auto save
     cy.wait(5000);
@@ -35,7 +35,7 @@ describe("edit and switch", () => {
 
     // your edits should show
     cy.contains("div[data-selector='text-editor-title']", title);
-    cy.contains(".ql-editor", text);
+    cy.contains("div[data-lexical-editor=true]", text);
 
     cy.deleteFirstChapter();
     cy.deleteChapter();

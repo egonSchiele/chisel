@@ -1,4 +1,6 @@
-import React, { Reducer, useEffect, useState } from "react";
+import React, {
+  Reducer, useEffect, useRef, useState,
+} from "react";
 import * as t from "./Types";
 import "./globals.css";
 
@@ -170,7 +172,15 @@ export default function Library() {
     fetchSettings();
   }, []);
 
-  async function onTextEditorSave(state: t.State) {
+  const stateRef = useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  async function onTextEditorSave() {
+    console.log("onTextEditorSave");
+    const state = stateRef.current;
+    console.log(state);
     await saveChapter(state.chapter, state.suggestions);
     await saveBook(state.selectedBook);
     await saveToHistory(state);
@@ -199,6 +209,9 @@ export default function Library() {
     if (suggestions.length > 0) {
       chapter.suggestions = state.suggestions;
     }
+
+    console.log("saveChapter");
+    console.log(chapter.text);
 
     const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 
@@ -291,7 +304,7 @@ export default function Library() {
     {
       label: "Save",
       onClick: () => {
-        onTextEditorSave(state);
+        onTextEditorSave();
       },
       icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
     },
@@ -592,7 +605,7 @@ export default function Library() {
           }}
           onSettingsSave={() => {}}
           onHistoryClick={async (newText) => {
-            await onTextEditorSave(state);
+            await onTextEditorSave();
 
             dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
           }}
@@ -795,7 +808,7 @@ export default function Library() {
               }}
               onSettingsSave={() => {}}
               onHistoryClick={async (newText) => {
-                await onTextEditorSave(state);
+                await onTextEditorSave();
 
                 dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
               }}
