@@ -27,22 +27,22 @@ describe("history", () => {
     cy.contains(historyPanel).should("not.exist");
 
     // first sav
-    cy.get(".ql-editor").last().type(`${text}{enter}`);
+    cy.get("div[data-lexical-editor=true]").last().type(`${text}{enter}`);
     cy.manuallySave();
     cy.contains(historyPanel, text);
     cy.get(historyPanel).should("have.length", 1);
 
     // second save
-    cy.get(".ql-editor").last().type(`${text2}{enter}`);
+    cy.get("div[data-lexical-editor=true]").last().type(`${text2}{enter}`);
     cy.manuallySave();
     cy.contains(historyPanel, text2);
     cy.get(historyPanel).should("have.length", 2);
 
     // clicking history restores it
-    cy.contains(".ql-editor", text2);
+    cy.contains("div[data-lexical-editor=true]", text2);
     cy.get(historyPanel).last().click();
-    cy.contains(".ql-editor", text2).should("not.exist");
-    cy.contains(".ql-editor", text);
+    cy.contains("div[data-lexical-editor=true]", text2).should("not.exist");
+    cy.contains("div[data-lexical-editor=true]", text);
 
     // restoring history doesn't add to history
     cy.get(historyPanel).should("have.length", 2);

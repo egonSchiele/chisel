@@ -123,7 +123,7 @@ Cypress.Commands.add("showSuggestions", (user) => {
 });
 
 Cypress.Commands.add("manuallySave", (user) => {
-  cy.get(".ql-editor").last().type(`{command+shift+s}`);
+  cy.get("div[data-lexical-editor=true]").last().type(`{command+shift+s}`);
   cy.wait(2000);
 });
 
