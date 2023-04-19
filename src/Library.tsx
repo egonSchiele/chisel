@@ -571,7 +571,7 @@ export default function Library() {
     && state.chapter.chapterid
   ) {
     return (
-      <div className="w-3/4 mx-auto flex-none min-h-screen">
+      <div className="w-3/4 mx-auto flex-none h-screen overflow-scroll">
         <Launcher
           items={launchItems}
           open={state.launcherOpen}
@@ -765,7 +765,7 @@ export default function Library() {
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
         {state.panels.prompts.open && state.chapter && (
-          <div className="w-36 xl:w-48 flex-none min-h-screen">
+          <div className="w-36 xl:w-48 flex-none h-screen overflow-scroll">
             <PromptsSidebar
               dispatch={dispatch as any}
               state={state.editor}
@@ -780,7 +780,7 @@ export default function Library() {
         )}
 
         {state.panels.sidebar.open && state.chapter && (
-          <div className={`${sidebarWidth} flex-none min-h-screen`}>
+          <div className={`${sidebarWidth} flex-none h-screen overflow-scroll`}>
             <Sidebar
               state={state}
               settings={settings}
