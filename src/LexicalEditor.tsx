@@ -1,3 +1,5 @@
+import { $createHashtagNode, HashtagNode } from "@lexical/hashtag";
+
 import {
   $createParagraphNode,
   $createTextNode,
@@ -20,9 +22,10 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import TreeViewPlugin from "./TreeViewPlugin";
 import BoldTextPlugin, { BoldTextNode } from "./lexicalPlugins/BoldTextPlugin";
+import { HashtagPlugin } from "./lexicalPlugins/LexicalHashtagPlugin";
 
 const theme = {
-  // Theme styling goes here
+  hashtag: "text-yellow-500",
   // ...
 };
 
@@ -157,7 +160,7 @@ function LexicalEditor({
   const initialConfig = {
     namespace: "MyLexicalEditor",
     theme,
-    nodes: [BoldTextNode],
+    nodes: [HashtagNode, BoldTextNode],
     onError,
   };
 
@@ -199,6 +202,7 @@ function LexicalEditor({
         />
 
         <BoldTextPlugin />
+        <HashtagPlugin />
         {debug && <TreeViewPlugin />}
         {/*         <CodeHighlightPlugin />
         <ListPlugin />
