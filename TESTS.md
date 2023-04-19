@@ -10,6 +10,7 @@
 - Manually saving should create a new history element. Editing and saving again should create another element with a diff. Clicking the older element should restore that state, but not create another entry in the history: History
 - editing a prompt in settings: Settings
 - full screen mode: Fullscreen
+- Deleting a chapter/book updates UI: DeleteBook
 
 ## TODO
 - Reordering chapters
