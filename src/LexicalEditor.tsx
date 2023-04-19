@@ -6,6 +6,7 @@ import {
   COMMAND_PRIORITY_HIGH,
   KEY_DOWN_COMMAND,
   RangeSelection,
+  TextNode,
 } from "lexical";
 import React, { useEffect } from "react";
 import * as t from "./Types";
@@ -18,6 +19,7 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import TreeViewPlugin from "./TreeViewPlugin";
+import BoldTextPlugin, { BoldTextNode } from "./lexicalPlugins/BoldTextPlugin";
 
 const theme = {
   // Theme styling goes here
@@ -33,7 +35,10 @@ function onChange(editorState, dispatch) {
     const selection = $getSelection() as RangeSelection;
 
     const text = root.getTextContent();
-    // Get text from root
+
+    if (text.match(/---(\s*)$/)) {
+      console.log("found a match!");
+    }
 
     dispatch({ type: "SET_SAVED", payload: false });
     dispatch({
@@ -87,7 +92,7 @@ function OnSavePlugin({ onSave }) {
 
       return false;
     },
-    COMMAND_PRIORITY_HIGH,
+    COMMAND_PRIORITY_HIGH
   );
 
   return null;
@@ -116,6 +121,16 @@ function OnFocusPlugin({ text, chapterid, pushTextToEditor }) {
     editor.focus();
   }, [editor, chapterid, pushTextToEditor]);
 
+  /*   const removeTransform = editor.registerNodeTransform(TextNode, (textNode) => {
+    console.log("transforming text node", textNode.getTextContent());
+    if (textNode.getTextContent() === "blue") {
+      if (!textNode.hasFormat("bold")) {
+        textNode.toggleFormat("bold");
+      }
+      //textNode.setTextContent("green");
+    }
+  }); */
+
   return null;
 }
 
@@ -142,6 +157,7 @@ function LexicalEditor({
   const initialConfig = {
     namespace: "MyLexicalEditor",
     theme,
+    nodes: [BoldTextNode],
     onError,
   };
 
@@ -181,6 +197,8 @@ function LexicalEditor({
             onSave();
           }}
         />
+
+        <BoldTextPlugin />
         {debug && <TreeViewPlugin />}
         {/*         <CodeHighlightPlugin />
         <ListPlugin />
@@ -188,7 +206,7 @@ function LexicalEditor({
         <AutoLinkPlugin />
         <ListMaxIndentLevelPlugin maxDepth={7} />
  */}
-        {" "}
+        {/*         <CollapsiblePlugin /> */}
       </LexicalComposer>
     </div>
   );
