@@ -7,20 +7,21 @@ import * as fd from "./fetchData";
 import List from "./components/List";
 import Spinner from "./components/Spinner";
 import { fetchSuggestionsWrapper } from "./utils";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { librarySlice } from "./reducers/librarySlice";
 
 export default function PromptsSidebar({
-  dispatch,
-  state,
   settings,
   closeSidebar,
   onLoad,
 }: {
-  dispatch: (action: any) => t.State;
-  state: t.EditorState;
   settings: t.UserSettings;
   closeSidebar: () => void;
   onLoad: () => void;
 }) {
+  const state = useSelector((state: RootState) => state.library.editor);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
   const fetchSynonyms = async () => {
@@ -40,13 +41,8 @@ export default function PromptsSidebar({
 
     const synonyms = response.map((item) => item.word);
     console.log("synonyms", synonyms);
-    dispatch({
-      type: "ADD_SUGGESTION",
-      label: "Synonyms",
-      payload: synonyms.join(", "),
-    });
-
-    dispatch({ type: "SET_SAVED", payload: false });
+    dispatch(librarySlice.actions.addSuggestion({ label: 'Synonyms', value: synonyms.join(', ') }));
+    dispatch(librarySlice.actions.setSaved(false));
     setLoading(false);
     onLoad();
   };
@@ -55,10 +51,8 @@ export default function PromptsSidebar({
     <li
       key={i}
       onClick={() => fetchSuggestionsWrapper(
-        state,
         settings,
         setLoading,
-        dispatch,
         onLoad,
         prompt.text,
         prompt.label,

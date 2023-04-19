@@ -9,6 +9,8 @@ import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
 import * as fd from "./fetchData";
+import { useDispatch } from "react-redux";
+import { librarySlice } from "./reducers/librarySlice";
 
 async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
@@ -36,7 +38,7 @@ async function newBook(dispatch) {
   } else {
     const book = res.payload;
     console.log("new book", book);
-    dispatch({ type: "ADD_BOOK", payload: book });
+    dispatch(librarySlice.actions.addBook(book));
   }
 }
 
@@ -49,7 +51,6 @@ export default function BookList({
   onChange,
   onDelete,
   saveBook,
-  dispatch,
   canCloseSidebar = true,
 }: {
   books: t.Book[];
@@ -57,9 +58,9 @@ export default function BookList({
   onChange: () => void;
   onDelete: (bookid: string) => void;
   saveBook: (book: t.Book) => void;
-  dispatch: React.Dispatch<any>;
   canCloseSidebar?: boolean;
 }) {
+  const dispatch = useDispatch();
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentBook, setCurrentBook] = React.useState(books[0]);
 
@@ -92,7 +93,7 @@ export default function BookList({
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-    onClick: () => dispatch({ type: "CLOSE_BOOK_LIST" }),
+    onClick: () => dispatch(librarySlice.actions.closeBookList()),
     className: buttonStyles,
   };
 

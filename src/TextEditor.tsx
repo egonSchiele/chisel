@@ -11,20 +11,22 @@ import Select from "./components/Select";
 import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { librarySlice } from "./reducers/librarySlice";
 
 function TextEditor({
-  dispatch,
-  state,
   chapterid,
   saved,
   onSave,
 }: {
-  dispatch: (action: any) => State;
-  state: EditorState;
   chapterid: string;
   saved: boolean;
   onSave: () => void;
 }) {
+  const state = useSelector((state: RootState) => state.library.editor);
+  const dispatch = useDispatch();
+
   const quillRef = useRef();
 
   const [edited, setEdited] = useState(false);
@@ -33,8 +35,17 @@ function TextEditor({
     // @ts-ignore
     const editor = quillRef.current.getEditor();
     editor.setText(state.text);
-    dispatch({ type: "SET_CONTENTS", payload: editor.getContents() });
   }, [quillRef.current, chapterid, state._pushTextToEditor]);
+
+  useEffect(() => {
+    if (!quillRef.current) return;
+    if (!state._pushContentToEditor) {
+      return;
+    }
+    // @ts-ignore
+    const editor = quillRef.current.getEditor();
+    editor.getContents().insert(state._pushContentToEditor);
+  }, [quillRef.current, chapterid, state._pushContentToEditor]);
 
   const focus = () => {
     if (!quillRef.current) return;
@@ -77,15 +88,9 @@ function TextEditor({
     if (!edited) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    dispatch({ type: "SET_SAVED", payload: false });
-    dispatch({
-      type: "SET_CONTENTS",
-      payload: editor.getContents(),
-    });
-    dispatch({
-      type: "SET_TEXT",
-      payload: editor.getText(),
-    });
+    dispatch(librarySlice.actions.setSaved(false));
+    // dispatch(librarySlice.actions.setContents(editor.getContents()));
+    dispatch(librarySlice.actions.setText(editor.getText()));
   };
 
   const setSelection = (e) => {
@@ -97,13 +102,10 @@ function TextEditor({
 
     if (range) {
       const word = quill.getText(range.index, range.length).trim();
-      dispatch({
-        type: "SET_SELECTED_TEXT",
-        payload: { index: range.index, length: range.length, contents: word },
-      });
+      dispatch(librarySlice.actions.setSelectedText({ index: range.index, length: range.length, contents: word }));
     } else {
       console.log("no range");
-      dispatch({ type: "CLEAR_SELECTED_TEXT" });
+      dispatch(librarySlice.actions.clearSelectedText());
     }
   };
   /*   const onClickEditor = (event) => {
@@ -139,7 +141,7 @@ function TextEditor({
           value={state.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
           onSubmit={(title) => {
-            dispatch({ type: "SET_TITLE", payload: title });
+            dispatch(librarySlice.actions.setTitle(title));
           }}
           nextFocus={focus}
           selector="text-editor-title"
@@ -147,7 +149,6 @@ function TextEditor({
         <div className="mb-md h-full w-full">
           <ReactQuill
             ref={quillRef}
-            value={state.contents}
             placeholder="Write something..."
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}

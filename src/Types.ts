@@ -44,6 +44,8 @@ export type EditorState = {
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
 
+  _pushContentToEditor?: string;
+
   // selectedSyllables: number;
 };
 

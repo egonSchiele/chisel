@@ -17,6 +17,8 @@ import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
+import { useDispatch } from "react-redux";
+import { librarySlice } from "./reducers/librarySlice";
 // import Draggable from "react-draggable";
 
 export default function ChapterList({
@@ -27,7 +29,6 @@ export default function ChapterList({
   onDelete,
   saveChapter,
   closeSidebar,
-  dispatch,
   canCloseSidebar = true,
 }: {
   chapters: t.Chapter[];
@@ -37,16 +38,16 @@ export default function ChapterList({
   onDelete: any;
   saveChapter: any;
   closeSidebar: () => void;
-  dispatch: React.Dispatch<t.ReducerAction>;
   canCloseSidebar?: boolean;
 }) {
+  const dispatch = useDispatch();
   const [editing, setEditing] = React.useState(false);
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);
 
   async function deleteChapter(chapterid: string) {
     console.log("delete chapter", chapterid);
-    dispatch({ type: "LOADING" });
+    dispatch(librarySlice.actions.loading);
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
       headers: {
@@ -54,7 +55,7 @@ export default function ChapterList({
       },
       body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
     });
-    dispatch({ type: "LOADED" });
+    dispatch(librarySlice.actions.loaded);
     if (!res.ok) {
       console.log(res.statusText);
       return;
@@ -64,7 +65,7 @@ export default function ChapterList({
 
   async function favoriteChapter(chapterid: string) {
     console.log("favorite chapter", chapterid);
-    dispatch({ type: "LOADING" });
+    dispatch(librarySlice.actions.loading());
     const res = await fetch(`/api/favoriteChapter`, {
       method: "POST",
       headers: {
@@ -72,7 +73,7 @@ export default function ChapterList({
       },
       body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
     });
-    dispatch({ type: "LOADED" });
+    dispatch(librarySlice.actions.loaded());
     if (!res.ok) {
       console.log(res.statusText);
       return;
@@ -81,11 +82,11 @@ export default function ChapterList({
   }
 
   const newChapter = async (title = "New Chapter", text = "") => {
-    dispatch({ type: "LOADING" });
+    dispatch(librarySlice.actions.loading());
     const result = await fd.newChapter(bookid, title, text);
-    dispatch({ type: "LOADED" });
+    dispatch(librarySlice.actions.loaded());
     if (result.tag === "error") {
-      dispatch({ type: "SET_ERROR", payload: result.message });
+      dispatch(librarySlice.actions.setError(result.message));
       return;
     }
     await onChange();
@@ -120,7 +121,7 @@ export default function ChapterList({
     const [removed] = ids.splice(result.source.index, 1);
     ids.splice(result.destination.index, 0, removed);
 
-    dispatch({ type: "SET_CHAPTER_ORDER", payload: { bookid, ids } });
+    dispatch(librarySlice.actions.setChapterOrder({ bookid, ids }));
   };
 
   const sublist = () => chapters.map((chapter, index) => (

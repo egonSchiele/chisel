@@ -12,12 +12,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
-import { initialState, reducer } from "./reducers/library";
 import {
   fetchSuggestionsWrapper,
   getCsrfToken,
   useInterval,
-  useLocalStorage,
 } from "./utils";
 import Launcher from "./Launcher";
 import {
@@ -41,12 +39,13 @@ import Sidebar from "./Sidebar";
 import NavButton from "./NavButton";
 import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { librarySlice } from "./reducers/librarySlice";
 
 export default function Library() {
-  const [state, dispatch] = React.useReducer<Reducer<t.State, t.ReducerAction>>(
-    reducer,
-    initialState(null),
-  );
+  const state = useSelector((state: RootState) => state.library);
+  const dispatch = useDispatch();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -67,20 +66,20 @@ export default function Library() {
         (c: t.Chapter) => c.chapterid === chapterid,
       );
       if (chapter) {
-        dispatch({ type: "SET_CHAPTER", payload: chapter });
+        dispatch(librarySlice.actions.setChapter(chapter));
         return;
       }
     }
-    dispatch({ type: "SET_NO_CHAPTER" });
+    dispatch(librarySlice.actions.setNoChapter());
   }, [chapterid, state.selectedBook?.bookid]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
       if (state.launcherOpen) {
-        dispatch({ type: "TOGGLE_LAUNCHER" });
+        dispatch(librarySlice.actions.toggleLauncher());
       } else if (state.viewMode === "fullscreen") {
-        dispatch({ type: "SET_VIEW_MODE", payload: "default" });
+        dispatch(librarySlice.actions.setViewMode('default'));
       } else if (state.viewMode === "focus") {
         focusModeClose();
       } else if (
@@ -89,13 +88,13 @@ export default function Library() {
         || state.panels.bookList.open
         || state.panels.chapterList.open
       ) {
-        dispatch({ type: "CLOSE_ALL_PANELS" });
+        dispatch(librarySlice.actions.closeAllPanels());
       } else {
-        dispatch({ type: "OPEN_ALL_PANELS" });
+        dispatch(librarySlice.actions.openAllPanels());
       }
     } else if (event.metaKey && event.shiftKey && event.key === "p") {
       event.preventDefault();
-      dispatch({ type: "TOGGLE_LAUNCHER" });
+      dispatch(librarySlice.actions.toggleLauncher());
     }
   };
 
@@ -115,9 +114,9 @@ export default function Library() {
     const result = await fd.fetchBook(bookid);
     setLoading(false);
     if (result.tag === "success") {
-      dispatch({ type: "SET_BOOK", payload: result.payload });
+      dispatch(librarySlice.actions.setBook(result.payload));
     } else {
-      dispatch({ type: "SET_ERROR", payload: result.message });
+      dispatch(librarySlice.actions.setError(result.message));
     }
   };
 
@@ -129,7 +128,7 @@ export default function Library() {
   // so that we do not end up with an empty screen.
   useEffect(() => {
     if (!chapterid) {
-      dispatch({ type: "OPEN_BOOK_LIST" });
+      dispatch(librarySlice.actions.openBookList());
     }
   }, [chapterid]);
 
@@ -137,7 +136,7 @@ export default function Library() {
   // book has.
   useEffect(() => {
     if (!chapterid && state.selectedBook) {
-      dispatch({ type: "OPEN_CHAPTER_LIST" });
+      dispatch(librarySlice.actions.openChapterList());
     }
   }, [state.selectedBook, chapterid]);
 
@@ -147,9 +146,9 @@ export default function Library() {
     setLoading(false);
 
     if (result.tag === "success") {
-      dispatch({ type: "SET_BOOKS", payload: result.payload });
+      dispatch(librarySlice.actions.setBooks(result.payload));
     } else {
-      dispatch({ type: "SET_ERROR", payload: result.message });
+      dispatch(librarySlice.actions.setError(result.message));
     }
   };
 
@@ -161,7 +160,7 @@ export default function Library() {
     if (result.tag === "success") {
       setSettings(result.payload);
     } else {
-      dispatch({ type: "SET_ERROR", payload: result.message });
+      dispatch(librarySlice.actions.setError(result.message));
     }
   };
 
@@ -211,14 +210,14 @@ export default function Library() {
     });
 
     if (!result.ok) {
-      dispatch({ type: "SET_ERROR", payload: result.statusText });
+      dispatch(librarySlice.actions.setError(result.statusText));
     } else {
-      dispatch({ type: "CLEAR_ERROR" });
-      dispatch({ type: "SET_SAVED", payload: true });
+      dispatch(librarySlice.actions.clearError());
+      dispatch(librarySlice.actions.setSaved(true));
       // Since we depend on a cache version of the selected book when picking a chapter
       // we must also set the chapter on said cache whenever save occurs.
       // This avoids the issue in which switching a chapter looses your last saved work.
-      dispatch({ type: "SET_SELECTED_BOOK_CHAPTER", payload: chapter });
+      dispatch(librarySlice.actions.setSelectedBookChapter(chapter));
     }
   }
 
@@ -255,10 +254,7 @@ export default function Library() {
   }
 
   const addToContents = (text: string) => {
-    dispatch({
-      type: "ADD_TO_CONTENTS",
-      payload: text,
-    });
+    dispatch(librarySlice.actions.addToContents(text));
   };
 
   const togglePanel = (panel: string) => {
@@ -266,23 +262,23 @@ export default function Library() {
       state.panels.sidebar.open
       && state.panels.sidebar.activePanel === panel
     ) {
-      dispatch({ type: "CLOSE_SIDEBAR" });
+      dispatch(librarySlice.actions.closeSidebar());
     } else {
-      dispatch({ type: "OPEN_SIDEBAR" });
-      dispatch({ type: "SET_ACTIVE_PANEL", payload: panel });
+      dispatch(librarySlice.actions.openSidebar());
+      dispatch(librarySlice.actions.setActivePanel(panel));
     }
   };
 
   function onSuggestionLoad() {
-    dispatch({ type: "OPEN_SIDEBAR" });
-    dispatch({ type: "SET_ACTIVE_PANEL", payload: "suggestions" });
+    dispatch(librarySlice.actions.openSidebar());
+    dispatch(librarySlice.actions.setActivePanel("suggestions"));
   }
 
   function setLoading(bool) {
     if (bool) {
-      dispatch({ type: "LOADING" });
+      dispatch(librarySlice.actions.loading());
     } else {
-      dispatch({ type: "LOADED" });
+      dispatch(librarySlice.actions.loaded());
     }
   }
 
@@ -298,11 +294,11 @@ export default function Library() {
     {
       label: "New Chapter",
       onClick: async () => {
-        dispatch({ type: "LOADING" });
+        dispatch(librarySlice.actions.loading());
         const result = await fd.newChapter(bookid, "New Chapter", "");
-        dispatch({ type: "LOADED" });
+        dispatch(librarySlice.actions.loaded());
         if (result.tag === "error") {
-          dispatch({ type: "SET_ERROR", payload: result.message });
+          dispatch(librarySlice.actions.setError(result.message));
         }
         await fetchBook();
       },
@@ -319,7 +315,7 @@ export default function Library() {
       label: state.panels.bookList.open ? "Close Book List" : "Open Book List",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
-        dispatch({ type: "TOGGLE_BOOK_LIST" });
+        dispatch(librarySlice.actions.toggleBookList());
       },
     },
     {
@@ -328,14 +324,14 @@ export default function Library() {
         : "Open Chapter List",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
-        dispatch({ type: "TOGGLE_CHAPTER_LIST" });
+        dispatch(librarySlice.actions.toggleChapterList());
       },
     },
     {
       label: state.panels.prompts.open ? "Close Prompts" : "Open Prompts",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
-        dispatch({ type: "TOGGLE_PROMPTS" });
+        dispatch(librarySlice.actions.togglePrompts());
       },
     },
     {
@@ -412,10 +408,8 @@ export default function Library() {
       label: prompt.label,
       onClick: () => {
         fetchSuggestionsWrapper(
-          state.editor,
           settings,
           setLoading,
-          dispatch,
           onSuggestionLoad,
           prompt.text,
           prompt.label,
@@ -429,7 +423,7 @@ export default function Library() {
     launchItems.push({
       label: "Close Sidebar",
       onClick: () => {
-        dispatch({ type: "CLOSE_SIDEBAR" });
+        dispatch(librarySlice.actions.closeSidebar());
       },
       icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
     });
@@ -437,7 +431,7 @@ export default function Library() {
     launchItems.push({
       label: "Open Sidebar",
       onClick: () => {
-        dispatch({ type: "OPEN_SIDEBAR" });
+        dispatch(librarySlice.actions.openSidebar());
       },
       icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
     });
@@ -447,7 +441,7 @@ export default function Library() {
     launchItems.push({
       label: "Exit Fullscreen",
       onClick: () => {
-        dispatch({ type: "SET_VIEW_MODE", payload: "default" });
+        dispatch(librarySlice.actions.setViewMode("default"));
       },
       icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />,
     });
@@ -455,7 +449,7 @@ export default function Library() {
     launchItems.push({
       label: "View Sidebar In Fullscreen",
       onClick: () => {
-        dispatch({ type: "SET_VIEW_MODE", payload: "fullscreen" });
+        dispatch(librarySlice.actions.setViewMode("fullscreen"));
       },
       icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />,
     });
@@ -466,7 +460,7 @@ export default function Library() {
     launchItems.push({
       label: "Focus Mode",
       onClick: () => {
-        dispatch({ type: "SET_VIEW_MODE", payload: "focus" });
+        dispatch(librarySlice.actions.setViewMode("focus"));
       },
       icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
     });
@@ -494,7 +488,7 @@ export default function Library() {
   const sidebarWidth = state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
 
   function focusModeClose() {
-    dispatch({ type: "SET_VIEW_MODE", payload: "default" });
+    dispatch(librarySlice.actions.setViewMode("default"));
     let selected = state.editor.selectedText;
     if (
       state.editor.selectedText.contents === ""
@@ -521,7 +515,7 @@ export default function Library() {
       replacement = state._temporaryFocusModeState;
     }
 
-    dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: replacement });
+    dispatch(librarySlice.actions.pushTextToEditor(replacement));
   }
 
   function replace(full, start, end, replacement) {
@@ -542,10 +536,7 @@ export default function Library() {
           text={text}
           onClose={focusModeClose}
           onChange={(text) => {
-            dispatch({
-              type: "SET_TEMPORARY_FOCUS_MODE_STATE",
-              payload: text,
-            });
+            dispatch(librarySlice.actions.setTemporaryFocusModeState(text));
           }}
         />
         <Launcher
@@ -559,7 +550,7 @@ export default function Library() {
             },
           ]}
           open={state.launcherOpen}
-          close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
+          close={() => dispatch(librarySlice.actions.toggleLauncher())}
         />
       </div>
     );
@@ -575,26 +566,24 @@ export default function Library() {
         <Launcher
           items={launchItems}
           open={state.launcherOpen}
-          close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
+          close={() => dispatch(librarySlice.actions.toggleLauncher())}
         />
 
         <Sidebar
-          state={state}
-          dispatch={dispatch}
           settings={settings}
           setSettings={setSettings}
           activePanel={state.panels.sidebar.activePanel}
-          setActivePanel={(panel) => dispatch({ type: "SET_ACTIVE_PANEL", payload: panel })}
+          setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
           maximize={state.viewMode === "fullscreen"}
           onSuggestionClick={addToContents}
           onSuggestionDelete={(index) => {
-            dispatch({ type: "DELETE_SUGGESTION", payload: index });
+            dispatch(librarySlice.actions.deleteSuggestion(index));
           }}
           onSettingsSave={() => {}}
           onHistoryClick={async (newText) => {
             await onTextEditorSave(state);
 
-            dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
+            dispatch(librarySlice.actions.pushTextToEditor(newText));
           }}
           triggerHistoryRerender={triggerHistoryRerender}
         />
@@ -609,7 +598,7 @@ export default function Library() {
       <Launcher
         items={launchItems}
         open={state.launcherOpen}
-        close={() => dispatch({ type: "TOGGLE_LAUNCHER" })}
+        close={() => dispatch(librarySlice.actions.toggleLauncher())}
       />
       {state.error && (
         <div className="bg-red-700 p-2 text-white">{state.error}</div>
@@ -622,13 +611,12 @@ export default function Library() {
               selectedBookId={selectedBookId}
               onChange={fetchBooks}
               onDelete={(deletedBookid) => {
-                dispatch({ type: "DELETE_BOOK", payload: deletedBookid });
+                dispatch(librarySlice.actions.deleteBook(deletedBookid));
                 if (deletedBookid === bookid) {
-                  dispatch({ type: "NO_BOOK_SELECTED" });
+                  dispatch(librarySlice.actions.noBookSelected());
                   navigate("/");
                 }
               }}
-              dispatch={dispatch}
               canCloseSidebar={chapterid !== undefined}
               saveBook={saveBook}
             />
@@ -642,16 +630,15 @@ export default function Library() {
               selectedChapterId={chapterid || ""}
               onChange={async () => await fetchBook()}
               onDelete={(deletedChapterid) => {
-                dispatch({ type: "DELETE_CHAPTER", payload: deletedChapterid });
+                dispatch(librarySlice.actions.deleteChapter(deletedChapterid));
                 if (deletedChapterid === chapterid) {
-                  dispatch({ type: "NO_CHAPTER_SELECTED" });
+                  dispatch(librarySlice.actions.noChapterSelected());
                   navigate(`/book/${state.selectedBook.bookid}`);
                 }
               }}
               saveChapter={(chapter) => saveChapter(chapter, [])}
-              closeSidebar={() => dispatch({ type: "CLOSE_CHAPTER_LIST" })}
+              closeSidebar={() => dispatch(librarySlice.actions.closeChapterList())}
               canCloseSidebar={chapterid !== undefined || !state.selectedBook}
-              dispatch={dispatch}
             />
           </div>
         )}
@@ -675,8 +662,8 @@ export default function Library() {
                 <NavButton
                   label="Open"
                   onClick={() => {
-                    dispatch({ type: "OPEN_BOOK_LIST" });
-                    dispatch({ type: "OPEN_CHAPTER_LIST" });
+                    dispatch(librarySlice.actions.openBookList());
+                    dispatch(librarySlice.actions.openChapterList());
                   }}
                   className="p-0"
                   selector="open-lists-button"
@@ -697,7 +684,7 @@ export default function Library() {
 
                 <NavButton
                   label="Focus Mode"
-                  onClick={() => dispatch({ type: "SET_VIEW_MODE", payload: "focus" })}
+                  onClick={() => dispatch(librarySlice.actions.setViewMode("focus"))}
                 >
                   {/*                   <p className="mr-xs">
                     {state.editor.selectedText.contents.length}
@@ -723,10 +710,10 @@ export default function Library() {
                 <NavButton
                   label="Prompts"
                   onClick={() => {
-                    dispatch({ type: "TOGGLE_PROMPTS" });
+                    dispatch(librarySlice.actions.togglePrompts());
                     if (!state.panels.prompts.open) {
-                      dispatch({ type: "CLOSE_BOOK_LIST" });
-                      dispatch({ type: "CLOSE_CHAPTER_LIST" });
+                      dispatch(librarySlice.actions.closeBookList());
+                      dispatch(librarySlice.actions.closeChapterList());
                     }
                   }}
                   selector="prompts-button"
@@ -737,10 +724,10 @@ export default function Library() {
                 <NavButton
                   label="Sidebar"
                   onClick={() => {
-                    dispatch({ type: "TOGGLE_SIDEBAR" });
+                    dispatch(librarySlice.actions.toggleSidebar());
                     if (!state.panels.sidebar.open) {
-                      dispatch({ type: "CLOSE_BOOK_LIST" });
-                      dispatch({ type: "CLOSE_CHAPTER_LIST" });
+                      dispatch(librarySlice.actions.closeBookList());
+                      dispatch(librarySlice.actions.closeChapterList());
                     }
                   }}
                   selector="sidebar-button"
@@ -756,8 +743,6 @@ export default function Library() {
           <div className="flex-grow h-full w-full">
             {state.chapter && (
               <Editor
-                state={state}
-                dispatch={dispatch}
                 onSave={onTextEditorSave}
               />
             )}
@@ -767,13 +752,11 @@ export default function Library() {
         {state.panels.prompts.open && state.chapter && (
           <div className="w-36 xl:w-48 flex-none h-screen overflow-scroll">
             <PromptsSidebar
-              dispatch={dispatch as any}
-              state={state.editor}
               settings={settings}
-              closeSidebar={() => dispatch({ type: "CLOSE_PROMPTS" })}
+              closeSidebar={() => dispatch(librarySlice.actions.closePrompts())}
               onLoad={() => {
-                dispatch({ type: "OPEN_SIDEBAR" });
-                dispatch({ type: "SET_ACTIVE_PANEL", payload: "suggestions" });
+                dispatch(librarySlice.actions.openSidebar());
+                dispatch(librarySlice.actions.setActivePanel("suggestions"));
               }}
             />
           </div>
@@ -782,22 +765,20 @@ export default function Library() {
         {state.panels.sidebar.open && state.chapter && (
           <div className={`${sidebarWidth} flex-none h-screen overflow-scroll`}>
             <Sidebar
-              state={state}
               settings={settings}
               setSettings={setSettings}
               activePanel={state.panels.sidebar.activePanel}
-              setActivePanel={(panel) => dispatch({ type: "SET_ACTIVE_PANEL", payload: panel })}
-              dispatch={dispatch as any}
+              setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
               maximize={state.viewMode === "fullscreen"}
               onSuggestionClick={addToContents}
               onSuggestionDelete={(index) => {
-                dispatch({ type: "DELETE_SUGGESTION", payload: index });
+                dispatch(librarySlice.actions.deleteSuggestion(index));
               }}
               onSettingsSave={() => {}}
               onHistoryClick={async (newText) => {
                 await onTextEditorSave(state);
 
-                dispatch({ type: "PUSH_TEXT_TO_EDITOR", payload: newText });
+                dispatch(librarySlice.actions.pushTextToEditor(newText));
               }}
               triggerHistoryRerender={triggerHistoryRerender}
             />
