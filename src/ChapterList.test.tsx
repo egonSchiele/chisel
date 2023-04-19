@@ -10,6 +10,8 @@ import { BrowserRouter } from "react-router-dom";
 import { render, fireEvent, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { act } from "react-dom/test-utils";
+import { store } from "./store";
+import { Provider } from 'react-redux';
 
 const props = {
   chapters: [chapter1, chapter2],
@@ -36,9 +38,12 @@ describe("ChapterList", () => {
   let container;
   beforeEach(() => {
     const res = render(
-      <BrowserRouter>
-        <ChapterList {...props} />
-      </BrowserRouter>,
+
+      <Provider store={store}>
+        <BrowserRouter>
+          <ChapterList {...props} />
+        </BrowserRouter>
+      </Provider>,
     );
     container = res.container;
   });

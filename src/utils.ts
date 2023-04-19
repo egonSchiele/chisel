@@ -1,5 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import * as fd from "./fetchData";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { librarySlice } from "./reducers/librarySlice";
 
 export function useInterval(fn, delay) {
   const saved = useRef();
@@ -75,14 +78,15 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 }
 
 export const fetchSuggestionsWrapper = async (
-  state,
   settings,
   setLoading,
-  dispatch,
   onLoad,
   prompt,
   label,
 ) => {
+  const state = useSelector((state: RootState) => state.library.editor);
+  const dispatch = useDispatch();
+
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let { text } = state;
   if (
@@ -104,19 +108,15 @@ export const fetchSuggestionsWrapper = async (
   setLoading(false);
 
   if (result.tag === "error") {
-    dispatch({ type: "SET_ERROR", payload: result.message });
+    dispatch(librarySlice.actions.setError(result.message));
     return;
   }
 
   result.payload.forEach((choice) => {
     const generatedText = choice.text;
-    dispatch({
-      type: "ADD_SUGGESTION",
-      label,
-      payload: generatedText,
-    });
+    dispatch(librarySlice.actions.addSuggestion({ label, value: generatedText }));
   });
-  dispatch({ type: "SET_SAVED", payload: false });
+  dispatch(librarySlice.actions.setSuggestions(false));
 
   onLoad();
 };

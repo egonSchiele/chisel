@@ -14,6 +14,9 @@ import SuggestionPanel from "./SuggestionPanel";
 import Info from "./Info";
 import List from "./components/List";
 import NavButton from "./NavButton";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { librarySlice } from "./reducers/librarySlice";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -114,7 +117,6 @@ function Navigation({
 }
 
 export default function Sidebar({
-  state,
   settings,
   setSettings,
   activePanel,
@@ -125,8 +127,10 @@ export default function Sidebar({
   onHistoryClick,
   triggerHistoryRerender,
   maximize,
-  dispatch,
 }) {
+  const state = useSelector((state: RootState) => state.library);
+  const dispatch = useDispatch();
+
   const infoText = state.editor.selectedText.length === 0
     ? state.editor.text
     : state.editor.selectedText.contents;
@@ -135,10 +139,10 @@ export default function Sidebar({
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}
-          closeSidebar={() => dispatch({ type: "CLOSE_SIDEBAR" })}
+          closeSidebar={() => dispatch(librarySlice.actions.closeSidebar())}
           maximize={maximize}
-          fullscreen={() => dispatch({ type: "SET_VIEW_MODE", payload: "fullscreen" })}
-          exitFullscreen={() => dispatch({ type: "SET_VIEW_MODE", payload: "default" })}
+          fullscreen={() => dispatch(librarySlice.actions.setViewMode("fullscreen"))}
+          exitFullscreen={() => dispatch(librarySlice.actions.setViewMode("default"))}
         />
         {activePanel === "info" && (
           <List

@@ -3,16 +3,17 @@ import "./globals.css";
 import TextEditor from "./TextEditor";
 import * as t from "./Types";
 import { getCsrfToken } from "./utils";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { librarySlice } from "./reducers/librarySlice";
 
 export default function Editor({
-  state,
-  dispatch,
   onSave,
 }: {
-  state: t.State;
-  dispatch: React.Dispatch<t.ReducerAction>;
   onSave: (state: t.State) => void;
 }) {
+  const state = useSelector((state: RootState) => state.library);
+  const dispatch = useDispatch();
   async function saveChapter(state: t.State) {
     if (state.saved) return;
     if (!state.chapter) {
@@ -33,10 +34,10 @@ export default function Editor({
     });
 
     if (!result.ok) {
-      dispatch({ type: "SET_ERROR", payload: result.statusText });
+      dispatch(librarySlice.actions.setError(result.statusText));
     } else {
-      dispatch({ type: "CLEAR_ERROR" });
-      dispatch({ type: "SET_SAVED", payload: true });
+      dispatch(librarySlice.actions.clearError());
+      dispatch(librarySlice.actions.setSaved(true));
     }
   }
 
@@ -57,8 +58,6 @@ export default function Editor({
         </div>
         <div className="h-full w-full">
           <TextEditor
-            dispatch={dispatch as any}
-            state={state.editor}
             chapterid={state.chapter.chapterid}
             saved={state.saved}
             onSave={() => onSave(state)}
