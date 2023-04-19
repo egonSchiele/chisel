@@ -26,27 +26,27 @@ type FeatureData = {
 
 const features: FeatureData[] = [
   {
-    image: "/public/images/history.png",
+    image: "/images/history.png",
     title: "History",
     text: "Git-like history lets you track every change, so nothing is ever lost.",
   },
   {
-    image: "/public/images/prompts.png",
+    image: "/images/prompts.png",
     title: "AI prompts",
     text: "Built-in AI prompts like expand, contract, and rewrite... and it's easy to add your own.",
   },
   {
-    image: "/public/images/launcher.png",
+    image: "/images/launcher.png",
     title: "Quick-launch",
     text: "Navigate the UI, go to a chapter, or run an AI prompt, all without touching the mouse.",
   },
   {
-    image: "/public/images/gridmode.png",
+    image: "/images/gridmode.png",
     title: "Grid mode",
     text: "Organize your chapters by act or by beat using grid mode.",
   },
   {
-    image: "/public/images/focusmode.png",
+    image: "/images/focusmode.png",
     title: "Focus mode",
     text: "Get feedback on your writing.",
   },
