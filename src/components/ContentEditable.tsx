@@ -13,7 +13,8 @@ export default function ContentEditable({
   const [content, setContent] = React.useState(value);
 
   const handleChange = (evt) => {
-    setContent(evt.target.innerHTML.replace(/<br>/g, " "));
+    const value = evt.target.innerHTML.replace(/<br>|&nbsp;/g, " ").trim();
+    setContent(value);
   };
 
   const handleSubmit = () => {
