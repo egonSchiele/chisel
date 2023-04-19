@@ -1,33 +1,14 @@
-- use new dnd library for grid
-- ask ai to outline entire book
-- download all data
+
+
+## P2
+- need to clear the cached selected data at some point, maybe once the user starts typing again.
+- snippets functionality
 - imports
 - move chapter to another book
-- accessibility audit
 - cache synonyms
-
-## P3
-
-- snippets functionality
 - Fix loading flash
 - tags
-- offline mode
-- figure out what code is saving chapters on a book object
-- search
-- text preview for chapters
-- drag and drop should only work for text files
-- put actions as a separate tab on that panel
-- would it be good to set a file type for chapters, so I can do syntax highlighting?
-- markdown preview?
-- support other writing formats: comics, screenplays
-- translate to other languages
-- add whisper for speech-to-text
-- allow users to change font, font size
-- history is rendering multiple times
 - Ability to star history.
-- Show different versions of some text side-by-side.
-
-- Use advice from Steven pinker book.
 - bookmark sections of a chapter? or highlights?
 - built-in writing streak
 - only show 10 most recent history items, with a load more button
@@ -37,12 +18,31 @@
 - error handling w boundaries? Currently they show in console
 - When adding a book and chapter, the process is slow. For the short term change the + button to a loading spinner so people don’t double click it
 - by double clicking on the book, it will bring up the modal to change the name.
+- write a guide
+- Functionality for taking notes with no organization
+- use new dnd library for grid
+- should be able to change settings without a chapter selected
+
+
+## P3
+
+- accessibility audit
+- ask ai to outline entire book
+- download all data
+- offline mode
+- figure out what code is saving chapters on a book object
+- search
+- text preview for chapters
+- drag and drop should only work for text files
+- put actions as a separate tab on that panel
+- support other writing formats: comics, screenplays
+- translate to other languages
+- add whisper for speech-to-text
+- allow users to change font, font size
+- history is rendering multiple times
+- Show different versions of some text side-by-side.
+
+- Use advice from Steven pinker book.
 - light mode: Note you cannot tell that Book On is highlighted, And then there is the weird line gap for chapters.
 - prompt library
-- write a guide
-- need to clear the cached selected data at some point, maybe once the user starts typing again.
-- Functionality for taking notes with no organization
 - Daily log functionality
-- should be able to change settings without a chapter selected
-- add launcher back to grid mode
-- deleting a book doesn't clear the editor

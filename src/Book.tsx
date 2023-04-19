@@ -108,6 +108,7 @@ export default function Book({}) {
 
   const [loaded, setLoaded] = React.useState(false);
   const [saved, setSaved] = React.useState(true);
+  const [launcherOpen, setLauncherOpen] = React.useState(false);
 
   const [size, setSize] = useLocalStorage("grid_size", "medium");
 
@@ -160,6 +161,12 @@ export default function Book({}) {
     } else if (event.metaKey && event.key === "0") {
       event.preventDefault();
       setSize("medium");
+    } else if (event.metaKey && event.shiftKey && event.key === "p") {
+      event.preventDefault();
+      setLauncherOpen((o) => !o);
+    } else if (event.key === "Escape" && launcherOpen) {
+      event.preventDefault();
+      setLauncherOpen(false);
     }
   };
 
@@ -247,29 +254,6 @@ export default function Book({}) {
       setError(result.statusText);
     } else {
       setError("");
-    }
-  }
-
-  /*   const setCoverColor = async (e) => {
-    dispatch({ type: "SET_COVER_COLOR", payload: e.target.value });
-    setSaved(false);
-  };
-
-  const setLabelColor = async (e) => {
-    dispatch({ type: "SET_LABEL_COLOR", payload: e.target.value });
-    setSaved(false);
-  };
- */
-  async function deleteChapter(chapterid: string) {
-    const res = await fetch(`/api/deleteChapter`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ chapterid, csrfToken: getCsrfToken() }),
-    });
-    if (!res.ok) {
-      setError(res.statusText);
     }
   }
 
@@ -423,7 +407,11 @@ export default function Book({}) {
           {error}
         </p>
       )}
-      {/* <Launcher items={launchItems}  /> */}
+      <Launcher
+        items={launchItems}
+        open={launcherOpen}
+        close={() => setLauncherOpen(false)}
+      />
       <h1 className="w-full uppercase text-sm dark:text-gray-500">Grid Mode</h1>
       <div className="w-full text-sm dark:text-gray-300 my-xs flex">
         <Link to={`/book/${bookid}`}>
