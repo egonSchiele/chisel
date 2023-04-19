@@ -1,6 +1,7 @@
 
 
 ## P2
+- add to launcher: rename book and chapter, reorder chapters
 - need to clear the cached selected data at some point, maybe once the user starts typing again.
 - snippets functionality
 - imports
