@@ -29,44 +29,16 @@ import {
   $createParagraphNode,
   KEY_ENTER_COMMAND,
   $isTextNode,
+  $isRangeSelection,
+  KEY_ARROW_DOWN_COMMAND,
+  $createLineBreakNode,
+  $isParagraphNode,
 } from "lexical";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
+import { $findMatchingParent } from "@lexical/utils";
 
 const FOLDABLE_REGEX = /^> (.+)$/;
-
-function Foldable({ text }) {
-  const [open, setOpen] = useState(false);
-  let firstLine = text.split("\n")[0];
-  if (firstLine.length > 20) {
-    firstLine = firstLine.substring(0, 20) + "...";
-  }
-  let arrowClassname = "w-5 h-5 cursor-pointer mb-xs";
-
-  return (
-    <div className="flex">
-      {open && (
-        <ArrowDownCircleIcon
-          className={arrowClassname}
-          onClick={() => setOpen(!open)}
-        />
-      )}
-      {!open && (
-        <ArrowUpCircleIcon
-          className={arrowClassname}
-          onClick={() => setOpen(!open)}
-        />
-      )}
-
-      {open && (
-        <div className="p-2 bg-gray-700 text-sm font-mono border-l-2 ml-sm border-red-700 w-full">
-          {text}
-        </div>
-      )}
-      {!open && <p className="text-sm flex-grow ml-sm">{firstLine}</p>}
-    </div>
-  );
-}
 
 export class FoldableNode extends ElementNode {
   __text: string;
@@ -88,12 +60,14 @@ export class FoldableNode extends ElementNode {
   createDOM(config: EditorConfig): HTMLElement {
     const container = document.createElement("div");
     container.className = "flex";
+    container.contentEditable = "false";
     /*     const button = document.createElement("div");
     button.className = "w-5 h-5 cursor-pointer mb-xs";
     button.innerText = ">";
     container.appendChild(button);
  */ const details = document.createElement("details");
-    details.className = "flex-grow bg-gray-700 p-2";
+    details.className =
+      "flex-grow bg-gray-700 pl-2 border-l-4 border-red-700 select-text";
 
     let firstLine = this.__text.split("\n")[0];
     if (firstLine.length > 20) {
@@ -119,20 +93,20 @@ export class FoldableNode extends ElementNode {
   }
 
   updateDOM(prevNode: FoldableNode, dom: HTMLDetailsElement): false {
-    if (prevNode.__text === this.__text) {
-      const details = dom.querySelector("details");
-      if (details) {
-        console.log(this.__open, prevNode.__open, details.open);
-        this.setOpen(details.open);
-        const summary = dom.querySelector("summary");
+    console.log(this.__text, prevNode.__text, dom.innerText);
+    const details = dom.querySelector("details");
+    if (details) {
+      console.log(this.__text, prevNode.__text);
+      this.setOpen(details.open);
+      const summary = dom.querySelector("summary");
 
-        details.innerText = this.__text;
-        if (summary) {
-          details.appendChild(summary);
-        }
-        console.log("updating details wihth text:", this.__text);
+      details.innerText = this.__text;
+      if (summary) {
+        details.appendChild(summary);
       }
+      console.log("updating details wihth text:", this.__text);
     }
+    //}
     return false;
   }
 
@@ -251,22 +225,6 @@ export function FoldablePlugin() {
     }
   });
  */
-  editor.registerNodeTransform(LineBreakNode, (node) => {
-    const prev = node.getPreviousSibling();
-    if (!prev) return;
-    if (prev && $isFoldableNode(prev)) {
-      return;
-    }
-
-    const text = prev.getTextContent();
-
-    if (text.match(FOLDABLE_REGEX) && !$isFoldableNode(prev)) {
-      const fold = $createFoldableNode(text.slice(2, text.length), false);
-      const root = $getRoot();
-      prev.replace(fold);
-      //root.append(fold);
-    }
-  });
 
   editor.registerCommand(
     KEY_ENTER_COMMAND,
@@ -275,28 +233,52 @@ export function FoldablePlugin() {
         // Read the contents of the EditorState here.
         const root = $getRoot();
         const selection = $getSelection() as RangeSelection;
-
+        console.log({ selection });
         if (!selection) return;
         const current = $getNodeByKey(selection.anchor.key);
-        const text = current.getTextContent();
-        const prev = current.getPreviousSibling();
+        let prev = current.getPreviousSibling();
 
+        if (!prev) {
+          const parent = current.getParent();
+          if ($isParagraphNode(parent)) {
+            prev = parent;
+          }
+        }
         if (!prev) return;
+        console.log({ current, prev });
         const prevPrev = prev.getPreviousSibling();
 
-        if (
-          $isTextNode(current) &&
-          text.match(FOLDABLE_REGEX) &&
-          $isLineBreakNode(prev) &&
-          $isFoldableNode(prevPrev)
-        ) {
-          const newText =
-            prevPrev.getText() + "\n" + text.slice(2, text.length);
-          console.log({ newText });
-          prevPrev.setText(newText);
-          prevPrev.setOpen(true);
-          current.remove();
-          prev.remove();
+        const text = current.getTextContent();
+        console.log({ current, prev, prevPrev, text });
+        if ($isTextNode(current) && text.match(FOLDABLE_REGEX)) {
+          console.log("match");
+          if (
+            ($isLineBreakNode(prev) || $isParagraphNode(prev)) &&
+            $isFoldableNode(prevPrev)
+          ) {
+            const newText =
+              prevPrev.getText() + "\n" + text.slice(2, text.length);
+            console.log({ newText });
+            prevPrev.setText(newText);
+            prevPrev.setOpen(true);
+            current.remove();
+            prev.remove();
+          } else if ($isFoldableNode(prev)) {
+            const newText = prev.getText() + "\n" + text.slice(2, text.length);
+            console.log({ newText });
+            prev.setText(newText);
+            prev.setOpen(true);
+            current.remove();
+          } else {
+            const fold = $createFoldableNode(text.slice(2, text.length), false);
+            current.insertAfter(fold);
+            const para = $createParagraphNode();
+            const textNode = $createTextNode("");
+            para.append(textNode);
+            fold.insertAfter(para);
+            current.remove();
+            textNode.select();
+          }
         }
         /* 
         console.log($isLineBreakNode(current));
@@ -310,34 +292,81 @@ export function FoldablePlugin() {
     COMMAND_PRIORITY_LOW
   );
 
+  // When collapsible is the last child pressing down arrow will insert paragraph
+  // below it to allow adding more content. It's similar what $insertBlockNode
+  // (mainly for decorators), except it'll always be possible to continue adding
+  // new content even if trailing paragraph is accidentally deleted
   editor.registerCommand(
-    KEY_BACKSPACE_COMMAND,
-    (event: KeyboardEvent) => {
-      editor.update(() => {
-        // Read the contents of the EditorState here.
-        const root = $getRoot();
-        const selection = $getSelection() as RangeSelection;
-        if (!selection) return;
-        const current = $getNodeByKey(selection.anchor.key);
-        if ($isFoldableNode(current)) {
-          const text = "> " + current.getText();
-          const para = $createParagraphNode();
-          const node = $createTextNode(text);
-          para.append(node);
-          current.insertAfter(para);
-          current.remove();
-        }
-        /* 
-        console.log($isLineBreakNode(current));
-        console.log($isFoldableNode(current.getPreviousSibling()));
- */
-        /* const start = selection.anchor;
-        const end = selection.focus; */
-      });
+    KEY_ARROW_DOWN_COMMAND,
+    () => {
+      const selection = $getSelection();
+
+      if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+        return false;
+      }
+
+      const container = $findMatchingParent(
+        selection.anchor.getNode(),
+        $isFoldableNode
+      );
+
+      if (container === null) {
+        return false;
+      }
+
+      const parent = container.getParent();
+      if (parent !== null && parent.getLastChild() === container) {
+        parent.append($createParagraphNode());
+      }
       return false;
     },
     COMMAND_PRIORITY_LOW
-  );
+  ),
+    editor.registerCommand(
+      KEY_BACKSPACE_COMMAND,
+      (event: KeyboardEvent) => {
+        editor.update(() => {
+          // Read the contents of the EditorState here.
+          const root = $getRoot();
+          const selection = $getSelection() as RangeSelection;
+          if (!selection) return;
+
+          if (!$isRangeSelection(selection) || selection.anchor.offset !== 0) {
+            return false;
+          }
+
+          const current = $getNodeByKey(selection.anchor.key);
+          if (!current) return;
+          const prev = current.getPreviousSibling();
+          console.log({ current, selection, prev });
+          if ($isFoldableNode(current)) {
+            const text = current.getText();
+            const para = $createParagraphNode();
+            const node = $createTextNode(text);
+            para.append(node);
+            current.insertAfter(para);
+            current.remove();
+            node.select();
+          } /*  else if ($isFoldableNode(prev)) {
+            const text = prev.getText();
+            const para = $createParagraphNode();
+            const node = $createTextNode(text);
+            para.append(node);
+            current.insertAfter(para);
+            current.remove();
+            prev.remove();
+          } */
+          /* 
+        console.log($isLineBreakNode(current));
+        console.log($isFoldableNode(current.getPreviousSibling()));
+ */
+          /* const start = selection.anchor;
+        const end = selection.focus; */
+        });
+        return false;
+      },
+      COMMAND_PRIORITY_LOW
+    );
 
   /* editor.update(() => {
   const textNode = $getNodeByKey('3');
