@@ -207,7 +207,7 @@ export function FoldablePlugin() {
           if (
             start.type === "text" &&
             end.type === "text" &&
-            parseInt(start.key) > parseInt(end.key)
+            parseInt(start.key) >= parseInt(end.key)
           ) {
             const foo = start;
             start = end;
@@ -263,7 +263,6 @@ export function FoldablePlugin() {
               .join("\n");
           }
           console.log(nodeText);
-          return;
           /*    let word;
           if (start.offset < end.offset) {
             word = nodeText.slice(start.offset, end.offset).trim();
@@ -273,7 +272,25 @@ export function FoldablePlugin() {
           const fold = $createFoldableNode(nodeText, true);
           nodes[0].insertAfter(fold);
           //if (nodes.length > 1) {
-          nodes.forEach((n) => n.remove());
+          nodes.forEach((n, i) => {
+            if (i === 0) {
+              if (start.type === "text" && $isTextNode(n)) {
+                const newText = getText(n, 0, start.offset);
+                console.log("newText", newText);
+                n.setTextContent(newText);
+              } else {
+                n.remove();
+              }
+            } else if (i === nodes.length - 1) {
+              if (end.type === "text" && $isTextNode(n)) {
+                n.setTextContent(getText(n, end.offset));
+              } else {
+                n.remove();
+              }
+            } else {
+              n.remove();
+            }
+          });
           /*} else {
             const text = nodes[0].getTextContent();
             nodes[0].setTextContent(text.replace(nodeText, ""));
