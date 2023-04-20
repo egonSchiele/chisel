@@ -201,7 +201,7 @@ function LexicalEditor({
   const debug = queryParameters.get("debug");
 
   return (
-    <div className="w-3/4 mx-auto">
+    <div className="w-3/4 mx-auto lexical-editor">
       <MyContentEditable
         value={state.title}
         className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"

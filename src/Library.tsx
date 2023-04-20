@@ -208,8 +208,8 @@ export default function Library() {
       chapter.suggestions = state.suggestions;
     }
 
-    console.log("saveChapter");
-    console.log(chapter.text);
+    /* console.log("saveChapter");
+    console.log(chapter.text); */
 
     const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 

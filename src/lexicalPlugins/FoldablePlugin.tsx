@@ -288,6 +288,10 @@ export function FoldablePlugin({ dispatch }) {
             // And we attach the new foldable node to the parent, it will just get deleted.
             // So in that case, attach it as a sibling to the parent.
             parent.insertAfter(fold);
+            const para = $createParagraphNode();
+            const textNode = $createTextNode("");
+            para.append(textNode);
+            parent.insertAfter(para);
           } else {
             nodes[0].insertAfter(fold);
           }
@@ -501,6 +505,7 @@ export function FoldablePlugin({ dispatch }) {
 
           return true;
         }
+        return false;
       },
       COMMAND_PRIORITY_LOW
     );

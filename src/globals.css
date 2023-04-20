@@ -82,3 +82,8 @@ pre {
     white-space:pre-line;
     word-wrap: break-word;
 }
+
+span ,p {
+    display: inline-block;
+    padding-left: 1px;
+}
