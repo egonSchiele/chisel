@@ -21,6 +21,12 @@ import {
   SerializedLexicalNode,
   ElementNode,
   SerializedElementNode,
+  KEY_BACKSPACE_COMMAND,
+  COMMAND_PRIORITY_LOW,
+  $getNodeByKey,
+  $isLineBreakNode,
+  $createTextNode,
+  $createParagraphNode,
 } from "lexical";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
@@ -112,16 +118,20 @@ export class FoldableNode extends ElementNode {
     /* if (prevNode.__text === this.__text) {
 
     } */
-    const details = dom.querySelector("details");
+    /* const details = dom.querySelector("details");
     if (details) {
       this.setOpen(details.open);
-    }
+    } */
     return false;
   }
 
   setText(text: string): void {
     const writable = this.getWritable();
     writable.__text = text;
+  }
+
+  getText(): string {
+    return this.__text;
   }
 
   setOpen(open: boolean): void {
@@ -147,6 +157,10 @@ export class FoldableNode extends ElementNode {
       format: "start",
       indent: 2,
     };
+  }
+
+  isParentRequired(): boolean {
+    return false;
   }
 
   static importJSON(serialized): FoldableNode {
@@ -241,6 +255,38 @@ export function FoldablePlugin() {
       //root.append(fold);
     }
   });
+
+  editor.registerCommand(
+    KEY_BACKSPACE_COMMAND,
+    (event: KeyboardEvent) => {
+      editor.update(() => {
+        // Read the contents of the EditorState here.
+        const root = $getRoot();
+        const selection = $getSelection() as RangeSelection;
+        console.log(selection);
+        if (!selection) return;
+        const current = $getNodeByKey(selection.anchor.key);
+        console.log(current);
+        if ($isFoldableNode(current)) {
+          const text = "> " + current.getText();
+          const para = $createParagraphNode();
+          const node = $createTextNode(text);
+          para.append(node);
+          console.log(para);
+          current.insertAfter(para);
+          current.remove();
+        }
+        /* 
+        console.log($isLineBreakNode(current));
+        console.log($isFoldableNode(current.getPreviousSibling()));
+ */
+        /* const start = selection.anchor;
+        const end = selection.focus; */
+      });
+      return false;
+    },
+    COMMAND_PRIORITY_LOW
+  );
 
   /* editor.update(() => {
   const textNode = $getNodeByKey('3');

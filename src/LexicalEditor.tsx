@@ -144,9 +144,27 @@ function OnFocusPlugin({ text, chapterid, pushTextToEditor }) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    const parsed = editor.parseEditorState(text);
-    console.log({ parsed });
-    editor.setEditorState(parsed);
+    try {
+      const parsed = editor.parseEditorState(text);
+      console.log({ parsed });
+      editor.setEditorState(parsed);
+    } catch (e) {
+      editor.update(() => {
+        const root = $getRoot();
+
+        // Create a new ParagraphNode
+        const paragraphNode = $createParagraphNode();
+
+        // Create a new TextNode
+        const textNode = $createTextNode(text);
+
+        // Append the text node to the paragraph
+        paragraphNode.append(textNode);
+
+        root.clear();
+        root.append(paragraphNode);
+      });
+    }
     // Focus the editor when the effect fires!
   }, [editor, chapterid, pushTextToEditor]);
 
