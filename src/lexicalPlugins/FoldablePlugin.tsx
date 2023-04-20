@@ -24,7 +24,7 @@ import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
 
 function Foldable({ text }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   let firstLine = text.split("\n")[0];
   if (firstLine.length > 20) {
     firstLine = firstLine.substring(0, 20) + "...";
