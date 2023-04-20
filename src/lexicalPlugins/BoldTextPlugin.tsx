@@ -4,6 +4,7 @@ import {
   $createParagraphNode,
   $createTextNode,
   ParagraphNode,
+  SerializedTextNode,
   TextNode,
 } from "lexical";
 import React, { createElement, useCallback, useEffect } from "react";
@@ -29,6 +30,18 @@ export class BoldTextNode extends TextNode {
  */
     return dom;
   }
+
+  exportJSON(): SerializedTextNode & { text: string } {
+    return {
+      type: BoldTextNode.getType(),
+      version: 1,
+      text: this.__text,
+      detail: this.__detail,
+      format: this.__format,
+      style: this.__style,
+      mode: "normal",
+    };
+  }
 }
 
 export function $isBoldTextNode(node) {
@@ -49,8 +62,9 @@ export default function BoldTextPlugin(): JSX.Element | null {
   }, [editor]);
 
   const createBoldTextNode = useCallback(
-    (textNode: TextNode): BoldTextNode => $createBoldTextNode(textNode.getTextContent()),
-    [],
+    (textNode: TextNode): BoldTextNode =>
+      $createBoldTextNode(textNode.getTextContent()),
+    []
   );
 
   const getBoldTextMatch = useCallback((text: string) => {
@@ -73,7 +87,7 @@ export default function BoldTextPlugin(): JSX.Element | null {
   useLexicalTextEntity<BoldTextNode>(
     getBoldTextMatch,
     BoldTextNode,
-    createBoldTextNode,
+    createBoldTextNode
   );
 
   return null;

@@ -49,6 +49,9 @@ function onChange(editorState, dispatch) {
 
     const text = root.getTextContent();
 
+    const json = JSON.stringify(editorState);
+    console.log({ json });
+
     dispatch({ type: "SET_SAVED", payload: false });
     dispatch({
       type: "SET_CONTENTS",
@@ -56,9 +59,10 @@ function onChange(editorState, dispatch) {
     });
     dispatch({
       type: "SET_TEXT",
-      payload: text,
+      payload: json,
     });
 
+    if (!selection) return;
     const start = selection.anchor;
     const end = selection.focus;
 
@@ -121,7 +125,7 @@ function OnSavePlugin({ onSave }) {
     COMMAND_PRIORITY_HIGH
   );
 
-  editor.registerCommand(
+  /*   editor.registerCommand(
     KEY_ARROW_RIGHT_COMMAND,
     () => {
       editor.dispatchCommand(
@@ -131,7 +135,7 @@ function OnSavePlugin({ onSave }) {
       return false;
     },
     COMMAND_PRIORITY_HIGH
-  );
+  ); */
 
   return null;
 }
@@ -140,23 +144,10 @@ function OnFocusPlugin({ text, chapterid, pushTextToEditor }) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
+    const parsed = editor.parseEditorState(text);
+    console.log({ parsed });
+    editor.setEditorState(parsed);
     // Focus the editor when the effect fires!
-    editor.update(() => {
-      const root = $getRoot();
-
-      // Create a new ParagraphNode
-      const paragraphNode = $createParagraphNode();
-
-      // Create a new TextNode
-      const textNode = $createTextNode(text);
-
-      // Append the text node to the paragraph
-      paragraphNode.append(textNode);
-
-      root.clear();
-      root.append(paragraphNode);
-    });
-    editor.focus();
   }, [editor, chapterid, pushTextToEditor]);
 
   return null;

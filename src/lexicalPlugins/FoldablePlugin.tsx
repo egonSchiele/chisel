@@ -3,7 +3,7 @@ import {
   ArrowDownCircleIcon,
 } from "@heroicons/react/24/solid";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { url } from "inspector";
+import { useLexicalTextEntity } from "@lexical/react/useLexicalTextEntity";
 import {
   DecoratorNode,
   NodeKey,
@@ -16,48 +16,57 @@ import {
   $getRoot,
   $getSelection,
   RangeSelection,
+  TextNode,
+  LineBreakNode,
+  SerializedLexicalNode,
 } from "lexical";
-import React, { ReactNode, useEffect, useState } from "react";
-import { node } from "webpack";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
 
 function Foldable({ text }) {
   const [open, setOpen] = useState(true);
   const firstLine = text.split("\n")[0];
+  let arrowClassname = "w-5 h-5 cursor-pointer mb-xs";
+
   return (
-    <div>
+    <div className="flex">
       {open && (
         <ArrowDownCircleIcon
-          className="w-5 h-5 cursor-pointer mb-xs"
+          className={arrowClassname}
           onClick={() => setOpen(!open)}
         />
       )}
       {!open && (
         <ArrowUpCircleIcon
-          className="w-5 h-5 cursor-pointer mb-xs"
+          className={arrowClassname}
           onClick={() => setOpen(!open)}
         />
       )}
 
-      {open && <div className="p-2 bg-gray-700 text-sm font-mono">{text}</div>}
-      {!open && <div>{firstLine}</div>}
+      {open && (
+        <div className="p-2 bg-gray-700 text-sm font-mono border-l-2 ml-sm border-red-700 w-full">
+          {text}
+        </div>
+      )}
+      {!open && <p className="text-xs flex-grow ml-sm">{firstLine}</p>}
     </div>
   );
 }
 
 export class FoldableNode extends DecoratorNode<any> {
-  __url: string;
+  __text: string;
 
   static getType(): string {
     return "Foldable";
   }
 
   static clone(node: FoldableNode): FoldableNode {
-    return new FoldableNode(node.__url, node.__key);
+    return new FoldableNode(node.__text, node.__key);
   }
 
-  constructor(url: string, key?: NodeKey) {
+  constructor(text: string, key?: NodeKey) {
     super(key);
-    this.__url = url;
+    this.__text = text;
   }
 
   createDOM(config: EditorConfig): HTMLElement {
@@ -70,18 +79,30 @@ export class FoldableNode extends DecoratorNode<any> {
     return false;
   }
 
-  setURL(url: string): void {
+  setText(text: string): void {
     const writable = this.getWritable();
-    writable.__url = url;
+    writable.__text = text;
   }
 
   decorate(editor: LexicalEditor): ReactNode {
-    return <Foldable text={this.__url} />;
+    return <Foldable text={this.__text} />;
+  }
+
+  exportJSON(): SerializedLexicalNode & { text: string } {
+    return {
+      text: this.__text,
+      type: "Foldable",
+      version: 1,
+    };
+  }
+
+  static importJSON(serialized): FoldableNode {
+    return $createFoldableNode(serialized.text);
   }
 }
 
-export function $createFoldableNode(url: string): FoldableNode {
-  return new FoldableNode(url);
+export function $createFoldableNode(text: string): FoldableNode {
+  return new FoldableNode(text);
 }
 
 export function $isFoldableNode(node: LexicalNode | null): boolean {
@@ -127,7 +148,6 @@ export function FoldablePlugin() {
             word = nodeText.slice(end.offset, start.offset).trim();
           }
 
-          const url = payload;
           $insertNodes([$createFoldableNode(word)]);
         });
 
@@ -141,6 +161,41 @@ export function FoldablePlugin() {
       removeListener();
     };
   }, [editor]);
+
+  /* editor.registerNodeTransform(TextNode, (node) => {
+    const text = node.getTextContent();
+
+    if (text.match(/^> (.+)\n$/) && !$isFoldableNode(node)) {
+      const fold = $createFoldableNode(text.slice(2, text.length));
+      const root = $getRoot();
+      node.replace(fold);
+      //root.append(fold);
+    }
+  });
+ */
+  editor.registerNodeTransform(LineBreakNode, (node) => {
+    const prev = node.getPreviousSibling();
+    if (prev && $isFoldableNode(prev)) {
+      return;
+    }
+
+    const text = prev.getTextContent();
+    console.log(text, "prevtext");
+
+    if (text.match(/^> (.+)$/) && !$isFoldableNode(prev)) {
+      console.log("in");
+      const fold = $createFoldableNode(text.slice(2, text.length));
+      const root = $getRoot();
+      prev.replace(fold);
+      //root.append(fold);
+    }
+  });
+
+  /* editor.update(() => {
+  const textNode = $getNodeByKey('3');
+  textNode.setTextContent('foo');
+ 
+});*/
 
   return null;
 }
