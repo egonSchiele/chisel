@@ -19,6 +19,8 @@ import {
   TextNode,
   LineBreakNode,
   SerializedLexicalNode,
+  ElementNode,
+  SerializedElementNode,
 } from "lexical";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
@@ -56,7 +58,7 @@ function Foldable({ text }) {
   );
 }
 
-export class FoldableNode extends DecoratorNode<any> {
+export class FoldableNode extends ElementNode {
   __text: string;
 
   static getType(): string {
@@ -64,21 +66,56 @@ export class FoldableNode extends DecoratorNode<any> {
   }
 
   static clone(node: FoldableNode): FoldableNode {
-    return new FoldableNode(node.__text, node.__key);
+    return new FoldableNode(node.__text, node.__open, node.__key);
   }
 
-  constructor(text: string, key?: NodeKey) {
+  constructor(text: string, open: boolean, key?: NodeKey) {
     super(key);
     this.__text = text;
+    this.__open = open;
   }
 
   createDOM(config: EditorConfig): HTMLElement {
-    const div = document.createElement("div");
-    div.style.display = "contents";
-    return div;
+    const container = document.createElement("div");
+    container.className = "flex";
+    /*     const button = document.createElement("div");
+    button.className = "w-5 h-5 cursor-pointer mb-xs";
+    button.innerText = ">";
+    container.appendChild(button);
+ */ const details = document.createElement("details");
+    details.className = "flex-grow bg-gray-700 p-2";
+
+    let firstLine = this.__text.split("\n")[0];
+    if (firstLine.length > 20) {
+      firstLine = firstLine.substring(0, 20) + "...";
+    }
+
+    const summary = document.createElement("summary");
+    summary.innerText = firstLine;
+
+    details.innerText = this.__text;
+    details.appendChild(summary);
+    details.open = this.__open;
+    container.appendChild(details);
+
+    console.log("creating details wihth text:", this.__text);
+
+    /*    details.addEventListener("toggle", (event) => {
+      this.__open = details.open;
+    }); */
+
+    //div.style.display = "contents";
+    return container;
   }
 
-  updateDOM(): false {
+  updateDOM(prevNode: FoldableNode, dom: HTMLDetailsElement): false {
+    /* if (prevNode.__text === this.__text) {
+
+    } */
+    const details = dom.querySelector("details");
+    if (details) {
+      this.setOpen(details.open);
+    }
     return false;
   }
 
@@ -87,25 +124,38 @@ export class FoldableNode extends DecoratorNode<any> {
     writable.__text = text;
   }
 
+  setOpen(open: boolean): void {
+    const writable = this.getWritable();
+    writable.__open = open;
+  }
+  /* 
   decorate(editor: LexicalEditor): ReactNode {
     return <Foldable text={this.__text} />;
-  }
+  } */
 
-  exportJSON(): SerializedLexicalNode & { text: string } {
+  exportJSON(): SerializedElementNode<SerializedLexicalNode> & {
+    text: string;
+    open: boolean;
+  } {
     return {
       text: this.__text,
+      open: this.__open,
       type: "Foldable",
       version: 1,
+      children: [],
+      direction: "ltr",
+      format: "start",
+      indent: 2,
     };
   }
 
   static importJSON(serialized): FoldableNode {
-    return $createFoldableNode(serialized.text);
+    return $createFoldableNode(serialized.text, serialized.open);
   }
 }
 
-export function $createFoldableNode(text: string): FoldableNode {
-  return new FoldableNode(text);
+export function $createFoldableNode(text: string, open: boolean): FoldableNode {
+  return new FoldableNode(text, open);
 }
 
 export function $isFoldableNode(node: LexicalNode | null): boolean {
@@ -151,7 +201,7 @@ export function FoldablePlugin() {
             word = nodeText.slice(end.offset, start.offset).trim();
           }
 
-          $insertNodes([$createFoldableNode(word)]);
+          $insertNodes([$createFoldableNode(word, false)]);
         });
 
         // Returning true indicates that command is handled and no further propagation is required
@@ -183,11 +233,9 @@ export function FoldablePlugin() {
     }
 
     const text = prev.getTextContent();
-    console.log(text, "prevtext");
 
     if (text.match(/^> (.+)$/) && !$isFoldableNode(prev)) {
-      console.log("in");
-      const fold = $createFoldableNode(text.slice(2, text.length));
+      const fold = $createFoldableNode(text.slice(2, text.length), false);
       const root = $getRoot();
       prev.replace(fold);
       //root.append(fold);
