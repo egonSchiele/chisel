@@ -1,9 +1,5 @@
 /* import { $createHashtagNode, HashtagNode } from "@lexical/hashtag"; */
-import {
-  ImageNode,
-  INSERT_IMAGE_COMMAND,
-  ImagePlugin,
-} from "./lexicalPlugins/ImagePlugin";
+
 import {
   $createParagraphNode,
   $createTextNode,
@@ -92,16 +88,10 @@ function OnSavePlugin({ onSave }) {
         onSave();
         return true;
       }
-      if (event.metaKey && event.code === "KeyX") {
-        editor.dispatchCommand(
-          INSERT_IMAGE_COMMAND,
-          "https://www.adit.io/imgs/probability/8_all_8.png"
-        );
-        return;
-      }
+
       return false;
     },
-    COMMAND_PRIORITY_HIGH
+    COMMAND_PRIORITY_HIGH,
   );
 
   return null;
@@ -156,7 +146,7 @@ function LexicalEditor({
   const initialConfig = {
     namespace: "MyLexicalEditor",
     theme,
-    nodes: [BoldTextNode, ImageNode],
+    nodes: [BoldTextNode],
     onError,
   };
 
@@ -198,7 +188,6 @@ function LexicalEditor({
         />
 
         <BoldTextPlugin />
-        <ImagePlugin />
 
         {debug && <TreeViewPlugin />}
         {/*         <CodeHighlightPlugin />
