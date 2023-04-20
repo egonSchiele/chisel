@@ -25,7 +25,10 @@ import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
 
 function Foldable({ text }) {
   const [open, setOpen] = useState(true);
-  const firstLine = text.split("\n")[0];
+  let firstLine = text.split("\n")[0];
+  if (firstLine.length > 20) {
+    firstLine = firstLine.substring(0, 20) + "...";
+  }
   let arrowClassname = "w-5 h-5 cursor-pointer mb-xs";
 
   return (
@@ -48,7 +51,7 @@ function Foldable({ text }) {
           {text}
         </div>
       )}
-      {!open && <p className="text-xs flex-grow ml-sm">{firstLine}</p>}
+      {!open && <p className="text-sm flex-grow ml-sm">{firstLine}</p>}
     </div>
   );
 }
