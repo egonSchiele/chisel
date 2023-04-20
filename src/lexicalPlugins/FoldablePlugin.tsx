@@ -80,8 +80,17 @@ export class FoldableNode extends ElementNode {
 
     details.innerText = this.__text;
     details.appendChild(summary);
+    console.log({ summary });
     details.open = this.__open;
     container.appendChild(details);
+
+    const button = document.createElement("div");
+    button.className =
+      "bg-gray-500 px-2 h-full cursor-pointer mb-xs delete-foldable";
+    button.innerText = "x";
+    button.setAttribute("data-key", this.__key);
+
+    container.appendChild(button);
 
     console.log("creating details wihth text:", this.__text);
 
@@ -94,19 +103,20 @@ export class FoldableNode extends ElementNode {
   }
 
   updateDOM(prevNode: FoldableNode, dom: HTMLDetailsElement): false {
-    console.log(this.__text, prevNode.__text, dom.innerText);
+    //console.log(this.__text, prevNode.__text, dom.innerText);
     const details = dom.querySelector("details");
     if (details) {
-      console.log(this.__text, prevNode.__text);
+      //console.log(this.__text, prevNode.__text);
       this.setOpen(details.open);
 
-      details.innerText = this.__text;
       const summary = dom.querySelector("summary");
+      details.innerText = this.__text;
+
       if (summary) {
         details.appendChild(summary);
       }
 
-      console.log("updating details wihth text:", this.__text);
+      //console.log("updating details wihth text:", this.__text);
     }
     //}
     return false;
@@ -118,12 +128,18 @@ export class FoldableNode extends ElementNode {
   }
 
   getText(): string {
-    return this.__text;
+    const self = this.getLatest();
+    return self.__text;
   }
 
   setOpen(open: boolean): void {
     const writable = this.getWritable();
     writable.__open = open;
+  }
+
+  getOpen(): string {
+    const self = this.getLatest();
+    return self.__open;
   }
   /* 
   decorate(editor: LexicalEditor): ReactNode {
@@ -167,6 +183,7 @@ export function $isFoldableNode(node: LexicalNode | null): boolean {
 type CommandPayload = string;
 export const INSERT_FOLDABLE_COMMAND: LexicalCommand<CommandPayload> =
   createCommand("INSERT_FOLDABLE_COMMAND");
+const HELLO_WORLD_COMMAND: LexicalCommand<string> = createCommand();
 
 export function FoldablePlugin() {
   const [editor] = useLexicalComposerContext();
@@ -203,7 +220,30 @@ export function FoldablePlugin() {
 
           if (nodes.length === 0) return;
 
-          const nodeText = nodes.map((n) => n.getTextContent()).join("\n");
+          let nodeText = "";
+          if (nodes.length === 1) {
+            if (start.offset === end.offset) {
+              nodeText = nodes[0].getTextContent();
+            } else {
+              const begin = Math.min(start.offset, end.offset);
+              const fin = Math.max(start.offset, end.offset);
+              nodeText = nodes[0].getTextContent().slice(begin, fin);
+            }
+          } else {
+            nodeText = nodes
+              .map((n, i) => {
+                if (i === 0) {
+                  return n.getTextContent().slice(start.offset);
+                } else if (i === nodes.length - 1) {
+                  n.getTextContent().slice(0, end.offset);
+                } else if ($isLineBreakNode(n)) {
+                  return "\n";
+                } else {
+                  return n.getTextContent();
+                }
+              })
+              .join("\n");
+          }
           console.log({ nodeText });
           /*    let word;
           if (start.offset < end.offset) {
@@ -213,7 +253,12 @@ export function FoldablePlugin() {
           } */
           const fold = $createFoldableNode(nodeText, true);
           nodes[0].insertAfter(fold);
+          //if (nodes.length > 1) {
           nodes.forEach((n) => n.remove());
+          /*} else {
+            const text = nodes[0].getTextContent();
+            nodes[0].setTextContent(text.replace(nodeText, ""));
+          }*/
         });
 
         // Returning true indicates that command is handled and no further propagation is required
@@ -335,7 +380,7 @@ export function FoldablePlugin() {
     },
     COMMAND_PRIORITY_LOW
   ),
-    editor.registerCommand(
+    /*  editor.registerCommand(
       KEY_BACKSPACE_COMMAND,
       (event: KeyboardEvent) => {
         editor.update(() => {
@@ -369,29 +414,45 @@ export function FoldablePlugin() {
             current.remove();
             prev.remove();
           } */
-          /* 
+    /* 
         console.log($isLineBreakNode(current));
         console.log($isFoldableNode(current.getPreviousSibling()));
  */
-          /* const start = selection.anchor;
+    /* const start = selection.anchor;
         const end = selection.focus; */
-        });
+    /* });
         return false;
       },
       COMMAND_PRIORITY_LOW
     );
+ */
+    editor.registerCommand(
+      KEY_MODIFIER_COMMAND,
+      (event: KeyboardEvent) => {
+        if (event.code === "Period") {
+          event.preventDefault();
+          editor.dispatchCommand(INSERT_FOLDABLE_COMMAND, null);
+          console.log("dispatched");
+          return true;
+        }
+      },
+      COMMAND_PRIORITY_LOW
+    );
 
-  editor.registerCommand(
-    KEY_MODIFIER_COMMAND,
-    (event: KeyboardEvent) => {
-      if (event.code === "Period") {
-        event.preventDefault();
-        editor.dispatchCommand(INSERT_FOLDABLE_COMMAND, null);
-        console.log("dispatched");
-        return true;
+  /* const removeMutationListener = editor.registerMutationListener(
+    FoldableNode,
+    (mutatedNodes) => {
+      console.log("==mutation listener==");
+      // mutatedNodes is a Map where each key is the NodeKey, and the value is the state of mutation.
+      for (let [nodeKey, mutation] of mutatedNodes) {
+        console.log(nodeKey, mutation);
       }
-    },
-    COMMAND_PRIORITY_LOW
+    }
+  );
+ */
+  const removeTransform = editor.registerNodeTransform(
+    FoldableNode,
+    (textNode) => {}
   );
 
   /* editor.update(() => {
@@ -399,6 +460,45 @@ export function FoldablePlugin() {
   textNode.setTextContent('foo');
  
 });*/
+
+  editor.registerCommand(
+    HELLO_WORLD_COMMAND,
+    (payload: string) => {
+      console.log(payload); // Hello World!
+      return false;
+    },
+    COMMAND_PRIORITY_LOW
+  );
+
+  const handleKeyDown = (event) => {
+    console.log(event.target);
+    if (!event.target) return;
+    const key = event.target.getAttribute("data-key");
+    if (!key) return;
+    editor.update(() => {
+      const node = $getNodeByKey(key);
+      if (!node) return;
+      console.log(node);
+
+      if ($isFoldableNode(node)) {
+        const text = node.getText();
+        const para = $createParagraphNode();
+        const textNode = $createTextNode(text);
+        para.append(textNode);
+        node.insertAfter(para);
+        node.remove();
+        textNode.select();
+      }
+    });
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("click", handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return null;
 }
