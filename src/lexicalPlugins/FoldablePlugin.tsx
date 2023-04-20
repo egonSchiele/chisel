@@ -71,8 +71,8 @@ export class FoldableNode extends ElementNode {
       "flex-grow bg-gray-700 pl-2 border-l-4 border-red-700 select-text";
 
     let firstLine = this.__text.split("\n")[0];
-    if (firstLine.length > 20) {
-      firstLine = firstLine.substring(0, 20) + "...";
+    if (firstLine.length > 80) {
+      firstLine = firstLine.substring(0, 80) + "...";
     }
 
     const summary = document.createElement("summary");
@@ -270,7 +270,15 @@ export function FoldablePlugin() {
             word = nodeText.slice(end.offset, start.offset).trim();
           } */
           const fold = $createFoldableNode(nodeText, true);
-          nodes[0].insertAfter(fold);
+          const parent = nodes[0].getParent();
+          if (nodes.includes(parent)) {
+            // If the parent is part of the list of notes we are about to delete,
+            // And we attach the new foldable node to the parent, it will just get deleted.
+            // So in that case, attach it as a sibling to the parent.
+            parent.insertAfter(fold);
+          } else {
+            nodes[0].insertAfter(fold);
+          }
           //if (nodes.length > 1) {
           nodes.forEach((n, i) => {
             if (i === 0) {
