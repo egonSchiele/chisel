@@ -17,7 +17,7 @@ const defaults = {
 };
 
 const initialEditorState = (
-  _chapter: t.Chapter | DefaultChapter,
+  _chapter: t.Chapter | DefaultChapter
 ): t.EditorState => {
   const chapter = _chapter || defaults;
   return {
@@ -84,11 +84,12 @@ export const reducer = produce<t.State>(
         {
           const chapterid = action.payload;
           draft.selectedBook.chapters = draft.selectedBook.chapters.filter(
-            (chapter) => chapter.chapterid !== chapterid,
+            (chapter) => chapter.chapterid !== chapterid
           );
-          draft.selectedBook.chapterTitles = draft.selectedBook.chapterTitles.filter(
-            (chapter) => chapter.chapterid !== chapterid,
-          );
+          draft.selectedBook.chapterTitles =
+            draft.selectedBook.chapterTitles.filter(
+              (chapter) => chapter.chapterid !== chapterid
+            );
         }
         break;
 
@@ -131,7 +132,7 @@ export const reducer = produce<t.State>(
         draft.chapter.title = action.payload;
         // find chapter and then update it so that the chapter list also receives the update.
         let chapterIdx = draft.selectedBook.chapters.findIndex(
-          (chapter) => chapter.chapterid === draft.chapter.chapterid,
+          (chapter) => chapter.chapterid === draft.chapter.chapterid
         );
 
         if (chapterIdx !== -1) {
@@ -139,7 +140,7 @@ export const reducer = produce<t.State>(
         }
 
         chapterIdx = draft.selectedBook.chapterTitles.findIndex(
-          (chapter) => chapter.chapterid === draft.chapter.chapterid,
+          (chapter) => chapter.chapterid === draft.chapter.chapterid
         );
 
         if (chapterIdx !== -1) {
@@ -172,7 +173,7 @@ export const reducer = produce<t.State>(
       case "SET_SELECTED_BOOK_CHAPTER":
         const _chapter = action.payload;
         const idx = draft.selectedBook.chapters.findIndex(
-          (sbChapter) => sbChapter.chapterid === _chapter.chapterid,
+          (sbChapter) => sbChapter.chapterid === _chapter.chapterid
         );
 
         if (idx >= 0) {
@@ -211,11 +212,6 @@ export const reducer = produce<t.State>(
       case "CLEAR_SELECTED_TEXT":
         draft.editor._cachedSelectedText = draft.editor.selectedText;
         draft.editor.selectedText = { index: 0, length: 0, contents: "" };
-        console.log(
-          "clearing selected text",
-          draft.editor._cachedSelectedText,
-          draft.editor.selectedText,
-        );
         break;
       case "SYNONYM_SELECTED":
         draft.editor.selectedText = action.payload;
@@ -241,7 +237,7 @@ export const reducer = produce<t.State>(
         const newTitles = [];
         ids.forEach((id) => {
           const chapter = draft.selectedBook.chapterTitles.find(
-            (chapter) => chapter.chapterid === id,
+            (chapter) => chapter.chapterid === id
           );
           if (chapter) {
             newTitles.push(chapter);
@@ -292,28 +288,28 @@ export const reducer = produce<t.State>(
         draft.panels.bookList.open = !draft.panels.bookList.open;
         localStorage.setItem(
           "bookListOpen",
-          draft.panels.bookList.open ? "true" : "false",
+          draft.panels.bookList.open ? "true" : "false"
         );
         break;
       case "TOGGLE_CHAPTER_LIST":
         draft.panels.chapterList.open = !draft.panels.chapterList.open;
         localStorage.setItem(
           "chapterListOpen",
-          draft.panels.chapterList.open ? "true" : "false",
+          draft.panels.chapterList.open ? "true" : "false"
         );
         break;
       case "TOGGLE_SIDEBAR":
         draft.panels.sidebar.open = !draft.panels.sidebar.open;
         localStorage.setItem(
           "sidebarOpen",
-          draft.panels.sidebar.open ? "true" : "false",
+          draft.panels.sidebar.open ? "true" : "false"
         );
         break;
       case "TOGGLE_PROMPTS":
         draft.panels.prompts.open = !draft.panels.prompts.open;
         localStorage.setItem(
           "promptsOpen",
-          draft.panels.prompts.open ? "true" : "false",
+          draft.panels.prompts.open ? "true" : "false"
         );
         break;
       case "CLOSE_ALL_PANELS":
@@ -358,5 +354,5 @@ export const reducer = produce<t.State>(
         // eslint-disable-next-line
         return draft;
     }
-  },
+  }
 );

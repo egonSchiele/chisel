@@ -27,9 +27,13 @@ import {
   $isLineBreakNode,
   $createTextNode,
   $createParagraphNode,
+  KEY_ENTER_COMMAND,
+  $isTextNode,
 } from "lexical";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
+
+const FOLDABLE_REGEX = /^> (.+)$/;
 
 function Foldable({ text }) {
   const [open, setOpen] = useState(false);
@@ -115,13 +119,20 @@ export class FoldableNode extends ElementNode {
   }
 
   updateDOM(prevNode: FoldableNode, dom: HTMLDetailsElement): false {
-    /* if (prevNode.__text === this.__text) {
+    if (prevNode.__text === this.__text) {
+      const details = dom.querySelector("details");
+      if (details) {
+        console.log(this.__open, prevNode.__open, details.open);
+        this.setOpen(details.open);
+        const summary = dom.querySelector("summary");
 
-    } */
-    /* const details = dom.querySelector("details");
-    if (details) {
-      this.setOpen(details.open);
-    } */
+        details.innerText = this.__text;
+        if (summary) {
+          details.appendChild(summary);
+        }
+        console.log("updating details wihth text:", this.__text);
+      }
+    }
     return false;
   }
 
@@ -242,13 +253,14 @@ export function FoldablePlugin() {
  */
   editor.registerNodeTransform(LineBreakNode, (node) => {
     const prev = node.getPreviousSibling();
+    if (!prev) return;
     if (prev && $isFoldableNode(prev)) {
       return;
     }
 
     const text = prev.getTextContent();
 
-    if (text.match(/^> (.+)$/) && !$isFoldableNode(prev)) {
+    if (text.match(FOLDABLE_REGEX) && !$isFoldableNode(prev)) {
       const fold = $createFoldableNode(text.slice(2, text.length), false);
       const root = $getRoot();
       prev.replace(fold);
@@ -257,22 +269,61 @@ export function FoldablePlugin() {
   });
 
   editor.registerCommand(
+    KEY_ENTER_COMMAND,
+    (event: KeyboardEvent) => {
+      editor.update(() => {
+        // Read the contents of the EditorState here.
+        const root = $getRoot();
+        const selection = $getSelection() as RangeSelection;
+
+        if (!selection) return;
+        const current = $getNodeByKey(selection.anchor.key);
+        const text = current.getTextContent();
+        const prev = current.getPreviousSibling();
+
+        if (!prev) return;
+        const prevPrev = prev.getPreviousSibling();
+
+        if (
+          $isTextNode(current) &&
+          text.match(FOLDABLE_REGEX) &&
+          $isLineBreakNode(prev) &&
+          $isFoldableNode(prevPrev)
+        ) {
+          const newText =
+            prevPrev.getText() + "\n" + text.slice(2, text.length);
+          console.log({ newText });
+          prevPrev.setText(newText);
+          prevPrev.setOpen(true);
+          current.remove();
+          prev.remove();
+        }
+        /* 
+        console.log($isLineBreakNode(current));
+        console.log($isFoldableNode(current.getPreviousSibling()));
+ */
+        /* const start = selection.anchor;
+        const end = selection.focus; */
+      });
+      return false;
+    },
+    COMMAND_PRIORITY_LOW
+  );
+
+  editor.registerCommand(
     KEY_BACKSPACE_COMMAND,
     (event: KeyboardEvent) => {
       editor.update(() => {
         // Read the contents of the EditorState here.
         const root = $getRoot();
         const selection = $getSelection() as RangeSelection;
-        console.log(selection);
         if (!selection) return;
         const current = $getNodeByKey(selection.anchor.key);
-        console.log(current);
         if ($isFoldableNode(current)) {
           const text = "> " + current.getText();
           const para = $createParagraphNode();
           const node = $createTextNode(text);
           para.append(node);
-          console.log(para);
           current.insertAfter(para);
           current.remove();
         }

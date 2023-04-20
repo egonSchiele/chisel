@@ -50,7 +50,6 @@ function onChange(editorState, dispatch) {
     const text = root.getTextContent();
 
     const json = JSON.stringify(editorState);
-    console.log({ json });
 
     dispatch({ type: "SET_SAVED", payload: false });
     dispatch({
