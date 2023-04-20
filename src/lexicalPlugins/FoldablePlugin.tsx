@@ -33,6 +33,7 @@ import {
   KEY_ARROW_DOWN_COMMAND,
   $createLineBreakNode,
   $isParagraphNode,
+  KEY_MODIFIER_COMMAND,
 } from "lexical";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
@@ -60,7 +61,7 @@ export class FoldableNode extends ElementNode {
   createDOM(config: EditorConfig): HTMLElement {
     const container = document.createElement("div");
     container.className = "flex";
-    container.contentEditable = "false";
+    //container.contentEditable = "false";
     /*     const button = document.createElement("div");
     button.className = "w-5 h-5 cursor-pointer mb-xs";
     button.innerText = ">";
@@ -98,12 +99,13 @@ export class FoldableNode extends ElementNode {
     if (details) {
       console.log(this.__text, prevNode.__text);
       this.setOpen(details.open);
-      const summary = dom.querySelector("summary");
 
       details.innerText = this.__text;
+      const summary = dom.querySelector("summary");
       if (summary) {
         details.appendChild(summary);
       }
+
       console.log("updating details wihth text:", this.__text);
     }
     //}
@@ -180,27 +182,38 @@ export function FoldablePlugin() {
           const root = $getRoot();
           const selection = $getSelection() as RangeSelection;
 
-          const text = root.getTextContent();
+          //const text = root.getTextContent();
 
-          const start = selection.anchor;
-          const end = selection.focus;
+          let start = selection.anchor;
+          let end = selection.focus;
 
-          const node = root
+          if (start.key > end.key) {
+            [start, end] = [end, start];
+          }
+
+          console.log({ start, end });
+
+          const nodes = root
             .getAllTextNodes()
-            .find((node) => node.getKey() === start.key);
+            .filter(
+              (node) => node.getKey() >= start.key && node.getKey() <= end.key
+            );
 
-          if (!node) return;
+          console.log({ nodes });
 
-          const nodeText = node.getTextContent();
+          if (nodes.length === 0) return;
 
-          let word;
+          const nodeText = nodes.map((n) => n.getTextContent()).join("\n");
+          console.log({ nodeText });
+          /*    let word;
           if (start.offset < end.offset) {
             word = nodeText.slice(start.offset, end.offset).trim();
           } else {
             word = nodeText.slice(end.offset, start.offset).trim();
-          }
-
-          $insertNodes([$createFoldableNode(word, false)]);
+          } */
+          const fold = $createFoldableNode(nodeText, true);
+          nodes[0].insertAfter(fold);
+          nodes.forEach((n) => n.remove());
         });
 
         // Returning true indicates that command is handled and no further propagation is required
@@ -367,6 +380,19 @@ export function FoldablePlugin() {
       },
       COMMAND_PRIORITY_LOW
     );
+
+  editor.registerCommand(
+    KEY_MODIFIER_COMMAND,
+    (event: KeyboardEvent) => {
+      if (event.code === "Period") {
+        event.preventDefault();
+        editor.dispatchCommand(INSERT_FOLDABLE_COMMAND, null);
+        console.log("dispatched");
+        return true;
+      }
+    },
+    COMMAND_PRIORITY_LOW
+  );
 
   /* editor.update(() => {
   const textNode = $getNodeByKey('3');
