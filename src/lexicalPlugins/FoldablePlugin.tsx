@@ -204,18 +204,28 @@ export function FoldablePlugin() {
           let start = selection.anchor;
           let end = selection.focus;
 
-          if (start.key > end.key) {
-            [start, end] = [end, start];
+          if (
+            start.type === "text" &&
+            end.type === "text" &&
+            parseInt(start.key) > parseInt(end.key)
+          ) {
+            const foo = start;
+            start = end;
+            end = foo;
           }
 
+          console.log({ selection });
           console.log({ start, end });
 
+          const nodes = selection.getNodes();
+          /* console.log({ snodes });
+
           const nodes = root
-            .getAllTextNodes()
+            .getChildren()
             .filter(
               (node) => node.getKey() >= start.key && node.getKey() <= end.key
             );
-
+ */
           console.log({ nodes });
 
           if (nodes.length === 0) return;
@@ -233,18 +243,27 @@ export function FoldablePlugin() {
             nodeText = nodes
               .map((n, i) => {
                 if (i === 0) {
-                  return n.getTextContent().slice(start.offset);
+                  console.log("first", n.getTextContent(), start.offset);
+                  if (start.type === "text") {
+                    return getText(n, start.offset);
+                  } else {
+                    return getText(n);
+                  }
                 } else if (i === nodes.length - 1) {
-                  n.getTextContent().slice(0, end.offset);
-                } else if ($isLineBreakNode(n)) {
-                  return "\n";
+                  console.log("last", n.getTextContent(), end.offset);
+                  if (end.type === "text") {
+                    return getText(n, null, end.offset);
+                  } else {
+                    return getText(n);
+                  }
                 } else {
-                  return n.getTextContent();
+                  return getText(n);
                 }
               })
               .join("\n");
           }
-          console.log({ nodeText });
+          console.log(nodeText);
+          return;
           /*    let word;
           if (start.offset < end.offset) {
             word = nodeText.slice(start.offset, end.offset).trim();
@@ -501,4 +520,14 @@ export function FoldablePlugin() {
   }, [handleKeyDown]);
 
   return null;
+}
+
+function getText(node: any, start = null, end = null) {
+  if ($isLineBreakNode(node)) return "";
+  if (!$isTextNode(node)) return "";
+  const text = node.getTextContent();
+  if (start === null && end === null) return text;
+  if (start === null) return text.slice(0, end);
+  if (end === null) return text.slice(start);
+  return text.slice(start, end);
 }
