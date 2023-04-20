@@ -78,7 +78,7 @@ export class FoldableNode extends ElementNode {
     const summary = document.createElement("summary");
     summary.innerText = firstLine;
 
-    details.innerText = this.__text.substring(firstLine.length);
+    details.innerText = this.__text.substring(Math.min(firstLine.length, 80));
     details.appendChild(summary);
     console.log({ summary });
     details.open = this.__open;
@@ -136,6 +136,10 @@ export class FoldableNode extends ElementNode {
     return self.__text;
   }
 
+  getTextContent(): string {
+    return this.getText();
+  }
+
   setOpen(open: boolean): void {
     const writable = this.getWritable();
     writable.__open = open;
@@ -189,7 +193,7 @@ export const INSERT_FOLDABLE_COMMAND: LexicalCommand<CommandPayload> =
   createCommand("INSERT_FOLDABLE_COMMAND");
 const HELLO_WORLD_COMMAND: LexicalCommand<string> = createCommand();
 
-export function FoldablePlugin() {
+export function FoldablePlugin({ dispatch }) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -277,7 +281,7 @@ export function FoldablePlugin() {
           } else {
             word = nodeText.slice(end.offset, start.offset).trim();
           } */
-          const fold = $createFoldableNode(nodeText, true);
+          const fold = $createFoldableNode(nodeText, false);
           const parent = nodes[0].getParent();
           if (nodes.includes(parent)) {
             // If the parent is part of the list of notes we are about to delete,
@@ -306,6 +310,21 @@ export function FoldablePlugin() {
             } else {
               n.remove();
             }
+          });
+
+          const state = editor.getEditorState();
+          const text = root.getTextContent();
+
+          const json = JSON.stringify(state);
+
+          dispatch({ type: "SET_SAVED", payload: false });
+          dispatch({
+            type: "SET_CONTENTS",
+            payload: text,
+          });
+          dispatch({
+            type: "SET_TEXT",
+            payload: json,
           });
           /*} else {
             const text = nodes[0].getTextContent();
@@ -336,7 +355,7 @@ export function FoldablePlugin() {
   });
  */
 
-  editor.registerCommand(
+  /*  editor.registerCommand(
     KEY_ENTER_COMMAND,
     (event: KeyboardEvent) => {
       editor.update(() => {
@@ -390,17 +409,12 @@ export function FoldablePlugin() {
             textNode.select();
           }
         }
-        /* 
-        console.log($isLineBreakNode(current));
-        console.log($isFoldableNode(current.getPreviousSibling()));
- */
-        /* const start = selection.anchor;
-        const end = selection.focus; */
+ 
       });
       return false;
     },
     COMMAND_PRIORITY_LOW
-  );
+  ); */
 
   // When collapsible is the last child pressing down arrow will insert paragraph
   // below it to allow adding more content. It's similar what $insertBlockNode
@@ -484,7 +498,7 @@ export function FoldablePlugin() {
         if (event.code === "Period") {
           event.preventDefault();
           editor.dispatchCommand(INSERT_FOLDABLE_COMMAND, null);
-          console.log("dispatched");
+
           return true;
         }
       },
@@ -502,10 +516,6 @@ export function FoldablePlugin() {
     }
   );
  */
-  const removeTransform = editor.registerNodeTransform(
-    FoldableNode,
-    (textNode) => {}
-  );
 
   /* editor.update(() => {
   const textNode = $getNodeByKey('3');
@@ -513,17 +523,7 @@ export function FoldablePlugin() {
  
 });*/
 
-  editor.registerCommand(
-    HELLO_WORLD_COMMAND,
-    (payload: string) => {
-      console.log(payload); // Hello World!
-      return false;
-    },
-    COMMAND_PRIORITY_LOW
-  );
-
-  const handleKeyDown = (event) => {
-    console.log(event.target);
+  const handleClick = (event) => {
     if (!event.target) return;
     const key = event.target.getAttribute("data-key");
     if (!key) return;
@@ -545,12 +545,12 @@ export function FoldablePlugin() {
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleKeyDown);
+    document.addEventListener("click", handleClick);
 
     return () => {
-      document.removeEventListener("click", handleKeyDown);
+      document.removeEventListener("click", handleClick);
     };
-  }, [handleKeyDown]);
+  }, [handleClick]);
 
   return null;
 }

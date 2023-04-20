@@ -234,9 +234,9 @@ function LexicalEditor({
           }}
         />
 
-        <BoldTextPlugin />
-        <ImagePlugin />
-        <FoldablePlugin />
+        {/* <BoldTextPlugin />
+        <ImagePlugin /> */}
+        <FoldablePlugin dispatch={dispatch} />
 
         {debug && <TreeViewPlugin />}
         {/*         <CodeHighlightPlugin />
