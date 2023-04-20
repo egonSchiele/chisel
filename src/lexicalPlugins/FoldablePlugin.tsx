@@ -204,14 +204,18 @@ export function FoldablePlugin() {
           let start = selection.anchor;
           let end = selection.focus;
 
-          if (
-            start.type === "text" &&
-            end.type === "text" &&
-            parseInt(start.key) >= parseInt(end.key)
-          ) {
-            const foo = start;
-            start = end;
-            end = foo;
+          if (start.type === "text" && end.type === "text") {
+            if (parseInt(start.key) > parseInt(end.key)) {
+              const foo = start;
+              start = end;
+              end = foo;
+            } else if (parseInt(start.key) === parseInt(end.key)) {
+              if (start.offset > end.offset) {
+                const foo = start;
+                start = end;
+                end = foo;
+              }
+            }
           }
 
           console.log({ selection });
