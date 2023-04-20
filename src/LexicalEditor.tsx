@@ -5,11 +5,17 @@ import {
   ImagePlugin,
 } from "./lexicalPlugins/ImagePlugin";
 import {
+  FoldableNode,
+  INSERT_FOLDABLE_COMMAND,
+  FoldablePlugin,
+} from "./lexicalPlugins/FoldablePlugin";
+import {
   $createParagraphNode,
   $createTextNode,
   $getRoot,
   $getSelection,
   COMMAND_PRIORITY_HIGH,
+  KEY_ARROW_RIGHT_COMMAND,
   KEY_DOWN_COMMAND,
   RangeSelection,
   TextNode,
@@ -60,12 +66,23 @@ function onChange(editorState, dispatch) {
       dispatch({ type: "CLEAR_SELECTED_TEXT" });
       return;
     }
+
+    const node = root
+      .getAllTextNodes()
+      .find((node) => node.getKey() === start.key);
+
+    if (!node) return;
+
+    const nodeText = node.getTextContent();
+
     let word;
     if (start.offset < end.offset) {
-      word = text.slice(start.offset, end.offset).trim();
+      word = nodeText.slice(start.offset, end.offset).trim();
     } else {
-      word = text.slice(end.offset, start.offset).trim();
+      word = nodeText.slice(end.offset, start.offset).trim();
     }
+
+    console.log("selected", word, nodeText);
 
     dispatch({
       type: "SET_SELECTED_TEXT",
@@ -94,11 +111,23 @@ function OnSavePlugin({ onSave }) {
       }
       if (event.metaKey && event.code === "KeyX") {
         editor.dispatchCommand(
-          INSERT_IMAGE_COMMAND,
+          INSERT_FOLDABLE_COMMAND,
           "https://www.adit.io/imgs/probability/8_all_8.png"
         );
         return;
       }
+      return false;
+    },
+    COMMAND_PRIORITY_HIGH
+  );
+
+  editor.registerCommand(
+    KEY_ARROW_RIGHT_COMMAND,
+    () => {
+      editor.dispatchCommand(
+        INSERT_FOLDABLE_COMMAND,
+        "https://www.adit.io/imgs/probability/8_all_8.png"
+      );
       return false;
     },
     COMMAND_PRIORITY_HIGH
@@ -156,7 +185,7 @@ function LexicalEditor({
   const initialConfig = {
     namespace: "MyLexicalEditor",
     theme,
-    nodes: [BoldTextNode, ImageNode],
+    nodes: [BoldTextNode, ImageNode, FoldableNode],
     onError,
   };
 
@@ -199,6 +228,7 @@ function LexicalEditor({
 
         <BoldTextPlugin />
         <ImagePlugin />
+        <FoldablePlugin />
 
         {debug && <TreeViewPlugin />}
         {/*         <CodeHighlightPlugin />
