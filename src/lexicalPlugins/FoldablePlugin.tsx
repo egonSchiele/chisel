@@ -433,24 +433,38 @@ export function FoldablePlugin({ dispatch }) {
         return false;
       }
 
-      const container = $findMatchingParent(
-        selection.anchor.getNode(),
-        $isFoldableNode
-      );
+      let current = selection.anchor.getNode();
+      console.log(current, "anchor node");
+      let container;
+
+      if ($isFoldableNode(current)) {
+        container = current;
+      } else {
+        container = $findMatchingParent(current, $isFoldableNode);
+      }
+      console.log(container, "container");
 
       if (container === null) {
         return false;
       }
 
       const parent = container.getParent();
-      if (parent !== null && parent.getLastChild() === container) {
-        parent.append($createParagraphNode());
+      console.log({ parent });
+      console.log(parent.getLastChild());
+      if (parent !== null) {
+        const lastChild = parent.getLastChild();
+        if (
+          (!$isTextNode(lastChild) && !$isLineBreakNode(lastChild)) ||
+          isEmptyParagraphNode(lastChild)
+        ) {
+          parent.append($createParagraphNode());
+        }
       }
       return false;
     },
     COMMAND_PRIORITY_LOW
   ),
-    /*  editor.registerCommand(
+    editor.registerCommand(
       KEY_BACKSPACE_COMMAND,
       (event: KeyboardEvent) => {
         editor.update(() => {
@@ -458,15 +472,17 @@ export function FoldablePlugin({ dispatch }) {
           const root = $getRoot();
           const selection = $getSelection() as RangeSelection;
           if (!selection) return;
+          console.log({ sel: selection.anchor.offset });
 
-          if (!$isRangeSelection(selection) || selection.anchor.offset !== 0) {
+          /*           if (!$isRangeSelection(selection) || selection.anchor.offset !== 0) {
             return false;
-          }
+          } */
 
           const current = $getNodeByKey(selection.anchor.key);
           if (!current) return;
           const prev = current.getPreviousSibling();
           console.log({ current, selection, prev });
+
           if ($isFoldableNode(current)) {
             const text = current.getText();
             const para = $createParagraphNode();
@@ -484,31 +500,31 @@ export function FoldablePlugin({ dispatch }) {
             current.remove();
             prev.remove();
           } */
-    /* 
-        console.log($isLineBreakNode(current));
-        console.log($isFoldableNode(current.getPreviousSibling()));
- */
-    /* const start = selection.anchor;
-        const end = selection.focus; */
-    /* });
-        return false;
-      },
-      COMMAND_PRIORITY_LOW
-    );
- */
-    editor.registerCommand(
-      KEY_MODIFIER_COMMAND,
-      (event: KeyboardEvent) => {
-        if (event.code === "Period") {
-          event.preventDefault();
-          editor.dispatchCommand(INSERT_FOLDABLE_COMMAND, null);
 
-          return true;
-        }
+          console.log($isLineBreakNode(current));
+          console.log($isFoldableNode(current.getPreviousSibling()));
+
+          const start = selection.anchor;
+          const end = selection.focus;
+        });
         return false;
       },
       COMMAND_PRIORITY_LOW
     );
+
+  editor.registerCommand(
+    KEY_MODIFIER_COMMAND,
+    (event: KeyboardEvent) => {
+      if (event.code === "Period") {
+        event.preventDefault();
+        editor.dispatchCommand(INSERT_FOLDABLE_COMMAND, null);
+
+        return true;
+      }
+      return false;
+    },
+    COMMAND_PRIORITY_LOW
+  );
 
   /* const removeMutationListener = editor.registerMutationListener(
     FoldableNode,
@@ -588,4 +604,8 @@ function pickEndpoint(n, start, end) {
   throw new Error(
     "key not found, " + JSON.stringify({ key, s: start.key, e: end.key })
   );
+}
+
+function isEmptyParagraphNode(node) {
+  return $isParagraphNode(node) && node.getChildCount() === 0;
 }
