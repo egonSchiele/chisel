@@ -62,7 +62,7 @@ export class FoldableNode extends TextNode {
   createDOM(config: EditorConfig): HTMLElement {
     const container = document.createElement("div");
     container.className = "flex display-block";
-    //container.contentEditable = "false";
+    container.contentEditable = "false";
     /*     const button = document.createElement("div");
     button.className = "w-5 h-5 cursor-pointer mb-xs";
     button.innerText = ">";
@@ -86,8 +86,7 @@ export class FoldableNode extends TextNode {
     container.appendChild(details);
 
     const button = document.createElement("div");
-    button.className =
-      "bg-gray-500 px-2 h-full cursor-pointer mb-xs delete-foldable";
+    button.className = "bg-gray-500 px-2 h-full cursor-pointer delete-foldable";
     button.innerText = "x";
     button.setAttribute("data-key", this.__key);
 
@@ -302,10 +301,10 @@ export function FoldablePlugin({ dispatch }) {
               const endpoint = pickEndpoint(n, start, end);
               if (endpoint.type === "text" && $isTextNode(n)) {
                 let newText;
-                if (endpoint === start) {
-                  newText = getText(n, 0, start.offset);
+                if (i === 0) {
+                  newText = getText(n, 0, endpoint.offset);
                 } else {
-                  newText = getText(n, end.offset);
+                  newText = getText(n, endpoint.offset);
                 }
                 console.log("newText", newText);
                 n.setTextContent(newText);
@@ -572,12 +571,20 @@ function getText(node: any, start = null, end = null) {
 }
 
 function pickEndpoint(n, start, end) {
-  const key = n.__key;
+  let key = n.__key;
   if (key === start.key) {
     return start;
   } else if (key === end.key) {
     return end;
   }
+  // maybe it's the parent key?
+  key = n.__parent;
+  if (key === start.key) {
+    return start;
+  } else if (key === end.key) {
+    return end;
+  }
+
   throw new Error(
     "key not found, " + JSON.stringify({ key, s: start.key, e: end.key })
   );

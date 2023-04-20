@@ -86,4 +86,9 @@ pre {
 span ,p {
     display: inline-block;
     padding-left: 1px;
+    width: 100%;
 }
+/* 
+summary {
+    font-weight: bold;
+} */
