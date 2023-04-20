@@ -78,7 +78,7 @@ export class FoldableNode extends ElementNode {
     const summary = document.createElement("summary");
     summary.innerText = firstLine;
 
-    details.innerText = this.__text;
+    details.innerText = this.__text.substring(firstLine.length);
     details.appendChild(summary);
     console.log({ summary });
     details.open = this.__open;
@@ -110,7 +110,11 @@ export class FoldableNode extends ElementNode {
       this.setOpen(details.open);
 
       const summary = dom.querySelector("summary");
-      details.innerText = this.__text;
+      let len = summary.innerText.length;
+      if (len > 80) {
+        len = 80;
+      }
+      details.innerText = this.__text.substring(len);
 
       if (summary) {
         details.appendChild(summary);
