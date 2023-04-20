@@ -34,6 +34,7 @@ import {
   $createLineBreakNode,
   $isParagraphNode,
   KEY_MODIFIER_COMMAND,
+  SerializedTextNode,
 } from "lexical";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { BoldTextNode, $createBoldTextNode } from "./BoldTextPlugin";
@@ -41,7 +42,7 @@ import { $findMatchingParent } from "@lexical/utils";
 
 const FOLDABLE_REGEX = /^> (.+)$/;
 
-export class FoldableNode extends ElementNode {
+export class FoldableNode extends TextNode {
   __text: string;
 
   static getType(): string {
@@ -60,7 +61,7 @@ export class FoldableNode extends ElementNode {
 
   createDOM(config: EditorConfig): HTMLElement {
     const container = document.createElement("div");
-    container.className = "flex";
+    container.className = "flex display-block";
     //container.contentEditable = "false";
     /*     const button = document.createElement("div");
     button.className = "w-5 h-5 cursor-pointer mb-xs";
@@ -68,7 +69,7 @@ export class FoldableNode extends ElementNode {
     container.appendChild(button);
  */ const details = document.createElement("details");
     details.className =
-      "flex-grow bg-gray-700 pl-2 border-l-4 border-red-700 select-text";
+      "flex-grow bg-gray-700 pl-2 border-l-4 border-red-700 select-text display-block";
 
     let firstLine = this.__text.split("\n")[0];
     if (firstLine.length > 80) {
@@ -102,7 +103,7 @@ export class FoldableNode extends ElementNode {
     return container;
   }
 
-  updateDOM(prevNode: FoldableNode, dom: HTMLDetailsElement): false {
+  updateDOM(prevNode: TextNode, dom: HTMLDetailsElement): false {
     //console.log(this.__text, prevNode.__text, dom.innerText);
     const details = dom.querySelector("details");
     if (details) {
@@ -154,19 +155,16 @@ export class FoldableNode extends ElementNode {
     return <Foldable text={this.__text} />;
   } */
 
-  exportJSON(): SerializedElementNode<SerializedLexicalNode> & {
-    text: string;
-    open: boolean;
-  } {
+  exportJSON(): SerializedTextNode & { open: boolean } {
     return {
       text: this.__text,
       open: this.__open,
       type: "Foldable",
       version: 1,
-      children: [],
-      direction: "ltr",
-      format: "start",
-      indent: 2,
+      format: 0,
+      style: "normal",
+      detail: 0,
+      mode: "normal",
     };
   }
 
@@ -213,11 +211,11 @@ export function FoldablePlugin({ dispatch }) {
           let end = selection.focus;
 
           if (start.type === "text" && end.type === "text") {
-            if (parseInt(start.key) > parseInt(end.key)) {
+            /*   if (parseInt(start.key) > parseInt(end.key)) {
               const foo = start;
               start = end;
               end = foo;
-            } else if (parseInt(start.key) === parseInt(end.key)) {
+            } else */ if (parseInt(start.key) === parseInt(end.key)) {
               if (start.offset > end.offset) {
                 const foo = start;
                 start = end;
@@ -255,16 +253,18 @@ export function FoldablePlugin({ dispatch }) {
             nodeText = nodes
               .map((n, i) => {
                 if (i === 0) {
-                  console.log("first", n.getTextContent(), start.offset);
-                  if (start.type === "text") {
-                    return getText(n, start.offset);
+                  const endpoint = pickEndpoint(n, start, end);
+                  console.log("first", n.getTextContent(), endpoint.offset);
+                  if (endpoint.type === "text") {
+                    return getText(n, endpoint.offset);
                   } else {
                     return getText(n);
                   }
                 } else if (i === nodes.length - 1) {
-                  console.log("last", n.getTextContent(), end.offset);
-                  if (end.type === "text") {
-                    return getText(n, null, end.offset);
+                  const endpoint = pickEndpoint(n, start, end);
+                  console.log("last", n.getTextContent(), endpoint.offset);
+                  if (endpoint.type === "text") {
+                    return getText(n, null, endpoint.offset);
                   } else {
                     return getText(n);
                   }
@@ -272,6 +272,7 @@ export function FoldablePlugin({ dispatch }) {
                   return getText(n);
                 }
               })
+              .filter((n) => n !== "")
               .join("\n");
           }
           console.log(nodeText);
@@ -297,17 +298,17 @@ export function FoldablePlugin({ dispatch }) {
           }
           //if (nodes.length > 1) {
           nodes.forEach((n, i) => {
-            if (i === 0) {
-              if (start.type === "text" && $isTextNode(n)) {
-                const newText = getText(n, 0, start.offset);
+            if (i === 0 || i === nodes.length - 1) {
+              const endpoint = pickEndpoint(n, start, end);
+              if (endpoint.type === "text" && $isTextNode(n)) {
+                let newText;
+                if (endpoint === start) {
+                  newText = getText(n, 0, start.offset);
+                } else {
+                  newText = getText(n, end.offset);
+                }
                 console.log("newText", newText);
                 n.setTextContent(newText);
-              } else {
-                n.remove();
-              }
-            } else if (i === nodes.length - 1) {
-              if (end.type === "text" && $isTextNode(n)) {
-                n.setTextContent(getText(n, end.offset));
               } else {
                 n.remove();
               }
@@ -568,4 +569,16 @@ function getText(node: any, start = null, end = null) {
   if (start === null) return text.slice(0, end);
   if (end === null) return text.slice(start);
   return text.slice(start, end);
+}
+
+function pickEndpoint(n, start, end) {
+  const key = n.__key;
+  if (key === start.key) {
+    return start;
+  } else if (key === end.key) {
+    return end;
+  }
+  throw new Error(
+    "key not found, " + JSON.stringify({ key, s: start.key, e: end.key })
+  );
 }
