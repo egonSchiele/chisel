@@ -17,7 +17,6 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import TreeViewPlugin from "./TreeViewPlugin";
 
 const theme = {
   // Theme styling goes here
@@ -145,9 +144,6 @@ function LexicalEditor({
     onError,
   };
 
-  const queryParameters = new URLSearchParams(window.location.search);
-  const debug = queryParameters.get("debug");
-
   return (
     <div className="w-3/4 mx-auto">
       <MyContentEditable
@@ -181,14 +177,6 @@ function LexicalEditor({
             onSave();
           }}
         />
-        {debug && <TreeViewPlugin />}
-        {/*         <CodeHighlightPlugin />
-        <ListPlugin />
-        <LinkPlugin />
-        <AutoLinkPlugin />
-        <ListMaxIndentLevelPlugin maxDepth={7} />
- */}
-        {" "}
       </LexicalComposer>
     </div>
   );
