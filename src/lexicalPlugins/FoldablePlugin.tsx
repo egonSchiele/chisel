@@ -167,10 +167,6 @@ export class FoldableNode extends TextNode {
     };
   }
 
-  isParentRequired(): boolean {
-    return false;
-  }
-
   static importJSON(serialized): FoldableNode {
     return $createFoldableNode(serialized.text, serialized.open);
   }
@@ -434,7 +430,7 @@ export function FoldablePlugin({ dispatch }) {
       }
 
       let current = selection.anchor.getNode();
-      console.log(current, "anchor node");
+
       let container;
 
       if ($isFoldableNode(current)) {
@@ -442,15 +438,12 @@ export function FoldablePlugin({ dispatch }) {
       } else {
         container = $findMatchingParent(current, $isFoldableNode);
       }
-      console.log(container, "container");
 
       if (container === null) {
         return false;
       }
 
       const parent = container.getParent();
-      console.log({ parent });
-      console.log(parent.getLastChild());
       if (parent !== null) {
         const lastChild = parent.getLastChild();
         if (
@@ -470,18 +463,23 @@ export function FoldablePlugin({ dispatch }) {
         editor.update(() => {
           // Read the contents of the EditorState here.
           const root = $getRoot();
-          const selection = $getSelection() as RangeSelection;
+          const selection = $getSelection();
           if (!selection) return;
-          console.log({ sel: selection.anchor.offset });
+          //console.log({ sel: selection.anchor.offset });
 
           /*           if (!$isRangeSelection(selection) || selection.anchor.offset !== 0) {
             return false;
           } */
 
-          const current = $getNodeByKey(selection.anchor.key);
+          let current = $getNodeByKey(selection.anchor.key);
+          console.log("key", current.__key, selection.anchor.key);
+          if (selection.anchor.type === "element") {
+            //current = current.getChildByIndex(selection.anchor.offset);
+          }
           if (!current) return;
           const prev = current.getPreviousSibling();
           console.log({ current, selection, prev });
+          console.log(current.getTextContentSize());
 
           if ($isFoldableNode(current)) {
             const text = current.getText();
@@ -500,12 +498,6 @@ export function FoldablePlugin({ dispatch }) {
             current.remove();
             prev.remove();
           } */
-
-          console.log($isLineBreakNode(current));
-          console.log($isFoldableNode(current.getPreviousSibling()));
-
-          const start = selection.anchor;
-          const end = selection.focus;
         });
         return false;
       },
@@ -543,6 +535,33 @@ export function FoldablePlugin({ dispatch }) {
   textNode.setTextContent('foo');
  
 });*/
+
+  const removeMutationListener = editor.registerMutationListener(
+    FoldableNode,
+    (mutatedNodes) => {
+      return false;
+      // mutatedNodes is a Map where each key is the NodeKey, and the value is the state of mutation.
+      for (let [nodeKey, mutation] of mutatedNodes) {
+        if (mutation === "destroyed") {
+          editor.update(() => {
+            const root = $getRoot();
+            const child = root.getFirstChild();
+            const nodes = child.getChildren();
+            console.log(nodes);
+            const node = $getNodeByKey(nodeKey);
+            console.log(node);
+            const text = node.getText();
+            const para = $createParagraphNode();
+            const textNode = $createTextNode(text);
+            para.append(textNode);
+            node.insertAfter(para);
+            node.remove();
+            textNode.select();
+          });
+        }
+      }
+    }
+  );
 
   const handleClick = (event) => {
     if (!event.target) return;
