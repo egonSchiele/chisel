@@ -1,5 +1,3 @@
-/* import { $createHashtagNode, HashtagNode } from "@lexical/hashtag"; */
-
 import {
   $createParagraphNode,
   $createTextNode,
@@ -8,7 +6,6 @@ import {
   COMMAND_PRIORITY_HIGH,
   KEY_DOWN_COMMAND,
   RangeSelection,
-  TextNode,
 } from "lexical";
 import React, { useEffect } from "react";
 import * as t from "./Types";
@@ -21,11 +18,9 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import TreeViewPlugin from "./TreeViewPlugin";
-import BoldTextPlugin, { BoldTextNode } from "./lexicalPlugins/BoldTextPlugin";
-/* import { HashtagPlugin } from "./lexicalPlugins/LexicalHashtagPlugin"; */
 
 const theme = {
-  // hashtag: "text-yellow-500",
+  // Theme styling goes here
   // ...
 };
 
@@ -38,6 +33,7 @@ function onChange(editorState, dispatch) {
     const selection = $getSelection() as RangeSelection;
 
     const text = root.getTextContent();
+    // Get text from root
 
     dispatch({ type: "SET_SAVED", payload: false });
     dispatch({
@@ -146,7 +142,6 @@ function LexicalEditor({
   const initialConfig = {
     namespace: "MyLexicalEditor",
     theme,
-    nodes: [BoldTextNode],
     onError,
   };
 
@@ -186,9 +181,6 @@ function LexicalEditor({
             onSave();
           }}
         />
-
-        <BoldTextPlugin />
-
         {debug && <TreeViewPlugin />}
         {/*         <CodeHighlightPlugin />
         <ListPlugin />
@@ -196,6 +188,7 @@ function LexicalEditor({
         <AutoLinkPlugin />
         <ListMaxIndentLevelPlugin maxDepth={7} />
  */}
+        {" "}
       </LexicalComposer>
     </div>
   );
