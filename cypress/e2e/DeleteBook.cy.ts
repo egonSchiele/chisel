@@ -18,8 +18,8 @@ describe("delete book", () => {
     cy.selectChapter();
 
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
-    cy.get("div[data-lexical-editor=true]").last().type(`${text}{enter}`);
-    cy.get("div[data-lexical-editor=true]").last().type(`{command+s}`);
+    cy.get(".ql-editor").last().type(`${text}{enter}`);
+    cy.get(".ql-editor").last().type(`{command+s}`);
 
     cy.deleteChapter();
     cy.contains("div", title).should("not.exist");
@@ -40,8 +40,8 @@ describe("delete book", () => {
     cy.selectChapter();
 
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
-    cy.get("div[data-lexical-editor=true]").last().type(`${text}{enter}`);
-    cy.get("div[data-lexical-editor=true]").last().type(`{command+s}`);
+    cy.get(".ql-editor").last().type(`${text}{enter}`);
+    cy.get(".ql-editor").last().type(`{command+s}`);
 
     cy.deleteBook();
     cy.contains("div", title).should("not.exist");

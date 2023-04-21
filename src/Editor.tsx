@@ -1,6 +1,6 @@
 import React from "react";
 import "./globals.css";
-import LexicalEditor from "./LexicalEditor";
+import TextEditor from "./TextEditor";
 import * as t from "./Types";
 import { getCsrfToken } from "./utils";
 
@@ -11,7 +11,7 @@ export default function Editor({
 }: {
   state: t.State;
   dispatch: React.Dispatch<t.ReducerAction>;
-  onSave: () => void;
+  onSave: (state: t.State) => void;
 }) {
   async function saveChapter(state: t.State) {
     if (state.saved) return;
@@ -56,12 +56,12 @@ export default function Editor({
           <div className="flex flex-grow" />
         </div>
         <div className="h-full w-full">
-          <LexicalEditor
+          <TextEditor
             dispatch={dispatch as any}
             state={state.editor}
             chapterid={state.chapter.chapterid}
             saved={state.saved}
-            onSave={onSave}
+            onSave={() => onSave(state)}
           />
         </div>
       </div>
