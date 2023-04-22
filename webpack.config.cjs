@@ -40,6 +40,7 @@ module.exports = {
     privacy: "./empty.tsx",
     register: "./empty.tsx",
     home: "./home.tsx",
+    userguide: "./userguide.tsx",
     404: "./empty.tsx",
   },
   output: {
