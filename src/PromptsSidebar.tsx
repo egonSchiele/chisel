@@ -65,6 +65,7 @@ export default function PromptsSidebar({
         dispatch,
       )}
       className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
+      data-selector={`prompt-${prompt.label}-button`}
     >
       <p className="px-xs">{prompt.label}</p>
     </li>

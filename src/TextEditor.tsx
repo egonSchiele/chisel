@@ -44,7 +44,7 @@ function TextEditor({
     }
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    editor.getContents().insert(state._pushContentToEditor);
+    editor.insertText(-1, state._pushContentToEditor);
   }, [quillRef.current, chapterid, state._pushContentToEditor]);
 
   const focus = () => {

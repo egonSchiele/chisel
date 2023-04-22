@@ -13,8 +13,9 @@ export default function SuggestionPanel({
       title={title}
       onClick={() => onClick(contents)}
       onDelete={onDelete}
+      selector="ai-suggestion-panel"
     >
-      <p className="">{contents}</p>
+      <p>{contents}</p>
     </Panel>
   );
 }

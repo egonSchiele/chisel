@@ -17,6 +17,7 @@ export default function Panel({
         {onDelete && (
           <XMarkIcon
             className="w-4 m-2 absolute top-0 right-0 cursor-pointer"
+            data-selector={`delete-${selector}`}
             onClick={onDelete}
           />
         )}

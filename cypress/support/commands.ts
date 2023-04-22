@@ -107,6 +107,10 @@ Cypress.Commands.add("toggleSidebar", (user) => {
   cy.get("button[data-selector='sidebar-button']").click();
 });
 
+Cypress.Commands.add("togglePrompts", (user) => {
+  cy.get("button[data-selector='prompts-button']").click();
+});
+
 Cypress.Commands.add("showHistory", (user) => {
   cy.get("button[data-selector='history-button']").click();
   cy.contains("h3", "History");
