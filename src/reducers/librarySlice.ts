@@ -1,5 +1,5 @@
-import * as toolkitRaw from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import * as toolkitRaw from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import { localStorageOrDefault } from "../utils";
 
@@ -69,7 +69,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
 };
 
 export const librarySlice = createSlice({
-  name: 'library',
+  name: "library",
   initialState: initialState(null),
   reducers: {
     setBooks(state, action: PayloadAction<t.Book[]>) {
@@ -88,7 +88,9 @@ export const librarySlice = createSlice({
     deleteChapter(state, action: PayloadAction<string>) {
       const chapterid = action.payload;
 
-      state.selectedBook.chapters = state.selectedBook.chapters.filter((chapter) => chapter.chapterid !== chapterid);
+      state.selectedBook.chapters = state.selectedBook.chapters.filter(
+        (chapter) => chapter.chapterid !== chapterid,
+      );
 
       state.selectedBook.chapterTitles = state.selectedBook.chapterTitles.filter(
         (chapter) => chapter.chapterid !== chapterid,
@@ -149,13 +151,6 @@ export const librarySlice = createSlice({
       }
       state.saved = false;
     },
-    setLoadedChapterData(state, action) {
-      state.chapter = action.payload.chapter;
-      state.suggestions = action.payload.suggestions;
-      state.editor.text = action.payload.text;
-      state.editor.title = action.payload.title;
-      state.editor.chapterid = action.payload.chapterid;
-    },
     setSuggestions(state, action) {
       if (action.payload) {
         state.suggestions = action.payload;
@@ -180,21 +175,6 @@ export const librarySlice = createSlice({
       state.editor.text += action.payload;
       state.saved = false;
     },
-    setSynonyms(state, action) {
-      state.synonyms = action.payload;
-    },
-    clearSynonyms(state, action) {
-      state.synonyms = [];
-    },
-    setTooltipPosition(state, action) {
-      state.editor.tooltipPosition = action.payload;
-    },
-    openTooltip(state) {
-      state.editor.tooltipOpen = true;
-    },
-    closeTooltip(state) {
-      state.editor.tooltipOpen = false;
-    },
     setSelectedText(state, action) {
       state.editor.selectedText = action.payload;
     },
@@ -207,10 +187,6 @@ export const librarySlice = createSlice({
         state.editor.selectedText,
       );
     },
-    synonymSelected(state, action) {
-      state.editor.selectedText = action.payload;
-      state.editor.tooltipOpen = false;
-    },
     addSuggestion(state, action) {
       state.suggestions.push({
         type: action.payload.label,
@@ -222,12 +198,8 @@ export const librarySlice = createSlice({
       state.suggestions.splice(action.payload, 1);
       state.saved = false;
     },
-    setAllNewState(state, action) {
-      // eslint-disable-next-line
-      return action.payload;
-    },
     setChapterOrder(state, action) {
-      const { ids, bookid } = action.payload;
+      const { ids } = action.payload;
       console.log(ids);
       const newTitles = [];
       ids.forEach((id) => {
@@ -270,10 +242,6 @@ export const librarySlice = createSlice({
     closeSidebar(state) {
       state.panels.sidebar.open = false;
       localStorage.setItem("sidebarOpen", "false");
-    },
-    openPrompts(state) {
-      state.panels.prompts.open = true;
-      localStorage.setItem("promptsOpen", "true");
     },
     closePrompts(state) {
       state.panels.prompts.open = false;

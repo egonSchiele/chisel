@@ -12,11 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
-import {
-  fetchSuggestionsWrapper,
-  getCsrfToken,
-  useInterval,
-} from "./utils";
+import { fetchSuggestionsWrapper, getCsrfToken, useInterval } from "./utils";
 import Launcher from "./Launcher";
 import {
   ArrowsPointingInIcon,
@@ -79,7 +75,7 @@ export default function Library() {
       if (state.launcherOpen) {
         dispatch(librarySlice.actions.toggleLauncher());
       } else if (state.viewMode === "fullscreen") {
-        dispatch(librarySlice.actions.setViewMode('default'));
+        dispatch(librarySlice.actions.setViewMode("default"));
       } else if (state.viewMode === "focus") {
         focusModeClose();
       } else if (
@@ -741,11 +737,7 @@ export default function Library() {
             )}
           </div>
           <div className="flex-grow h-full w-full">
-            {state.chapter && (
-              <Editor
-                onSave={onTextEditorSave}
-              />
-            )}
+            {state.chapter && <Editor onSave={onTextEditorSave} />}
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>

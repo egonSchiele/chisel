@@ -102,7 +102,13 @@ function TextEditor({
 
     if (range) {
       const word = quill.getText(range.index, range.length).trim();
-      dispatch(librarySlice.actions.setSelectedText({ index: range.index, length: range.length, contents: word }));
+      dispatch(
+        librarySlice.actions.setSelectedText({
+          index: range.index,
+          length: range.length,
+          contents: word,
+        }),
+      );
     } else {
       console.log("no range");
       dispatch(librarySlice.actions.clearSelectedText());
