@@ -9,7 +9,6 @@ export default function Button({
   rounded = false,
   size = "medium",
   style = "primary",
-  buttonType = "button",
   selector = "",
 }: {
   size?: ButtonSize;
@@ -19,7 +18,6 @@ export default function Button({
   disabled?: boolean;
   rounded?: boolean;
   style?: "primary" | "secondary";
-  buttonType?: "button" | "submit";
   selector?: string;
 }) {
   let colors = "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
@@ -46,7 +44,7 @@ export default function Button({
 
   return (
     <button
-      type={buttonType}
+      type="button"
       disabled={disabled}
       className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${colors} ${sizeCss} ${roundedCss} ${className}`}
       data-selector={selector}

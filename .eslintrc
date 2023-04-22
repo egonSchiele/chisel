@@ -3,16 +3,8 @@
 {
   "ignorePatterns": ["node_modules/*", "dist/*", "tmp/*", "src/FocusMode.tsx"],
   "rules": {
-    "quotes": "off",
-    "react/prop-types": "off",
-    "no-console": "off",
-    "max-len": "off",
-    "no-underscore-dangle": "off",
-    "no-plusplus": "off", // i++
     "no-unused-vars": "off",
 
-    // gives too many false positives, ts checks this anyway
-    "no-undef": "off",
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "react/jsx-filename-extension": "off",
@@ -44,11 +36,19 @@
     "no-constant-condition": "off",
     "no-restricted-syntax": "off",
     "no-empty-pattern": "off",
-    /* "radix": "off", */
     "no-empty": "off",
-    /* "import/prefer-default-export": "off", */
-    "react/button-has-type": "off",
-    "jsx-a11y/no-static-element-interactions": "off"
+    "jsx-a11y/no-static-element-interactions": "off",
+
+    // leave these off
+    "quotes": "off",
+    "react/prop-types": "off",
+    "no-console": "off",
+    "max-len": "off",
+    "no-underscore-dangle": "off", // _chapter
+    "no-plusplus": "off", // i++
+
+    // gives too many false positives, ts checks this anyway
+    "no-undef": "off"
   },
   "extends": [
     "eslint:recommended",
