@@ -10,3 +10,4 @@ settings.js
 yarn.lock
 tmp/*
 yarn-error.log
+.idea/

@@ -114,7 +114,9 @@ export const fetchSuggestionsWrapper = async (
 
   result.payload.forEach((choice) => {
     const generatedText = choice.text;
-    dispatch(librarySlice.actions.addSuggestion({ label, value: generatedText }));
+    dispatch(
+      librarySlice.actions.addSuggestion({ label, value: generatedText }),
+    );
   });
   dispatch(librarySlice.actions.setSuggestions(false));
 

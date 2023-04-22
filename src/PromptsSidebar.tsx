@@ -41,7 +41,12 @@ export default function PromptsSidebar({
 
     const synonyms = response.map((item) => item.word);
     console.log("synonyms", synonyms);
-    dispatch(librarySlice.actions.addSuggestion({ label: 'Synonyms', value: synonyms.join(', ') }));
+    dispatch(
+      librarySlice.actions.addSuggestion({
+        label: "Synonyms",
+        value: synonyms.join(", "),
+      }),
+    );
     dispatch(librarySlice.actions.setSaved(false));
     setLoading(false);
     onLoad();

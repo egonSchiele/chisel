@@ -1,4 +1,4 @@
-import * as toolkitRaw from '@reduxjs/toolkit';
+import * as toolkitRaw from "@reduxjs/toolkit";
 import { librarySlice } from "./reducers/librarySlice";
 
 // @ts-ignore
@@ -11,5 +11,5 @@ export const store = configureStore({
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

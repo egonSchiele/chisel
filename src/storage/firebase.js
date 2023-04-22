@@ -37,11 +37,12 @@ export const getBook = async (bookid) => {
   console.log({ bookid });
   const bookRef = db.collection("books").doc(bookid);
 
-  const chapterRef = db
-    .collection("chapters")
-    .where("bookid", "==", bookid);
+  const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
 
-  const [bookObj, chapters] = await Promise.all([bookRef.get(), chapterRef.get()]);
+  const [bookObj, chapters] = await Promise.all([
+    bookRef.get(),
+    chapterRef.get(),
+  ]);
 
   if (!bookObj.exists) {
     return null;

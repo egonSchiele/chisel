@@ -58,9 +58,7 @@ export default function Chapter({
       >
         {!small && (
           <div>
-            <div
-              className="handle cursor-move uppercase font-semibold p-xs text-black dark:text-white dark:bg-slate-400 text-sm bg-slate-400"
-            >
+            <div className="handle cursor-move uppercase font-semibold p-xs text-black dark:text-white dark:bg-slate-400 text-sm bg-slate-400">
               {chapter.title}
               {/*  | {chapter.chapterid} */}
             </div>
@@ -75,9 +73,7 @@ export default function Chapter({
 
         {small && (
           <div className="h-18 text-center">
-            <div
-              className="handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-9 max-h-9 overflow-hidden pt-1"
-            >
+            <div className="handle cursor-move uppercase font-semibold p-0 text-gray-700 dark:text-black dark:bg-slate-400 text-xs h-9 max-h-9 overflow-hidden pt-1">
               {chapter.title}
             </div>
             <Link

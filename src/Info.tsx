@@ -1,5 +1,5 @@
-import React from 'react';
-import { syllable } from 'syllable';
+import React from "react";
+import { syllable } from "syllable";
 
 const countSyllables = (text: string) => {
   try {
