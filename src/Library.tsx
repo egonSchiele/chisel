@@ -409,6 +409,8 @@ export default function Library() {
           onSuggestionLoad,
           prompt.text,
           prompt.label,
+          useSelector((state: RootState) => state.library.editor),
+          dispatch,
         );
       },
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,

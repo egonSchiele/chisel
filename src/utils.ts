@@ -83,10 +83,9 @@ export const fetchSuggestionsWrapper = async (
   onLoad,
   prompt,
   label,
+  state,
+  dispatch,
 ) => {
-  const state = useSelector((state: RootState) => state.library.editor);
-  const dispatch = useDispatch();
-
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let { text } = state;
   if (

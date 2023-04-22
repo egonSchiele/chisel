@@ -61,6 +61,8 @@ export default function PromptsSidebar({
         onLoad,
         prompt.text,
         prompt.label,
+        state,
+        dispatch,
       )}
       className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
     >
