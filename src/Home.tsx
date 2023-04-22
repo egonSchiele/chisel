@@ -60,7 +60,7 @@ export default function Home() {
           Chisel editor
         </h1>
         <p className="mt-xs text-lg leading-8 text-gray-800 dark:text-gray-300 ">
-          A community of 22 writers and counting
+          A community of 27 writers and counting
         </p>
         <div className="my-10 flex gap-x-6">
           <a
