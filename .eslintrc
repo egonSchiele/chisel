@@ -34,8 +34,7 @@
     "no-return-await": "off",
     "max-classes-per-file": "off",
     "no-constant-condition": "off",
-    "no-restricted-syntax": "off",
-    "no-empty-pattern": "off",
+
     "no-empty": "off",
     "jsx-a11y/no-static-element-interactions": "off",
 

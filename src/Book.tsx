@@ -101,7 +101,7 @@ const reducer = produce((draft: t.Book, action: any) => {
   }
 });
 
-export default function Book({}) {
+export default function Book() {
   const [state, dispatch] = React.useReducer<(state: t.Book, action: any) => any
     >(reducer, initialState);
   const [error, setError] = React.useState("");
@@ -294,7 +294,7 @@ export default function Book({}) {
   const stackElements = [];
 
   let key = 0;
-  for (const pos in positions) {
+  Object.keys(positions).forEach((pos) => {
     if (positions[pos] > 1) {
       const [x, y] = pos.split(",").map((n) => parseInt(n, 10));
       stackElements.push(
@@ -310,7 +310,7 @@ export default function Book({}) {
         </p>,
       );
     }
-  }
+  });
 
   let elements = [];
   const chapterElements = [];
