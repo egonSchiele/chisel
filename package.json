@@ -85,6 +85,7 @@
     "cypress": "cypress open",
     "depcheck": "depcheck",
     "lint": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prettier": "prettier"
   }
 }

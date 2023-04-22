@@ -8,13 +8,13 @@ import {
   InformationCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useDispatch, useSelector } from "react-redux";
 import History from "./History";
 import Settings from "./Settings";
 import SuggestionPanel from "./SuggestionPanel";
 import Info from "./Info";
 import List from "./components/List";
 import NavButton from "./NavButton";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import { librarySlice } from "./reducers/librarySlice";
 

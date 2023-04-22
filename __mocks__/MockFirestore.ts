@@ -88,16 +88,16 @@ export class MockDocRef {
       return data;
     }
     if (this.options.allowedMethods.includes("updateOrderStatus")) {
-      if (true) {
-        // isEqual(Object.keys(data), ["status"])) {
-        this.calls.update.push(data);
-      } else {
+      // if (true) {
+      // isEqual(Object.keys(data), ["status"])) {
+      this.calls.update.push(data);
+      /* } else {
         throw new MockFirebaseMethodError(
           `update order status method is allowed, but you are updating more than the order status. Data: ${JSON.stringify(
             data,
           )}`,
         );
-      }
+      } */
       return data;
     }
     throw new MockFirebaseMethodError(

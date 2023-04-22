@@ -624,7 +624,7 @@ export default function Library() {
               chapters={chapterlistChapters}
               bookid={state.selectedBook.bookid}
               selectedChapterId={chapterid || ""}
-              onChange={async () => await fetchBook()}
+              onChange={async () => fetchBook()}
               onDelete={(deletedChapterid) => {
                 dispatch(librarySlice.actions.deleteChapter(deletedChapterid));
                 if (deletedChapterid === chapterid) {

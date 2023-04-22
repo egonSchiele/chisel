@@ -10,8 +10,8 @@ import { BrowserRouter } from "react-router-dom";
 import { render, fireEvent, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { act } from "react-dom/test-utils";
-import { store } from "./store";
 import { Provider } from "react-redux";
+import { store } from "./store";
 
 const props = {
   chapters: [chapter1, chapter2],

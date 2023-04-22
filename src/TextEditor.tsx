@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./globals.css";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "./components/Button";
 import ButtonGroup from "./components/ButtonGroup";
 import { EditorState, State } from "./Types";
@@ -11,7 +12,6 @@ import Select from "./components/Select";
 import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import { librarySlice } from "./reducers/librarySlice";
 

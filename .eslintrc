@@ -26,14 +26,13 @@
     /* "consistent-return": "off", */
     "react/jsx-props-no-spreading": "off",
     "react/style-prop-object": "off",
-    "react/no-array-index-key": "off",
+
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "react/no-unescaped-entities": "off",
-    "react/jsx-no-bind": "off",
-    "no-return-await": "off",
+    "react/jsx-no-bind": "off", // JSX props should not use functions
+
     "max-classes-per-file": "off",
-    "no-constant-condition": "off",
 
     "no-empty": "off",
     "jsx-a11y/no-static-element-interactions": "off",
@@ -47,7 +46,8 @@
     "no-plusplus": "off", // i++
 
     // gives too many false positives, ts checks this anyway
-    "no-undef": "off"
+    "no-undef": "off",
+    "react/no-array-index-key": "off" // Do not use Array index in keys
   },
   "extends": [
     "eslint:recommended",
