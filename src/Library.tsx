@@ -59,7 +59,7 @@ export default function Library() {
   useEffect(() => {
     if (chapterid && state.selectedBook) {
       const chapter = state.selectedBook.chapters.find(
-        (c: t.Chapter) => c.chapterid === chapterid,
+        (c: t.Chapter) => c.chapterid === chapterid
       );
       if (chapter) {
         dispatch(librarySlice.actions.setChapter(chapter));
@@ -79,10 +79,10 @@ export default function Library() {
       } else if (state.viewMode === "focus") {
         focusModeClose();
       } else if (
-        state.panels.sidebar.open
-        || state.panels.prompts.open
-        || state.panels.bookList.open
-        || state.panels.chapterList.open
+        state.panels.sidebar.open ||
+        state.panels.prompts.open ||
+        state.panels.bookList.open ||
+        state.panels.chapterList.open
       ) {
         dispatch(librarySlice.actions.closeAllPanels());
       } else {
@@ -191,9 +191,8 @@ export default function Library() {
 
   async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
     const chapter = { ..._chapter };
-    if (suggestions.length > 0) {
-      chapter.suggestions = state.suggestions;
-    }
+
+    chapter.suggestions = state.suggestions;
 
     const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
 
@@ -255,8 +254,8 @@ export default function Library() {
 
   const togglePanel = (panel: string) => {
     if (
-      state.panels.sidebar.open
-      && state.panels.sidebar.activePanel === panel
+      state.panels.sidebar.open &&
+      state.panels.sidebar.activePanel === panel
     ) {
       dispatch(librarySlice.actions.closeSidebar());
     } else {
@@ -332,8 +331,8 @@ export default function Library() {
     },
     {
       label:
-        state.panels.sidebar.open
-        && state.panels.sidebar.activePanel === "history"
+        state.panels.sidebar.open &&
+        state.panels.sidebar.activePanel === "history"
           ? "Close History"
           : "Open History",
       icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -353,8 +352,8 @@ export default function Library() {
     },
     {
       label:
-        state.panels.sidebar.open
-        && state.panels.sidebar.activePanel === "suggestions"
+        state.panels.sidebar.open &&
+        state.panels.sidebar.activePanel === "suggestions"
           ? "Close Suggestions"
           : "Open Suggestions",
       icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -364,8 +363,8 @@ export default function Library() {
     },
     {
       label:
-        state.panels.sidebar.open
-        && state.panels.sidebar.activePanel === "settings"
+        state.panels.sidebar.open &&
+        state.panels.sidebar.activePanel === "settings"
           ? "Close Settings"
           : "Open Settings",
       icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -410,7 +409,7 @@ export default function Library() {
           prompt.text,
           prompt.label,
           useSelector((state: RootState) => state.library.editor),
-          dispatch,
+          dispatch
         );
       },
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
@@ -470,7 +469,7 @@ export default function Library() {
     if (state.selectedBook && state.selectedBook.chapterTitles) {
       state.selectedBook.chapterTitles.forEach((chaptertitle) => {
         const chapter = state.selectedBook.chapters.find(
-          (c) => c.chapterid === chaptertitle.chapterid,
+          (c) => c.chapterid === chaptertitle.chapterid
         );
         if (chapter) {
           localChapterListChapters.push(chapter);
@@ -483,14 +482,15 @@ export default function Library() {
     setChapterListChapters(localChapterListChapters);
   }, [state.selectedBook?.chapters]);
 
-  const sidebarWidth = state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
+  const sidebarWidth =
+    state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
 
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
     let selected = state.editor.selectedText;
     if (
-      state.editor.selectedText.contents === ""
-      && state.editor._cachedSelectedText
+      state.editor.selectedText.contents === "" &&
+      state.editor._cachedSelectedText
     ) {
       if (state.editor._cachedSelectedText.contents !== "") {
         selected = state.editor._cachedSelectedText;
@@ -505,7 +505,7 @@ export default function Library() {
         state.editor.text,
         selected.index,
         selected.index + selected.length,
-        state._temporaryFocusModeState,
+        state._temporaryFocusModeState
       );
     } else {
       // no selection, just replace the whole thing,
@@ -555,9 +555,9 @@ export default function Library() {
   }
 
   if (
-    state.viewMode === "fullscreen"
-    && state.chapter
-    && state.chapter.chapterid
+    state.viewMode === "fullscreen" &&
+    state.chapter &&
+    state.chapter.chapterid
   ) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-scroll">
@@ -571,7 +571,9 @@ export default function Library() {
           settings={settings}
           setSettings={setSettings}
           activePanel={state.panels.sidebar.activePanel}
-          setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
+          setActivePanel={(panel) =>
+            dispatch(librarySlice.actions.setActivePanel(panel))
+          }
           maximize={state.viewMode === "fullscreen"}
           onSuggestionClick={addToContents}
           onSuggestionDelete={(index) => {
@@ -635,7 +637,9 @@ export default function Library() {
                 }
               }}
               saveChapter={(chapter) => saveChapter(chapter, [])}
-              closeSidebar={() => dispatch(librarySlice.actions.closeChapterList())}
+              closeSidebar={() =>
+                dispatch(librarySlice.actions.closeChapterList())
+              }
               canCloseSidebar={chapterid !== undefined || !state.selectedBook}
             />
           </div>
@@ -644,9 +648,9 @@ export default function Library() {
         <div className="h-full flex flex-col flex-grow">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
-              {(!state.panels.bookList.open
-                || !state.panels.chapterList.open) && (
-              /*       <button
+              {(!state.panels.bookList.open ||
+                !state.panels.chapterList.open) && (
+                /*       <button
                   type="button"
                   className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0 "
                   onClick={() => {
@@ -682,7 +686,9 @@ export default function Library() {
 
                 <NavButton
                   label="Focus Mode"
-                  onClick={() => dispatch(librarySlice.actions.setViewMode("focus"))}
+                  onClick={() =>
+                    dispatch(librarySlice.actions.setViewMode("focus"))
+                  }
                 >
                   {/*                   <p className="mr-xs">
                     {state.editor.selectedText.contents.length}
@@ -762,7 +768,9 @@ export default function Library() {
               settings={settings}
               setSettings={setSettings}
               activePanel={state.panels.sidebar.activePanel}
-              setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
+              setActivePanel={(panel) =>
+                dispatch(librarySlice.actions.setActivePanel(panel))
+              }
               maximize={state.viewMode === "fullscreen"}
               onSuggestionClick={addToContents}
               onSuggestionDelete={(index) => {

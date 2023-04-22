@@ -49,8 +49,7 @@ describe("prompts", () => {
         expect(t.length).to.be.greaterThan(text.length);
       });
 
-    // save
-    cy.get(".ql-editor").last().type(`{command+s}`);
+    cy.manuallySave();
 
     // go back, the new suggestion should be there
     cy.visit("http://localhost:80/");
@@ -66,7 +65,7 @@ describe("prompts", () => {
     cy.get(`svg[data-selector='delete-ai-suggestion-panel']`).click();
 
     cy.get(`div[data-selector='ai-suggestion-panel']`).should("not.exist");
-
+    cy.manuallySave();
     // go back, the new suggestion should not be there anymore
     cy.visit("http://localhost:80/");
 
