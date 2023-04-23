@@ -38,16 +38,7 @@ export const mockBook = {
   rowHeadings: ["", "", "", "", "", "", "", "", "", "", "", ""],
   columnHeadings: ["", "", "", "", "", "", "", "", "", "", "", ""],
   title: "Test story",
-  chapterTitles: [
-    {
-      chapterid: "chapter_1",
-      title: "New job",
-    },
-    {
-      chapterid: "chapter_2",
-      title: "new chapter fresh from the oven",
-    },
-  ],
+  chapterOrder: ["chapter_1", "chapter_2"],
   userid: "user_1",
   bookid: "book_1",
 };

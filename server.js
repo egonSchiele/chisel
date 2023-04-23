@@ -198,7 +198,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       title: "Untitled",
       author: "Unknown",
       chapters: [],
-      chapterTitles: [],
+      chapterOrder: [],
       design: {
         coverColor: "bg-dmlistitem2",
         labelColor: "bg-blue-700",

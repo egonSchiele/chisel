@@ -113,7 +113,10 @@ export const getBooks = async (userid) => {
   const promises = asArray(books).map(async (book) => {
     const chapters = await getChaptersForBook(book.bookid);
     book.chapters = chapters;
-    book.chapterTitles = chapters.map((chapter) => chapter.title);
+    if (book.chapterTitles) {
+      book.chapterOrder = book.chapterTitles.map((c) => c.chapterid);
+      delete book.chapterTitles;
+    }
     allBooks.push(book);
   });
   await Promise.all(promises);
@@ -172,8 +175,8 @@ export const deleteChapter = async (chapterid, bookid) => {
     console.log("no book to update");
     return;
   }
-  book.chapterTitles = book.chapterTitles.filter(
-    (chapter) => chapter.chapterid !== chapterid,
+  book.chapterOrder = book.chapterOrder.filter(
+    (_chapterid) => _chapterid !== chapterid,
   );
   await saveBook(book);
 };

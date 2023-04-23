@@ -85,17 +85,14 @@ export type Column = {
   title: string;
 };
 
-export type ChapterTitle = {
-  chapterid: string;
-  title: string;
-};
+export type ChapterId = string;
 
 export type Book = {
   userid: string;
   bookid: string;
   title: string;
   author: string;
-  chapterTitles: ChapterTitle[];
+  chapterOrder: ChapterId[];
   chapters: Chapter[];
   design: {
     coverColor: string;

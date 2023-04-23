@@ -200,21 +200,13 @@ export const librarySlice = createSlice({
       state.suggestions.splice(action.payload, 1);
       state.saved = false;
     },
-    /*  setChapterOrder(state, action) {
+    setChapterOrder(state, action) {
       const { ids } = action.payload;
-      console.log(ids);
-      const newTitles = [];
-      ids.forEach((id) => {
-        const chapter = state.selectedBook.chapterTitles.find(
-          (chapter) => chapter.chapterid === id
-        );
-        if (chapter) {
-          newTitles.push(chapter);
-        }
-      });
-      state.selectedBook.chapterTitles = newTitles;
+
+      const book = getSelectedBook({ library: state });
+      book.chapterOrder = ids;
       state.saved = false;
-    }, */
+    },
     setTemporaryFocusModeState(state, action) {
       state._temporaryFocusModeState = action.payload;
     },
@@ -348,6 +340,13 @@ export const getSelectedBookChapters = (
   if (!book) return null;
 
   const { chapters } = book;
-
+  if (book.chapterOrder.length > 0) {
+    const sortedChapters = [];
+    book.chapterOrder.forEach((id) => {
+      const chapter = chapters.find((chapter) => chapter.chapterid === id);
+      if (chapter) sortedChapters.push(chapter);
+    });
+    return sortedChapters;
+  }
   return chapters;
 };

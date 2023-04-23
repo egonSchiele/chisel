@@ -21,7 +21,7 @@ const initialState: t.Book = {
   bookid: "",
   title: "",
   author: "",
-  chapterTitles: [],
+  chapterOrder: [],
   chapters: [],
   design: {
     coverColor: "bg-red-700",

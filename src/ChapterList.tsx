@@ -97,9 +97,9 @@ export default function ChapterList({
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
-    console.log(result);
+    console.log(result.source.index, result.destination.index);
     const ids = chapters.map((chapter) => chapter.chapterid);
-
+    console.log(ids);
     const [removed] = ids.splice(result.source.index, 1);
     ids.splice(result.destination.index, 0, removed);
 
