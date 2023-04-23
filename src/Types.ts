@@ -2,8 +2,8 @@ export type State = {
   books: Book[];
   error: string;
   loading: boolean;
-
-  selectedBook: Book | null;
+  booksLoaded: boolean;
+  selectedBookId: string | null;
   editor: EditorState;
   chapter: Chapter | null;
   synonyms: string[];
