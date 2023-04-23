@@ -33,10 +33,7 @@ export type SelectedText = {
 };
 
 export type EditorState = {
-  title: string;
-  text: string;
   contents: any;
-  chapterid: string;
   selectedText: SelectedText;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;

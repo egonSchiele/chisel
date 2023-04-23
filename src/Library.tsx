@@ -168,7 +168,7 @@ export default function Library() {
   async function saveToHistory(state: t.State) {
     const body = JSON.stringify({
       chapterid: currentChapter.chapterid,
-      text: currentChapter.text,
+      text: currentChapter.text.map((t) => t.text).join("\n"),
       csrfToken: getCsrfToken(),
     });
 
@@ -465,7 +465,8 @@ export default function Library() {
 
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
-    let selected = state.editor.selectedText;
+
+    /* let selected = state.editor.selectedText;
     if (
       state.editor.selectedText.contents === ""
       && state.editor._cachedSelectedText
@@ -480,7 +481,8 @@ export default function Library() {
     let replacement;
     if (selected.length > 0) {
       replacement = replace(
-        state.editor.text,
+        // TODO which text index?
+        currentChapter.text,
         selected.index,
         selected.index + selected.length,
         state._temporaryFocusModeState,
@@ -494,7 +496,7 @@ export default function Library() {
     // TODO not sure how multiple texts work w focus mode
     dispatch(
       librarySlice.actions.pushTextToEditor({ index: 0, text: replacement }),
-    );
+    ); */
   }
 
   function replace(full, start, end, replacement) {
@@ -507,7 +509,8 @@ export default function Library() {
       text = state.editor._cachedSelectedText.contents;
     }
     if (!text) {
-      text = state.editor.text;
+      // TODO
+      text = currentChapter.text.map((t) => t.text).join("\n");
     }
     return (
       <div>
