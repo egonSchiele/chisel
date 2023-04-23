@@ -37,7 +37,7 @@ import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
-import { librarySlice } from "./reducers/librarySlice";
+import { getChapterTitles, librarySlice } from "./reducers/librarySlice";
 
 export default function Library() {
   const state = useSelector((state: RootState) => state.library);
@@ -376,7 +376,7 @@ export default function Library() {
 
   if (state.books) {
     state.books.forEach((book, i) => {
-      book.chapterTitles.forEach((chapter, i) => {
+      book.chapters.forEach((chapter, i) => {
         launchItems.push({
           label: chapter.title || "(No title)",
           onClick: () => {
@@ -466,7 +466,7 @@ export default function Library() {
   useEffect(() => {
     const localChapterListChapters = [];
 
-    if (state.selectedBook && state.selectedBook.chapterTitles) {
+    if (state.selectedBook) {
       state.selectedBook.chapterTitles.forEach((chaptertitle) => {
         const chapter = state.selectedBook.chapters.find(
           (c) => c.chapterid === chaptertitle.chapterid,

@@ -311,3 +311,11 @@ export const librarySlice = createSlice({
     },
   },
 });
+
+export const getChapterTitles = (bookid) => (state) => {
+  const book = state.books.find((book) => book.bookid === bookid);
+  if (book) {
+    return book.chapters.map((chapter) => chapter.title);
+  }
+  return [];
+};
