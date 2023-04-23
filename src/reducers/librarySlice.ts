@@ -1,7 +1,7 @@
 import * as toolkitRaw from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
-import { localStorageOrDefault, parseText } from "../utils";
+import { isString, localStorageOrDefault, parseText } from "../utils";
 
 import { current } from "immer";
 import { RootState } from "../store";
@@ -76,6 +76,13 @@ export const librarySlice = createSlice({
   initialState: initialState(null) as t.State,
   reducers: {
     setBooks(state: t.State, action: PayloadAction<t.Book[]>) {
+      const books = action.payload;
+      books.forEach((book) => {
+        book.chapters.forEach((chapter) => {
+          if (isString(chapter.text))
+            chapter.text = [t.plainTextBlock(chapter.text)];
+        });
+      });
       state.books = action.payload;
     },
     setBooksLoaded(state: t.State, action: PayloadAction<boolean>) {

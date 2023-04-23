@@ -109,7 +109,7 @@ function TextEditor({
           index: range.index,
           length: range.length,
           contents: word,
-        })
+        }),
       );
     } else {
       console.log("no range");

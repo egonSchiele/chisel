@@ -156,10 +156,13 @@ export function parseText(text): t.TextBlock[] {
     const data = JSON.parse(text);
     if (Array.isArray(data)) {
       return data;
-    } else {
-      return [t.plainTextBlock(text)];
     }
+    return [t.plainTextBlock(text)];
   } catch (e) {
     return [t.plainTextBlock(text)];
   }
+}
+
+export function isString(x): x is string {
+  return typeof x === "string" || x instanceof String;
 }
