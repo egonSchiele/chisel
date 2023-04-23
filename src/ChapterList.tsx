@@ -25,7 +25,7 @@ export default function ChapterList({
   chapters,
   bookid,
   selectedChapterId,
-  onChange,
+
   onDelete,
   saveChapter,
   closeSidebar,
@@ -34,7 +34,6 @@ export default function ChapterList({
   chapters: t.Chapter[];
   bookid: string;
   selectedChapterId: string;
-  onChange: any;
   onDelete: any;
   saveChapter: any;
   closeSidebar: () => void;
@@ -63,24 +62,6 @@ export default function ChapterList({
     onDelete(chapterid);
   }
 
-  async function favoriteChapter(chapterid: string) {
-    console.log("favorite chapter", chapterid);
-    dispatch(librarySlice.actions.loading());
-    const res = await fetch(`/api/favoriteChapter`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
-    });
-    dispatch(librarySlice.actions.loaded());
-    if (!res.ok) {
-      console.log(res.statusText);
-      return;
-    }
-    await onChange();
-  }
-
   const newChapter = async (title = "New Chapter", text = "") => {
     dispatch(librarySlice.actions.loading());
     const result = await fd.newChapter(bookid, title, text);
@@ -89,7 +70,8 @@ export default function ChapterList({
       dispatch(librarySlice.actions.setError(result.message));
       return;
     }
-    await onChange();
+    const chapter = result.payload;
+    dispatch(librarySlice.actions.addChapter(chapter));
   };
 
   const dropHandler = (ev) => {
@@ -136,7 +118,7 @@ export default function ChapterList({
         title={chapter.title || "(no title)"}
         selected={chapter.chapterid === selectedChapterId}
         onDelete={() => deleteChapter(chapter.chapterid)}
-        onFavorite={() => favoriteChapter(chapter.chapterid)}
+        onFavorite={() => {}}
         onRename={() => startRenameChapter(chapter)}
         selector="chapterlist"
       />
@@ -147,7 +129,6 @@ export default function ChapterList({
     const newChapter = { ...chapter, title: newTitle };
     saveChapter(newChapter);
     setShowPopup(false);
-    await onChange();
   }
 
   function startRenameChapter(chapter) {

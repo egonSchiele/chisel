@@ -117,7 +117,8 @@ export const newChapter = async (
   if (!res.ok) {
     return t.error(res.statusText);
   }
-  return t.success();
+  const data = await res.json();
+  return t.success(data);
 };
 
 export async function deleteBook(bookid: string) {

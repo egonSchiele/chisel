@@ -3,6 +3,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import { localStorageOrDefault } from "../utils";
 
+import { current } from "immer";
+import { RootState } from "../store";
+
 // @ts-ignore
 const { createSlice } = toolkitRaw.default ?? toolkitRaw;
 
@@ -39,7 +42,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
   const chapter = _chapter || defaults;
   return {
     books: [],
-    selectedBook: null,
+    selectedBookId: null,
     editor: initialEditorState(chapter),
     chapter: _chapter,
     synonyms: [],
@@ -63,6 +66,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     saved: true,
     error: "",
     loading: true,
+    booksLoaded: false,
     viewMode: "default",
     launcherOpen: false,
   };
@@ -75,11 +79,14 @@ export const librarySlice = createSlice({
     setBooks(state, action: PayloadAction<t.Book[]>) {
       state.books = action.payload;
     },
+    setBooksLoaded(state, action: PayloadAction<boolean>) {
+      state.booksLoaded = action.payload;
+    },
     addBook(state, action: PayloadAction<t.Book>) {
       state.books.push(action.payload);
     },
-    setBook(state, action: PayloadAction<t.Book>) {
-      state.selectedBook = action.payload;
+    setBook(state, action: PayloadAction<string | null>) {
+      state.selectedBookId = action.payload;
     },
     deleteBook(state, action: PayloadAction<string>) {
       const bookid = action.payload;
@@ -87,14 +94,19 @@ export const librarySlice = createSlice({
     },
     deleteChapter(state, action: PayloadAction<string>) {
       const chapterid = action.payload;
-
-      state.selectedBook.chapters = state.selectedBook.chapters.filter(
+      const book = getSelectedBook({ library: state });
+      book.chapters = book.chapters.filter(
         (chapter) => chapter.chapterid !== chapterid,
       );
+    },
+    addChapter(state, action: PayloadAction<t.Chapter>) {
+      const chapter = action.payload;
+      const book = getSelectedBook({ library: state });
+      book.chapters.push(chapter);
 
-      state.selectedBook.chapterTitles = state.selectedBook.chapterTitles.filter(
-        (chapter) => chapter.chapterid !== chapterid,
-      );
+      if (state.chapters) {
+        state.chapters.push(chapter);
+      }
     },
     setChapter(state, action) {
       const chapter = action.payload;
@@ -133,22 +145,16 @@ export const librarySlice = createSlice({
     setTitle(state, action) {
       state.editor.title = action.payload;
       state.chapter.title = action.payload;
+      const book = getSelectedBook({ library: state });
       // find chapter and then update it so that the chapter list also receives the update.
-      let chapterIdx = state.selectedBook.chapters.findIndex(
+      const chapterIdx = book.chapters.findIndex(
         (chapter) => chapter.chapterid === state.chapter.chapterid,
       );
 
       if (chapterIdx !== -1) {
-        state.selectedBook.chapters[chapterIdx].title = action.payload;
+        book.chapters[chapterIdx].title = action.payload;
       }
 
-      chapterIdx = state.selectedBook.chapterTitles.findIndex(
-        (chapter) => chapter.chapterid === state.chapter.chapterid,
-      );
-
-      if (chapterIdx !== -1) {
-        state.selectedBook.chapterTitles[chapterIdx].title = action.payload;
-      }
       state.saved = false;
     },
     setSuggestions(state, action) {
@@ -162,12 +168,13 @@ export const librarySlice = createSlice({
     },
     setSelectedBookChapter(state, action) {
       const _chapter = action.payload;
-      const idx = state.selectedBook.chapters.findIndex(
+      const book = getSelectedBook({ library: state });
+      const idx = book.chapters.findIndex(
         (sbChapter) => sbChapter.chapterid === _chapter.chapterid,
       );
 
       if (idx >= 0) {
-        state.selectedBook.chapters[idx] = _chapter;
+        book.chapters[idx] = _chapter;
       }
     },
     addToContents(state, action) {
@@ -181,11 +188,6 @@ export const librarySlice = createSlice({
     clearSelectedText(state) {
       state.editor._cachedSelectedText = state.editor.selectedText;
       state.editor.selectedText = { index: 0, length: 0, contents: "" };
-      console.log(
-        "clearing selected text",
-        state.editor._cachedSelectedText,
-        state.editor.selectedText,
-      );
     },
     addSuggestion(state, action) {
       state.suggestions.push({
@@ -198,13 +200,13 @@ export const librarySlice = createSlice({
       state.suggestions.splice(action.payload, 1);
       state.saved = false;
     },
-    setChapterOrder(state, action) {
+    /*  setChapterOrder(state, action) {
       const { ids } = action.payload;
       console.log(ids);
       const newTitles = [];
       ids.forEach((id) => {
         const chapter = state.selectedBook.chapterTitles.find(
-          (chapter) => chapter.chapterid === id,
+          (chapter) => chapter.chapterid === id
         );
         if (chapter) {
           newTitles.push(chapter);
@@ -212,7 +214,7 @@ export const librarySlice = createSlice({
       });
       state.selectedBook.chapterTitles = newTitles;
       state.saved = false;
-    },
+    }, */
     setTemporaryFocusModeState(state, action) {
       state._temporaryFocusModeState = action.payload;
     },
@@ -303,7 +305,7 @@ export const librarySlice = createSlice({
       state.launcherOpen = !state.launcherOpen;
     },
     noBookSelected(state) {
-      state.selectedBook = null;
+      state.selectedBookId = null;
       state.chapter = null;
     },
     noChapterSelected(state) {
@@ -312,10 +314,40 @@ export const librarySlice = createSlice({
   },
 });
 
-export const getChapterTitles = (bookid) => (state) => {
-  const book = state.books.find((book) => book.bookid === bookid);
+export const getChapterTitles = (bookid) => (state: RootState) => {
+  const book = state.library.books.find((book) => book.bookid === bookid);
   if (book) {
     return book.chapters.map((chapter) => chapter.title);
   }
   return [];
+};
+
+export const getChapters = (bookid) => (state: RootState) => {
+  const book = state.library.books.find((book) => book.bookid === bookid);
+  if (book) {
+    return book.chapters;
+  }
+  return [];
+};
+
+export const getSelectedBook = (state: RootState): t.Book | null => {
+  if (!state.library.booksLoaded) return null;
+
+  const book = state.library.books.find(
+    (book) => book.bookid === state.library.selectedBookId,
+  );
+
+  return book;
+};
+
+export const getSelectedBookChapters = (
+  state: RootState,
+): t.Chapter[] | null => {
+  const book = getSelectedBook(state);
+
+  if (!book) return null;
+
+  const { chapters } = book;
+
+  return chapters;
 };

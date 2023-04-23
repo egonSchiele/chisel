@@ -231,21 +231,8 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 
   await saveChapter(chapter);
 
-  let { book } = res.locals;
-  // This should not be needed as long as the checkBookAccess middleware is called
-  if (!book) {
-    book = await getBook(bookid);
-  }
-
-  // This should not be needed as long as the checkBookAccess middleware is called
-  if (!book) {
-    console.log(`no book with id, ${bookid}`);
-    res.status(404).end();
-  }
-
-  book.chapterTitles.push({ chapterid, title });
-  await saveBook(book);
-  res.status(200).end();
+  res.send(chapter);
+  // res.status(200).end();
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
