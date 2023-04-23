@@ -37,11 +37,9 @@ export const getBook = async (bookid) => {
   console.log({ bookid });
   const bookRef = db.collection("books").doc(bookid);
 
-  const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
-
   const [bookObj, chapters] = await Promise.all([
     bookRef.get(),
-    chapterRef.get(),
+    getChaptersForBook(bookid),
   ]);
 
   if (!bookObj.exists) {
@@ -49,17 +47,23 @@ export const getBook = async (bookid) => {
   }
 
   const book = bookObj.data();
-  book.chapters = [];
+  book.chapters = chapters;
+  return book;
+};
 
+export const getChaptersForBook = async (bookid) => {
+  const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
+
+  const chapters = await chapterRef.get();
   if (chapters.empty) {
     console.log("No chapters found for this book.");
-  } else {
-    chapters.forEach((chapter) => {
-      const data = chapter.data();
-      book.chapters.push(data);
-    });
+    return [];
   }
-  return book;
+  const allChapters = [];
+  chapters.forEach((chapter) => {
+    allChapters.push(chapter.data());
+  });
+  return allChapters;
 };
 
 export const deleteBook = async (bookid) => {
@@ -85,6 +89,14 @@ export const deleteBook = async (bookid) => {
   await docRef.delete();
 };
 
+function asArray(snapshot) {
+  const array = [];
+  snapshot.forEach((doc) => {
+    array.push(doc.data());
+  });
+  return array;
+}
+
 export const getBooks = async (userid) => {
   console.log("getting books");
 
@@ -98,15 +110,13 @@ export const getBooks = async (userid) => {
     return [];
   }
   const allBooks = [];
-  books.forEach(async (book) => {
-    const data = book.data();
-    if (!data.chapterTitles) {
-      data.chapterTitles = data.chapters;
-      data.chapters = [];
-      await saveBook(data);
-    }
-    allBooks.push(data);
+  const promises = asArray(books).map(async (book) => {
+    const chapters = await getChaptersForBook(book.bookid);
+    book.chapters = chapters;
+    book.chapterTitles = chapters.map((chapter) => chapter.title);
+    allBooks.push(book);
   });
+  await Promise.all(promises);
   console.log(
     "allBooks",
     allBooks.map((book) => book.bookid),
