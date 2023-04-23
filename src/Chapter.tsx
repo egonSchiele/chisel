@@ -2,9 +2,7 @@
 import Draggable from "react-draggable"; // The default
 import { Routes, Route, Link } from "react-router-dom";
 
-import React, {
-  useEffect, useReducer, useRef, useState,
-} from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import Panel from "./components/Panel";
 import * as t from "./Types";
 
@@ -30,7 +28,7 @@ export default function Chapter({
       "new",
       newChapter.chapterid,
       newChapter.pos.x,
-      newChapter.pos.y,
+      newChapter.pos.y
     );
     onChange(newChapter);
     // dispatch({ type: "SET_CHAPTER", payload: chapter });
@@ -65,7 +63,7 @@ export default function Chapter({
             <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
               <div className="text-sm m-xs overflow-hidden inline-block w-full h-20 dark:bg-dmsidebar dark:hover:bg-gray-600 bg-sidebar hover:bg-gray-200 text-text dark:text-dmtext px-xs">
                 {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
-                {chapter.text || "..."}
+                {chapter.text.map((t) => t.text).join("\n") || "..."}
               </div>
             </Link>
           </div>
