@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
 import { RootState } from "./store";
 import { librarySlice } from "./reducers/librarySlice";
+import * as t from "./Types";
 
 export function useInterval(fn, delay) {
   const saved = useRef();
@@ -62,7 +63,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setValue = (value: T | ((val: T) => T)) => {
     try {
       // Allow value to be a function so we have same API as useState
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       // Save state
       setStoredValue(valueToStore);
       // Save to local storage
@@ -84,14 +86,14 @@ export const fetchSuggestionsWrapper = async (
   prompt,
   label,
   state,
-  dispatch,
+  dispatch
 ) => {
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let { text } = state;
   if (
-    state._cachedSelectedText
-    && state._cachedSelectedText.contents
-    && state._cachedSelectedText.contents.length > 0
+    state._cachedSelectedText &&
+    state._cachedSelectedText.contents &&
+    state._cachedSelectedText.contents.length > 0
   ) {
     text = state._cachedSelectedText.contents;
   }
@@ -102,7 +104,7 @@ export const fetchSuggestionsWrapper = async (
     settings.num_suggestions,
     max_tokens_with_min,
     prompt,
-    label,
+    label
   );
   setLoading(false);
 
@@ -114,7 +116,7 @@ export const fetchSuggestionsWrapper = async (
   result.payload.forEach((choice) => {
     const generatedText = choice.text;
     dispatch(
-      librarySlice.actions.addSuggestion({ label, value: generatedText }),
+      librarySlice.actions.addSuggestion({ label, value: generatedText })
     );
   });
   dispatch(librarySlice.actions.setSuggestions(false));
@@ -147,4 +149,17 @@ export function getCsrfToken() {
     .querySelector('meta[name="csrf-token"]')
     .getAttribute("content");
   return token;
+}
+
+export function parseText(text): t.TextBlock[] {
+  try {
+    const data = JSON.parse(text);
+    if (Array.isArray(data)) {
+      return data;
+    } else {
+      return [t.plainTextBlock(text)];
+    }
+  } catch (e) {
+    return [t.plainTextBlock(text)];
+  }
 }

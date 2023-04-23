@@ -17,10 +17,12 @@ import { librarySlice } from "./reducers/librarySlice";
 
 function TextEditor({
   chapterid,
+  index,
   saved,
   onSave,
 }: {
   chapterid: string;
+  index: number;
   saved: boolean;
   onSave: () => void;
 }) {
@@ -90,7 +92,7 @@ function TextEditor({
     const editor = quillRef.current.getEditor();
     dispatch(librarySlice.actions.setSaved(false));
     // dispatch(librarySlice.actions.setContents(editor.getContents()));
-    dispatch(librarySlice.actions.setText(editor.getText()));
+    dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
   };
 
   const setSelection = (e) => {
@@ -107,7 +109,7 @@ function TextEditor({
           index: range.index,
           length: range.length,
           contents: word,
-        }),
+        })
       );
     } else {
       console.log("no range");

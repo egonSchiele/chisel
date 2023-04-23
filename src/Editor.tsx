@@ -25,11 +25,15 @@ export default function Editor({
           <div className="flex flex-grow" />
         </div>
         <div className="h-full w-full">
-          <TextEditor
-            chapterid={currentChapter.chapterid}
-            saved={state.saved}
-            onSave={() => onSave(state)}
-          />
+          {currentChapter.text.map((textBlock, index) => (
+            <TextEditor
+              chapterid={currentChapter.chapterid}
+              index={index}
+              key={index}
+              saved={state.saved}
+              onSave={() => onSave(state)}
+            />
+          ))}
         </div>
       </div>
     </div>
