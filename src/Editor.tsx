@@ -17,7 +17,12 @@ export default function Editor({
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
 
-  console.log(currentChapter.text, "!!");
+  if (!currentChapter) {
+    return <div className="flex w-full h-full">Loading</div>;
+  }
+
+  console.log(currentChapter, "!!");
+
   return (
     <div className="flex w-full h-full">
       <div className="w-full h-full col-span-4">
