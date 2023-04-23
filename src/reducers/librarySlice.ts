@@ -24,7 +24,7 @@ const defaults = {
 };
 
 const initialEditorState = (
-  _chapter: t.Chapter | DefaultChapter,
+  _chapter: t.Chapter | DefaultChapter
 ): t.EditorState => {
   const chapter = _chapter || defaults;
   return {
@@ -44,7 +44,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     books: [],
     selectedBookId: null,
     editor: initialEditorState(chapter),
-    chapter: _chapter,
+    selectedChapterId: chapter.chapterid,
     synonyms: [],
     infoPanel: { syllables: 0 },
     panels: {
@@ -96,27 +96,25 @@ export const librarySlice = createSlice({
       const chapterid = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters = book.chapters.filter(
-        (chapter) => chapter.chapterid !== chapterid,
+        (chapter) => chapter.chapterid !== chapterid
       );
     },
     addChapter(state, action: PayloadAction<t.Chapter>) {
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters.push(chapter);
-
-      if (state.chapters) {
-        state.chapters.push(chapter);
-      }
     },
     setChapter(state, action) {
-      const chapter = action.payload;
+      const chapterId = action.payload;
+      const chapter = getChapter(chapterId)({ library: state });
+      if (!chapter) return;
       state.editor = initialEditorState(chapter);
-      state.chapter = chapter;
+      state.selectedChapterId = chapterId;
       state.suggestions = chapter.suggestions;
     },
     setNoChapter(state) {
       state.editor = initialEditorState(null);
-      state.chapter = null;
+      state.selectedChapterId = null;
       state.suggestions = [];
     },
     setError(state, action) {
@@ -133,27 +131,22 @@ export const librarySlice = createSlice({
     },
     setText(state, action) {
       state.editor.text = action.payload;
-      state.chapter.text = action.payload;
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text = action.payload;
       state.saved = false;
     },
     pushTextToEditor(state, action) {
       state.editor.text = action.payload;
       state.editor._pushTextToEditor = action.payload;
-      state.chapter.text = action.payload;
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text = action.payload;
+
       state.saved = false;
     },
     setTitle(state, action) {
       state.editor.title = action.payload;
-      state.chapter.title = action.payload;
-      const book = getSelectedBook({ library: state });
-      // find chapter and then update it so that the chapter list also receives the update.
-      const chapterIdx = book.chapters.findIndex(
-        (chapter) => chapter.chapterid === state.chapter.chapterid,
-      );
-
-      if (chapterIdx !== -1) {
-        book.chapters[chapterIdx].title = action.payload;
-      }
+      const chapter = getSelectedChapter({ library: state });
+      chapter.title = action.payload;
 
       state.saved = false;
     },
@@ -170,7 +163,7 @@ export const librarySlice = createSlice({
       const _chapter = action.payload;
       const book = getSelectedBook({ library: state });
       const idx = book.chapters.findIndex(
-        (sbChapter) => sbChapter.chapterid === _chapter.chapterid,
+        (sbChapter) => sbChapter.chapterid === _chapter.chapterid
       );
 
       if (idx >= 0) {
@@ -245,28 +238,28 @@ export const librarySlice = createSlice({
       state.panels.bookList.open = !state.panels.bookList.open;
       localStorage.setItem(
         "bookListOpen",
-        state.panels.bookList.open ? "true" : "false",
+        state.panels.bookList.open ? "true" : "false"
       );
     },
     toggleChapterList(state) {
       state.panels.chapterList.open = !state.panels.chapterList.open;
       localStorage.setItem(
         "chapterListOpen",
-        state.panels.chapterList.open ? "true" : "false",
+        state.panels.chapterList.open ? "true" : "false"
       );
     },
     toggleSidebar(state) {
       state.panels.sidebar.open = !state.panels.sidebar.open;
       localStorage.setItem(
         "sidebarOpen",
-        state.panels.sidebar.open ? "true" : "false",
+        state.panels.sidebar.open ? "true" : "false"
       );
     },
     togglePrompts(state) {
       state.panels.prompts.open = !state.panels.prompts.open;
       localStorage.setItem(
         "promptsOpen",
-        state.panels.prompts.open ? "true" : "false",
+        state.panels.prompts.open ? "true" : "false"
       );
     },
     closeAllPanels(state) {
@@ -298,10 +291,10 @@ export const librarySlice = createSlice({
     },
     noBookSelected(state) {
       state.selectedBookId = null;
-      state.chapter = null;
+      state.selectedChapterId = null;
     },
     noChapterSelected(state) {
-      state.chapter = null;
+      state.selectedChapterId = null;
     },
   },
 });
@@ -326,14 +319,42 @@ export const getSelectedBook = (state: RootState): t.Book | null => {
   if (!state.library.booksLoaded) return null;
 
   const book = state.library.books.find(
-    (book) => book.bookid === state.library.selectedBookId,
+    (book) => book.bookid === state.library.selectedBookId
   );
 
   return book;
 };
 
+export const getSelectedChapter = (state: RootState): t.Chapter | null => {
+  if (!state.library.booksLoaded) return null;
+
+  const book = getSelectedBook(state);
+  if (!book) return null;
+  const chapter = book.chapters.find(
+    (chapter) => chapter.chapterid === state.library.selectedChapterId
+  );
+
+  return chapter;
+};
+
+export const getChapter =
+  (chapterid: t.ChapterId) =>
+  (state: RootState): t.Chapter | null => {
+    if (!state.library.booksLoaded) return null;
+    let chapterToReturn = null;
+    state.library.books.forEach((book) => {
+      book.chapters.forEach((chapter) => {
+        if (chapter.chapterid === chapterid) {
+          chapterToReturn = chapter;
+        }
+      });
+    });
+
+    return chapterToReturn;
+  };
+
 export const getSelectedBookChapters = (
-  state: RootState,
+  state: RootState
 ): t.Chapter[] | null => {
   const book = getSelectedBook(state);
 

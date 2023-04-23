@@ -16,7 +16,7 @@ import Info from "./Info";
 import List from "./components/List";
 import NavButton from "./NavButton";
 import { RootState } from "./store";
-import { librarySlice } from "./reducers/librarySlice";
+import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -130,6 +130,7 @@ export default function Sidebar({
 }) {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
+  const currentChapter = useSelector(getSelectedChapter);
 
   const infoText = state.editor.selectedText.length === 0
     ? state.editor.text
@@ -171,8 +172,8 @@ export default function Sidebar({
             items={[
               <History
                 key="history"
-                chapterid={state.chapter.chapterid}
-                bookid={state.chapter.bookid}
+                chapterid={currentChapter.chapterid}
+                bookid={currentChapter.bookid}
                 onSave={() => {}}
                 triggerHistoryRerender={triggerHistoryRerender}
                 onClick={onHistoryClick}

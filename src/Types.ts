@@ -5,7 +5,7 @@ export type State = {
   booksLoaded: boolean;
   selectedBookId: string | null;
   editor: EditorState;
-  chapter: Chapter | null;
+  selectedChapterId: ChapterId | null;
   synonyms: string[];
   infoPanel: InfoPanelState;
   panels: PanelState;
