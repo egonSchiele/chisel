@@ -39,6 +39,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import {
   getChapterTitles,
+  getChapters,
   getSelectedBook,
   librarySlice,
 } from "./reducers/librarySlice";
@@ -137,6 +138,7 @@ export default function Library() {
 
     if (result.tag === "success") {
       dispatch(librarySlice.actions.setBooks(result.payload));
+      dispatch(librarySlice.actions.setBooksLoaded(true));
     } else {
       dispatch(librarySlice.actions.setError(result.message));
     }
@@ -289,7 +291,8 @@ export default function Library() {
         if (result.tag === "error") {
           dispatch(librarySlice.actions.setError(result.message));
         }
-        await fetchBook();
+        /*         await fetchBook();
+         */
       },
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
     },
@@ -458,14 +461,12 @@ export default function Library() {
   }
 
   useEffect(() => {
-    const localChapterListChapters = [];
-
-    /*     if (state.selectedBookId) {
-      localChapterListChapters.push(useSelector(getSelectedBook).chapters);
+    if (state.selectedBookId && state.booksLoaded) {
+      const book = getSelectedBook(state);
+      const chapters = book.chapters; // []; //useSelector(getChapters(state.selectedBookId));
+      setChapterListChapters(chapters);
     }
- */
-    setChapterListChapters(localChapterListChapters);
-  }, [state.selectedBookId]);
+  }, [state.selectedBookId, state.booksLoaded]);
 
   const sidebarWidth =
     state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
@@ -605,28 +606,34 @@ export default function Library() {
             />
           </div>
         )}
-        {state.panels.chapterList.open && state.selectedBookId && (
-          <div className="flex-none w-40 xl:w-48 h-full">
-            <ChapterList
-              chapters={chapterlistChapters}
-              bookid={state.selectedBookId}
-              selectedChapterId={chapterid || ""}
-              onChange={async () => fetchBook()}
-              onDelete={(deletedChapterid) => {
-                dispatch(librarySlice.actions.deleteChapter(deletedChapterid));
-                if (deletedChapterid === chapterid) {
-                  dispatch(librarySlice.actions.noChapterSelected());
-                  navigate(`/book/${state.selectedBookId}`);
+        {state.panels.chapterList.open &&
+          state.selectedBookId &&
+          state.booksLoaded && (
+            <div className="flex-none w-40 xl:w-48 h-full">
+              <ChapterList
+                chapters={chapterlistChapters}
+                bookid={state.selectedBookId}
+                selectedChapterId={chapterid || ""}
+                onChange={async () => {}} //fetchBook()}
+                onDelete={(deletedChapterid) => {
+                  dispatch(
+                    librarySlice.actions.deleteChapter(deletedChapterid)
+                  );
+                  if (deletedChapterid === chapterid) {
+                    dispatch(librarySlice.actions.noChapterSelected());
+                    navigate(`/book/${state.selectedBookId}`);
+                  }
+                }}
+                saveChapter={(chapter) => saveChapter(chapter, [])}
+                closeSidebar={() =>
+                  dispatch(librarySlice.actions.closeChapterList())
                 }
-              }}
-              saveChapter={(chapter) => saveChapter(chapter, [])}
-              closeSidebar={() =>
-                dispatch(librarySlice.actions.closeChapterList())
-              }
-              canCloseSidebar={chapterid !== undefined || !state.selectedBookId}
-            />
-          </div>
-        )}
+                canCloseSidebar={
+                  chapterid !== undefined || !state.selectedBookId
+                }
+              />
+            </div>
+          )}
 
         <div className="h-full flex flex-col flex-grow">
           <div className="flex-none h-fit m-xs flex">

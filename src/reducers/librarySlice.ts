@@ -77,6 +77,9 @@ export const librarySlice = createSlice({
     setBooks(state, action: PayloadAction<t.Book[]>) {
       state.books = action.payload;
     },
+    setBooksLoaded(state, action: PayloadAction<boolean>) {
+      state.booksLoaded = action.payload;
+    },
     addBook(state, action: PayloadAction<t.Book>) {
       state.books.push(action.payload);
     },
@@ -133,7 +136,7 @@ export const librarySlice = createSlice({
       state.chapter.title = action.payload;
       const book = useSelector(getSelectedBook);
       // find chapter and then update it so that the chapter list also receives the update.
-      let chapterIdx = book.chapters.findIndex(
+      const chapterIdx = book.chapters.findIndex(
         (chapter) => chapter.chapterid === state.chapter.chapterid
       );
 
@@ -309,6 +312,14 @@ export const getChapterTitles = (bookid) => (state) => {
   const book = state.books.find((book) => book.bookid === bookid);
   if (book) {
     return book.chapters.map((chapter) => chapter.title);
+  }
+  return [];
+};
+
+export const getChapters = (bookid) => (state) => {
+  const book = state.books.find((book) => book.bookid === bookid);
+  if (book) {
+    return book.chapters;
   }
   return [];
 };
