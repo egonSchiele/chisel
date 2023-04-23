@@ -2,7 +2,9 @@ import * as toolkitRaw from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import { localStorageOrDefault } from "../utils";
-import { useSelector } from "react-redux";
+
+import { current } from "immer";
+import { RootState } from "../store";
 
 // @ts-ignore
 const { createSlice } = toolkitRaw.default ?? toolkitRaw;
@@ -78,6 +80,7 @@ export const librarySlice = createSlice({
       state.books = action.payload;
     },
     setBooksLoaded(state, action: PayloadAction<boolean>) {
+      console.warn("\t\t\t\tsetBooksLoaded", action.payload);
       state.booksLoaded = action.payload;
     },
     addBook(state, action: PayloadAction<t.Book>) {
@@ -92,10 +95,21 @@ export const librarySlice = createSlice({
     },
     deleteChapter(state, action: PayloadAction<string>) {
       const chapterid = action.payload;
-      const book = useSelector(getSelectedBook);
+      const book = getSelectedBook({ library: state });
       book.chapters = book.chapters.filter(
         (chapter) => chapter.chapterid !== chapterid
       );
+    },
+    addChapter(state, action: PayloadAction<t.Chapter>) {
+      const chapter = action.payload;
+      const book = getSelectedBook({ library: state });
+      book.chapters.push(chapter);
+      console.log("addChapter", book.chapters);
+      if (state.chapters) {
+        state.chapters.push(chapter);
+      }
+      const cur = current(state);
+      console.log(cur);
     },
     setChapter(state, action) {
       const chapter = action.payload;
@@ -134,7 +148,7 @@ export const librarySlice = createSlice({
     setTitle(state, action) {
       state.editor.title = action.payload;
       state.chapter.title = action.payload;
-      const book = useSelector(getSelectedBook);
+      const book = getSelectedBook({ library: state });
       // find chapter and then update it so that the chapter list also receives the update.
       const chapterIdx = book.chapters.findIndex(
         (chapter) => chapter.chapterid === state.chapter.chapterid
@@ -157,7 +171,7 @@ export const librarySlice = createSlice({
     },
     setSelectedBookChapter(state, action) {
       const _chapter = action.payload;
-      const book = useSelector(getSelectedBook);
+      const book = getSelectedBook({ library: state });
       const idx = book.chapters.findIndex(
         (sbChapter) => sbChapter.chapterid === _chapter.chapterid
       );
@@ -324,15 +338,30 @@ export const getChapters = (bookid) => (state) => {
   return [];
 };
 
-export const getSelectedBook = (state: t.State): t.Book | null => {
-  if (!state.booksLoaded) return null;
-  const book = state.books.find((book) => book.bookid === state.selectedBookId);
+export const getSelectedBook = (state: RootState): t.Book | null => {
+  console.log(
+    "\tgetting selected book",
+    state.library.booksLoaded,
+    state.library
+  );
+  if (!state.library.booksLoaded) return null;
+  console.log("\t\tlooking");
+  const book = state.library.books.find(
+    (book) => book.bookid === state.library.selectedBookId
+  );
+  console.log("\t\tfound");
   return book;
 };
 
-export const getSelectedBookChapters = (state: t.State): t.Chapter[] | null => {
+export const getSelectedBookChapters = (
+  state: RootState
+): t.Chapter[] | null => {
+  console.log("getting selected book chapters");
   const book = getSelectedBook(state);
+  console.log("book", book);
   if (!book) return null;
-  const chapters = book.chapters;
+
+  const { chapters } = book;
+  console.log("chapters", chapters);
   return chapters;
 };

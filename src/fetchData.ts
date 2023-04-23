@@ -58,7 +58,7 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
-  label: string,
+  label: string
 ) => {
   const prompt = _prompt.replaceAll("{{text}}", text);
   const body = JSON.stringify({
@@ -99,7 +99,7 @@ export const fetchSuggestions = async (
 export const newChapter = async (
   bookid: string,
   title: string,
-  text: string,
+  text: string
 ) => {
   const body = JSON.stringify({
     bookid,
@@ -117,7 +117,9 @@ export const newChapter = async (
   if (!res.ok) {
     return t.error(res.statusText);
   }
-  return t.success();
+  const data = await res.json();
+  console.log("got new chapter", data);
+  return t.success(data);
 };
 
 export async function deleteBook(bookid: string) {

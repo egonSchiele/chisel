@@ -48,6 +48,7 @@ import {
 export default function Library() {
   const state = useSelector((state: RootState) => state.library);
   const selectedBook = useSelector(getSelectedBook);
+  const selectedBookChapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -65,7 +66,7 @@ export default function Library() {
 
   useEffect(() => {
     if (chapterid) {
-      const book = getSelectedBook(state);
+      const book = getSelectedBook({ library: state });
       if (!book) return;
       console.log(state.selectedBookId, book, state.books);
       const chapter = book.chapters.find(
@@ -166,9 +167,9 @@ export default function Library() {
 
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state.chapter, state.suggestions);
-    const book = useSelector(getSelectedBook);
-    if (!book) return;
-    await saveBook(book);
+
+    if (!selectedBook) return;
+    await saveBook(selectedBook);
     await saveToHistory(state);
     setTriggerHistoryRerender((t) => t + 1);
   }
@@ -223,20 +224,19 @@ export default function Library() {
       if (state.chapter) {
         await saveChapter(state.chapter, state.suggestions);
       }
-      const book = useSelector(getSelectedBook);
-      if (!book) return;
-      await saveBook(useSelector(getSelectedBook));
+      if (!selectedBook) return;
+      await saveBook(selectedBook);
     };
     func();
   }, 5000);
 
   useEffect(() => {
-    const book = getSelectedBook(state);
-
+    const book = getSelectedBook({ library: state });
+    console.log("update chapter list");
     if (!book) return;
     const { chapters } = book; // []; //useSelector(getChapters(state.selectedBookId));
     setChapterListChapters(chapters);
-  }, [state.selectedBookId, state.booksLoaded, state.chapters]);
+  }, [state.selectedBookId, state.booksLoaded, selectedBookChapters]);
 
   async function saveBook(_book: t.Book) {
     if (!_book) {
