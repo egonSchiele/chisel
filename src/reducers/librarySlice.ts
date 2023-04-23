@@ -325,6 +325,14 @@ export const getChapters = (bookid) => (state) => {
 };
 
 export const getSelectedBook = (state: t.State): t.Book | null => {
+  if (!state.booksLoaded) return null;
   const book = state.books.find((book) => book.bookid === state.selectedBookId);
   return book;
+};
+
+export const getSelectedBookChapters = (state: t.State): t.Chapter[] | null => {
+  const book = getSelectedBook(state);
+  if (!book) return null;
+  const chapters = book.chapters;
+  return chapters;
 };

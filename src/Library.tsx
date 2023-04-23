@@ -41,11 +41,13 @@ import {
   getChapterTitles,
   getChapters,
   getSelectedBook,
+  getSelectedBookChapters,
   librarySlice,
 } from "./reducers/librarySlice";
 
 export default function Library() {
   const state = useSelector((state: RootState) => state.library);
+  const selectedBook = useSelector(getSelectedBook);
   const dispatch = useDispatch();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -62,8 +64,9 @@ export default function Library() {
   const { bookid, chapterid } = useParams();
 
   useEffect(() => {
-    if (chapterid && state.selectedBookId && state.booksLoaded) {
+    if (chapterid) {
       const book = getSelectedBook(state);
+      if (!book) return;
       console.log(state.selectedBookId, book, state.books);
       const chapter = book.chapters.find(
         (c: t.Chapter) => c.chapterid === chapterid
@@ -163,7 +166,9 @@ export default function Library() {
 
   async function onTextEditorSave(state: t.State) {
     await saveChapter(state.chapter, state.suggestions);
-    await saveBook(useSelector(getSelectedBook));
+    const book = useSelector(getSelectedBook);
+    if (!book) return;
+    await saveBook(book);
     await saveToHistory(state);
     setTriggerHistoryRerender((t) => t + 1);
   }
@@ -218,12 +223,20 @@ export default function Library() {
       if (state.chapter) {
         await saveChapter(state.chapter, state.suggestions);
       }
-      if (state.selectedBookId) {
-        await saveBook(useSelector(getSelectedBook));
-      }
+      const book = useSelector(getSelectedBook);
+      if (!book) return;
+      await saveBook(useSelector(getSelectedBook));
     };
     func();
   }, 5000);
+
+  useEffect(() => {
+    const book = getSelectedBook(state);
+
+    if (!book) return;
+    const { chapters } = book; // []; //useSelector(getChapters(state.selectedBookId));
+    setChapterListChapters(chapters);
+  }, [state.selectedBookId, state.booksLoaded, state.chapters]);
 
   async function saveBook(_book: t.Book) {
     if (!_book) {
@@ -274,6 +287,11 @@ export default function Library() {
   }
 
   const navigate = useNavigate();
+
+  if (!state.booksLoaded) {
+    return <div>Loading...</div>;
+  }
+
   const launchItems = [
     {
       label: "Save",
@@ -460,14 +478,6 @@ export default function Library() {
     });
   }
 
-  useEffect(() => {
-    if (state.selectedBookId && state.booksLoaded) {
-      const book = getSelectedBook(state);
-      const chapters = book.chapters; // []; //useSelector(getChapters(state.selectedBookId));
-      setChapterListChapters(chapters);
-    }
-  }, [state.selectedBookId, state.booksLoaded]);
-
   const sidebarWidth =
     state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
 
@@ -614,7 +624,7 @@ export default function Library() {
                 chapters={chapterlistChapters}
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
-                onChange={async () => {}} //fetchBook()}
+                onChange={async () => {}} // fetchBook()}
                 onDelete={(deletedChapterid) => {
                   dispatch(
                     librarySlice.actions.deleteChapter(deletedChapterid)
