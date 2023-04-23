@@ -58,7 +58,6 @@ export default function Library() {
   });
 
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
-  const [chapterlistChapters, setChapterListChapters] = useState([]);
 
   const { bookid, chapterid } = useParams();
 
@@ -227,14 +226,6 @@ export default function Library() {
     };
     func();
   }, 5000);
-
-  useEffect(() => {
-    const book = getSelectedBook({ library: state });
-    console.log("update chapter list");
-    if (!book) return;
-    const { chapters } = book;
-    setChapterListChapters(chapters);
-  }, [state.selectedBookId, state.booksLoaded, selectedBookChapters]);
 
   async function saveBook(_book: t.Book) {
     if (!_book) {
@@ -616,7 +607,7 @@ export default function Library() {
           && state.booksLoaded && (
             <div className="flex-none w-40 xl:w-48 h-full">
               <ChapterList
-                chapters={chapterlistChapters}
+                chapters={selectedBookChapters || []}
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
                 onDelete={(deletedChapterid) => {
