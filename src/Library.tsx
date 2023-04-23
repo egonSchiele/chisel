@@ -185,9 +185,10 @@ export default function Library() {
   async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
     const chapter = { ..._chapter };
     chapter.suggestions = suggestions;
+    console.log("saving@@ chapter", chapter);
+    console.log("saving@@ chapter", JSON.stringify(chapter));
 
     const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
-
     const result = await fetch("/api/saveChapter", {
       method: "POST",
       headers: {

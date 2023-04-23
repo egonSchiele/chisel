@@ -220,7 +220,8 @@ export const getHistory = async (chapterid) => {
   return bookObj.data().history;
 };
 
-export const saveToHistory = async (chapterid, text) => {
+export const saveToHistory = async (chapterid, _text) => {
+  const text = JSON.stringify(_text);
   let docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();
 
@@ -252,6 +253,7 @@ export const saveToHistory = async (chapterid, text) => {
     console.log("no change");
     return;
   }
+  console.log("text", text);
   const patch = Diff.createPatch(chapterid, old, text, "-", "-");
   console.log("patch", patch);
   history.push(patch);
