@@ -114,20 +114,6 @@ function TextEditor({
       dispatch(librarySlice.actions.clearSelectedText());
     }
   };
-  /*   const onClickEditor = (event) => {
-    setSelection(event);
-    if (event.metaKey || event.ctrlKey) {
-      if (range && range.length > 0) {
-        fetchSynonyms(word);
-        const bounds = quill.getBounds(range.index);
-        dispatch({
-          type: "SET_TOOLTIP_POSITION",
-          payload: { top: bounds.top, left: bounds.left },
-        });
-        dispatch({ type: "OPEN_TOOLTIP" });
-      }
-    }
-  }; */
 
   const handleKeyDown = (event) => {
     setEdited(true);

@@ -9,23 +9,21 @@ import { syllable } from "syllable";
 import Button from "./components/Button";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
-
+import * as fd from "./fetchData";
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
   const fetchSynonyms = async (word) => {
     if (!selected) return;
     if (selected.length < 3) return;
-    try {
-      const res = await fetch(
-        `https://api.datamuse.com/words?ml=${selected}&max=20`
-      );
-      const data = await res.json();
-      const synonyms = data.map((item) => item.word);
-      setSynonyms(synonyms);
-    } catch (error) {
-      console.error("Error fetching synonyms:", error);
+
+    const res = await fd.fetchSynonyms(selected);
+    if (res.tag === "error") {
+      console.log("error w synonyms", res.message);
+      return;
     }
+
+    setSynonyms(res.payload);
   };
 
   useEffect(() => {

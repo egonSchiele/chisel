@@ -148,6 +148,19 @@ export async function newBook() {
   return t.success(book);
 }
 
+export async function fetchSynonyms(word: string) {
+  if (!word) return t.error("No word");
+
+  const res = await fetch(`https://api.datamuse.com/words?ml=${word}&max=20`);
+  if (!res.ok) {
+    return t.error(res.statusText);
+  }
+  const response = await res.json();
+
+  const synonyms = response.map((item) => item.word);
+  return t.success(synonyms);
+}
+
 export async function postWithCsrf(url: string, body: any) {
   const res = await fetch(url, {
     method: "POST",

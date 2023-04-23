@@ -28,27 +28,21 @@ export default function PromptsSidebar({
     const word = state._cachedSelectedText
       ? state._cachedSelectedText.contents
       : "";
-    console.log("word", word);
-    if (!word) return;
+
     setLoading(true);
-    const res = await fetch(`https://api.datamuse.com/words?ml=${word}&max=20`);
-    if (!res.ok) {
-      setLoading(false);
-      console.log("error w synonyms", res);
+    const res = await fd.fetchSynonyms(word);
+    setLoading(false);
+    if (res.tag === "error") {
+      console.log("error w synonyms", res.message);
       return;
     }
-    const response = await res.json();
-
-    const synonyms = response.map((item) => item.word);
-    console.log("synonyms", synonyms);
     dispatch(
       librarySlice.actions.addSuggestion({
         label: "Synonyms",
-        value: synonyms.join(", "),
+        value: res.payload.join(", "),
       }),
     );
     dispatch(librarySlice.actions.setSaved(false));
-    setLoading(false);
     onLoad();
   };
 

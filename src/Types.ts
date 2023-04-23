@@ -4,9 +4,8 @@ export type State = {
   loading: boolean;
   booksLoaded: boolean;
   selectedBookId: string | null;
-  editor: EditorState;
   selectedChapterId: ChapterId | null;
-  synonyms: string[];
+  editor: EditorState;
   infoPanel: InfoPanelState;
   panels: PanelState;
   suggestions: Suggestion[];
