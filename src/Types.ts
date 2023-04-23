@@ -37,15 +37,11 @@ export type EditorState = {
   text: string;
   contents: any;
   chapterid: string;
-  tooltipPosition: { top: number; left: number };
-  tooltipOpen: boolean;
   selectedText: SelectedText;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
 
   _pushContentToEditor?: string;
-
-  // selectedSyllables: number;
 };
 
 export type InfoPanelState = {
