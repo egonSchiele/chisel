@@ -139,9 +139,7 @@ function TextEditor({
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
-                onFocus={() =>
-                  dispatch(librarySlice.actions.setActiveTextIndex(index))
-                }
+                onFocus={() => dispatch(librarySlice.actions.setActiveTextIndex(index))}
               />
             </div>
           </div>
