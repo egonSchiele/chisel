@@ -102,7 +102,12 @@ function TextEditor({
       event.preventDefault();
       console.log("saving!");
       onSave();
-    } else if (event.shiftKey && event.code === "Period") {
+    } else if (
+      event.altKey
+      && event.shiftKey
+      && event.code === "ArrowDown"
+      && state.selectedText.length > 0
+    ) {
       event.preventDefault();
       dispatch(librarySlice.actions.extractBlock());
     }

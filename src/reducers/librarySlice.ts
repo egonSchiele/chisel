@@ -113,6 +113,7 @@ export const librarySlice = createSlice({
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters.push(chapter);
+      book.chapterOrder.push(chapter.chapterid);
     },
     setChapter(state: t.State, action: PayloadAction<string>) {
       const chapterId = action.payload;
@@ -321,8 +322,50 @@ export const librarySlice = createSlice({
       chapter.text[action.payload].open = false;
       state.saved = false;
     },
+    newBlockBeforeCurrent(state: t.State) {
+      const newBlock = t.plainTextBlock("");
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
+
+      state.saved = false;
+    },
+    newAfterBeforeCurrent(state: t.State) {
+      const newBlock = t.plainTextBlock("");
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+
+      state.saved = false;
+    },
+    mergeBlockUp(state: t.State) {
+      const index = state.editor.activeTextIndex;
+      if (index === 0) return;
+      const chapter = getSelectedChapter({ library: state });
+      const cur = chapter.text[index];
+      const prev = chapter.text[index - 1];
+      prev.text += `\n${cur.text}`;
+      cur.text = "deleted";
+      chapter.text.splice(index, 1);
+
+      state.saved = false;
+    },
+    mergeBlockDown(state: t.State) {
+      const index = state.editor.activeTextIndex;
+      const chapter = getSelectedChapter({ library: state });
+      if (index === chapter.text.length - 1) return;
+      const cur = chapter.text[index];
+      const next = chapter.text[index + 1];
+      cur.text += `\n${next.text}`;
+      chapter.text.splice(index + 1, 1);
+
+      state.saved = false;
+    },
     extractBlock(state: t.State) {
-      const { index, length, contents } = state.editor.selectedText;
+      let { index, length, contents } = state.editor.selectedText;
+      if (length === 0 && state.editor._cachedSelectedText) {
+        index = state.editor._cachedSelectedText.index;
+        length = state.editor._cachedSelectedText.length;
+        contents = state.editor._cachedSelectedText.contents;
+      }
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
       const newText = strSplice(text.text, index, length);

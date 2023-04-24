@@ -18,6 +18,9 @@ import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
   Bars3BottomLeftIcon,
+  Bars3Icon,
+  BarsArrowDownIcon,
+  BarsArrowUpIcon,
   BookOpenIcon,
   CheckCircleIcon,
   ChevronRightIcon,
@@ -168,7 +171,7 @@ export default function Library() {
   async function saveToHistory(state: t.State) {
     const body = JSON.stringify({
       chapterid: currentChapter.chapterid,
-      text: currentChapter.text.map((t) => t.text).join("\n"),
+      text: currentChapter.text.map((t) => t.text).join("\n---\n"),
       csrfToken: getCsrfToken(),
     });
 
@@ -445,6 +448,57 @@ export default function Library() {
         dispatch(librarySlice.actions.setViewMode("fullscreen"));
       },
       icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  launchItems.push({
+    label: "New Block Before Current",
+    onClick: () => {
+      dispatch(librarySlice.actions.newBlockBeforeCurrent());
+    },
+    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  launchItems.push({
+    label: "New Block After Current",
+    onClick: () => {
+      dispatch(librarySlice.actions.newBlockAfterCurrent());
+    },
+    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  if (
+    state.editor._cachedSelectedText
+    && state.editor._cachedSelectedText.length > 0
+  ) {
+    launchItems.push({
+      label: "Extract Block",
+      onClick: () => {
+        dispatch(librarySlice.actions.extractBlock());
+      },
+      icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+  if (state.editor.activeTextIndex !== 0) {
+    launchItems.push({
+      label: "Merge Block Up",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockUp());
+      },
+      icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+  if (
+    currentChapter
+    && currentChapter.text
+    && state.editor.activeTextIndex !== currentChapter.text.length - 1
+  ) {
+    launchItems.push({
+      label: "Merge Block Down",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockDown());
+      },
+      icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
   /*
