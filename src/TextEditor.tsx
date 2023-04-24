@@ -5,30 +5,30 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
-import Button from "./components/Button";
-import ButtonGroup from "./components/ButtonGroup";
-import { EditorState, State } from "./Types";
-import Select from "./components/Select";
-import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
-import * as t from "./Types";
-import { RootState } from "./store";
-import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import { getSelectedChapter, librarySlice, saveFromTextEditorThunk } from "./reducers/librarySlice";
+import { AppDispatch, RootState } from "./store";
+import { useInterval } from "./utils";
 
 function TextEditor({
   chapterid,
   index,
   saved,
-  onSave,
 }: {
   chapterid: string;
   index: number;
   saved: boolean;
-  onSave: () => void;
 }) {
   const state = useSelector((state: RootState) => state.library.editor);
   const currentChapter = useSelector(getSelectedChapter);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  useInterval(() => {
+    const func = () => {
+      dispatch(saveFromTextEditorThunk());
+    };
+    func();
+  }, 5000);
 
   const quillRef = useRef();
 
@@ -63,8 +63,9 @@ function TextEditor({
     if (!edited) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    dispatch(librarySlice.actions.setSaved(false));
-    // dispatch(librarySlice.actions.setContents(editor.getContents()));
+    if (saved) {
+      dispatch(librarySlice.actions.setSaved(false));
+    }
     dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
   };
 
@@ -94,8 +95,7 @@ function TextEditor({
     setEdited(true);
     if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
-      console.log("saving!");
-      onSave();
+      dispatch(saveFromTextEditorThunk());
     }
   };
 

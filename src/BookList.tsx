@@ -1,16 +1,13 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch } from "react-redux";
 import * as t from "./Types";
 import List from "./components/List";
-import Button from "./components/Button";
-import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
-import { getCsrfToken } from "./utils";
 import * as fd from "./fetchData";
-import { librarySlice } from "./reducers/librarySlice";
+import { librarySlice, saveBookThunk } from "./reducers/librarySlice";
+import { AppDispatch } from "./store";
 
 async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
@@ -50,17 +47,15 @@ export default function BookList({
   selectedBookId,
   onChange,
   onDelete,
-  saveBook,
   canCloseSidebar = true,
 }: {
   books: t.Book[];
   selectedBookId: string;
   onChange: () => void;
   onDelete: (bookid: string) => void;
-  saveBook: (book: t.Book) => void;
   canCloseSidebar?: boolean;
 }) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentBook, setCurrentBook] = React.useState(books[0]);
 
@@ -70,8 +65,7 @@ export default function BookList({
   }
 
   async function renameBook(book, newTitle, onChange) {
-    const newBook = { ...book, title: newTitle };
-    saveBook(newBook);
+    dispatch(saveBookThunk({ ...book, title: newTitle }));
     setShowPopup(false);
     await onChange();
   }

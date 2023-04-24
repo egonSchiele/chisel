@@ -1,20 +1,13 @@
 import React from "react";
 import "./globals.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import TextEditor from "./TextEditor";
-import * as t from "./Types";
-import { getCsrfToken } from "./utils";
 import { RootState } from "./store";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { postWithCsrf } from "./fetchData";
 
-export default function Editor({
-  onSave,
-}: {
-  onSave: (state: t.State) => void;
-}) {
+export default function Editor() {
   const state = useSelector((state: RootState) => state.library);
-  const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
 
   if (!currentChapter) {
@@ -37,7 +30,6 @@ export default function Editor({
               index={index}
               key={index}
               saved={state.saved}
-              onSave={() => onSave(state)}
             />
           ))}
         </div>

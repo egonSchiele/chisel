@@ -1,13 +1,14 @@
 import * as toolkitRaw from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
-import { isString, localStorageOrDefault, parseText } from "../utils";
+import {
+  isString, getCsrfToken, localStorageOrDefault, parseText,
+} from "../utils";
 
-import { current } from "immer";
 import { RootState } from "../store";
 
 // @ts-ignore
-const { createSlice } = toolkitRaw.default ?? toolkitRaw;
+const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
 
 type DefaultChapter = {
   title: string;
@@ -33,7 +34,7 @@ const initialEditorState = (
   };
 };
 
-export const initialState = (_chapter: t.Chapter | null): t.State => {
+export const initialState = (_chapter: t.Chapter | null): t.LibraryState => {
   const chapter = _chapter || defaults;
   return {
     books: [],
@@ -63,14 +64,84 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     booksLoaded: false,
     viewMode: "default",
     launcherOpen: false,
+    historyRerender: 0,
   };
 };
 
+export const saveFromTextEditorThunk: AsyncThunk<null, null, RootState> = createAsyncThunk('library/saveFromEditor', async (payload, thunkAPI) => {
+  thunkAPI.dispatch(saveCurrentChapterThunk());
+  thunkAPI.dispatch(saveBookThunk(getSelectedBook(thunkAPI.getState())));
+  thunkAPI.dispatch(saveToHistoryThunk());
+});
+
+export const saveCurrentChapterThunk: AsyncThunk<null, null, RootState> = createAsyncThunk('library/saveCurrentChapter', async (_payload, thunkAPI) => {
+  const { chapter, suggestions } = thunkAPI.getState().library;
+  const chapterToSave = thunkAPI.dispatch(saveChapterThunk({ chapter, suggestions }));
+
+  // Since we depend on a cache version of the selected book when picking a chapter
+  // we must also set the chapter on said cache whenever save occurs.
+  // This avoids the issue in which switching a chapter looses your last saved work.
+  thunkAPI.dispatch(librarySlice.actions.setSelectedBookChapter(chapterToSave));
+});
+
+export const saveChapterThunk: AsyncThunk<t.Chapter, { chapter: t.Chapter, suggestions: t.Suggestion[] }, RootState> = createAsyncThunk('library/saveChapter', async (payload, thunkAPI) => {
+  const chapterToSave = { ...payload.chapter };
+  chapterToSave.suggestions = payload.suggestions;
+  const body = JSON.stringify({ chapter: chapterToSave, csrfToken: getCsrfToken() });
+  await fetch("/api/saveChapter", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    signal: thunkAPI.signal,
+    body,
+  });
+
+  return chapterToSave;
+});
+
+export const saveBookThunk: AsyncThunk<null, t.Book, RootState> = createAsyncThunk('library/saveBook', async (book, thunkAPI) => {
+  if (!book) {
+    return;
+  }
+
+  const body = JSON.stringify({ book, csrfToken: getCsrfToken() });
+  await fetch("/api/saveBook", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    signal: thunkAPI.signal,
+    body,
+  });
+});
+
+export const saveToHistoryThunk: AsyncThunk<null, null, RootState> = createAsyncThunk('library/saveToHistory', async (_payload, thunkAPI) => {
+  const { chapter } = thunkAPI.getState().library;
+  const body = JSON.stringify({
+    chapterid: chapter.chapterid,
+    text: chapter.text.map((t) => t.text).join("\n"),
+    csrfToken: getCsrfToken(),
+  });
+
+  await fetch("/api/saveToHistory", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    signal: thunkAPI.signal,
+    credentials: "include",
+    body,
+  });
+
+  thunkAPI.dispatch(librarySlice.actions.updateHistoryRerender());
+});
+
 export const librarySlice = createSlice({
   name: "library",
-  initialState: initialState(null) as t.State,
+  initialState: initialState(null),
   reducers: {
-    setBooks(state: t.State, action: PayloadAction<t.Book[]>) {
+    setBooks(state: t.LibraryState, action: PayloadAction<t.Book[]>) {
       const books = action.payload;
       books.forEach((book) => {
         book.chapters.forEach((chapter) => {
@@ -79,32 +150,32 @@ export const librarySlice = createSlice({
       });
       state.books = action.payload;
     },
-    setBooksLoaded(state: t.State, action: PayloadAction<boolean>) {
+    setBooksLoaded(state: t.LibraryState, action: PayloadAction<boolean>) {
       state.booksLoaded = action.payload;
     },
-    addBook(state: t.State, action: PayloadAction<t.Book>) {
+    addBook(state: t.LibraryState, action: PayloadAction<t.Book>) {
       state.books.push(action.payload);
     },
-    setBook(state: t.State, action: PayloadAction<string | null>) {
+    setBook(state: t.LibraryState, action: PayloadAction<string | null>) {
       state.selectedBookId = action.payload;
     },
-    deleteBook(state: t.State, action: PayloadAction<string>) {
+    deleteBook(state: t.LibraryState, action: PayloadAction<string>) {
       const bookid = action.payload;
       state.books = state.books.filter((book) => book.bookid !== bookid);
     },
-    deleteChapter(state: t.State, action: PayloadAction<string>) {
+    deleteChapter(state: t.LibraryState, action: PayloadAction<string>) {
       const chapterid = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters = book.chapters.filter(
         (chapter) => chapter.chapterid !== chapterid,
       );
     },
-    addChapter(state: t.State, action: PayloadAction<t.Chapter>) {
+    addChapter(state: t.LibraryState, action: PayloadAction<t.Chapter>) {
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters.push(chapter);
     },
-    setChapter(state: t.State, action: PayloadAction<string>) {
+    setChapter(state: t.LibraryState, action: PayloadAction<string>) {
       const chapterId = action.payload;
       const chapter = getChapter(chapterId)({ library: state });
       if (!chapter) return;
@@ -117,7 +188,7 @@ export const librarySlice = createSlice({
       state.selectedChapterId = null;
       state.suggestions = [];
     },
-    setError(state: t.State, action: PayloadAction<string>) {
+    setError(state: t.LibraryState, action: PayloadAction<string>) {
       state.error = action.payload;
     },
     clearError(state) {
@@ -129,14 +200,14 @@ export const librarySlice = createSlice({
     loaded(state) {
       state.loading = false;
     },
-    setText(state: t.State, action: PayloadAction<t.NewTextForBlock>) {
+    setText(state: t.LibraryState, action: PayloadAction<t.NewTextForBlock>) {
       const { index, text } = action.payload;
 
       const chapter = getSelectedChapter({ library: state });
       chapter.text[index].text = text;
       state.saved = false;
     },
-    pushTextToEditor(state: t.State, action: PayloadAction<t.NewTextForBlock>) {
+    pushTextToEditor(state: t.LibraryState, action: PayloadAction<t.NewTextForBlock>) {
       const { index, text } = action.payload;
       state.editor._pushTextToEditor = text;
       const chapter = getSelectedChapter({ library: state });
@@ -144,22 +215,22 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    setTitle(state: t.State, action) {
+    setTitle(state: t.LibraryState, action) {
       const chapter = getSelectedChapter({ library: state });
       chapter.title = action.payload;
 
       state.saved = false;
     },
-    setSuggestions(state: t.State, action: PayloadAction<t.Suggestion[]>) {
+    setSuggestions(state: t.LibraryState, action: PayloadAction<t.Suggestion[]>) {
       if (action.payload) {
         state.suggestions = action.payload;
         state.saved = false;
       }
     },
-    setSaved(state: t.State, action: PayloadAction<boolean>) {
+    setSaved(state: t.LibraryState, action: PayloadAction<boolean>) {
       state.saved = action.payload;
     },
-    setSelectedBookChapter(state: t.State, action: PayloadAction<t.Chapter>) {
+    setSelectedBookChapter(state: t.LibraryState, action: PayloadAction<t.Chapter>) {
       const _chapter = action.payload;
       const book = getSelectedBook({ library: state });
       const idx = book.chapters.findIndex(
@@ -170,11 +241,11 @@ export const librarySlice = createSlice({
         book.chapters[idx] = _chapter;
       }
     },
-    addToContents(state: t.State, action: PayloadAction<string>) {
+    addToContents(state: t.LibraryState, action: PayloadAction<string>) {
       state.editor._pushContentToEditor = action.payload;
       state.saved = false;
     },
-    setSelectedText(state: t.State, action: PayloadAction<t.SelectedText>) {
+    setSelectedText(state: t.LibraryState, action: PayloadAction<t.SelectedText>) {
       state.editor.selectedText = action.payload;
     },
     clearSelectedText(state) {
@@ -182,7 +253,7 @@ export const librarySlice = createSlice({
       state.editor.selectedText = { index: 0, length: 0, contents: "" };
     },
     addSuggestion(
-      state: t.State,
+      state: t.LibraryState,
       action: PayloadAction<{ label: string; value: string }>,
     ) {
       state.suggestions.push({
@@ -191,21 +262,21 @@ export const librarySlice = createSlice({
       });
       state.saved = false;
     },
-    deleteSuggestion(state: t.State, action: PayloadAction<number>) {
+    deleteSuggestion(state: t.LibraryState, action: PayloadAction<number>) {
       state.suggestions.splice(action.payload, 1);
       state.saved = false;
     },
-    setChapterOrder(state: t.State, action: PayloadAction<t.ChapterId[]>) {
+    setChapterOrder(state: t.LibraryState, action: PayloadAction<t.ChapterId[]>) {
       const ids = action.payload;
 
       const book = getSelectedBook({ library: state });
       book.chapterOrder = ids;
       state.saved = false;
     },
-    setTemporaryFocusModeState(state: t.State, action: PayloadAction<string>) {
+    setTemporaryFocusModeState(state: t.LibraryState, action: PayloadAction<string>) {
       state._temporaryFocusModeState = action.payload;
     },
-    setViewMode(state: t.State, action: PayloadAction<t.ViewMode>) {
+    setViewMode(state: t.LibraryState, action: PayloadAction<t.ViewMode>) {
       state.viewMode = action.payload;
     },
     openBookList(state) {
@@ -284,7 +355,7 @@ export const librarySlice = createSlice({
       localStorage.setItem("sidebarOpen", "true");
       localStorage.setItem("promptsOpen", "true");
     },
-    setActivePanel(state: t.State, action: PayloadAction<string>) {
+    setActivePanel(state: t.LibraryState, action: PayloadAction<string>) {
       state.panels.sidebar.activePanel = action.payload;
       localStorage.setItem("activePanel", action.payload);
     },
@@ -298,6 +369,25 @@ export const librarySlice = createSlice({
     noChapterSelected(state) {
       state.selectedChapterId = null;
     },
+    updateHistoryRerender(state: t.LibraryState) {
+      state.historyRerender += 1;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(saveFromTextEditorThunk.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(saveFromTextEditorThunk.fulfilled, (state) => {
+      state.loading = false;
+      state.loaded = true;
+    });
+
+    builder.addCase(saveFromTextEditorThunk.rejected, (state) => {
+      state.loading = false;
+      state.loaded = true;
+      // TODO add errors here
+    });
   },
 });
 

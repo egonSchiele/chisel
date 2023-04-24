@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
-import { fetchSuggestionsWrapper, getCsrfToken, useInterval } from "./utils";
+import { fetchSuggestionsWrapper, getCsrfToken } from "./utils";
 import Launcher from "./Launcher";
 import {
   ArrowsPointingInIcon,
@@ -36,12 +36,12 @@ import NavButton from "./NavButton";
 import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./store";
+import { AppDispatch, RootState } from "./store";
 import {
   getSelectedBook,
   getSelectedBookChapters,
   getSelectedChapter,
-  librarySlice,
+  librarySlice, saveFromTextEditorThunk,
 } from "./reducers/librarySlice";
 
 export default function Library() {
@@ -49,7 +49,7 @@ export default function Library() {
   const selectedBook = useSelector(getSelectedBook);
   const selectedBookChapters = useSelector(getSelectedBookChapters);
   const currentChapter = useSelector(getSelectedChapter);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -58,8 +58,6 @@ export default function Library() {
     version_control: false,
     prompts: [],
   });
-
-  const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
   const { bookid, chapterid } = useParams();
 
@@ -156,88 +154,6 @@ export default function Library() {
     fetchSettings();
   }, []);
 
-  async function onTextEditorSave(state: t.State) {
-    await saveChapter(currentChapter, state.suggestions);
-
-    if (!selectedBook) return;
-    await saveBook(selectedBook);
-    await saveToHistory(state);
-    setTriggerHistoryRerender((t) => t + 1);
-  }
-
-  async function saveToHistory(state: t.State) {
-    const body = JSON.stringify({
-      chapterid: currentChapter.chapterid,
-      text: currentChapter.text.map((t) => t.text).join("\n"),
-      csrfToken: getCsrfToken(),
-    });
-
-    const result = await fetch("/api/saveToHistory", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body,
-    });
-  }
-
-  async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
-    const chapter = { ..._chapter };
-    chapter.suggestions = suggestions;
-
-    const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
-    const result = await fetch("/api/saveChapter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-
-    if (!result.ok) {
-      dispatch(librarySlice.actions.setError(result.statusText));
-    } else {
-      dispatch(librarySlice.actions.clearError());
-      dispatch(librarySlice.actions.setSaved(true));
-      // Since we depend on a cache version of the selected book when picking a chapter
-      // we must also set the chapter on said cache whenever save occurs.
-      // This avoids the issue in which switching a chapter looses your last saved work.
-      dispatch(librarySlice.actions.setSelectedBookChapter(chapter));
-    }
-  }
-
-  useInterval(() => {
-    const func = async () => {
-      if (state.saved) return;
-      if (currentChapter) {
-        await saveChapter(currentChapter, state.suggestions);
-      }
-      if (!selectedBook) return;
-      await saveBook(selectedBook);
-    };
-    func();
-  }, 5000);
-
-  async function saveBook(_book: t.Book) {
-    if (!_book) {
-      console.log("no book");
-      return;
-    }
-
-    const book = { ..._book };
-
-    book.chapters = [];
-    const body = JSON.stringify({ book, csrfToken: getCsrfToken() });
-    const result = await fetch("/api/saveBook", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-  }
-
   const addToContents = (text: string) => {
     dispatch(librarySlice.actions.addToContents(text));
   };
@@ -277,7 +193,7 @@ export default function Library() {
     {
       label: "Save",
       onClick: () => {
-        onTextEditorSave(state);
+        dispatch(saveFromTextEditorThunk());
       },
       icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
     },
@@ -557,12 +473,11 @@ export default function Library() {
           }}
           onSettingsSave={() => {}}
           onHistoryClick={async (newText) => {
-            await onTextEditorSave(state);
+            dispatch(saveFromTextEditorThunk());
             dispatch(
               librarySlice.actions.pushTextToEditor({ index: 0, text: newText }),
             );
           }}
-          triggerHistoryRerender={triggerHistoryRerender}
         />
       </div>
     );
@@ -593,7 +508,6 @@ export default function Library() {
                 }
               }}
               canCloseSidebar={chapterid !== undefined}
-              saveBook={saveBook}
             />
           </div>
         )}
@@ -614,7 +528,6 @@ export default function Library() {
                     navigate(`/book/${state.selectedBookId}`);
                   }
                 }}
-                saveChapter={(chapter) => saveChapter(chapter, [])}
                 closeSidebar={() => dispatch(librarySlice.actions.closeChapterList())}
                 canCloseSidebar={
                   chapterid !== undefined || !state.selectedBookId
@@ -720,7 +633,7 @@ export default function Library() {
             )}
           </div>
           <div className="flex-grow h-full w-full">
-            {currentChapter && <Editor onSave={onTextEditorSave} />}
+            {state.chapter && <Editor />}
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
@@ -751,8 +664,7 @@ export default function Library() {
               }}
               onSettingsSave={() => {}}
               onHistoryClick={async (newText) => {
-                await onTextEditorSave(state);
-
+                dispatch(saveFromTextEditorThunk());
                 dispatch(
                   librarySlice.actions.pushTextToEditor({
                     index: 0,
@@ -760,7 +672,6 @@ export default function Library() {
                   }),
                 );
               }}
-              triggerHistoryRerender={triggerHistoryRerender}
             />
           </div>
         )}

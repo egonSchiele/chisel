@@ -7,16 +7,16 @@ import Input from "./components/Input";
 import Select from "./components/Select";
 import * as t from "./Types";
 import Panel from "./components/Panel";
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
 
 function History({
   bookid,
   chapterid,
-  onSave,
-  triggerHistoryRerender,
   onClick,
 }) {
   const [history, setHistory] = useState<t.History>([]);
-  console.log("rerendering history");
+  const triggerHistoryRerender = useSelector((state: RootState) => state.library.historyRerender);
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
