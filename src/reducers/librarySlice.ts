@@ -28,7 +28,7 @@ const defaults = {
 };
 
 const initialEditorState = (
-  _chapter: t.Chapter | DefaultChapter
+  _chapter: t.Chapter | DefaultChapter,
 ): t.EditorState => {
   const chapter = _chapter || defaults;
   return {
@@ -71,19 +71,18 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
   };
 };
 
-export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
-  createAsyncThunk(
-    "library/fetchBooks",
-    async (_payload, { dispatch, signal }) => {
-      const res = await fetch(`/books`, {
-        credentials: "include",
-        signal,
-      });
+export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThunk(
+  "library/fetchBooks",
+  async (_payload, { dispatch, signal }) => {
+    const res = await fetch(`/books`, {
+      credentials: "include",
+      signal,
+    });
 
-      const { books } = await res.json();
-      dispatch(librarySlice.actions.setBooks(books));
-    }
-  );
+    const { books } = await res.json();
+    dispatch(librarySlice.actions.setBooks(books));
+  },
+);
 
 export const librarySlice = createSlice({
   name: "library",
@@ -119,7 +118,7 @@ export const librarySlice = createSlice({
       const chapterid = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters = book.chapters.filter(
-        (chapter) => chapter.chapterid !== chapterid
+        (chapter) => chapter.chapterid !== chapterid,
       );
     },
     addChapter(state: t.State, action: PayloadAction<t.Chapter>) {
@@ -170,7 +169,7 @@ export const librarySlice = createSlice({
     },
     restoreFromHistory(
       state: t.State,
-      action: PayloadAction<{ text: string }>
+      action: PayloadAction<{ text: string }>,
     ) {
       const { text } = action.payload;
       const chapter = getSelectedChapter({ library: state });
@@ -201,7 +200,7 @@ export const librarySlice = createSlice({
       const _chapter = action.payload;
       const book = getSelectedBook({ library: state });
       const idx = book.chapters.findIndex(
-        (sbChapter) => sbChapter.chapterid === _chapter.chapterid
+        (sbChapter) => sbChapter.chapterid === _chapter.chapterid,
       );
 
       if (idx >= 0) {
@@ -221,7 +220,7 @@ export const librarySlice = createSlice({
     },
     addSuggestion(
       state: t.State,
-      action: PayloadAction<{ label: string; value: string }>
+      action: PayloadAction<{ label: string; value: string }>,
     ) {
       state.suggestions.push({
         type: action.payload.label,
@@ -278,28 +277,28 @@ export const librarySlice = createSlice({
       state.panels.bookList.open = !state.panels.bookList.open;
       localStorage.setItem(
         "bookListOpen",
-        state.panels.bookList.open ? "true" : "false"
+        state.panels.bookList.open ? "true" : "false",
       );
     },
     toggleChapterList(state) {
       state.panels.chapterList.open = !state.panels.chapterList.open;
       localStorage.setItem(
         "chapterListOpen",
-        state.panels.chapterList.open ? "true" : "false"
+        state.panels.chapterList.open ? "true" : "false",
       );
     },
     toggleSidebar(state) {
       state.panels.sidebar.open = !state.panels.sidebar.open;
       localStorage.setItem(
         "sidebarOpen",
-        state.panels.sidebar.open ? "true" : "false"
+        state.panels.sidebar.open ? "true" : "false",
       );
     },
     togglePrompts(state) {
       state.panels.prompts.open = !state.panels.prompts.open;
       localStorage.setItem(
         "promptsOpen",
-        state.panels.prompts.open ? "true" : "false"
+        state.panels.prompts.open ? "true" : "false",
       );
     },
     closeAllPanels(state) {
@@ -503,7 +502,7 @@ export const getSelectedBook = (state: RootState): t.Book | null => {
   if (!state.library.booksLoaded) return null;
 
   const book = state.library.books.find(
-    (book) => book.bookid === state.library.selectedBookId
+    (book) => book.bookid === state.library.selectedBookId,
   );
 
   return book;
@@ -515,7 +514,7 @@ export const getSelectedChapter = (state: RootState): t.Chapter | null => {
   const book = getSelectedBook(state);
   if (!book) return null;
   const chapter = book.chapters.find(
-    (chapter) => chapter.chapterid === state.library.selectedChapterId
+    (chapter) => chapter.chapterid === state.library.selectedChapterId,
   );
 
   return chapter;
@@ -529,7 +528,7 @@ export const getSelectedChapterTitle = (state: RootState): string | null => {
 };
 
 export const getSelectedChapterTextLength = (
-  state: RootState
+  state: RootState,
 ): number | null => {
   const chapter = getSelectedChapter(state);
   if (!chapter) return null;
@@ -537,33 +536,29 @@ export const getSelectedChapterTextLength = (
   return chapter.text.length;
 };
 
-export const getText =
-  (index: number) =>
-  (state: RootState): t.TextBlock | null => {
-    const chapter = getSelectedChapter(state);
-    if (!chapter) return null;
+export const getText = (index: number) => (state: RootState): t.TextBlock | null => {
+  const chapter = getSelectedChapter(state);
+  if (!chapter) return null;
 
-    return chapter.text[index];
-  };
+  return chapter.text[index];
+};
 
-export const getChapter =
-  (chapterid: t.ChapterId) =>
-  (state: RootState): t.Chapter | null => {
-    if (!state.library.booksLoaded) return null;
-    let chapterToReturn = null;
-    state.library.books.forEach((book) => {
-      book.chapters.forEach((chapter) => {
-        if (chapter.chapterid === chapterid) {
-          chapterToReturn = chapter;
-        }
-      });
+export const getChapter = (chapterid: t.ChapterId) => (state: RootState): t.Chapter | null => {
+  if (!state.library.booksLoaded) return null;
+  let chapterToReturn = null;
+  state.library.books.forEach((book) => {
+    book.chapters.forEach((chapter) => {
+      if (chapter.chapterid === chapterid) {
+        chapterToReturn = chapter;
+      }
     });
+  });
 
-    return chapterToReturn;
-  };
+  return chapterToReturn;
+};
 
 export const getSelectedBookChapters = (
-  state: RootState
+  state: RootState,
 ): t.Chapter[] | null => {
   const book = getSelectedBook(state);
 
