@@ -40,8 +40,7 @@ async function newBook(dispatch) {
   }
 }
 
-const buttonStyles =
-  "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList({
@@ -64,13 +63,13 @@ export default function BookList({
   const [currentBook, setCurrentBook] = React.useState(books[0]);
 
   const onDeleteWrapped = (bookid) => () => deleteBook(bookid, onDelete);
-  //useCallback(() => deleteBook(bookid, onDelete), [bookid]);
+  // useCallback(() => deleteBook(bookid, onDelete), [bookid]);
 
   const onFavoriteWrapped = (bookid) => () => favoriteBook(bookid, onChange);
-  //useCallback(() => favoriteBook(bookid, onChange), [bookid]);
+  // useCallback(() => favoriteBook(bookid, onChange), [bookid]);
 
   const onRenameWrapped = (book) => () => startRenameBook(book);
-  //useCallback(() => startRenameBook(book), [book]);
+  // useCallback(() => startRenameBook(book), [book]);
 
   function startRenameBook(book) {
     setCurrentBook(book);

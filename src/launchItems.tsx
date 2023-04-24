@@ -21,6 +21,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import { fetchSuggestionsWrapper } from "./utils";
+
 export default function useLaunchItems(
   dispatch,
   bookid,
@@ -33,7 +34,7 @@ export default function useLaunchItems(
   books,
   _cachedSelectedText,
   activeTextIndex,
-  viewMode
+  viewMode,
 ) {
   const launchItems = [
     /*   {

@@ -33,16 +33,16 @@ function TextEditor({
 }) {
   console.log("TextEditor", index);
   const _pushTextToEditor = useSelector(
-    (state: RootState) => state.library.editor._pushTextToEditor
+    (state: RootState) => state.library.editor._pushTextToEditor,
   );
   const _pushContentToEditor = useSelector(
-    (state: RootState) => state.library.editor._pushContentToEditor
+    (state: RootState) => state.library.editor._pushContentToEditor,
   );
   /*   const currentChapter = useSelector(getSelectedChapter);
    */ const currentText = useSelector(getText(index));
 
   const dispatch = useDispatch();
-  const open = currentText.open;
+  const { open } = currentText;
   /*  return (
     <ContentEditable
       value={currentText.text}
@@ -104,7 +104,7 @@ function TextEditor({
           index: range.index,
           length: range.length,
           contents: word,
-        })
+        }),
       );
     } else {
       console.log("no range");
@@ -148,9 +148,7 @@ function TextEditor({
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
-                onFocus={() =>
-                  dispatch(librarySlice.actions.setActiveTextIndex(index))
-                }
+                onFocus={() => dispatch(librarySlice.actions.setActiveTextIndex(index))}
               />
             </div>
           </div>

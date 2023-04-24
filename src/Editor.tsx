@@ -21,7 +21,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
   const currentChapterId = useSelector(
-    (state: RootState) => state.library.selectedChapterId
+    (state: RootState) => state.library.selectedChapterId,
   );
 
   if (!currentChapterTitle) {
