@@ -5,7 +5,7 @@ import {
   isString,
   localStorageOrDefault,
   parseText,
-  strSplice,
+  strSplice
 } from "../utils";
 
 import { RootState } from "../store";
@@ -24,17 +24,17 @@ const defaults = {
   title: "",
   text: [t.plainTextBlock("default textt")],
   chapterid: "",
-  suggestions: [],
+  suggestions: []
 };
 
 const initialEditorState = (
-  _chapter: t.Chapter | DefaultChapter,
+  _chapter: t.Chapter | DefaultChapter
 ): t.EditorState => {
   const chapter = _chapter || defaults;
   return {
     contents: {},
     activeTextIndex: 0,
-    selectedText: { index: 0, length: 0, contents: "" },
+    selectedText: { index: 0, length: 0, contents: "" }
   };
 };
 
@@ -48,18 +48,18 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     infoPanel: { syllables: 0 },
     panels: {
       bookList: {
-        open: localStorageOrDefault("bookListOpen", true),
+        open: localStorageOrDefault("bookListOpen", true)
       },
       chapterList: {
-        open: localStorageOrDefault("chapterListOpen", true),
+        open: localStorageOrDefault("chapterListOpen", true)
       },
       sidebar: {
         open: localStorageOrDefault("sidebarOpen", false),
-        activePanel: localStorageOrDefault("activePanel", "suggestions"),
+        activePanel: localStorageOrDefault("activePanel", "suggestions")
       },
       prompts: {
-        open: localStorageOrDefault("promptsOpen", false),
-      },
+        open: localStorageOrDefault("promptsOpen", false)
+      }
     },
     suggestions: chapter.suggestions,
     saved: true,
@@ -67,7 +67,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     loading: true,
     booksLoaded: false,
     viewMode: "default",
-    launcherOpen: false,
+    launcherOpen: false
   };
 };
 
@@ -76,12 +76,12 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThu
   async (_payload, { dispatch, signal }) => {
     const res = await fetch(`/books`, {
       credentials: "include",
-      signal,
+      signal
     });
 
     const { books } = await res.json();
     dispatch(librarySlice.actions.setBooks(books));
-  },
+  }
 );
 
 export const librarySlice = createSlice({
@@ -94,7 +94,7 @@ export const librarySlice = createSlice({
         book.chapters.forEach((chapter) => {
           if (isString(chapter.text)) {
             chapter.text = [
-              t.plainTextBlock(chapter.text as unknown as string),
+              t.plainTextBlock(chapter.text as unknown as string)
             ];
           }
         });
@@ -118,7 +118,7 @@ export const librarySlice = createSlice({
       const chapterid = action.payload;
       const book = getSelectedBook({ library: state });
       book.chapters = book.chapters.filter(
-        (chapter) => chapter.chapterid !== chapterid,
+        (chapter) => chapter.chapterid !== chapterid
       );
     },
     addChapter(state: t.State, action: PayloadAction<t.Chapter>) {
@@ -169,7 +169,7 @@ export const librarySlice = createSlice({
     },
     restoreFromHistory(
       state: t.State,
-      action: PayloadAction<{ text: string }>,
+      action: PayloadAction<{ text: string }>
     ) {
       const { text } = action.payload;
       const chapter = getSelectedChapter({ library: state });
@@ -200,7 +200,7 @@ export const librarySlice = createSlice({
       const _chapter = action.payload;
       const book = getSelectedBook({ library: state });
       const idx = book.chapters.findIndex(
-        (sbChapter) => sbChapter.chapterid === _chapter.chapterid,
+        (sbChapter) => sbChapter.chapterid === _chapter.chapterid
       );
 
       if (idx >= 0) {
@@ -220,11 +220,11 @@ export const librarySlice = createSlice({
     },
     addSuggestion(
       state: t.State,
-      action: PayloadAction<{ label: string; value: string }>,
+      action: PayloadAction<{ label: string; value: string }>
     ) {
       state.suggestions.push({
         type: action.payload.label,
-        contents: action.payload.value,
+        contents: action.payload.value
       });
       state.saved = false;
     },
@@ -277,28 +277,28 @@ export const librarySlice = createSlice({
       state.panels.bookList.open = !state.panels.bookList.open;
       localStorage.setItem(
         "bookListOpen",
-        state.panels.bookList.open ? "true" : "false",
+        state.panels.bookList.open ? "true" : "false"
       );
     },
     toggleChapterList(state) {
       state.panels.chapterList.open = !state.panels.chapterList.open;
       localStorage.setItem(
         "chapterListOpen",
-        state.panels.chapterList.open ? "true" : "false",
+        state.panels.chapterList.open ? "true" : "false"
       );
     },
     toggleSidebar(state) {
       state.panels.sidebar.open = !state.panels.sidebar.open;
       localStorage.setItem(
         "sidebarOpen",
-        state.panels.sidebar.open ? "true" : "false",
+        state.panels.sidebar.open ? "true" : "false"
       );
     },
     togglePrompts(state) {
       state.panels.prompts.open = !state.panels.prompts.open;
       localStorage.setItem(
         "promptsOpen",
-        state.panels.prompts.open ? "true" : "false",
+        state.panels.prompts.open ? "true" : "false"
       );
     },
     closeAllPanels(state) {
@@ -462,7 +462,7 @@ export const librarySlice = createSlice({
         chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
         console.log(text.text, newBlock, endBlock);
       }
-    },
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBooksThunk.pending, (state) => {
@@ -479,7 +479,7 @@ export const librarySlice = createSlice({
       state.booksLoaded = true;
       state.error = "Books not found";
     });
-  },
+  }
 });
 
 export const getChapterTitles = (bookid) => (state: RootState) => {
@@ -502,7 +502,7 @@ export const getSelectedBook = (state: RootState): t.Book | null => {
   if (!state.library.booksLoaded) return null;
 
   const book = state.library.books.find(
-    (book) => book.bookid === state.library.selectedBookId,
+    (book) => book.bookid === state.library.selectedBookId
   );
 
   return book;
@@ -514,7 +514,7 @@ export const getSelectedChapter = (state: RootState): t.Chapter | null => {
   const book = getSelectedBook(state);
   if (!book) return null;
   const chapter = book.chapters.find(
-    (chapter) => chapter.chapterid === state.library.selectedChapterId,
+    (chapter) => chapter.chapterid === state.library.selectedChapterId
   );
 
   return chapter;
@@ -528,7 +528,7 @@ export const getSelectedChapterTitle = (state: RootState): string | null => {
 };
 
 export const getSelectedChapterTextLength = (
-  state: RootState,
+  state: RootState
 ): number | null => {
   const chapter = getSelectedChapter(state);
   if (!chapter) return null;
@@ -558,7 +558,7 @@ export const getChapter = (chapterid: t.ChapterId) => (state: RootState): t.Chap
 };
 
 export const getSelectedBookChapters = (
-  state: RootState,
+  state: RootState
 ): t.Chapter[] | null => {
   const book = getSelectedBook(state);
 

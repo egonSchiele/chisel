@@ -47,13 +47,11 @@
 
     // gives too many false positives, ts checks this anyway
     "no-undef": "off",
+    "comma-dangle": "off",
+    //"no-trailing-spaces": "off",
     "react/no-array-index-key": "off" // Do not use Array index in keys
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "airbnb"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "airbnb"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "root": true
