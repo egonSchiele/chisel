@@ -10,7 +10,7 @@ import ContentEditable from "./components/ContentEditable";
 import {
   Bars3BottomLeftIcon,
   ChevronLeftIcon,
-  PlusIcon,
+  PlusIcon
 } from "@heroicons/react/24/outline";
 import NavButton from "./NavButton";
 import { getCsrfToken, useLocalStorage } from "./utils";
@@ -26,12 +26,12 @@ const initialState: t.Book = {
   design: {
     coverColor: "bg-red-700",
     labelColor: "bg-blue-700",
-    labelLinesColor: "bg-yellow-400",
+    labelLinesColor: "bg-yellow-400"
   },
   columnHeadings: [],
   rowHeadings: [],
 
-  favorite: false,
+  favorite: false
 };
 // import { useInterval } from "./utils";
 
@@ -41,7 +41,7 @@ const reducer = produce((draft: t.Book, action: any) => {
     case "SET_TITLE":
       {
         const chapter = draft.chapters.find(
-          (ch) => ch.chapterid === action.payload.chapterID,
+          (ch) => ch.chapterid === action.payload.chapterID
         );
         if (chapter) {
           chapter.title = action.payload.newTitle;
@@ -51,16 +51,10 @@ const reducer = produce((draft: t.Book, action: any) => {
     case "SET_TEXT":
       {
         const chapter = draft.chapters.find(
-          (ch) => ch.chapterid === action.payload.chapterID,
+          (ch) => ch.chapterid === action.payload.chapterID
         );
         if (chapter) {
           chapter.text = action.payload.newText;
-        } else {
-          console.log(
-            "Chapter not found",
-            current(draft.chapters),
-            action.payload.chapterID,
-          );
         }
       }
       break;
@@ -87,7 +81,6 @@ const reducer = produce((draft: t.Book, action: any) => {
       if (!book.rowHeadings || book.rowHeadings.length === 0) {
         book.rowHeadings = Array(12).fill("");
       }
-      console.log("set book", book);
       return book;
 
     case "SET_BOOK_TITLE":
@@ -102,8 +95,9 @@ const reducer = produce((draft: t.Book, action: any) => {
 });
 
 export default function Book() {
-  const [state, dispatch] = React.useReducer<(state: t.Book, action: any) => any
-    >(reducer, initialState);
+  const [state, dispatch] = React.useReducer<
+    (state: t.Book, action: any) => any
+  >(reducer, initialState);
   const [error, setError] = React.useState("");
 
   const [loaded, setLoaded] = React.useState(false);
@@ -115,13 +109,13 @@ export default function Book() {
   const widths = {
     small: 100,
     medium: 200,
-    large: 300,
+    large: 300
   };
 
   const heights = {
     small: 70,
     medium: 140,
-    large: 210,
+    large: 210
   };
 
   const width = widths[size];
@@ -185,8 +179,7 @@ export default function Book() {
       return;
     }
     const data: t.Book = await res.json();
-    console.log("got book");
-    console.log(data);
+
     if (!data) {
       setError("Book not found");
       return;
@@ -196,7 +189,7 @@ export default function Book() {
       data.design = {
         coverColor: "bg-dmlistitem2",
         labelColor: "bg-blue-700",
-        labelLinesColor: "border-yellow-400",
+        labelLinesColor: "border-yellow-400"
       };
     }
     dispatch({ type: "SET_BOOK", payload: data });
@@ -212,20 +205,16 @@ export default function Book() {
     const result = await fetch("/api/saveChapter", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body,
+      body
     });
-
-    if (!result.ok) {
-      console.log("error saving chapter", result.statusText);
-    }
   }
 
   const onChange = async (chapter: t.Chapter) => {
     dispatch({
       type: "SET_CHAPTER",
-      payload: { chapter, chapterID: chapter.chapterid },
+      payload: { chapter, chapterID: chapter.chapterid }
     });
     await saveChapter(chapter);
   };
@@ -239,15 +228,14 @@ export default function Book() {
   async function saveBook(state: t.Book) {
     const book = { ...state };
 
-    console.log("saving book", book);
     book.chapters = [];
     const body = JSON.stringify({ book, csrfToken: getCsrfToken() });
     const result = await fetch("/api/saveBook", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body,
+      body
     });
 
     if (!result.ok) {
@@ -263,21 +251,20 @@ export default function Book() {
     await fetch("/api/newChapter", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         bookid,
         title,
         text,
-        csrfToken: getCsrfToken(),
-      }),
+        csrfToken: getCsrfToken()
+      })
     });
     await fetchBook();
   };
 
   const cell = useRef();
   const headings = []; // ["hi", "there", "how", "are", "you"];
-  console.log("state", state);
   if (!state) {
     return <div>Loading...</div>;
   }
@@ -303,11 +290,11 @@ export default function Book() {
           className="absolute w-8 h-8 p-2 rounded-md bg-red-700 text-center content-center -m-xs text-white"
           style={{
             top: `${y * height}px`,
-            left: `${x * width}px`,
+            left: `${x * width}px`
           }}
         >
           {positions[pos]}
-        </p>,
+        </p>
       );
     }
   });
@@ -319,7 +306,7 @@ export default function Book() {
   for (let x = 0; x < state.columnHeadings.length; x++) {
     for (let y = 0; y < state.rowHeadings.length; y++) {
       const chapters = state.chapters.filter(
-        (c) => c.pos.x === x && c.pos.y === y,
+        (c) => c.pos.x === x && c.pos.y === y
       );
       if (chapters.length > 0) {
         chapters.forEach((chapter) => {
@@ -333,7 +320,7 @@ export default function Book() {
               width={width}
               // @ts-ignore
               height={height}
-            />,
+            />
           );
         });
       }
@@ -345,9 +332,9 @@ export default function Book() {
             left: `${x * width}px`,
             top: `${y * height}px`,
             height: `${height}px`,
-            width: `${width}px`,
+            width: `${width}px`
           }}
-        />,
+        />
       );
     }
   }
@@ -367,15 +354,15 @@ export default function Book() {
       onClick: () => {
         newChapter();
       },
-      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />
     },
     {
       label: "Back",
       onClick: () => {
         navigate(`/book/${bookid}`);
       },
-      icon: <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />,
-    },
+      icon: <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+    }
   ];
 
   state.chapters.forEach((chapter, i) => {
@@ -384,7 +371,7 @@ export default function Book() {
       onClick: () => {
         navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
       },
-      icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />
     });
   });
 
@@ -439,12 +426,12 @@ export default function Book() {
             style={{
               left: `${i * width}px`,
               height: `${height}px`,
-              width: `${width}px`,
+              width: `${width}px`
             }}
             onSubmit={(newHeading) => {
               dispatch({
                 type: "SET_COLUMN_HEADING",
-                payload: { i, newHeading },
+                payload: { i, newHeading }
               });
               setSaved(false);
             }}

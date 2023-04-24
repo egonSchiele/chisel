@@ -402,18 +402,6 @@ export const librarySlice = createSlice({
       // all the text after the selection
       const endText = text.text.slice(index + length).trim();
 
-      /*  console.log(
-        "index",
-        index,
-        "length",
-        length,
-        "text",
-        text.text,
-        "newText",
-        newText,
-        "newBlock",
-        newBlock
-      ); */
       state.saved = false;
       if (index === 0) {
         if (length === text.text.length) {
@@ -460,7 +448,6 @@ export const librarySlice = createSlice({
         state.editor._pushTextToEditor = startText;
         const endBlock = t.plainTextBlock(endText);
         chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
-        console.log(text.text, newBlock, endBlock);
       }
     }
   },

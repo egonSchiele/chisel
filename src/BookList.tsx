@@ -37,12 +37,12 @@ async function newBook(dispatch) {
     console.log(res.message);
   } else {
     const book = res.payload;
-    console.log("new book", book);
     dispatch(librarySlice.actions.addBook(book));
   }
 }
 
-const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+const buttonStyles =
+  "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList({
@@ -51,7 +51,7 @@ export default function BookList({
   onChange,
   onDelete,
   saveBook,
-  canCloseSidebar = true,
+  canCloseSidebar = true
 }: {
   books: t.Book[];
   selectedBookId: string;
@@ -94,14 +94,14 @@ export default function BookList({
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => dispatch(librarySlice.actions.closeBookList()),
-    className: buttonStyles,
+    className: buttonStyles
   };
 
   const leftMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => newBook(dispatch),
-    className: buttonStyles,
+    className: buttonStyles
   };
 
   return (

@@ -45,3 +45,5 @@
 - prompt library
 - Daily log functionality
 - tables? https://jspreadsheets.com
+- switrch grid mode to redux
+- show err messages instead of logging to console

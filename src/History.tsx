@@ -13,13 +13,13 @@ function History({
   chapterid,
   onSave,
   triggerHistoryRerender,
-  onClick,
+  onClick
 }) {
   const [history, setHistory] = useState<t.History>([]);
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
-        credentials: "include",
+        credentials: "include"
       });
       if (!res.ok) {
         console.log(res.statusText);
@@ -27,25 +27,19 @@ function History({
         return;
       }
       const data = await res.json();
-      console.log("got history");
       setHistory(data);
     };
     func();
   }, [chapterid, triggerHistoryRerender]);
 
   const applyPatch = (index) => {
-    console.log("index", index);
-    console.log("history", history);
     if (index < 0) return "";
     if (!history || !history[index]) return "";
     let old = history[0];
     if (index === 0) return old;
 
     history.slice(1, index + 1).forEach((patch) => {
-      console.log("old", old);
-      console.log("patch", patch);
       const result = Diff.applyPatch(old, patch);
-      console.log("result", result);
       if (result) old = result;
     });
     return old;

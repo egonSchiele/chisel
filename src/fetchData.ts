@@ -8,19 +8,11 @@ export const fetchBook = async (bookid: string): Promise<t.Result> => {
     return t.error(res.statusText);
   }
   const data: t.Book = await res.json();
-  console.log("got book");
-  console.log(data);
+
   if (!data) {
     return t.error("Book not found");
   }
 
-  /* if (!data.design) {
-    data.design = {
-      coverColor: "bg-dmlistitem2",
-      labelColor: "bg-blue-700",
-      labelLinesColor: "border-yellow-400",
-    };
-  } */
   return t.success(data);
 };
 
@@ -30,8 +22,7 @@ export const fetchSettings = async () => {
     return t.error(res.statusText);
   }
   const data = await res.json();
-  console.log("got settings");
-  console.log(data);
+
   if (!data) {
     return t.error("Settings not found");
   }
@@ -44,7 +35,7 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
-  label: string,
+  label: string
 ) => {
   const prompt = _prompt.replaceAll("{{text}}", text);
   const body = JSON.stringify({
@@ -52,15 +43,15 @@ export const fetchSuggestions = async (
     model,
     max_tokens,
     num_suggestions,
-    csrfToken: getCsrfToken(),
+    csrfToken: getCsrfToken()
   });
 
   const res = await fetch("/api/suggestions", {
     method: "POST",
     body,
     headers: {
-      "Content-Type": "application/json",
-    },
+      "Content-Type": "application/json"
+    }
   });
 
   if (!res.ok) {
@@ -85,20 +76,20 @@ export const fetchSuggestions = async (
 export const newChapter = async (
   bookid: string,
   title: string,
-  text: string,
+  text: string
 ) => {
   const body = JSON.stringify({
     bookid,
     title,
     text,
-    csrfToken: getCsrfToken(),
+    csrfToken: getCsrfToken()
   });
   const res = await fetch("/api/newChapter", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     },
-    body,
+    body
   });
   if (!res.ok) {
     return t.error(res.statusText);
@@ -151,9 +142,9 @@ export async function postWithCsrf(url: string, body: any) {
   const res = await fetch(url, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({ ...body, csrfToken: getCsrfToken() }),
+    body: JSON.stringify({ ...body, csrfToken: getCsrfToken() })
   });
   return res;
 }
