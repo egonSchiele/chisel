@@ -36,8 +36,9 @@ import NavButton from "./NavButton";
 import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./store";
+import { AppDispatch, RootState } from "./store";
 import {
+  fetchBooksThunk,
   getSelectedBook,
   getSelectedBookChapters,
   getSelectedChapter,
@@ -49,7 +50,7 @@ export default function Library() {
   const selectedBook = useSelector(getSelectedBook);
   const selectedBookChapters = useSelector(getSelectedBookChapters);
   const currentChapter = useSelector(getSelectedChapter);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
     max_tokens: 0,
@@ -127,16 +128,7 @@ export default function Library() {
   }, [state.selectedBookId, chapterid]);
 
   const fetchBooks = async () => {
-    setLoading(true);
-    const result = await fd.fetchBooks();
-    setLoading(false);
-
-    if (result.tag === "success") {
-      dispatch(librarySlice.actions.setBooks(result.payload));
-      dispatch(librarySlice.actions.setBooksLoaded(true));
-    } else {
-      dispatch(librarySlice.actions.setError(result.message));
-    }
+    dispatch(fetchBooksThunk());
   };
 
   const fetchSettings = async () => {
