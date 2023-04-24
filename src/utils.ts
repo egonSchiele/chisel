@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
 import { RootState } from "./store";
 import { librarySlice } from "./reducers/librarySlice";
+import * as t from "./Types";
 
 export function useInterval(fn, delay) {
   const saved = useRef();
@@ -147,4 +148,20 @@ export function getCsrfToken() {
     .querySelector('meta[name="csrf-token"]')
     .getAttribute("content");
   return token;
+}
+
+export function parseText(text): t.TextBlock[] {
+  try {
+    const data = JSON.parse(text);
+    if (Array.isArray(data)) {
+      return data;
+    }
+    return [t.plainTextBlock(text)];
+  } catch (e) {
+    return [t.plainTextBlock(text)];
+  }
+}
+
+export function isString(x): x is string {
+  return typeof x === "string" || x instanceof String;
 }

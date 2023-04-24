@@ -103,7 +103,7 @@ export default function ChapterList({
     const [removed] = ids.splice(result.source.index, 1);
     ids.splice(result.destination.index, 0, removed);
 
-    dispatch(librarySlice.actions.setChapterOrder({ bookid, ids }));
+    dispatch(librarySlice.actions.setChapterOrder(ids));
   };
 
   const sublist = () => chapters.map((chapter, index) => (

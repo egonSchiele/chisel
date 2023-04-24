@@ -122,7 +122,7 @@ export const getBooks = async (userid) => {
   await Promise.all(promises);
   console.log(
     "allBooks",
-    allBooks.map((book) => book.bookid),
+    allBooks.map((book) => book.bookid)
   );
   return allBooks;
 };
@@ -136,12 +136,12 @@ export const saveChapter = async (chapter) => {
   }
 
   if (
-    settings.limits.chapterLength > 0
-    && chapter.text
-    && chapter.text.length >= settings.limits.chapterLength
+    settings.limits.chapterLength > 0 &&
+    chapter.text &&
+    chapter.text.length >= settings.limits.chapterLength
   ) {
     throw new Error(
-      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`,
+      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
     );
   }
 
@@ -176,7 +176,7 @@ export const deleteChapter = async (chapterid, bookid) => {
     return;
   }
   book.chapterOrder = book.chapterOrder.filter(
-    (_chapterid) => _chapterid !== chapterid,
+    (_chapterid) => _chapterid !== chapterid
   );
   await saveBook(book);
 };
@@ -233,11 +233,11 @@ export const saveToHistory = async (chapterid, text) => {
   const { history } = bookObj.data();
 
   if (
-    settings.limits.historyLength > 0
-    && history.length >= settings.limits.historyLength
+    settings.limits.historyLength > 0 &&
+    history.length >= settings.limits.historyLength
   ) {
     throw new Error(
-      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`,
+      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
     );
   }
 
@@ -252,6 +252,7 @@ export const saveToHistory = async (chapterid, text) => {
     console.log("no change");
     return;
   }
+  console.log("text", text);
   const patch = Diff.createPatch(chapterid, old, text, "-", "-");
   console.log("patch", patch);
   history.push(patch);

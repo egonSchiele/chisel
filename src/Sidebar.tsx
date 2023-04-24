@@ -131,9 +131,9 @@ export default function Sidebar({
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
-
+  // TODO
   const infoText = state.editor.selectedText.length === 0
-    ? state.editor.text
+    ? currentChapter.text[0].text
     : state.editor.selectedText.contents;
   return (
     <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder">

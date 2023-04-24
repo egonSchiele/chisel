@@ -13,18 +13,21 @@ import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
 import { RootState } from "./store";
-import { librarySlice } from "./reducers/librarySlice";
+import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 
 function TextEditor({
   chapterid,
+  index,
   saved,
   onSave,
 }: {
   chapterid: string;
+  index: number;
   saved: boolean;
   onSave: () => void;
 }) {
   const state = useSelector((state: RootState) => state.library.editor);
+  const currentChapter = useSelector(getSelectedChapter);
   const dispatch = useDispatch();
 
   const quillRef = useRef();
@@ -34,7 +37,8 @@ function TextEditor({
     if (!quillRef.current) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    editor.setText(state.text);
+    // TODO
+    editor.setText(currentChapter.text[0].text);
   }, [quillRef.current, chapterid, state._pushTextToEditor]);
 
   useEffect(() => {
@@ -54,35 +58,6 @@ function TextEditor({
     editor.focus();
   };
 
-  /*   const highlightFillerWords = () => {
-    if (!quillRef.current) return;
-    const quill = quillRef.current.getEditor();
-    const text = quill.getText();
-
-    const words = text.split(" ");
-
-    let idx = 0;
-    words.forEach((word) => {
-      word = word.toLowerCase();
-      word = word.trim();
-      const start = idx;
-      const end = idx + word.length;
-      const isFiller = fillers.includes(word);
-      console.log({ word, start, end, isFiller });
-
-      if (isFiller) {
-        quill.formatText(start, word.length, {
-          background: "yellow",
-        });
-      } else {
-        quill.formatText(start, word.length, {
-          background: "white",
-        });
-      }
-      idx = end + 1;
-    });
-  };
- */
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
     if (!edited) return;
@@ -90,7 +65,7 @@ function TextEditor({
     const editor = quillRef.current.getEditor();
     dispatch(librarySlice.actions.setSaved(false));
     // dispatch(librarySlice.actions.setContents(editor.getContents()));
-    dispatch(librarySlice.actions.setText(editor.getText()));
+    dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
   };
 
   const setSelection = (e) => {
@@ -130,7 +105,7 @@ function TextEditor({
         <div className="ql-editor hidden">hi</div>
         <div className="ql-toolbar ql-snow hidden">hi</div>
         <ContentEditable
-          value={state.title}
+          value={currentChapter.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
           onSubmit={(title) => {
             dispatch(librarySlice.actions.setTitle(title));

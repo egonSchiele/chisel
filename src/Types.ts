@@ -33,19 +33,12 @@ export type SelectedText = {
 };
 
 export type EditorState = {
-  title: string;
-  text: string;
   contents: any;
-  chapterid: string;
-  tooltipPosition: { top: number; left: number };
-  tooltipOpen: boolean;
   selectedText: SelectedText;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
 
   _pushContentToEditor?: string;
-
-  // selectedSyllables: number;
 };
 
 export type InfoPanelState = {
@@ -53,15 +46,9 @@ export type InfoPanelState = {
 };
 
 export type ButtonSize = "small" | "medium" | "large";
-export type SuggestionType =
-  | "expand"
-  | "contract"
-  | "rewrite"
-  | "texttospeech"
-  | "activevoice";
 
 export type Suggestion = {
-  type: SuggestionType;
+  type: string;
   contents: string;
 };
 
@@ -70,11 +57,34 @@ export type Pos = {
   y: number;
 };
 
+export type PlainTextBlock = {
+  type: "plain";
+  text: string;
+};
+
+export type FoldableBlock = {
+  type: "foldable";
+  text: string;
+  folded: boolean;
+};
+
+export function plainTextBlock(text: string): PlainTextBlock {
+  return { type: "plain", text };
+}
+
+export function foldableBlock(text: string): FoldableBlock {
+  return { type: "foldable", text, folded: true };
+}
+
+export type TextBlock = PlainTextBlock | FoldableBlock;
+
+export type NewTextForBlock = { index: number; text: string };
+
 export type Chapter = {
   bookid: string;
   chapterid: string;
   title: string;
-  text: string;
+  text: TextBlock[];
   pos: Pos;
   suggestions: Suggestion[];
   favorite: boolean;

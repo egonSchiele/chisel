@@ -17,6 +17,12 @@ export default function Editor({
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
 
+  if (!currentChapter) {
+    return <div className="flex w-full h-full">Loading</div>;
+  }
+
+  console.log(currentChapter, "!!");
+
   return (
     <div className="flex w-full h-full">
       <div className="w-full h-full col-span-4">
@@ -25,11 +31,15 @@ export default function Editor({
           <div className="flex flex-grow" />
         </div>
         <div className="h-full w-full">
-          <TextEditor
-            chapterid={currentChapter.chapterid}
-            saved={state.saved}
-            onSave={() => onSave(state)}
-          />
+          {currentChapter.text.map((textBlock, index) => (
+            <TextEditor
+              chapterid={currentChapter.chapterid}
+              index={index}
+              key={index}
+              saved={state.saved}
+              onSave={() => onSave(state)}
+            />
+          ))}
         </div>
       </div>
     </div>

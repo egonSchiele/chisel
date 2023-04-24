@@ -65,7 +65,7 @@ export default function Chapter({
             <Link to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}>
               <div className="text-sm m-xs overflow-hidden inline-block w-full h-20 dark:bg-dmsidebar dark:hover:bg-gray-600 bg-sidebar hover:bg-gray-200 text-text dark:text-dmtext px-xs">
                 {/* {chapter.pos.x}, {chapter.pos.y}, {def} */}
-                {chapter.text || "..."}
+                {chapter.text.map((t) => t.text).join("\n") || "..."}
               </div>
             </Link>
           </div>
