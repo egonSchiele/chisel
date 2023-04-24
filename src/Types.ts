@@ -38,7 +38,6 @@ export type EditorState = {
   selectedText: SelectedText;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
-  _pushContentToEditor?: string;
 };
 
 export type InfoPanelState = {
@@ -184,7 +183,7 @@ export type Result = Error | Success;
 export const error = (message: string): Error => ({ tag: "error", message });
 export const success = (payload: any = null): Success => ({
   tag: "success",
-  payload,
+  payload
 });
 
 export type MenuItem = {

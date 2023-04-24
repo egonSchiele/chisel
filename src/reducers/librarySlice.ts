@@ -208,7 +208,24 @@ export const librarySlice = createSlice({
       }
     },
     addToContents(state: t.State, action: PayloadAction<string>) {
-      state.editor._pushContentToEditor = action.payload;
+      const toAdd = action.payload;
+      const { activeTextIndex } = state.editor;
+      const chapter = getSelectedChapter({ library: state });
+      const cur = chapter.text[activeTextIndex];
+      let { index, length, contents } = state.editor.selectedText;
+      if (index === 0) {
+        index = state.editor._cachedSelectedText.index;
+        length = state.editor._cachedSelectedText.length;
+        contents = state.editor._cachedSelectedText.contents;
+      }
+      let newText = "";
+      if (index) {
+        newText = strSplice(cur.text, index, length, toAdd);
+      } else {
+        newText = `${cur.text} ${toAdd}`;
+      }
+      cur.text = newText;
+      state.editor._pushTextToEditor = newText;
       state.saved = false;
     },
     setSelectedText(state: t.State, action: PayloadAction<t.SelectedText>) {

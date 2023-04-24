@@ -508,12 +508,12 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
           return;
         }
         user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.month.completion +=
-          json.usage.completion_tokens;
+        user.usage.openai_api.tokens.month.completion
+          += json.usage.completion_tokens;
 
         user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.total.completion +=
-          json.usage.completion_tokens;
+        user.usage.openai_api.tokens.total.completion
+          += json.usage.completion_tokens;
 
         await saveUser(user);
         /* {

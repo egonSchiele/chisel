@@ -16,7 +16,7 @@ import { RootState } from "./store";
 import {
   getSelectedChapter,
   getText,
-  librarySlice,
+  librarySlice
 } from "./reducers/librarySlice";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
@@ -25,17 +25,14 @@ import { useTraceUpdate } from "./utils";
 function TextEditor({
   chapterid,
   index,
-  onSave,
+  onSave
 }: {
   chapterid: string;
   index: number;
   onSave: () => void;
 }) {
   const _pushTextToEditor = useSelector(
-    (state: RootState) => state.library.editor._pushTextToEditor,
-  );
-  const _pushContentToEditor = useSelector(
-    (state: RootState) => state.library.editor._pushContentToEditor,
+    (state: RootState) => state.library.editor._pushTextToEditor
   );
 
   const currentText = useSelector(getText(index));
@@ -53,16 +50,6 @@ function TextEditor({
     // TODO
     editor.setText(currentText.text);
   }, [quillRef.current, chapterid, _pushTextToEditor]);
-
-  useEffect(() => {
-    if (!quillRef.current) return;
-    if (!_pushContentToEditor) {
-      return;
-    }
-    // @ts-ignore
-    const editor = quillRef.current.getEditor();
-    editor.insertText(-1, _pushContentToEditor);
-  }, [quillRef.current, chapterid, _pushContentToEditor]);
 
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
@@ -86,8 +73,8 @@ function TextEditor({
         librarySlice.actions.setSelectedText({
           index: range.index,
           length: range.length,
-          contents: word,
-        }),
+          contents: word
+        })
       );
     } else {
       dispatch(librarySlice.actions.clearSelectedText());
@@ -152,7 +139,9 @@ function TextEditor({
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
-                onFocus={() => dispatch(librarySlice.actions.setActiveTextIndex(index))}
+                onFocus={() =>
+                  dispatch(librarySlice.actions.setActiveTextIndex(index))
+                }
               />
             </div>
           </div>
