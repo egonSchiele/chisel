@@ -94,6 +94,14 @@ function TextEditor({
     }
   };
 
+  function setOpen(bool: boolean) {
+    if (bool) {
+      dispatch(librarySlice.actions.openBlock(index));
+    } else {
+      dispatch(librarySlice.actions.closeBlock(index));
+    }
+  }
+
   const handleKeyDown = (event) => {
     setEdited(true);
     if (event.metaKey && event.code === "KeyS") {
@@ -103,8 +111,22 @@ function TextEditor({
     } else if (event.altKey && event.shiftKey && event.code === "ArrowDown") {
       event.preventDefault();
       dispatch(librarySlice.actions.extractBlock());
+    } else if (event.shiftKey && event.code === "Tab") {
+      event.preventDefault();
+      setOpen(!open);
     }
   };
+
+  let textPreview = "(no text)";
+  if (currentText.text) {
+    const line = currentText.text.split("\n")[0];
+    const textLines = line.split(".");
+    if (textLines.length > 1) {
+      textPreview = `${textLines[0]}.`;
+    } else {
+      textPreview = line;
+    }
+  }
 
   return (
     <div className="">
@@ -118,7 +140,7 @@ function TextEditor({
             <div
               className="flex-none cursor-pointer mr-xs"
               onClick={() => {
-                dispatch(librarySlice.actions.closeBlock(index));
+                setOpen(false);
               }}
             >
               <ChevronDownIcon className="w-5 h-5 text-gray-500" />
@@ -140,13 +162,13 @@ function TextEditor({
             <div
               className="flex-none cursor-pointer mr-xs"
               onClick={() => {
-                dispatch(librarySlice.actions.openBlock(index));
+                setOpen(true);
               }}
             >
               <ChevronRightIcon className="w-5 h-5 text-gray-500" />
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
-              <p className="text-gray-500">{currentText.text.split("\n")[0]}</p>
+              <p className="text-gray-500">{textPreview}</p>
             </div>
           </div>
         )}

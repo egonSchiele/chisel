@@ -1,9 +1,6 @@
-
-
 ## P2
 - add to launcher: rename book and chapter, reorder chapters
 - need to clear the cached selected data at some point, maybe once the user starts typing again.
-- snippets functionality
 - imports
 - move chapter to another book
 - cache synonyms
@@ -23,7 +20,7 @@
 - Functionality for taking notes with no organization
 - use new dnd library for grid
 - should be able to change settings without a chapter selected
-
+- add save + prompts functionality back to launcher
 
 ## P3
 
@@ -47,3 +44,4 @@
 - light mode: Note you cannot tell that Book On is highlighted, And then there is the weird line gap for chapters.
 - prompt library
 - Daily log functionality
+- tables? https://jspreadsheets.com

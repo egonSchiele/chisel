@@ -381,12 +381,12 @@ export const librarySlice = createSlice({
       if (length === 0) return;
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
-      const newText = strSplice(text.text, index, length);
-      const newBlock = t.plainTextBlock(contents);
+      const newText = strSplice(text.text, index, length).trim();
+      const newBlock = t.plainTextBlock(contents.trim());
       // all the text before the selection
-      const startText = text.text.slice(0, index);
+      const startText = text.text.slice(0, index).trim();
       // all the text after the selection
-      const endText = text.text.slice(index + length);
+      const endText = text.text.slice(index + length).trim();
 
       /*  console.log(
         "index",
@@ -413,14 +413,14 @@ export const librarySlice = createSlice({
           state.editor._pushTextToEditor = newText;
           chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
         }
-      } else if (startText.replace(/\s/g, "").length === 0) {
+      } else if (startText.length === 0) {
         console.log("start");
         // just whitespace the beginning of the text,
         // so new block will be at the start
         text.text = newText;
         state.editor._pushTextToEditor = newText;
         chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
-      } else if (endText.replace(/\s/g, "").length === 0) {
+      } else if (endText.length === 0) {
         console.log("end");
         // just whitespace the end of the text,
         // so new block will be at the end
