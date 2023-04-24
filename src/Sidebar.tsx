@@ -125,7 +125,6 @@ export default function Sidebar({
   onSuggestionDelete,
   onSettingsSave,
   onHistoryClick,
-  triggerHistoryRerender,
   maximize,
 }) {
   const state = useSelector((state: RootState) => state.library);
@@ -174,8 +173,6 @@ export default function Sidebar({
                 key="history"
                 chapterid={currentChapter.chapterid}
                 bookid={currentChapter.bookid}
-                onSave={() => {}}
-                triggerHistoryRerender={triggerHistoryRerender}
                 onClick={onHistoryClick}
               />,
             ]}

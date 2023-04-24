@@ -1,4 +1,8 @@
 export type State = {
+  library: LibraryState;
+}
+
+export type LibraryState = {
   books: Book[];
   error: string;
   loading: boolean;
@@ -13,6 +17,7 @@ export type State = {
   _temporaryFocusModeState?: string;
   viewMode: ViewMode;
   launcherOpen: boolean;
+  historyRerender: number;
 };
 
 export type ViewMode = "default" | "focus" | "fullscreen" | "grid";

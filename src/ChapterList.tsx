@@ -18,7 +18,8 @@ import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
-import { librarySlice } from "./reducers/librarySlice";
+import { librarySlice, saveChapterThunk } from "./reducers/librarySlice";
+import { AppDispatch } from "./store";
 // import Draggable from "react-draggable";
 
 export default function ChapterList({
@@ -27,7 +28,6 @@ export default function ChapterList({
   selectedChapterId,
 
   onDelete,
-  saveChapter,
   closeSidebar,
   canCloseSidebar = true,
 }: {
@@ -35,11 +35,10 @@ export default function ChapterList({
   bookid: string;
   selectedChapterId: string;
   onDelete: any;
-  saveChapter: any;
   closeSidebar: () => void;
   canCloseSidebar?: boolean;
 }) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [editing, setEditing] = React.useState(false);
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);
@@ -127,7 +126,7 @@ export default function ChapterList({
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
-    saveChapter(newChapter);
+    dispatch(saveChapterThunk({ chapter: newChapter, suggestions: [] }));
     setShowPopup(false);
   }
 
