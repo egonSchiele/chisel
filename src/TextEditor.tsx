@@ -41,17 +41,8 @@ function TextEditor({
   /*   const currentChapter = useSelector(getSelectedChapter);
    */ const currentText = useSelector(getText(index));
 
-  useTraceUpdate({
-    chapterid,
-    index,
-    onSave,
-    _pushTextToEditor,
-    _pushContentToEditor,
-    currentText,
-  });
-
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(true);
+  const open = currentText.open;
   /*  return (
     <ContentEditable
       value={currentText.text}
@@ -62,7 +53,7 @@ function TextEditor({
   ); */
 
   const quillRef = useRef();
-
+  console.log("currentText", currentText);
   const [edited, setEdited] = useState(false);
   useEffect(() => {
     if (!quillRef.current) return;
@@ -94,9 +85,9 @@ function TextEditor({
     if (!edited) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    //dispatch(librarySlice.actions.setSaved(false));
+    dispatch(librarySlice.actions.setSaved(false));
     // dispatch(librarySlice.actions.setContents(editor.getContents()));
-    //dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
+    dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
   };
 
   const setSelection = (e) => {
@@ -127,12 +118,7 @@ function TextEditor({
       event.preventDefault();
       console.log("saving!");
       onSave();
-    } else if (
-      event.altKey &&
-      event.shiftKey &&
-      event.code === "ArrowDown"
-      /* state.selectedText.length > 0 */
-    ) {
+    } else if (event.altKey && event.shiftKey && event.code === "ArrowDown") {
       event.preventDefault();
       dispatch(librarySlice.actions.extractBlock());
     }
@@ -145,49 +131,45 @@ function TextEditor({
       <div className="ql-toolbar ql-snow hidden">hi</div>
 
       <div className="mb-sm h-full w-full">
-        {/* {open && ( */}
-        <div className="flex">
-          <div
-            className="flex-none cursor-pointer mr-xs"
-            onClick={() => {
-              dispatch(librarySlice.actions.closeBlock(index));
-              setOpen(false);
-            }}
-          >
-            <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+        {open && (
+          <div className="flex">
+            <div
+              className="flex-none cursor-pointer mr-xs"
+              onClick={() => {
+                dispatch(librarySlice.actions.closeBlock(index));
+              }}
+            >
+              <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+            </div>
+            <div className="flex-grow border-l border-gray-500 pl-sm">
+              <ReactQuill
+                ref={quillRef}
+                placeholder="Write something..."
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
+                onChangeSelection={setSelection}
+                onFocus={() =>
+                  dispatch(librarySlice.actions.setActiveTextIndex(index))
+                }
+              />
+            </div>
           </div>
-          <div className="flex-grow border-l border-gray-500 pl-sm">
-            <ReactQuill
-              ref={quillRef}
-              placeholder="Write something..."
-              onChange={handleTextChange}
-              onKeyDown={handleKeyDown}
-              onChangeSelection={setSelection}
-              /* onFocus={() =>
-                dispatch(librarySlice.actions.setActiveTextIndex(index))
-              } */
-            />
-          </div>
-        </div>
-        {/* )} */}
-        {/*    {!open && (
+        )}
+        {!open && (
           <div className="flex">
             <div
               className="flex-none cursor-pointer mr-xs"
               onClick={() => {
                 dispatch(librarySlice.actions.openBlock(index));
-                setOpen(true);
               }}
             >
               <ChevronRightIcon className="w-5 h-5 text-gray-500" />
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
-              <p className="text-gray-500">
-                {currentChapter.text[index].text.split("\n")[0]}
-              </p>
+              <p className="text-gray-500">{currentText.text.split("\n")[0]}</p>
             </div>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

@@ -132,6 +132,43 @@ export default function Library() {
     }
   }, [state.selectedBookId, chapterid]);
 
+  const panels = useSelector((state: RootState) => state.library.panels);
+  const books = useSelector((state: RootState) => state.library.books);
+  const editor = useSelector((state: RootState) => state.library.editor);
+  const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const currentText = useSelector((state: RootState) => {
+    const chapter = getSelectedChapter(state);
+    return chapter ? chapter.text : [];
+  });
+
+  const [launchItems, setLaunchItems] = useState<t.MenuItem[]>([]);
+
+  useEffect(() => {
+    const _launchItems = useLaunchItems(
+      dispatch,
+      bookid,
+      togglePanel,
+      navigate,
+      settings,
+      setLoading,
+      onSuggestionLoad,
+      panels,
+      books,
+      editor._cachedSelectedText,
+      editor.activeTextIndex,
+      viewMode
+    );
+    setLaunchItems(_launchItems);
+  }, [
+    bookid,
+    settings,
+    panels,
+    books,
+    editor._cachedSelectedText,
+    editor.activeTextIndex,
+    viewMode,
+  ]);
+
   const fetchBooks = async () => {
     dispatch(fetchBooksThunk());
   };
@@ -172,29 +209,22 @@ export default function Library() {
     dispatch(librarySlice.actions.setActivePanel("suggestions"));
   }
 
-  // todo memoize these
-  const launchItems = useLaunchItems(
-    onTextEditorSave,
-    dispatch,
-    bookid,
-    togglePanel,
-    navigate,
-    settings,
-    fetchSuggestionsWrapper,
-    setLoading,
-    onSuggestionLoad
-  );
-
   const onLauncherClose = useCallback(
     () => dispatch(librarySlice.actions.toggleLauncher()),
     []
   );
 
   async function onTextEditorSave(state: t.State) {
-    await saveChapter(currentChapter, state.suggestions);
+    const chapter = getSelectedChapter({ library: state });
+    const book = getSelectedBook({ library: state });
+    if (!chapter) {
+      console.log(state);
+      throw new Error("No chapter to saveWTFF");
+    }
+    await saveChapter(chapter, state.suggestions);
 
-    if (!selectedBook) return;
-    await saveBook(selectedBook);
+    if (!book) return;
+    await saveBook(book);
     await saveToHistory(state);
     setTriggerHistoryRerender((t) => t + 1);
   }
@@ -217,6 +247,7 @@ export default function Library() {
   }
 
   async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
+    if (!_chapter) throw new Error("No chapter to save");
     const chapter = { ..._chapter };
     chapter.suggestions = suggestions;
 
@@ -244,16 +275,18 @@ export default function Library() {
   useInterval(() => {
     const func = async () => {
       if (state.saved) return;
-      if (currentChapter) {
-        await saveChapter(currentChapter, state.suggestions);
+      const chapter = getSelectedChapter({ library: state });
+      if (chapter) {
+        await saveChapter(chapter, state.suggestions);
       }
-      if (!selectedBook) return;
-      await saveBook(selectedBook);
+      const book = getSelectedBook({ library: state });
+      if (!book) return;
+      await saveBook(book);
     };
     func();
   }, 5000);
 
-  const onEditorSave = useCallback(() => onTextEditorSave(state), []);
+  const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
 
   async function saveBook(_book: t.Book) {
     if (!_book) {

@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch } from "react-redux";
 import * as t from "./Types";
 import List from "./components/List";
-import Button from "./components/Button";
-import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
@@ -42,7 +40,8 @@ async function newBook(dispatch) {
   }
 }
 
-const buttonStyles = "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+const buttonStyles =
+  "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList({
@@ -64,6 +63,15 @@ export default function BookList({
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentBook, setCurrentBook] = React.useState(books[0]);
 
+  const onDeleteWrapped = (bookid) => () => deleteBook(bookid, onDelete);
+  //useCallback(() => deleteBook(bookid, onDelete), [bookid]);
+
+  const onFavoriteWrapped = (bookid) => () => favoriteBook(bookid, onChange);
+  //useCallback(() => favoriteBook(bookid, onChange), [bookid]);
+
+  const onRenameWrapped = (book) => () => startRenameBook(book);
+  //useCallback(() => startRenameBook(book), [book]);
+
   function startRenameBook(book) {
     setCurrentBook(book);
     setShowPopup(true);
@@ -82,9 +90,9 @@ export default function BookList({
         link={`/book/${book.bookid}`}
         title={book.title}
         selected={book.bookid === selectedBookId}
-        onDelete={() => deleteBook(book.bookid, onDelete)}
-        onFavorite={() => favoriteBook(book.bookid, onChange)}
-        onRename={() => startRenameBook(book)}
+        onDelete={onDeleteWrapped(book.bookid)}
+        onFavorite={onFavoriteWrapped(book.bookid)}
+        onRename={onRenameWrapped(book)}
         selector="booklist"
       />
     </li>

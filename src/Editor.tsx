@@ -23,17 +23,10 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   const currentChapterId = useSelector(
     (state: RootState) => state.library.selectedChapterId
   );
-  useTraceUpdate({
-    onSave,
-    currentChapterTitle,
-    currentChapterTextLength,
-    currentChapterId,
-  });
 
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;
   }
-  console.log("currentChapterTextLength", currentChapterTextLength);
 
   return (
     <div className="flex w-full h-full">
@@ -57,14 +50,14 @@ export default function Editor({ onSave }: { onSave: () => void }) {
               }}
               selector="text-editor-title"
             />
-            {/* {_.range(0, currentChapterTextLength).map((index) => ( */}
-            <TextEditor
-              chapterid={currentChapterId}
-              index={0}
-              key={0}
-              onSave={onSave}
-            />
-            {/* ))} */}
+            {_.range(0, currentChapterTextLength).map((index) => (
+              <TextEditor
+                chapterid={currentChapterId}
+                index={index}
+                key={index}
+                onSave={onSave}
+              />
+            ))}
           </div>
         </div>
       </div>

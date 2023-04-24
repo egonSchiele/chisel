@@ -379,6 +379,7 @@ export const librarySlice = createSlice({
         length = state.editor._cachedSelectedText.length;
         contents = state.editor._cachedSelectedText.contents;
       }
+      if (length === 0) return;
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
       const newText = strSplice(text.text, index, length);

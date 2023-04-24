@@ -20,33 +20,29 @@ import {
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
+import { fetchSuggestionsWrapper } from "./utils";
 export default function useLaunchItems(
-  onTextEditorSave,
   dispatch,
   bookid,
   togglePanel,
   navigate,
   settings,
-  fetchSuggestionsWrapper,
   setLoading,
-  onSuggestionLoad
+  onSuggestionLoad,
+  panels,
+  books,
+  _cachedSelectedText,
+  activeTextIndex,
+  viewMode
 ) {
-  const panels = useSelector((state: RootState) => state.library.panels);
-  const books = useSelector((state: RootState) => state.library.books);
-  const editor = useSelector((state: RootState) => state.library.editor);
-  const viewMode = useSelector((state: RootState) => state.library.viewMode);
-  const currentText = useSelector((state: RootState) => {
-    const chapter = getSelectedChapter(state);
-    return chapter ? chapter.text : [];
-  });
   const launchItems = [
-    {
+    /*   {
       label: "Save",
       onClick: () => {
         onTextEditorSave(state);
       },
       icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
-    },
+    }, */
     {
       label: "New Chapter",
       onClick: async () => {
@@ -157,7 +153,7 @@ export default function useLaunchItems(
     });
   });
 
-  settings.prompts.forEach((prompt, i) => {
+  /* settings.prompts.forEach((prompt, i) => {
     launchItems.push({
       label: prompt.label,
       onClick: () => {
@@ -173,7 +169,7 @@ export default function useLaunchItems(
       },
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
     });
-  });
+  }); */
 
   if (panels.sidebar.open) {
     launchItems.push({
@@ -227,7 +223,7 @@ export default function useLaunchItems(
     icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
   });
 
-  if (editor._cachedSelectedText && editor._cachedSelectedText.length > 0) {
+  if (_cachedSelectedText && _cachedSelectedText.length > 0) {
     launchItems.push({
       label: "Extract Block",
       onClick: () => {
@@ -236,7 +232,7 @@ export default function useLaunchItems(
       icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
     });
   }
-  if (editor.activeTextIndex !== 0) {
+  if (activeTextIndex !== 0) {
     launchItems.push({
       label: "Merge Block Up",
       onClick: () => {
@@ -245,7 +241,7 @@ export default function useLaunchItems(
       icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
-  if (currentText && editor.activeTextIndex !== currentText.length - 1) {
+  /*   if (currentText && activeTextIndex !== currentText.length - 1) {
     launchItems.push({
       label: "Merge Block Down",
       onClick: () => {
@@ -253,7 +249,7 @@ export default function useLaunchItems(
       },
       icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
     });
-  }
+  } */
   /*
   if (state.viewMode === "focus") {
   } else {
