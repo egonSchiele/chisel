@@ -1,5 +1,5 @@
 import * as toolkitRaw from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
   isString,
@@ -8,11 +8,10 @@ import {
   strSplice,
 } from "../utils";
 
-import { current } from "immer";
 import { RootState } from "../store";
 
 // @ts-ignore
-const { createSlice } = toolkitRaw.default ?? toolkitRaw;
+const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
 
 type DefaultChapter = {
   title: string;
@@ -71,6 +70,16 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     launcherOpen: false,
   };
 };
+
+export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThunk('library/fetchBooks', async (_payload, { dispatch, signal }) => {
+  const res = await fetch(`/books`, {
+    credentials: "include",
+    signal,
+  });
+
+  const { books } = await res.json();
+  dispatch(librarySlice.actions.setBooks(books));
+});
 
 export const librarySlice = createSlice({
   name: "library",
@@ -436,6 +445,22 @@ export const librarySlice = createSlice({
         console.log(text.text, newBlock, endBlock);
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchBooksThunk.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(fetchBooksThunk.fulfilled, (state) => {
+      state.loading = false;
+      state.booksLoaded = true;
+    });
+
+    builder.addCase(fetchBooksThunk.rejected, (state) => {
+      state.loading = false;
+      state.booksLoaded = true;
+      state.error = 'Books not found';
+    });
   },
 });
 

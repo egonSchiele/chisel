@@ -24,20 +24,6 @@ export const fetchBook = async (bookid: string): Promise<t.Result> => {
   return t.success(data);
 };
 
-export const fetchBooks = async () => {
-  const res = await fetch(`/books`, { credentials: "include" });
-  if (!res.ok) {
-    return t.error(res.statusText);
-  }
-  const data = await res.json();
-  console.log("got books");
-  console.log(data);
-  if (!data) {
-    return t.error("Books not found");
-  }
-  return t.success(data.books);
-};
-
 export const fetchSettings = async () => {
   const res = await fetch(`/api/settings`, { credentials: "include" });
   if (!res.ok) {
