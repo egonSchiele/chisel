@@ -310,7 +310,7 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
     console.log("no user");
     res.status(404).end();
   } else {
-    res.status(200).json({ settings: user.settings });
+    res.status(200).json({ settings: user.settings, usage: user.usage });
   }
 });
 

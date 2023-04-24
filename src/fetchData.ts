@@ -26,7 +26,7 @@ export const fetchSettings = async () => {
   if (!data) {
     return t.error("Settings not found");
   }
-  return t.success(data.settings);
+  return t.success(data);
 };
 
 export const fetchSuggestions = async (

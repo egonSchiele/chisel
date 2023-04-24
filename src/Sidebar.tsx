@@ -6,7 +6,7 @@ import {
   ClockIcon,
   Cog6ToothIcon,
   InformationCircleIcon,
-  XMarkIcon,
+  XMarkIcon
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import History from "./History";
@@ -39,7 +39,7 @@ function Navigation({
   closeSidebar,
   maximize,
   fullscreen,
-  exitFullscreen,
+  exitFullscreen
 }) {
   const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
   return (
@@ -119,6 +119,7 @@ function Navigation({
 export default function Sidebar({
   settings,
   setSettings,
+  usage,
   activePanel,
   setActivePanel,
   onSuggestionClick,
@@ -126,7 +127,7 @@ export default function Sidebar({
   onSettingsSave,
   onHistoryClick,
   triggerHistoryRerender,
-  maximize,
+  maximize
 }) {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
@@ -161,7 +162,7 @@ export default function Sidebar({
                 suggestions={state.suggestions}
                 onClick={onSuggestionClick}
                 onDelete={onSuggestionDelete}
-              />,
+              />
             ]}
           />
         )}
@@ -177,7 +178,7 @@ export default function Sidebar({
                 onSave={() => {}}
                 triggerHistoryRerender={triggerHistoryRerender}
                 onClick={onHistoryClick}
-              />,
+              />
             ]}
           />
         )}
@@ -189,9 +190,10 @@ export default function Sidebar({
               <Settings
                 key="settings"
                 settings={settings}
+                usage={usage}
                 setSettings={setSettings}
                 onSave={onSettingsSave}
-              />,
+              />
             ]}
           />
         )}

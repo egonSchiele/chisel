@@ -9,7 +9,7 @@ import TextArea from "./components/TextArea";
 import { getCsrfToken } from "./utils";
 
 function Prompt({
-  label, text, onLabelChange, onTextChange, onDelete,
+  label, text, onLabelChange, onTextChange, onDelete
 }) {
   return (
     <div className="mb-sm p-3 rounded-md dark:bg-gray-600 bg-settingspanel">
@@ -49,13 +49,15 @@ function Prompt({
   );
 }
 
-function Settings({ settings, setSettings, onSave }) {
+function Settings({
+  settings, setSettings, usage, onSave
+}) {
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
         // @ts-ignore
         draft[key] = value;
-      }),
+      })
     );
   };
 
@@ -64,7 +66,7 @@ function Settings({ settings, setSettings, onSave }) {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts[index][key] = value;
-      }),
+      })
     );
   };
 
@@ -73,7 +75,7 @@ function Settings({ settings, setSettings, onSave }) {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts.splice(index, 1);
-      }),
+      })
     );
   };
 
@@ -82,7 +84,7 @@ function Settings({ settings, setSettings, onSave }) {
       produce(settings, (draft) => {
         // @ts-ignore
         draft.prompts.push({ label: "NewPrompt", text: "" });
-      }),
+      })
     );
   };
 
@@ -91,12 +93,20 @@ function Settings({ settings, setSettings, onSave }) {
     await fetch("/api/settings", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ settings, csrfToken: getCsrfToken() }),
+      body: JSON.stringify({ settings, csrfToken: getCsrfToken() })
     });
     onSave();
   };
+
+  let monthlyUsage; let
+    totalUsage;
+  if (usage) {
+    const { tokens } = usage.openai_api;
+    monthlyUsage = tokens.month.prompt + tokens.month.completion;
+    totalUsage = tokens.total.prompt + tokens.total.completion;
+  }
 
   return (
     <form className="grid grid-cols-1 gap-y-sm">
@@ -125,14 +135,35 @@ function Settings({ settings, setSettings, onSave }) {
         onChange={(e) => handleChange("num_suggestions", parseInt(e.target.value, 10))}
       />
 
-      <Select
+      {usage && (
+        <div>
+          <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
+            Usage
+          </h4>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="uppercase ">Monthly:</span>
+            {' '}
+            {monthlyUsage}
+            {' '}
+            tokens
+          </p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="uppercase ">Total:</span>
+            {' '}
+            {totalUsage}
+            {' '}
+            tokens
+          </p>
+        </div>
+      )}
+      {/*  <Select
         title="Theme"
         name="theme"
         value={settings.theme}
         onChange={(e) => handleChange("theme", e.target.value as t.Theme)}
       >
         <option value="default">default</option>
-      </Select>
+      </Select> */}
 
       {/*  <label>
         Version Control:

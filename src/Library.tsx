@@ -50,6 +50,7 @@ export default function Library() {
     version_control: false,
     prompts: []
   });
+  const [usage, setUsage] = useState<t.Usage | null>(null);
 
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
@@ -167,7 +168,8 @@ export default function Library() {
     setLoading(false);
 
     if (result.tag === "success") {
-      setSettings(result.payload);
+      setSettings(result.payload.settings);
+      setUsage(result.payload.usage);
     } else {
       dispatch(librarySlice.actions.setError(result.message));
     }
@@ -400,6 +402,7 @@ export default function Library() {
         <Sidebar
           settings={settings}
           setSettings={setSettings}
+          usage={usage}
           activePanel={state.panels.sidebar.activePanel}
           setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
           maximize={state.viewMode === "fullscreen"}
@@ -599,6 +602,7 @@ export default function Library() {
             <Sidebar
               settings={settings}
               setSettings={setSettings}
+              usage={usage}
               activePanel={state.panels.sidebar.activePanel}
               setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
               maximize={state.viewMode === "fullscreen"}
