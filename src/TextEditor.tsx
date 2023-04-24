@@ -13,9 +13,14 @@ import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
 import { RootState } from "./store";
-import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import {
+  getSelectedChapter,
+  getText,
+  librarySlice,
+} from "./reducers/librarySlice";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { useTraceUpdate } from "./utils";
 
 function TextEditor({
   chapterid,
@@ -26,15 +31,35 @@ function TextEditor({
   index: number;
   onSave: () => void;
 }) {
-  const state = useSelector((state: RootState) => state.library.editor);
-  const currentChapter = useSelector(getSelectedChapter);
-  const currentText = currentChapter.text[index];
-  const dispatch = useDispatch();
-  const [open, setOpen] = useState(
-    Object.prototype.hasOwnProperty.call(currentText, "open")
-      ? currentText.open
-      : true,
+  console.log("TextEditor", index);
+  const _pushTextToEditor = useSelector(
+    (state: RootState) => state.library.editor._pushTextToEditor
   );
+  const _pushContentToEditor = useSelector(
+    (state: RootState) => state.library.editor._pushContentToEditor
+  );
+  /*   const currentChapter = useSelector(getSelectedChapter);
+   */ const currentText = useSelector(getText(index));
+
+  useTraceUpdate({
+    chapterid,
+    index,
+    onSave,
+    _pushTextToEditor,
+    _pushContentToEditor,
+    currentText,
+  });
+
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(true);
+  /*  return (
+    <ContentEditable
+      value={currentText.text}
+      className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
+      onSubmit={() => {}}
+      selector="text-editor-title"
+    />
+  ); */
 
   const quillRef = useRef();
 
@@ -45,17 +70,17 @@ function TextEditor({
     const editor = quillRef.current.getEditor();
     // TODO
     editor.setText(currentText.text);
-  }, [quillRef.current, chapterid, state._pushTextToEditor]);
+  }, [quillRef.current, chapterid, _pushTextToEditor]);
 
   useEffect(() => {
     if (!quillRef.current) return;
-    if (!state._pushContentToEditor) {
+    if (!_pushContentToEditor) {
       return;
     }
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    editor.insertText(-1, state._pushContentToEditor);
-  }, [quillRef.current, chapterid, state._pushContentToEditor]);
+    editor.insertText(-1, _pushContentToEditor);
+  }, [quillRef.current, chapterid, _pushContentToEditor]);
 
   const focus = () => {
     if (!quillRef.current) return;
@@ -69,9 +94,9 @@ function TextEditor({
     if (!edited) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    dispatch(librarySlice.actions.setSaved(false));
+    //dispatch(librarySlice.actions.setSaved(false));
     // dispatch(librarySlice.actions.setContents(editor.getContents()));
-    dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
+    //dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
   };
 
   const setSelection = (e) => {
@@ -88,7 +113,7 @@ function TextEditor({
           index: range.index,
           length: range.length,
           contents: word,
-        }),
+        })
       );
     } else {
       console.log("no range");
@@ -103,10 +128,10 @@ function TextEditor({
       console.log("saving!");
       onSave();
     } else if (
-      event.altKey
-      && event.shiftKey
-      && event.code === "ArrowDown"
-      && state.selectedText.length > 0
+      event.altKey &&
+      event.shiftKey &&
+      event.code === "ArrowDown"
+      /* state.selectedText.length > 0 */
     ) {
       event.preventDefault();
       dispatch(librarySlice.actions.extractBlock());
@@ -120,30 +145,32 @@ function TextEditor({
       <div className="ql-toolbar ql-snow hidden">hi</div>
 
       <div className="mb-sm h-full w-full">
-        {open && (
-          <div className="flex">
-            <div
-              className="flex-none cursor-pointer mr-xs"
-              onClick={() => {
-                dispatch(librarySlice.actions.closeBlock(index));
-                setOpen(false);
-              }}
-            >
-              <ChevronDownIcon className="w-5 h-5 text-gray-500" />
-            </div>
-            <div className="flex-grow border-l border-gray-500 pl-sm">
-              <ReactQuill
-                ref={quillRef}
-                placeholder="Write something..."
-                onChange={handleTextChange}
-                onKeyDown={handleKeyDown}
-                onChangeSelection={setSelection}
-                onFocus={() => dispatch(librarySlice.actions.setActiveTextIndex(index))}
-              />
-            </div>
+        {/* {open && ( */}
+        <div className="flex">
+          <div
+            className="flex-none cursor-pointer mr-xs"
+            onClick={() => {
+              dispatch(librarySlice.actions.closeBlock(index));
+              setOpen(false);
+            }}
+          >
+            <ChevronDownIcon className="w-5 h-5 text-gray-500" />
           </div>
-        )}
-        {!open && (
+          <div className="flex-grow border-l border-gray-500 pl-sm">
+            <ReactQuill
+              ref={quillRef}
+              placeholder="Write something..."
+              onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
+              onChangeSelection={setSelection}
+              /* onFocus={() =>
+                dispatch(librarySlice.actions.setActiveTextIndex(index))
+              } */
+            />
+          </div>
+        </div>
+        {/* )} */}
+        {/*    {!open && (
           <div className="flex">
             <div
               className="flex-none cursor-pointer mr-xs"
@@ -160,7 +187,7 @@ function TextEditor({
               </p>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

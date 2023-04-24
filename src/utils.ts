@@ -1,6 +1,4 @@
-import {
-  useRef, useEffect, useState, SetStateAction,
-} from "react";
+import { useRef, useEffect, useState, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
 import { RootState } from "./store";
@@ -66,7 +64,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setValue = (value: T | ((val: T) => T)) => {
     try {
       // Allow value to be a function so we have same API as useState
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       // Save state
       setStoredValue(valueToStore);
       // Save to local storage
@@ -99,14 +98,14 @@ export const fetchSuggestionsWrapper = async (
   prompt: string,
   label: string,
   state: { _cachedSelectedText?: any; text?: any },
-  dispatch: Dispatch<AnyAction>,
+  dispatch: Dispatch<AnyAction>
 ) => {
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let { text } = state;
   if (
-    state._cachedSelectedText
-    && state._cachedSelectedText.contents
-    && state._cachedSelectedText.contents.length > 0
+    state._cachedSelectedText &&
+    state._cachedSelectedText.contents &&
+    state._cachedSelectedText.contents.length > 0
   ) {
     text = state._cachedSelectedText.contents;
   }
@@ -117,7 +116,7 @@ export const fetchSuggestionsWrapper = async (
     settings.num_suggestions,
     max_tokens_with_min,
     prompt,
-    label,
+    label
   );
   setLoading(false);
 
@@ -129,7 +128,7 @@ export const fetchSuggestionsWrapper = async (
   result.payload.forEach((choice: { text: any }) => {
     const generatedText = choice.text;
     dispatch(
-      librarySlice.actions.addSuggestion({ label, value: generatedText }),
+      librarySlice.actions.addSuggestion({ label, value: generatedText })
     );
   });
   dispatch(librarySlice.actions.setSuggestions(false));
@@ -184,7 +183,23 @@ export function strSplice(
   str: string,
   index: number,
   count: number,
-  add = "",
+  add = ""
 ): string {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
+}
+
+export function useTraceUpdate(props) {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
+    if (Object.keys(changedProps).length > 0) {
+      console.log("Changed props:", changedProps);
+    }
+    prev.current = props;
+  });
 }

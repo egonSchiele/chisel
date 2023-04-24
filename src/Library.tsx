@@ -1,4 +1,4 @@
-import React, { Reducer, useEffect, useState } from "react";
+import React, { Reducer, useCallback, useEffect, useState } from "react";
 import * as t from "./Types";
 import "./globals.css";
 
@@ -47,12 +47,14 @@ import {
   getSelectedChapter,
   librarySlice,
 } from "./reducers/librarySlice";
+import useLaunchItems from "./launchItems";
 
 export default function Library() {
   const state = useSelector((state: RootState) => state.library);
   const selectedBook = useSelector(getSelectedBook);
-  const selectedBookChapters = useSelector(getSelectedBookChapters);
-  const currentChapter = useSelector(getSelectedChapter);
+
+  const currentChapter = getSelectedChapter({ library: state });
+
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -85,10 +87,10 @@ export default function Library() {
       } else if (state.viewMode === "focus") {
         focusModeClose();
       } else if (
-        state.panels.sidebar.open
-        || state.panels.prompts.open
-        || state.panels.bookList.open
-        || state.panels.chapterList.open
+        state.panels.sidebar.open ||
+        state.panels.prompts.open ||
+        state.panels.bookList.open ||
+        state.panels.chapterList.open
       ) {
         dispatch(librarySlice.actions.closeAllPanels());
       } else {
@@ -150,6 +152,43 @@ export default function Library() {
     fetchBooks();
     fetchSettings();
   }, []);
+
+  const navigate = useNavigate();
+
+  function togglePanel(panel: string) {
+    if (
+      state.panels.sidebar.open &&
+      state.panels.sidebar.activePanel === panel
+    ) {
+      dispatch(librarySlice.actions.closeSidebar());
+    } else {
+      dispatch(librarySlice.actions.openSidebar());
+      dispatch(librarySlice.actions.setActivePanel(panel));
+    }
+  }
+
+  function onSuggestionLoad() {
+    dispatch(librarySlice.actions.openSidebar());
+    dispatch(librarySlice.actions.setActivePanel("suggestions"));
+  }
+
+  // todo memoize these
+  const launchItems = useLaunchItems(
+    onTextEditorSave,
+    dispatch,
+    bookid,
+    togglePanel,
+    navigate,
+    settings,
+    fetchSuggestionsWrapper,
+    setLoading,
+    onSuggestionLoad
+  );
+
+  const onLauncherClose = useCallback(
+    () => dispatch(librarySlice.actions.toggleLauncher()),
+    []
+  );
 
   async function onTextEditorSave(state: t.State) {
     await saveChapter(currentChapter, state.suggestions);
@@ -214,6 +253,8 @@ export default function Library() {
     func();
   }, 5000);
 
+  const onEditorSave = useCallback(() => onTextEditorSave(state), []);
+
   async function saveBook(_book: t.Book) {
     if (!_book) {
       console.log("no book");
@@ -237,23 +278,6 @@ export default function Library() {
     dispatch(librarySlice.actions.addToContents(text));
   };
 
-  const togglePanel = (panel: string) => {
-    if (
-      state.panels.sidebar.open
-      && state.panels.sidebar.activePanel === panel
-    ) {
-      dispatch(librarySlice.actions.closeSidebar());
-    } else {
-      dispatch(librarySlice.actions.openSidebar());
-      dispatch(librarySlice.actions.setActivePanel(panel));
-    }
-  };
-
-  function onSuggestionLoad() {
-    dispatch(librarySlice.actions.openSidebar());
-    dispatch(librarySlice.actions.setActivePanel("suggestions"));
-  }
-
   function setLoading(bool) {
     if (bool) {
       dispatch(librarySlice.actions.loading());
@@ -262,250 +286,12 @@ export default function Library() {
     }
   }
 
-  const navigate = useNavigate();
-
   if (!state.booksLoaded) {
     return <div>Loading...</div>;
   }
 
-  const launchItems = [
-    {
-      label: "Save",
-      onClick: () => {
-        onTextEditorSave(state);
-      },
-      icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
-    },
-    {
-      label: "New Chapter",
-      onClick: async () => {
-        dispatch(librarySlice.actions.loading());
-        const result = await fd.newChapter(bookid, "New Chapter", "");
-        dispatch(librarySlice.actions.loaded());
-        if (result.tag === "error") {
-          dispatch(librarySlice.actions.setError(result.message));
-        } else {
-          dispatch(librarySlice.actions.addChapter(result.payload));
-        }
-      },
-      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
-    },
-    {
-      label: "Grid",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        navigate(`/grid/${bookid}`);
-      },
-    },
-    {
-      label: state.panels.bookList.open ? "Close Book List" : "Open Book List",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        dispatch(librarySlice.actions.toggleBookList());
-      },
-    },
-    {
-      label: state.panels.chapterList.open
-        ? "Close Chapter List"
-        : "Open Chapter List",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        dispatch(librarySlice.actions.toggleChapterList());
-      },
-    },
-    {
-      label: state.panels.prompts.open ? "Close Prompts" : "Open Prompts",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        dispatch(librarySlice.actions.togglePrompts());
-      },
-    },
-    {
-      label:
-        state.panels.sidebar.open
-        && state.panels.sidebar.activePanel === "history"
-          ? "Close History"
-          : "Open History",
-      icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        togglePanel("history");
-      },
-    },
-    {
-      label:
-        state.panels.sidebar.open && state.panels.sidebar.activePanel === "info"
-          ? "Close Info"
-          : "Open Info",
-      icon: <InformationCircleIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        togglePanel("info");
-      },
-    },
-    {
-      label:
-        state.panels.sidebar.open
-        && state.panels.sidebar.activePanel === "suggestions"
-          ? "Close Suggestions"
-          : "Open Suggestions",
-      icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        togglePanel("suggestions");
-      },
-    },
-    {
-      label:
-        state.panels.sidebar.open
-        && state.panels.sidebar.activePanel === "settings"
-          ? "Close Settings"
-          : "Open Settings",
-      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        togglePanel("settings");
-      },
-    },
-  ];
-
-  if (state.books) {
-    state.books.forEach((book, i) => {
-      book.chapters.forEach((chapter, i) => {
-        launchItems.push({
-          label: chapter.title || "(No title)",
-          onClick: () => {
-            navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
-          },
-          icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
-        });
-      });
-    });
-  }
-
-  state.books.forEach((book, i) => {
-    launchItems.push({
-      label: book.title,
-      onClick: () => {
-        navigate(`/book/${book.bookid}`);
-      },
-      icon: <BookOpenIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  });
-
-  settings.prompts.forEach((prompt, i) => {
-    launchItems.push({
-      label: prompt.label,
-      onClick: () => {
-        fetchSuggestionsWrapper(
-          settings,
-          setLoading,
-          onSuggestionLoad,
-          prompt.text,
-          prompt.label,
-          useSelector((state: RootState) => state.library.editor),
-          dispatch,
-        );
-      },
-      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  });
-
-  if (state.panels.sidebar.open) {
-    launchItems.push({
-      label: "Close Sidebar",
-      onClick: () => {
-        dispatch(librarySlice.actions.closeSidebar());
-      },
-      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  } else {
-    launchItems.push({
-      label: "Open Sidebar",
-      onClick: () => {
-        dispatch(librarySlice.actions.openSidebar());
-      },
-      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  }
-
-  if (state.viewMode === "fullscreen") {
-    launchItems.push({
-      label: "Exit Fullscreen",
-      onClick: () => {
-        dispatch(librarySlice.actions.setViewMode("default"));
-      },
-      icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  } else {
-    launchItems.push({
-      label: "View Sidebar In Fullscreen",
-      onClick: () => {
-        dispatch(librarySlice.actions.setViewMode("fullscreen"));
-      },
-      icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  }
-
-  launchItems.push({
-    label: "New Block Before Current",
-    onClick: () => {
-      dispatch(librarySlice.actions.newBlockBeforeCurrent());
-    },
-    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
-  });
-
-  launchItems.push({
-    label: "New Block After Current",
-    onClick: () => {
-      dispatch(librarySlice.actions.newBlockAfterCurrent());
-    },
-    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
-  });
-
-  if (
-    state.editor._cachedSelectedText
-    && state.editor._cachedSelectedText.length > 0
-  ) {
-    launchItems.push({
-      label: "Extract Block",
-      onClick: () => {
-        dispatch(librarySlice.actions.extractBlock());
-      },
-      icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
-    });
-  }
-  if (state.editor.activeTextIndex !== 0) {
-    launchItems.push({
-      label: "Merge Block Up",
-      onClick: () => {
-        dispatch(librarySlice.actions.mergeBlockUp());
-      },
-      icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  }
-  if (
-    currentChapter
-    && currentChapter.text
-    && state.editor.activeTextIndex !== currentChapter.text.length - 1
-  ) {
-    launchItems.push({
-      label: "Merge Block Down",
-      onClick: () => {
-        dispatch(librarySlice.actions.mergeBlockDown());
-      },
-      icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  }
-  /*
-  if (state.viewMode === "focus") {
-  } else {
-    launchItems.push({
-      label: "Focus Mode",
-      onClick: () => {
-        dispatch(librarySlice.actions.setViewMode("focus"));
-      },
-      icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-  } */
-
-  const sidebarWidth = state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
+  const sidebarWidth =
+    state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
 
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
@@ -576,7 +362,7 @@ export default function Library() {
             },
           ]}
           open={state.launcherOpen}
-          close={() => dispatch(librarySlice.actions.toggleLauncher())}
+          close={onLauncherClose}
         />
       </div>
     );
@@ -588,14 +374,16 @@ export default function Library() {
         <Launcher
           items={launchItems}
           open={state.launcherOpen}
-          close={() => dispatch(librarySlice.actions.toggleLauncher())}
+          close={onLauncherClose}
         />
 
         <Sidebar
           settings={settings}
           setSettings={setSettings}
           activePanel={state.panels.sidebar.activePanel}
-          setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
+          setActivePanel={(panel) =>
+            dispatch(librarySlice.actions.setActivePanel(panel))
+          }
           maximize={state.viewMode === "fullscreen"}
           onSuggestionClick={addToContents}
           onSuggestionDelete={(index) => {
@@ -605,7 +393,7 @@ export default function Library() {
           onHistoryClick={async (newText) => {
             await onTextEditorSave(state);
             dispatch(
-              librarySlice.actions.pushTextToEditor({ index: 0, text: newText }),
+              librarySlice.actions.pushTextToEditor({ index: 0, text: newText })
             );
           }}
           triggerHistoryRerender={triggerHistoryRerender}
@@ -619,7 +407,7 @@ export default function Library() {
       <Launcher
         items={launchItems}
         open={state.launcherOpen}
-        close={() => dispatch(librarySlice.actions.toggleLauncher())}
+        close={onLauncherClose}
       />
       {state.error && (
         <div className="bg-red-700 p-2 text-white">{state.error}</div>
@@ -643,17 +431,16 @@ export default function Library() {
             />
           </div>
         )}
-        {state.panels.chapterList.open
-          && state.selectedBookId
-          && state.booksLoaded && (
+        {state.panels.chapterList.open &&
+          state.selectedBookId &&
+          state.booksLoaded && (
             <div className="flex-none w-40 xl:w-48 h-full">
               <ChapterList
-                chapters={selectedBookChapters || []}
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
                 onDelete={(deletedChapterid) => {
                   dispatch(
-                    librarySlice.actions.deleteChapter(deletedChapterid),
+                    librarySlice.actions.deleteChapter(deletedChapterid)
                   );
                   if (deletedChapterid === chapterid) {
                     dispatch(librarySlice.actions.noChapterSelected());
@@ -661,20 +448,22 @@ export default function Library() {
                   }
                 }}
                 saveChapter={(chapter) => saveChapter(chapter, [])}
-                closeSidebar={() => dispatch(librarySlice.actions.closeChapterList())}
+                closeSidebar={() =>
+                  dispatch(librarySlice.actions.closeChapterList())
+                }
                 canCloseSidebar={
                   chapterid !== undefined || !state.selectedBookId
                 }
               />
             </div>
-        )}
+          )}
 
         <div className="h-full flex flex-col flex-grow">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
-              {(!state.panels.bookList.open
-                || !state.panels.chapterList.open) && (
-              /*       <button
+              {(!state.panels.bookList.open ||
+                !state.panels.chapterList.open) && (
+                /*       <button
                   type="button"
                   className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0 "
                   onClick={() => {
@@ -766,7 +555,7 @@ export default function Library() {
             )}
           </div>
           <div className="flex-grow h-full w-full">
-            {currentChapter && <Editor onSave={onTextEditorSave} />}
+            {currentChapter && <Editor onSave={onEditorSave} />}
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
@@ -789,7 +578,9 @@ export default function Library() {
               settings={settings}
               setSettings={setSettings}
               activePanel={state.panels.sidebar.activePanel}
-              setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
+              setActivePanel={(panel) =>
+                dispatch(librarySlice.actions.setActivePanel(panel))
+              }
               maximize={state.viewMode === "fullscreen"}
               onSuggestionClick={addToContents}
               onSuggestionDelete={(index) => {
@@ -803,7 +594,7 @@ export default function Library() {
                   librarySlice.actions.pushTextToEditor({
                     index: 0,
                     text: newText,
-                  }),
+                  })
                 );
               }}
               triggerHistoryRerender={triggerHistoryRerender}
