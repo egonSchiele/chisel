@@ -1,5 +1,5 @@
 import React, {
-  Reducer, useCallback, useEffect, useState,
+  Reducer, useCallback, useEffect, useState
 } from "react";
 import * as t from "./Types";
 import "./globals.css";
@@ -7,7 +7,7 @@ import "./globals.css";
 import {
   ClipboardIcon,
   ClockIcon,
-  InformationCircleIcon,
+  InformationCircleIcon
 } from "@heroicons/react/24/solid";
 import BookList from "./BookList";
 import { useNavigate, useParams } from "react-router-dom";
@@ -33,7 +33,7 @@ import {
   MinusIcon,
   PlusIcon,
   SparklesIcon,
-  ViewColumnsIcon,
+  ViewColumnsIcon
 } from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
@@ -47,7 +47,7 @@ import {
   getSelectedBook,
   getSelectedBookChapters,
   getSelectedChapter,
-  librarySlice,
+  librarySlice
 } from "./reducers/librarySlice";
 import useLaunchItems from "./launchItems";
 
@@ -64,7 +64,7 @@ export default function Library() {
     num_suggestions: 0,
     theme: "default",
     version_control: false,
-    prompts: [],
+    prompts: []
   });
 
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
@@ -159,6 +159,7 @@ export default function Library() {
       editor._cachedSelectedText,
       editor.activeTextIndex,
       viewMode,
+      currentText.length
     );
     setLaunchItems(_launchItems);
   }, [
@@ -169,6 +170,7 @@ export default function Library() {
     editor._cachedSelectedText,
     editor.activeTextIndex,
     viewMode,
+    currentText.length
   ]);
 
   const fetchBooks = async () => {
@@ -213,7 +215,7 @@ export default function Library() {
 
   const onLauncherClose = useCallback(
     () => dispatch(librarySlice.actions.toggleLauncher()),
-    [],
+    []
   );
 
   async function onTextEditorSave(state: t.State) {
@@ -235,16 +237,16 @@ export default function Library() {
     const body = JSON.stringify({
       chapterid: currentChapter.chapterid,
       text: currentChapter.text.map((t) => t.text).join("\n---\n"),
-      csrfToken: getCsrfToken(),
+      csrfToken: getCsrfToken()
     });
 
     const result = await fetch("/api/saveToHistory", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       credentials: "include",
-      body,
+      body
     });
   }
 
@@ -256,9 +258,9 @@ export default function Library() {
     const result = await fetch("/api/saveChapter", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body,
+      body
     });
 
     if (!result.ok) {
@@ -302,9 +304,9 @@ export default function Library() {
     const result = await fetch("/api/saveBook", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body,
+      body
     });
   }
 
@@ -329,7 +331,7 @@ export default function Library() {
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
 
-    /* let selected = state.editor.selectedText;
+    let selected = state.editor.selectedText;
     if (
       state.editor.selectedText.contents === ""
       && state.editor._cachedSelectedText
@@ -344,11 +346,10 @@ export default function Library() {
     let replacement;
     if (selected.length > 0) {
       replacement = replace(
-        // TODO which text index?
-        currentChapter.text,
+        currentText[editor.activeTextIndex].text,
         selected.index,
         selected.index + selected.length,
-        state._temporaryFocusModeState,
+        state._temporaryFocusModeState
       );
     } else {
       // no selection, just replace the whole thing,
@@ -358,8 +359,11 @@ export default function Library() {
 
     // TODO not sure how multiple texts work w focus mode
     dispatch(
-      librarySlice.actions.pushTextToEditor({ index: 0, text: replacement }),
-    ); */
+      librarySlice.actions.pushTextToEditor({
+        index: editor.activeTextIndex,
+        text: replacement
+      })
+    );
   }
 
   function replace(full, start, end, replacement) {
@@ -372,8 +376,7 @@ export default function Library() {
       text = state.editor._cachedSelectedText.contents;
     }
     if (!text && currentChapter && currentChapter.text) {
-      // TODO
-      text = currentChapter.text.map((t) => t.text).join("\n");
+      text = currentText[editor.activeTextIndex].text;
     }
     return (
       <div>
@@ -391,8 +394,8 @@ export default function Library() {
               onClick: () => {
                 focusModeClose();
               },
-              icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
-            },
+              icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />
+            }
           ]}
           open={state.launcherOpen}
           close={onLauncherClose}
@@ -424,7 +427,7 @@ export default function Library() {
           onHistoryClick={async (newText) => {
             await onTextEditorSave(state);
             dispatch(
-              librarySlice.actions.restoreFromHistory({ text: newText }),
+              librarySlice.actions.restoreFromHistory({ text: newText })
             );
           }}
           triggerHistoryRerender={triggerHistoryRerender}
@@ -471,7 +474,7 @@ export default function Library() {
                 selectedChapterId={chapterid || ""}
                 onDelete={(deletedChapterid) => {
                   dispatch(
-                    librarySlice.actions.deleteChapter(deletedChapterid),
+                    librarySlice.actions.deleteChapter(deletedChapterid)
                   );
                   if (deletedChapterid === chapterid) {
                     dispatch(librarySlice.actions.noChapterSelected());
@@ -526,15 +529,13 @@ export default function Library() {
                   </NavButton>
                 )}
 
-                {/*                 <NavButton
+                <NavButton
                   label="Focus Mode"
-                  onClick={() =>
-                    dispatch(librarySlice.actions.setViewMode("focus"))
-                  }
+                  onClick={() => dispatch(librarySlice.actions.setViewMode("focus"))}
                 >
                   <EyeIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
- */}
+
                 {!state.saved && (
                   <NavButton label="Unsaved" onClick={() => {}}>
                     <MinusIcon className="h-5 w-5" aria-hidden="true" />
@@ -617,7 +618,7 @@ export default function Library() {
               onHistoryClick={async (newText) => {
                 await onTextEditorSave(state);
                 dispatch(
-                  librarySlice.actions.restoreFromHistory({ text: newText }),
+                  librarySlice.actions.restoreFromHistory({ text: newText })
                 );
               }}
               triggerHistoryRerender={triggerHistoryRerender}

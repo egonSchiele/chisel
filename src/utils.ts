@@ -1,5 +1,5 @@
 import {
-  useRef, useEffect, useState, SetStateAction,
+  useRef, useEffect, useState, SetStateAction
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
@@ -99,7 +99,7 @@ export const fetchSuggestionsWrapper = async (
   prompt: string,
   label: string,
   state: { _cachedSelectedText?: any; text?: any },
-  dispatch: Dispatch<AnyAction>,
+  dispatch: Dispatch<AnyAction>
 ) => {
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let { text } = state;
@@ -117,7 +117,7 @@ export const fetchSuggestionsWrapper = async (
     settings.num_suggestions,
     max_tokens_with_min,
     prompt,
-    label,
+    label
   );
   setLoading(false);
 
@@ -129,7 +129,7 @@ export const fetchSuggestionsWrapper = async (
   result.payload.forEach((choice: { text: any }) => {
     const generatedText = choice.text;
     dispatch(
-      librarySlice.actions.addSuggestion({ label, value: generatedText }),
+      librarySlice.actions.addSuggestion({ label, value: generatedText })
     );
   });
   dispatch(librarySlice.actions.setSuggestions(false));
@@ -184,7 +184,7 @@ export function strSplice(
   str: string,
   index: number,
   count: number,
-  add = "",
+  add = ""
 ): string {
   return str.slice(0, index) + (add || "") + str.slice(index + count);
 }

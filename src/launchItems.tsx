@@ -16,6 +16,7 @@ import {
   Bars3Icon,
   BarsArrowUpIcon,
   BarsArrowDownIcon,
+  EyeIcon
 } from "@heroicons/react/24/outline";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -35,6 +36,7 @@ export default function useLaunchItems(
   _cachedSelectedText,
   activeTextIndex,
   viewMode,
+  currentTextLength
 ) {
   const launchItems = [
     /*   {
@@ -56,21 +58,21 @@ export default function useLaunchItems(
           dispatch(librarySlice.actions.addChapter(result.payload));
         }
       },
-      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />
     },
     {
       label: "Grid",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         navigate(`/grid/${bookid}`);
-      },
+      }
     },
     {
       label: panels.bookList.open ? "Close Book List" : "Open Book List",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.toggleBookList());
-      },
+      }
     },
     {
       label: panels.chapterList.open
@@ -79,14 +81,14 @@ export default function useLaunchItems(
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.toggleChapterList());
-      },
+      }
     },
     {
       label: panels.prompts.open ? "Close Prompts" : "Open Prompts",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.togglePrompts());
-      },
+      }
     },
     {
       label:
@@ -96,7 +98,7 @@ export default function useLaunchItems(
       icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("history");
-      },
+      }
     },
     {
       label:
@@ -106,7 +108,7 @@ export default function useLaunchItems(
       icon: <InformationCircleIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("info");
-      },
+      }
     },
     {
       label:
@@ -116,7 +118,7 @@ export default function useLaunchItems(
       icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("suggestions");
-      },
+      }
     },
     {
       label:
@@ -126,8 +128,8 @@ export default function useLaunchItems(
       icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("settings");
-      },
-    },
+      }
+    }
   ];
 
   if (books) {
@@ -138,7 +140,7 @@ export default function useLaunchItems(
           onClick: () => {
             navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
           },
-          icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+          icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />
         });
       });
     });
@@ -150,11 +152,11 @@ export default function useLaunchItems(
       onClick: () => {
         navigate(`/book/${book.bookid}`);
       },
-      icon: <BookOpenIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <BookOpenIcon className="h-4 w-4" aria-hidden="true" />
     });
   });
 
-  /* settings.prompts.forEach((prompt, i) => {
+  /*   settings.prompts.forEach((prompt, i) => {
     launchItems.push({
       label: prompt.label,
       onClick: () => {
@@ -168,7 +170,7 @@ export default function useLaunchItems(
           dispatch
         );
       },
-      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />
     });
   }); */
 
@@ -178,7 +180,7 @@ export default function useLaunchItems(
       onClick: () => {
         dispatch(librarySlice.actions.closeSidebar());
       },
-      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />
     });
   } else {
     launchItems.push({
@@ -186,7 +188,7 @@ export default function useLaunchItems(
       onClick: () => {
         dispatch(librarySlice.actions.openSidebar());
       },
-      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />
     });
   }
 
@@ -196,7 +198,7 @@ export default function useLaunchItems(
       onClick: () => {
         dispatch(librarySlice.actions.setViewMode("default"));
       },
-      icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />
     });
   } else {
     launchItems.push({
@@ -204,7 +206,7 @@ export default function useLaunchItems(
       onClick: () => {
         dispatch(librarySlice.actions.setViewMode("fullscreen"));
       },
-      icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />
     });
   }
 
@@ -213,7 +215,7 @@ export default function useLaunchItems(
     onClick: () => {
       dispatch(librarySlice.actions.newBlockBeforeCurrent());
     },
-    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />
   });
 
   launchItems.push({
@@ -221,7 +223,7 @@ export default function useLaunchItems(
     onClick: () => {
       dispatch(librarySlice.actions.newBlockAfterCurrent());
     },
-    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />
   });
 
   if (_cachedSelectedText && _cachedSelectedText.length > 0) {
@@ -230,7 +232,7 @@ export default function useLaunchItems(
       onClick: () => {
         dispatch(librarySlice.actions.extractBlock());
       },
-      icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+      icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />
     });
   }
   if (activeTextIndex !== 0) {
@@ -239,28 +241,28 @@ export default function useLaunchItems(
       onClick: () => {
         dispatch(librarySlice.actions.mergeBlockUp());
       },
-      icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />
     });
   }
-  /*   if (currentText && activeTextIndex !== currentText.length - 1) {
+  if (activeTextIndex !== currentTextLength - 1) {
     launchItems.push({
       label: "Merge Block Down",
       onClick: () => {
         dispatch(librarySlice.actions.mergeBlockDown());
       },
-      icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />
     });
-  } */
-  /*
-  if (state.viewMode === "focus") {
+  }
+
+  if (viewMode === "focus") {
   } else {
     launchItems.push({
       label: "Focus Mode",
       onClick: () => {
         dispatch(librarySlice.actions.setViewMode("focus"));
       },
-      icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
+      icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />
     });
-  } */
+  }
   return launchItems;
 }
