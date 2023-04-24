@@ -13,9 +13,14 @@ import Input from "./components/Input";
 import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
 import { RootState } from "./store";
-import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import {
+  getSelectedChapter,
+  getText,
+  librarySlice,
+} from "./reducers/librarySlice";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { useTraceUpdate } from "./utils";
 
 function TextEditor({
   chapterid,
@@ -26,15 +31,17 @@ function TextEditor({
   index: number;
   onSave: () => void;
 }) {
-  const state = useSelector((state: RootState) => state.library.editor);
-  const currentChapter = useSelector(getSelectedChapter);
-  const currentText = currentChapter.text[index];
-  const dispatch = useDispatch();
-  const [open, setOpen] = useState(
-    Object.prototype.hasOwnProperty.call(currentText, "open")
-      ? currentText.open
-      : true,
+  const _pushTextToEditor = useSelector(
+    (state: RootState) => state.library.editor._pushTextToEditor,
   );
+  const _pushContentToEditor = useSelector(
+    (state: RootState) => state.library.editor._pushContentToEditor,
+  );
+
+  const currentText = useSelector(getText(index));
+
+  const dispatch = useDispatch();
+  const { open } = currentText;
 
   const quillRef = useRef();
 
@@ -45,24 +52,17 @@ function TextEditor({
     const editor = quillRef.current.getEditor();
     // TODO
     editor.setText(currentText.text);
-  }, [quillRef.current, chapterid, state._pushTextToEditor]);
+  }, [quillRef.current, chapterid, _pushTextToEditor]);
 
   useEffect(() => {
     if (!quillRef.current) return;
-    if (!state._pushContentToEditor) {
+    if (!_pushContentToEditor) {
       return;
     }
     // @ts-ignore
     const editor = quillRef.current.getEditor();
-    editor.insertText(-1, state._pushContentToEditor);
-  }, [quillRef.current, chapterid, state._pushContentToEditor]);
-
-  const focus = () => {
-    if (!quillRef.current) return;
-    // @ts-ignore
-    const editor = quillRef.current.getEditor();
-    editor.focus();
-  };
+    editor.insertText(-1, _pushContentToEditor);
+  }, [quillRef.current, chapterid, _pushContentToEditor]);
 
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
@@ -75,7 +75,6 @@ function TextEditor({
   };
 
   const setSelection = (e) => {
-    console.log("setSelection", e);
     if (!quillRef.current) return;
     // @ts-ignore
     const quill = quillRef.current.getEditor();
@@ -91,7 +90,6 @@ function TextEditor({
         }),
       );
     } else {
-      console.log("no range");
       dispatch(librarySlice.actions.clearSelectedText());
     }
   };
@@ -100,14 +98,9 @@ function TextEditor({
     setEdited(true);
     if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
-      console.log("saving!");
+
       onSave();
-    } else if (
-      event.altKey
-      && event.shiftKey
-      && event.code === "ArrowDown"
-      && state.selectedText.length > 0
-    ) {
+    } else if (event.altKey && event.shiftKey && event.code === "ArrowDown") {
       event.preventDefault();
       dispatch(librarySlice.actions.extractBlock());
     }
@@ -126,7 +119,6 @@ function TextEditor({
               className="flex-none cursor-pointer mr-xs"
               onClick={() => {
                 dispatch(librarySlice.actions.closeBlock(index));
-                setOpen(false);
               }}
             >
               <ChevronDownIcon className="w-5 h-5 text-gray-500" />
@@ -149,15 +141,12 @@ function TextEditor({
               className="flex-none cursor-pointer mr-xs"
               onClick={() => {
                 dispatch(librarySlice.actions.openBlock(index));
-                setOpen(true);
               }}
             >
               <ChevronRightIcon className="w-5 h-5 text-gray-500" />
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
-              <p className="text-gray-500">
-                {currentChapter.text[index].text.split("\n")[0]}
-              </p>
+              <p className="text-gray-500">{currentText.text.split("\n")[0]}</p>
             </div>
           </div>
         )}

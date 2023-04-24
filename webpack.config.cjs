@@ -84,4 +84,5 @@ module.exports = {
     open: true,
     hot: true,
   },
+  devtool: "cheap-module-source-map",
 };

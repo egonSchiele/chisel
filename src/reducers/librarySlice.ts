@@ -71,15 +71,18 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
   };
 };
 
-export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThunk('library/fetchBooks', async (_payload, { dispatch, signal }) => {
-  const res = await fetch(`/books`, {
-    credentials: "include",
-    signal,
-  });
+export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThunk(
+  "library/fetchBooks",
+  async (_payload, { dispatch, signal }) => {
+    const res = await fetch(`/books`, {
+      credentials: "include",
+      signal,
+    });
 
-  const { books } = await res.json();
-  dispatch(librarySlice.actions.setBooks(books));
-});
+    const { books } = await res.json();
+    dispatch(librarySlice.actions.setBooks(books));
+  },
+);
 
 export const librarySlice = createSlice({
   name: "library",
@@ -375,6 +378,7 @@ export const librarySlice = createSlice({
         length = state.editor._cachedSelectedText.length;
         contents = state.editor._cachedSelectedText.contents;
       }
+      if (length === 0) return;
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
       const newText = strSplice(text.text, index, length);
@@ -459,7 +463,7 @@ export const librarySlice = createSlice({
     builder.addCase(fetchBooksThunk.rejected, (state) => {
       state.loading = false;
       state.booksLoaded = true;
-      state.error = 'Books not found';
+      state.error = "Books not found";
     });
   },
 });
@@ -500,6 +504,29 @@ export const getSelectedChapter = (state: RootState): t.Chapter | null => {
   );
 
   return chapter;
+};
+
+export const getSelectedChapterTitle = (state: RootState): string | null => {
+  const chapter = getSelectedChapter(state);
+  if (!chapter) return null;
+
+  return chapter.title;
+};
+
+export const getSelectedChapterTextLength = (
+  state: RootState,
+): number | null => {
+  const chapter = getSelectedChapter(state);
+  if (!chapter) return null;
+
+  return chapter.text.length;
+};
+
+export const getText = (index: number) => (state: RootState): t.TextBlock | null => {
+  const chapter = getSelectedChapter(state);
+  if (!chapter) return null;
+
+  return chapter.text[index];
 };
 
 export const getChapter = (chapterid: t.ChapterId) => (state: RootState): t.Chapter | null => {

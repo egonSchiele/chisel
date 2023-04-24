@@ -9,7 +9,7 @@ import {
   ViewColumnsIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
 import * as t from "./Types";
 import List from "./components/List";
@@ -18,11 +18,10 @@ import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
-import { librarySlice } from "./reducers/librarySlice";
+import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 // import Draggable from "react-draggable";
 
 export default function ChapterList({
-  chapters,
   bookid,
   selectedChapterId,
 
@@ -31,7 +30,6 @@ export default function ChapterList({
   closeSidebar,
   canCloseSidebar = true,
 }: {
-  chapters: t.Chapter[];
   bookid: string;
   selectedChapterId: string;
   onDelete: any;
@@ -40,6 +38,7 @@ export default function ChapterList({
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
+  const chapters = useSelector(getSelectedBookChapters);
   const [editing, setEditing] = React.useState(false);
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);

@@ -70,7 +70,7 @@ export type FoldableBlock = {
 };
 
 export function plainTextBlock(text: string): PlainTextBlock {
-  return { type: "plain", open: false, text };
+  return { type: "plain", open: true, text };
 }
 
 export function foldableBlock(text: string): FoldableBlock {

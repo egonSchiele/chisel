@@ -1,29 +1,32 @@
-import React from "react";
+import React, { useCallback } from "react";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
 import TextEditor from "./TextEditor";
 import * as t from "./Types";
-import { getCsrfToken } from "./utils";
+import { getCsrfToken, useTraceUpdate } from "./utils";
 import { RootState } from "./store";
-import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import {
+  getSelectedChapter,
+  getSelectedChapterTextLength,
+  getSelectedChapterTitle,
+  librarySlice,
+} from "./reducers/librarySlice";
 import { postWithCsrf } from "./fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
+import _ from "lodash";
 
-export default function Editor({
-  onSave,
-}: {
-  onSave: (state: t.State) => void;
-}) {
-  const state = useSelector((state: RootState) => state.library);
+export default function Editor({ onSave }: { onSave: () => void }) {
   const dispatch = useDispatch();
-  const currentChapter = useSelector(getSelectedChapter);
+  const currentChapterTitle = useSelector(getSelectedChapterTitle);
+  const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
+  const currentChapterId = useSelector(
+    (state: RootState) => state.library.selectedChapterId,
+  );
 
-  if (!currentChapter) {
+  if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;
   }
-
-  console.log(currentChapter.text, "!!");
 
   return (
     <div className="flex w-full h-full">
@@ -40,19 +43,19 @@ export default function Editor({
               Extract
             </Button> */}
             <ContentEditable
-              value={currentChapter.title}
+              value={currentChapterTitle}
               className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
               onSubmit={(title) => {
                 dispatch(librarySlice.actions.setTitle(title));
               }}
               selector="text-editor-title"
             />
-            {currentChapter.text.map((textBlock, index) => (
+            {_.range(0, currentChapterTextLength).map((index) => (
               <TextEditor
-                chapterid={currentChapter.chapterid}
+                chapterid={currentChapterId}
                 index={index}
                 key={index}
-                onSave={() => onSave(state)}
+                onSave={onSave}
               />
             ))}
           </div>

@@ -223,7 +223,7 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
     bookid,
     chapterid,
     title,
-    text: [{ type: "plain", text: text || "" }],
+    text: [{ type: "plain", text: text || "", open: true }],
     pos: { x: 0, y: 0 },
     suggestions: [],
     favorite: false,
