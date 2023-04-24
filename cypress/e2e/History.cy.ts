@@ -28,6 +28,7 @@ describe("history", () => {
 
     // first sav
     cy.get(".ql-editor").last().type(`${text}{enter}`);
+    cy.wait(2000);
     cy.manuallySave();
     cy.contains(historyPanel, text);
     cy.get(historyPanel).should("have.length", 1);

@@ -103,25 +103,24 @@ export default function ChapterList({
     dispatch(librarySlice.actions.setChapterOrder(ids));
   };
 
-  const sublist = () =>
-    chapters.map((chapter, index) => (
-      <li
-        key={chapter.chapterid}
-        className={
+  const sublist = () => chapters.map((chapter, index) => (
+    <li
+      key={chapter.chapterid}
+      className={
           !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
         }
-      >
-        <ListItem
-          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
-          title={chapter.title || "(no title)"}
-          selected={chapter.chapterid === selectedChapterId}
-          onDelete={() => deleteChapter(chapter.chapterid)}
-          onFavorite={() => {}}
-          onRename={() => startRenameChapter(chapter)}
-          selector="chapterlist"
-        />
-      </li>
-    ));
+    >
+      <ListItem
+        link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+        title={chapter.title || "(no title)"}
+        selected={chapter.chapterid === selectedChapterId}
+        onDelete={() => deleteChapter(chapter.chapterid)}
+        onFavorite={() => {}}
+        onRename={() => startRenameChapter(chapter)}
+        selector="chapterlist"
+      />
+    </li>
+  ));
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
@@ -168,8 +167,7 @@ export default function ChapterList({
 
   const navigate = useNavigate();
 
-  const buttonStyles =
-    "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,

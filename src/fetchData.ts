@@ -55,7 +55,8 @@ export const fetchSuggestions = async (
   });
 
   if (!res.ok) {
-    return t.error(res.statusText);
+    const error = await res.json();
+    return t.error(error.error);
   }
 
   const data = await res.json();

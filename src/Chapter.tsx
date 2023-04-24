@@ -2,7 +2,9 @@
 import Draggable from "react-draggable"; // The default
 import { Routes, Route, Link } from "react-router-dom";
 
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, {
+  useEffect, useReducer, useRef, useState
+} from "react";
 import Panel from "./components/Panel";
 import * as t from "./Types";
 

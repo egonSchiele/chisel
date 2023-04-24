@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // darkMode: "class",
+  darkMode: "class",
   content: [
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
-    "./src/**/*.(tsx|ts|jsx|js)",
+    "./src/**/*.(tsx|ts|jsx|js)"
   ],
   theme: {
     extend: {
@@ -13,7 +13,7 @@ module.exports = {
           "Superclarendon, 'Bookman Old Style', 'URW Bookman', 'URW Bookman L', 'Georgia Pro', Georgia, serif",
         didot:
           "Didot, 'Bodoni MT', 'Noto Serif Display', 'URW Palladio L', P052, Sylfaen, serif",
-        merriweather: "Merriweather, serif",
+        merriweather: "Merriweather, serif"
       },
       // palette: https://www.color-hex.com/color-palette/9376
       colors: {
@@ -78,20 +78,20 @@ module.exports = {
         dmlistitemhover: "rgb(56,60,72)",
         dmlistitemhoverSecondary: "#252525",
         listBorder: "rgb(203,213,226)",
-        dmlistBorder: "rgb(19,19,21)",
+        dmlistBorder: "rgb(19,19,21)"
       },
       spacing: {
         xs: "0.5rem",
         sm: "1rem",
         md: "2rem",
         lg: "3rem",
-        xl: "4rem",
+        xl: "4rem"
       },
       width: {
         history: "800px",
-        historysmall: "760px",
+        historysmall: "760px"
       },
-      height: {},
+      height: {}
       /*   padding: {
         xs: "0.5rem",
         sm: "1rem",
@@ -99,7 +99,7 @@ module.exports = {
         lg: "3rem",
         xl: "4rem",
       }, */
-    },
+    }
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/forms")]
 };

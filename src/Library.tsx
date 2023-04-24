@@ -4,36 +4,21 @@ import React, {
 import * as t from "./Types";
 import "./globals.css";
 
-import {
-  ClipboardIcon,
-  ClockIcon,
-  InformationCircleIcon
-} from "@heroicons/react/24/solid";
 import BookList from "./BookList";
 import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
-import { fetchSuggestionsWrapper, getCsrfToken, useInterval } from "./utils";
+import { getCsrfToken, useInterval } from "./utils";
 import Launcher from "./Launcher";
 import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  Bars3BottomLeftIcon,
-  Bars3Icon,
-  BarsArrowDownIcon,
-  BarsArrowUpIcon,
-  BookOpenIcon,
   CheckCircleIcon,
   ChevronRightIcon,
-  Cog6ToothIcon,
-  DocumentArrowDownIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
   MinusIcon,
-  PlusIcon,
   SparklesIcon,
-  ViewColumnsIcon
+  XMarkIcon
 } from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
@@ -45,7 +30,6 @@ import { AppDispatch, RootState } from "./store";
 import {
   fetchBooksThunk,
   getSelectedBook,
-  getSelectedBookChapters,
   getSelectedChapter,
   librarySlice
 } from "./reducers/librarySlice";
@@ -444,7 +428,15 @@ export default function Library() {
         close={onLauncherClose}
       />
       {state.error && (
-        <div className="bg-red-700 p-2 text-white">{state.error}</div>
+        <div className="bg-red-700 p-2 text-white flex">
+          <p className="flex-grow">{state.error}</p>
+          <div
+            className="cursor-pointer flex-none"
+            onClick={() => dispatch(librarySlice.actions.clearError())}
+          >
+            <XMarkIcon className="w-5 h-5 my-auto" />
+          </div>
+        </div>
       )}
       <div className="flex h-full">
         {state.panels.bookList.open && (

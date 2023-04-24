@@ -95,9 +95,8 @@ const reducer = produce((draft: t.Book, action: any) => {
 });
 
 export default function Book() {
-  const [state, dispatch] = React.useReducer<
-    (state: t.Book, action: any) => any
-  >(reducer, initialState);
+  const [state, dispatch] = React.useReducer<(state: t.Book, action: any) => any
+    >(reducer, initialState);
   const [error, setError] = React.useState("");
 
   const [loaded, setLoaded] = React.useState(false);

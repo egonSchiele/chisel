@@ -9,18 +9,23 @@ import List from "./components/List";
 import Spinner from "./components/Spinner";
 import { fetchSuggestionsWrapper } from "./utils";
 import { RootState } from "./store";
-import { librarySlice } from "./reducers/librarySlice";
+import {
+  getSelectedChapter,
+  getText,
+  librarySlice
+} from "./reducers/librarySlice";
 
 export default function PromptsSidebar({
   settings,
   closeSidebar,
-  onLoad,
+  onLoad
 }: {
   settings: t.UserSettings;
   closeSidebar: () => void;
   onLoad: () => void;
 }) {
   const state = useSelector((state: RootState) => state.library.editor);
+  const currentText = useSelector(getText(state.activeTextIndex));
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -39,12 +44,24 @@ export default function PromptsSidebar({
     dispatch(
       librarySlice.actions.addSuggestion({
         label: "Synonyms",
-        value: res.payload.join(", "),
-      }),
+        value: res.payload.join(", ")
+      })
     );
     dispatch(librarySlice.actions.setSaved(false));
     onLoad();
   };
+
+  function getTextForSuggestions() {
+    let { text } = currentText;
+    if (
+      state._cachedSelectedText
+      && state._cachedSelectedText.contents
+      && state._cachedSelectedText.contents.length > 0
+    ) {
+      text = state._cachedSelectedText.contents;
+    }
+    return text;
+  }
 
   const prompts = settings.prompts.map((prompt, i) => (
     <li
@@ -55,8 +72,8 @@ export default function PromptsSidebar({
         onLoad,
         prompt.text,
         prompt.label,
-        state,
-        dispatch,
+        getTextForSuggestions(),
+        dispatch
       )}
       className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
       data-selector={`prompt-${prompt.label}-button`}
@@ -70,7 +87,7 @@ export default function PromptsSidebar({
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
-    className: buttonStyles,
+    className: buttonStyles
   };
 
   const leftMenuItem = loading
@@ -78,7 +95,7 @@ export default function PromptsSidebar({
       label: "Loading",
       icon: <Spinner />,
       onClick: () => {},
-      className: buttonStyles,
+      className: buttonStyles
     }
     : null;
 
@@ -89,7 +106,7 @@ export default function PromptsSidebar({
       className="py-xs text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
     >
       <p className="px-xs">Get synonyms</p>
-    </li>,
+    </li>
   ];
 
   return (
