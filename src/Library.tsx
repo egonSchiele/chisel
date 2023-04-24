@@ -424,7 +424,7 @@ export default function Library() {
           onHistoryClick={async (newText) => {
             await onTextEditorSave(state);
             dispatch(
-              librarySlice.actions.pushTextToEditor({ index: 0, text: newText }),
+              librarySlice.actions.restoreFromHistory({ text: newText }),
             );
           }}
           triggerHistoryRerender={triggerHistoryRerender}
@@ -616,12 +616,8 @@ export default function Library() {
               onSettingsSave={() => {}}
               onHistoryClick={async (newText) => {
                 await onTextEditorSave(state);
-
                 dispatch(
-                  librarySlice.actions.pushTextToEditor({
-                    index: 0,
-                    text: newText,
-                  }),
+                  librarySlice.actions.restoreFromHistory({ text: newText }),
                 );
               }}
               triggerHistoryRerender={triggerHistoryRerender}
