@@ -14,21 +14,27 @@ import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
 import { RootState } from "./store";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
 
 function TextEditor({
   chapterid,
   index,
-  saved,
   onSave,
 }: {
   chapterid: string;
   index: number;
-  saved: boolean;
   onSave: () => void;
 }) {
   const state = useSelector((state: RootState) => state.library.editor);
   const currentChapter = useSelector(getSelectedChapter);
+  const currentText = currentChapter.text[index];
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(
+    Object.prototype.hasOwnProperty.call(currentText, "open")
+      ? currentText.open
+      : true,
+  );
 
   const quillRef = useRef();
 
@@ -38,7 +44,7 @@ function TextEditor({
     // @ts-ignore
     const editor = quillRef.current.getEditor();
     // TODO
-    editor.setText(currentChapter.text[0].text);
+    editor.setText(currentText.text);
   }, [quillRef.current, chapterid, state._pushTextToEditor]);
 
   useEffect(() => {
@@ -96,32 +102,60 @@ function TextEditor({
       event.preventDefault();
       console.log("saving!");
       onSave();
+    } else if (event.shiftKey && event.code === "Period") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.extractBlock());
     }
   };
 
   return (
-    <div className="h-full">
-      <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
-        <div className="ql-editor hidden">hi</div>
-        <div className="ql-toolbar ql-snow hidden">hi</div>
-        <ContentEditable
-          value={currentChapter.title}
-          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
-          onSubmit={(title) => {
-            dispatch(librarySlice.actions.setTitle(title));
-          }}
-          nextFocus={focus}
-          selector="text-editor-title"
-        />
-        <div className="mb-md h-full w-full">
-          <ReactQuill
-            ref={quillRef}
-            placeholder="Write something..."
-            onChange={handleTextChange}
-            onKeyDown={handleKeyDown}
-            onChangeSelection={setSelection}
-          />
-        </div>
+    <div className="">
+      {/* h-full"> */}
+      <div className="ql-editor hidden">hi</div>
+      <div className="ql-toolbar ql-snow hidden">hi</div>
+
+      <div className="mb-sm h-full w-full">
+        {open && (
+          <div className="flex">
+            <div
+              className="flex-none cursor-pointer mr-xs"
+              onClick={() => {
+                dispatch(librarySlice.actions.closeBlock(index));
+                setOpen(false);
+              }}
+            >
+              <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+            </div>
+            <div className="flex-grow border-l border-gray-500 pl-sm">
+              <ReactQuill
+                ref={quillRef}
+                placeholder="Write something..."
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
+                onChangeSelection={setSelection}
+                onFocus={() => dispatch(librarySlice.actions.setActiveTextIndex(index))}
+              />
+            </div>
+          </div>
+        )}
+        {!open && (
+          <div className="flex">
+            <div
+              className="flex-none cursor-pointer mr-xs"
+              onClick={() => {
+                dispatch(librarySlice.actions.openBlock(index));
+                setOpen(true);
+              }}
+            >
+              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+            </div>
+            <div className="flex-grow border-l border-gray-500 pl-sm">
+              <p className="text-gray-500">
+                {currentChapter.text[index].text.split("\n")[0]}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

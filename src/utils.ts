@@ -1,11 +1,14 @@
-import { useRef, useEffect, useState } from "react";
+import {
+  useRef, useEffect, useState, SetStateAction,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
 import { RootState } from "./store";
 import { librarySlice } from "./reducers/librarySlice";
 import * as t from "./Types";
+import { Dispatch, AnyAction } from "@reduxjs/toolkit";
 
-export function useInterval(fn, delay) {
+export function useInterval(fn: any, delay: any) {
   const saved = useRef();
   useEffect(() => {
     saved.current = fn;
@@ -79,13 +82,24 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 }
 
 export const fetchSuggestionsWrapper = async (
-  settings,
-  setLoading,
-  onLoad,
-  prompt,
-  label,
-  state,
-  dispatch,
+  settings: {
+    model: any;
+    max_tokens: any;
+    num_suggestions: any;
+    theme?: "default";
+    version_control?: boolean;
+    prompts?: t.Prompt[];
+  },
+  setLoading: {
+    (value: SetStateAction<boolean>): void;
+    (bool: any): void;
+    (arg0: boolean): void;
+  },
+  onLoad: { (): void; (): void; (): void },
+  prompt: string,
+  label: string,
+  state: { _cachedSelectedText?: any; text?: any },
+  dispatch: Dispatch<AnyAction>,
 ) => {
   const max_tokens_with_min = Math.min(settings.max_tokens, 500);
   let { text } = state;
@@ -112,7 +126,7 @@ export const fetchSuggestionsWrapper = async (
     return;
   }
 
-  result.payload.forEach((choice) => {
+  result.payload.forEach((choice: { text: any }) => {
     const generatedText = choice.text;
     dispatch(
       librarySlice.actions.addSuggestion({ label, value: generatedText }),
@@ -123,9 +137,9 @@ export const fetchSuggestionsWrapper = async (
   onLoad();
 };
 
-export function split(text) {
+export function split(text: string) {
   let parts = text.replaceAll("\n", "\n ").split(" ");
-  parts = parts.filter((part) => part !== "");
+  parts = parts.filter((part: string) => part !== "");
   return parts;
 }
 
@@ -150,7 +164,7 @@ export function getCsrfToken() {
   return token;
 }
 
-export function parseText(text): t.TextBlock[] {
+export function parseText(text: string): t.TextBlock[] {
   try {
     const data = JSON.parse(text);
     if (Array.isArray(data)) {
@@ -162,6 +176,15 @@ export function parseText(text): t.TextBlock[] {
   }
 }
 
-export function isString(x): x is string {
+export function isString(x): boolean {
   return typeof x === "string" || x instanceof String;
+}
+
+export function strSplice(
+  str: string,
+  index: number,
+  count: number,
+  add = "",
+): string {
+  return str.slice(0, index) + (add || "") + str.slice(index + count);
 }

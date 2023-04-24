@@ -1,7 +1,12 @@
 import * as toolkitRaw from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
-import { isString, localStorageOrDefault, parseText } from "../utils";
+import {
+  isString,
+  localStorageOrDefault,
+  parseText,
+  strSplice,
+} from "../utils";
 
 import { current } from "immer";
 import { RootState } from "../store";
@@ -29,6 +34,7 @@ const initialEditorState = (
   const chapter = _chapter || defaults;
   return {
     contents: {},
+    activeTextIndex: 0,
     selectedText: { index: 0, length: 0, contents: "" },
   };
 };
@@ -74,7 +80,11 @@ export const librarySlice = createSlice({
       const books = action.payload;
       books.forEach((book) => {
         book.chapters.forEach((chapter) => {
-          if (isString(chapter.text)) chapter.text = [t.plainTextBlock(chapter.text)];
+          if (isString(chapter.text)) {
+            chapter.text = [
+              t.plainTextBlock(chapter.text as unknown as string),
+            ];
+          }
         });
       });
       state.books = action.payload;
@@ -298,6 +308,91 @@ export const librarySlice = createSlice({
     noChapterSelected(state) {
       state.selectedChapterId = null;
     },
+    setActiveTextIndex(state: t.State, action: PayloadAction<number>) {
+      state.editor.activeTextIndex = action.payload;
+    },
+    openBlock(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text[action.payload].open = true;
+      state.saved = false;
+    },
+    closeBlock(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text[action.payload].open = false;
+      state.saved = false;
+    },
+    extractBlock(state: t.State) {
+      const { index, length, contents } = state.editor.selectedText;
+      const chapter = getSelectedChapter({ library: state });
+      const text = chapter.text[state.editor.activeTextIndex];
+      const newText = strSplice(text.text, index, length);
+      const newBlock = t.plainTextBlock(contents);
+      // all the text before the selection
+      const startText = text.text.slice(0, index);
+      // all the text after the selection
+      const endText = text.text.slice(index + length);
+
+      /*  console.log(
+        "index",
+        index,
+        "length",
+        length,
+        "text",
+        text.text,
+        "newText",
+        newText,
+        "newBlock",
+        newBlock
+      ); */
+      state.saved = false;
+      if (index === 0) {
+        if (length === text.text.length) {
+          console.log("all");
+          // we selected the entire text
+        } else {
+          console.log("start-nowhitespace");
+          // we selected the beginning of the text,
+          // so new block will be at the start
+          text.text = newText;
+          state.editor._pushTextToEditor = newText;
+          chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
+        }
+      } else if (startText.replace(/\s/g, "").length === 0) {
+        console.log("start");
+        // just whitespace the beginning of the text,
+        // so new block will be at the start
+        text.text = newText;
+        state.editor._pushTextToEditor = newText;
+        chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
+      } else if (endText.replace(/\s/g, "").length === 0) {
+        console.log("end");
+        // just whitespace the end of the text,
+        // so new block will be at the end
+        text.text = newText;
+        state.editor._pushTextToEditor = newText;
+        chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+      } else if (index + length === text.text.length) {
+        console.log("end-nowhitespace");
+        // we selected the end of the text,
+        // so new block will be at the end
+        text.text = newText;
+        state.editor._pushTextToEditor = newText;
+        chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+      } else {
+        console.log("middle");
+        // we selected the middle of the text,
+        // so new block will be in the middle
+
+        // the selected text
+        chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+
+        text.text = startText;
+        state.editor._pushTextToEditor = startText;
+        const endBlock = t.plainTextBlock(endText);
+        chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
+        console.log(text.text, newBlock, endBlock);
+      }
+    },
   },
 });
 
@@ -366,6 +461,13 @@ export const getSelectedBookChapters = (
     book.chapterOrder.forEach((id) => {
       const chapter = chapters.find((chapter) => chapter.chapterid === id);
       if (chapter) sortedChapters.push(chapter);
+    });
+    const sortedByCreated = [...chapters];
+    /*     sortedByCreated.sort((a, b) =>
+      // @ts-ignore
+      a.created_at - b.created_at); */
+    sortedByCreated.forEach((chapter) => {
+      if (!sortedChapters.includes(chapter)) sortedChapters.push(chapter);
     });
     return sortedChapters;
   }

@@ -7,6 +7,8 @@ import { getCsrfToken } from "./utils";
 import { RootState } from "./store";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { postWithCsrf } from "./fetchData";
+import Button from "./components/Button";
+import ContentEditable from "./components/ContentEditable";
 
 export default function Editor({
   onSave,
@@ -21,7 +23,7 @@ export default function Editor({
     return <div className="flex w-full h-full">Loading</div>;
   }
 
-  console.log(currentChapter, "!!");
+  console.log(currentChapter.text, "!!");
 
   return (
     <div className="flex w-full h-full">
@@ -30,16 +32,30 @@ export default function Editor({
           <div className="flex flex-none" />
           <div className="flex flex-grow" />
         </div>
-        <div className="h-full w-full">
-          {currentChapter.text.map((textBlock, index) => (
-            <TextEditor
-              chapterid={currentChapter.chapterid}
-              index={index}
-              key={index}
-              saved={state.saved}
-              onSave={() => onSave(state)}
+        <div className="h-screen overflow-scroll w-full">
+          <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
+            {/*  <Button
+              onClick={() => dispatch(librarySlice.actions.extractBlock())}
+            >
+              Extract
+            </Button> */}
+            <ContentEditable
+              value={currentChapter.title}
+              className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
+              onSubmit={(title) => {
+                dispatch(librarySlice.actions.setTitle(title));
+              }}
+              selector="text-editor-title"
             />
-          ))}
+            {currentChapter.text.map((textBlock, index) => (
+              <TextEditor
+                chapterid={currentChapter.chapterid}
+                index={index}
+                key={index}
+                onSave={() => onSave(state)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

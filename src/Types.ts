@@ -34,10 +34,10 @@ export type SelectedText = {
 
 export type EditorState = {
   contents: any;
+  activeTextIndex: number;
   selectedText: SelectedText;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
-
   _pushContentToEditor?: string;
 };
 
@@ -60,20 +60,21 @@ export type Pos = {
 export type PlainTextBlock = {
   type: "plain";
   text: string;
+  open?: boolean;
 };
 
 export type FoldableBlock = {
   type: "foldable";
   text: string;
-  folded: boolean;
+  open: boolean;
 };
 
 export function plainTextBlock(text: string): PlainTextBlock {
-  return { type: "plain", text };
+  return { type: "plain", open: true, text };
 }
 
 export function foldableBlock(text: string): FoldableBlock {
-  return { type: "foldable", text, folded: true };
+  return { type: "foldable", text, open: true };
 }
 
 export type TextBlock = PlainTextBlock | FoldableBlock;
