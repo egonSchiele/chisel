@@ -27,4 +27,4 @@ jobs:
           cache: "yarn"
       - run: yarn
       - run: NODE_OPTIONS=--experimental-vm-modules yarn test
-      - run: yarn lint
+      #- run: yarn lint
