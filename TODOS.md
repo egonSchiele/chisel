@@ -30,7 +30,6 @@
 - offline mode
 - figure out what code is saving chapters on a book object
 - search
-- text preview for chapters
 - drag and drop should only work for text files
 - put actions as a separate tab on that panel
 - support other writing formats: comics, screenplays
@@ -47,4 +46,3 @@
 - tables? https://jspreadsheets.com
 - switrch grid mode to redux
 - show err messages instead of logging to console
-- Minor annoyance that suggestions happen above the text

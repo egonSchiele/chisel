@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class",
+  //darkMode: "class",
   content: [
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
@@ -101,5 +101,5 @@ module.exports = {
       }, */
     }
   },
-  plugins: [require("@tailwindcss/forms")]
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/line-clamp")]
 };
