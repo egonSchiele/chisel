@@ -7,7 +7,7 @@ import {
   EllipsisHorizontalIcon,
   PlusIcon,
   ViewColumnsIcon,
-  XMarkIcon
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
@@ -28,7 +28,7 @@ export default function ChapterList({
   onDelete,
   saveChapter,
   closeSidebar,
-  canCloseSidebar = true
+  canCloseSidebar = true,
 }: {
   bookid: string;
   selectedChapterId: string;
@@ -48,9 +48,9 @@ export default function ChapterList({
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() })
+      body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
     });
     dispatch(librarySlice.actions.loaded);
     if (!res.ok) {
@@ -103,30 +103,29 @@ export default function ChapterList({
     dispatch(librarySlice.actions.setChapterOrder(ids));
   };
 
-  const sublist = () => chapters.map((chapter, index) => (
-    <li
-      key={chapter.chapterid}
-      className={
+  const sublist = () =>
+    chapters.map((chapter, index) => (
+      <li
+        key={chapter.chapterid}
+        className={
           !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
         }
-    >
-      <ListItem
-        link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
-        title={chapter.title || "(no title)"}
-        content={
-            `${chapter.text
-              .map((t) => t.text)
-              .join(". ")
-              .substring(0, 50)}...`
-          }
-        selected={chapter.chapterid === selectedChapterId}
-        onDelete={() => deleteChapter(chapter.chapterid)}
-        onFavorite={() => {}}
-        onRename={() => startRenameChapter(chapter)}
-        selector="chapterlist"
-      />
-    </li>
-  ));
+      >
+        <ListItem
+          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+          title={chapter.title || "(no title)"}
+          content={`${chapter.text
+            .map((t) => t.text)
+            .join(". ")
+            .substring(0, 50)}...`}
+          selected={chapter.chapterid === selectedChapterId}
+          onDelete={() => deleteChapter(chapter.chapterid)}
+          onFavorite={() => {}}
+          onRename={() => startRenameChapter(chapter)}
+          selector="chapterlist"
+        />
+      </li>
+    ));
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
@@ -168,24 +167,25 @@ export default function ChapterList({
           )}
         </Droppable>
       </DragDropContext>
-    </div>
+    </div>,
   ];
 
   const navigate = useNavigate();
 
-  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles =
+    "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
-    className: buttonStyles
+    className: buttonStyles,
   };
 
   const newMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => newChapter("New chapter"),
-    className: buttonStyles
+    className: buttonStyles,
   };
 
   const dropdownMenuItems = [
@@ -193,7 +193,7 @@ export default function ChapterList({
       label: "Grid mode",
       icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => navigate(`/grid/${bookid}`),
-      className: buttonStyles
+      className: buttonStyles,
     },
     /*  {
       label: "Import",
@@ -205,8 +205,8 @@ export default function ChapterList({
       label: "Reorder",
       icon: <ArrowsUpDownIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
       onClick: () => setEditing(true),
-      className: buttonStyles
-    }
+      className: buttonStyles,
+    },
   ];
 
   const dropdownMenu = {
@@ -219,7 +219,7 @@ export default function ChapterList({
       />
     ),
     onClick: () => {},
-    className: buttonStyles
+    className: buttonStyles,
   };
 
   let leftMenuItem = [newMenuItem, dropdownMenu];
@@ -239,8 +239,8 @@ export default function ChapterList({
         label: "Done",
         icon: <p>Done</p>,
         onClick: () => setEditing(false),
-        className: buttonStyles
-      }
+        className: buttonStyles,
+      },
     ];
   }
   return (
@@ -261,6 +261,8 @@ export default function ChapterList({
         className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
         onDrop={dropHandler}
         selector="chapterlist"
+        swipeToClose="left"
+        close={closeSidebar}
       />
     </>
   );

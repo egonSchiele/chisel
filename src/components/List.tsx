@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as t from "../Types";
-
+import { useDispatch } from "react-redux";
+import { librarySlice } from "../reducers/librarySlice";
 // Top left and top right menu items
 function MenuItem({
   label,
@@ -35,6 +36,9 @@ export default function List({
   level = 1,
   onDrop = (e) => {},
   selector = "list",
+  swipeToClose = null,
+  close = null,
+  open = null,
 }: {
   title: string;
   items: any[];
@@ -44,8 +48,49 @@ export default function List({
   level?: number;
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
   selector?: string;
+  swipeToClose?: "left" | "right" | null;
+  close?: () => void;
+  open?: () => void;
 }) {
   const [dragOver, setDragOver] = React.useState(false);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    function checkDirection() {
+      if (touchendX < touchstartX) {
+        if (swipeToClose === "left" && close) {
+          close();
+        }
+      }
+      if (touchendX > touchstartX) {
+        if (swipeToClose === "right" && close) {
+          close();
+        } else if (swipeToClose === "left" && open) {
+          open();
+        }
+      }
+    }
+
+    function handleStart(e) {
+      touchstartX = e.changedTouches[0].screenX;
+    }
+
+    function handleEnd(e) {
+      touchendX = e.changedTouches[0].screenX;
+      checkDirection();
+    }
+
+    document.addEventListener("touchstart", handleStart);
+
+    document.addEventListener("touchend", handleEnd);
+    return () => {
+      document.removeEventListener("touchstart", handleStart);
+      document.removeEventListener("touchend", handleEnd);
+    };
+  }, []);
+
   return (
     <div
       className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-screen overflow-scroll w-full ${className} ${
