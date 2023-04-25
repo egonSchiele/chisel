@@ -8,7 +8,9 @@ import * as t from "./Types";
 import TextArea from "./components/TextArea";
 import { getCsrfToken } from "./utils";
 
-function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
+function Prompt({
+  label, text, onLabelChange, onTextChange, onDelete
+}) {
   return (
     <div className="mb-sm p-3 rounded-md dark:bg-gray-600 bg-settingspanel">
       <div className="mb-sm w-full">
@@ -47,7 +49,9 @@ function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
   );
 }
 
-function Settings({ settings, setSettings, usage, onSave }) {
+function Settings({
+  settings, setSettings, usage, onSave
+}) {
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
@@ -137,10 +141,18 @@ function Settings({ settings, setSettings, usage, onSave }) {
             Usage
           </h4>
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="uppercase ">Monthly:</span> {monthlyUsage} tokens
+            <span className="uppercase ">Monthly:</span>
+            {' '}
+            {monthlyUsage}
+            {' '}
+            tokens
           </p>
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="uppercase ">Total:</span> {totalUsage} tokens
+            <span className="uppercase ">Total:</span>
+            {' '}
+            {totalUsage}
+            {' '}
+            tokens
           </p>
         </div>
       )}
