@@ -353,6 +353,7 @@ export const librarySlice = createSlice({
       state.selectedChapterId = null;
     },
     setActiveTextIndex(state: t.State, action: PayloadAction<number>) {
+      console.log("setActiveTextIndex", action.payload);
       state.editor.activeTextIndex = action.payload;
     },
     openBlock(state: t.State, action: PayloadAction<number>) {
@@ -409,9 +410,28 @@ export const librarySlice = createSlice({
         length = state.editor._cachedSelectedText.length;
         contents = state.editor._cachedSelectedText.contents;
       }
-      if (length === 0) return;
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
+
+      if (length === 0) {
+        if (index === 0) {
+          // newBlockBeforeCurrent
+          const newBlock = t.plainTextBlock("");
+          chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
+    
+          state.saved = false;
+          return;
+        } else if (index === text.text.length - 1) {
+          // newBlockAfterCurrent
+          const newBlock = t.plainTextBlock("");
+          chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+    
+          state.saved = false;
+          return;
+        } else {
+          return;
+        }
+      }
       const newText = strSplice(text.text, index, length).trim();
       const newBlock = t.plainTextBlock(contents.trim());
       // all the text before the selection

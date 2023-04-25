@@ -15,8 +15,9 @@ import * as t from "./Types";
 import { RootState } from "./store";
 import {
   getSelectedChapter,
+  getSelectedChapterTextLength,
   getText,
-  librarySlice
+  librarySlice,
 } from "./reducers/librarySlice";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
@@ -25,7 +26,7 @@ import { useTraceUpdate } from "./utils";
 function TextEditor({
   chapterid,
   index,
-  onSave
+  onSave,
 }: {
   chapterid: string;
   index: number;
@@ -35,7 +36,12 @@ function TextEditor({
     (state: RootState) => state.library.editor._pushTextToEditor
   );
 
+  const activeTextIndex = useSelector(
+    (state: RootState) => state.library.editor.activeTextIndex
+  );
+
   const currentText = useSelector(getText(index));
+  const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
 
   const dispatch = useDispatch();
   const { open } = currentText;
@@ -51,6 +57,18 @@ function TextEditor({
     editor.setText(currentText.text);
   }, [quillRef.current, chapterid, _pushTextToEditor]);
 
+  useEffect(() => {
+    if (activeTextIndex === index) {
+      focus();
+    }
+  }, [activeTextIndex]);
+
+  const focus = () => {
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const editor = quillRef.current.getEditor();
+    editor.focus();
+  };
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
     if (!edited) return;
@@ -73,7 +91,7 @@ function TextEditor({
         librarySlice.actions.setSelectedText({
           index: range.index,
           length: range.length,
-          contents: word
+          contents: word,
         })
       );
     } else {
@@ -101,8 +119,57 @@ function TextEditor({
     } else if (event.shiftKey && event.code === "Tab") {
       event.preventDefault();
       setOpen(!open);
+    } else if (event.code === "ArrowDown") {
+      if (quillRef && quillRef.current) {
+        // @ts-ignore
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection();
+
+        if (range) {
+          if (
+            range.length === 0 &&
+            range.index === currentText.text.length - 1 &&
+            index < currentChapterTextLength - 1
+          ) {
+            event.preventDefault();
+            dispatch(librarySlice.actions.setActiveTextIndex(index + 1));
+          }
+        }
+      }
+    } else if (event.code === "ArrowUp") {
+      if (quillRef && quillRef.current) {
+        // @ts-ignore
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection();
+
+        if (range) {
+          if (range.length === 0 && range.index === 0 && index > 0) {
+            event.preventDefault();
+            dispatch(librarySlice.actions.setActiveTextIndex(index - 1));
+          }
+        }
+      }
     }
   };
+
+  const handleKeyDownWhenClosed = (event) => {
+    if (open) return;
+    if (event.key === "Tab") {
+      if (index === activeTextIndex) {
+        event.preventDefault();
+        setOpen(true);
+        focus();
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDownWhenClosed);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDownWhenClosed);
+    };
+  }, [handleKeyDownWhenClosed]);
 
   let textPreview = "(no text)";
   if (currentText.text) {
@@ -139,13 +206,19 @@ function TextEditor({
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
-                onFocus={() => dispatch(librarySlice.actions.setActiveTextIndex(index))}
+                onFocus={() =>
+                  dispatch(librarySlice.actions.setActiveTextIndex(index))
+                }
               />
             </div>
           </div>
         )}
         {!open && (
-          <div className="flex">
+          <div
+            className={`flex ${
+              index === activeTextIndex && "border border-gray-500"
+            }`}
+          >
             <div
               className="flex-none cursor-pointer mr-xs"
               onClick={() => {

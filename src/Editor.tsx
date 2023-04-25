@@ -21,7 +21,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
   const currentChapterId = useSelector(
-    (state: RootState) => state.library.selectedChapterId,
+    (state: RootState) => state.library.selectedChapterId
   );
 
   if (!currentChapterTitle) {
@@ -47,6 +47,9 @@ export default function Editor({ onSave }: { onSave: () => void }) {
               className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
               onSubmit={(title) => {
                 dispatch(librarySlice.actions.setTitle(title));
+              }}
+              nextFocus={() => {
+                dispatch(librarySlice.actions.setActiveTextIndex(0));
               }}
               selector="text-editor-title"
             />
