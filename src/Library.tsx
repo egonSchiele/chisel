@@ -1,6 +1,4 @@
-import React, {
-  Reducer, useCallback, useEffect, useState
-} from "react";
+import React, { Reducer, useCallback, useEffect, useState } from "react";
 import * as t from "./Types";
 import "./globals.css";
 
@@ -74,10 +72,10 @@ export default function Library() {
       } else if (state.viewMode === "focus") {
         focusModeClose();
       } else if (
-        state.panels.sidebar.open
-        || state.panels.prompts.open
-        || state.panels.bookList.open
-        || state.panels.chapterList.open
+        state.panels.sidebar.open ||
+        state.panels.prompts.open ||
+        state.panels.bookList.open ||
+        state.panels.chapterList.open
       ) {
         dispatch(librarySlice.actions.closeAllPanels());
       } else {
@@ -184,8 +182,8 @@ export default function Library() {
 
   function togglePanel(panel: string) {
     if (
-      state.panels.sidebar.open
-      && state.panels.sidebar.activePanel === panel
+      state.panels.sidebar.open &&
+      state.panels.sidebar.activePanel === panel
     ) {
       dispatch(librarySlice.actions.closeSidebar());
     } else {
@@ -312,15 +310,16 @@ export default function Library() {
     return <div>Loading...</div>;
   }
 
-  const sidebarWidth = state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
+  const sidebarWidth =
+    state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
 
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
 
     let selected = state.editor.selectedText;
     if (
-      state.editor.selectedText.contents === ""
-      && state.editor._cachedSelectedText
+      state.editor.selectedText.contents === "" &&
+      state.editor._cachedSelectedText
     ) {
       if (state.editor._cachedSelectedText.contents !== "") {
         selected = state.editor._cachedSelectedText;
@@ -404,7 +403,9 @@ export default function Library() {
           setSettings={setSettings}
           usage={usage}
           activePanel={state.panels.sidebar.activePanel}
-          setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
+          setActivePanel={(panel) =>
+            dispatch(librarySlice.actions.setActivePanel(panel))
+          }
           maximize={state.viewMode === "fullscreen"}
           onSuggestionClick={addToContents}
           onSuggestionDelete={(index) => {
@@ -460,10 +461,10 @@ export default function Library() {
             />
           </div>
         )}
-        {state.panels.chapterList.open
-          && state.selectedBookId
-          && state.booksLoaded && (
-            <div className="flex-none w-40 xl:w-48 h-full">
+        {state.panels.chapterList.open &&
+          state.selectedBookId &&
+          state.booksLoaded && (
+            <div className="flex-none w-40 xl:w-60 h-full">
               <ChapterList
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
@@ -477,20 +478,22 @@ export default function Library() {
                   }
                 }}
                 saveChapter={(chapter) => saveChapter(chapter, [])}
-                closeSidebar={() => dispatch(librarySlice.actions.closeChapterList())}
+                closeSidebar={() =>
+                  dispatch(librarySlice.actions.closeChapterList())
+                }
                 canCloseSidebar={
                   chapterid !== undefined || !state.selectedBookId
                 }
               />
             </div>
-        )}
+          )}
 
         <div className="h-full flex flex-col flex-grow">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
-              {(!state.panels.bookList.open
-                || !state.panels.chapterList.open) && (
-              /*       <button
+              {(!state.panels.bookList.open ||
+                !state.panels.chapterList.open) && (
+                /*       <button
                   type="button"
                   className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0 "
                   onClick={() => {
@@ -526,7 +529,9 @@ export default function Library() {
 
                 <NavButton
                   label="Focus Mode"
-                  onClick={() => dispatch(librarySlice.actions.setViewMode("focus"))}
+                  onClick={() =>
+                    dispatch(librarySlice.actions.setViewMode("focus"))
+                  }
                 >
                   <EyeIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
@@ -604,7 +609,9 @@ export default function Library() {
               setSettings={setSettings}
               usage={usage}
               activePanel={state.panels.sidebar.activePanel}
-              setActivePanel={(panel) => dispatch(librarySlice.actions.setActivePanel(panel))}
+              setActivePanel={(panel) =>
+                dispatch(librarySlice.actions.setActivePanel(panel))
+              }
               maximize={state.viewMode === "fullscreen"}
               onSuggestionClick={addToContents}
               onSuggestionDelete={(index) => {
