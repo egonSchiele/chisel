@@ -46,3 +46,4 @@
 - tables? https://jspreadsheets.com
 - switrch grid mode to redux
 - show err messages instead of logging to console
+- reenable eslint

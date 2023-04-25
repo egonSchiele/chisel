@@ -48,7 +48,7 @@ export default function List({
   const [dragOver, setDragOver] = React.useState(false);
   return (
     <div
-      className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-full w-full ${className} ${
+      className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-screen overflow-scroll w-full ${className} ${
         dragOver && "dark:bg-gray-700"
       } `}
       onDragOver={(e) => {
@@ -68,9 +68,9 @@ export default function List({
       data-selector={`${selector}-list`}
     >
       <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
-        {leftMenuItem
-          && Array.isArray(leftMenuItem)
-          && leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
+        {leftMenuItem &&
+          Array.isArray(leftMenuItem) &&
+          leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
         {leftMenuItem && !Array.isArray(leftMenuItem) && (
           <MenuItem {...leftMenuItem} />
         )}
