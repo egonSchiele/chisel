@@ -372,7 +372,7 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    newAfterBeforeCurrent(state: t.State) {
+    newBlockAfterCurrent(state: t.State) {
       const newBlock = t.plainTextBlock("");
       const chapter = getSelectedChapter({ library: state });
       chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
