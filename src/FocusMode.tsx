@@ -70,7 +70,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
     });
     items.push(
       <div className="grid grid-cols-1" key={1}>
-        <h1 className="text-4xl font-georgia my-sm antialiased font-light">
+        <h1 className="text-4xl font-georgia my-xs py-xs antialiased font-light overflow-hidden break-words">
           {selected}
         </h1>
         <p className="text-md dark:text-white">
@@ -207,7 +207,7 @@ function Word({
           onChange(index, newWord);
         }}
       /> */}
-      <div className="text-sm font-light antialiased dark:text-gray-300">
+      <div className="h-sm text-sm font-light antialiased dark:text-gray-300">
         {simpleTags.join(", ")}
         {complexTags.join(", ")}
         {/*         {JSON.stringify(annotations)}
@@ -346,10 +346,7 @@ export default function FocusMode({ text, onClose, onChange }) {
       {/*  <h1 className="text-4xl font-georgia font-light antialiased dark:text-white">
         {JSON.stringify(activeGroups)}
       </h1> */}
-      <div className="w-full flex">
-        <div className="flex-grow flex max-w-screen-md mx-auto flex-wrap gap-xs">
-          {wordComponents}
-        </div>
+      <div className="w-full flex justify-around">
         <div className="flex-none w-48 sticky top-0">
           <FocusList
             words={words}
@@ -358,6 +355,11 @@ export default function FocusMode({ text, onClose, onChange }) {
             onDelete={onDelete}
             annotations={wordAnnotations[currentWord] || []}
           />
+        </div>
+        <div className="mt-8 pt-xs">
+          <div style={{"height": "calc(100vh - 10rem)"}} className="overflow-scroll mt-5 flex-grow flex max-w-screen-md mx-auto flex-wrap gap-xs">
+            {wordComponents}
+          </div>
         </div>
       </div>
     </div>
