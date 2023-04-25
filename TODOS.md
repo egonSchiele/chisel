@@ -47,3 +47,4 @@
 - switrch grid mode to redux
 - show err messages instead of logging to console
 - reenable eslint
+- listitem dropdown is partly hidden (overflow-hidden?)
