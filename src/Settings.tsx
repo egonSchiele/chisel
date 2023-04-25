@@ -8,9 +8,7 @@ import * as t from "./Types";
 import TextArea from "./components/TextArea";
 import { getCsrfToken } from "./utils";
 
-function Prompt({
-  label, text, onLabelChange, onTextChange, onDelete
-}) {
+function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
   return (
     <div className="mb-sm p-3 rounded-md dark:bg-gray-600 bg-settingspanel">
       <div className="mb-sm w-full">
@@ -49,9 +47,7 @@ function Prompt({
   );
 }
 
-function Settings({
-  settings, setSettings, usage, onSave
-}) {
+function Settings({ settings, setSettings, usage, onSave }) {
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
@@ -100,8 +96,8 @@ function Settings({
     onSave();
   };
 
-  let monthlyUsage; let
-    totalUsage;
+  let monthlyUsage;
+  let totalUsage;
   if (usage) {
     const { tokens } = usage.openai_api;
     monthlyUsage = tokens.month.prompt + tokens.month.completion;
@@ -126,13 +122,13 @@ function Settings({
         title="Max Tokens"
         name="max_tokens"
         value={settings.max_tokens}
-        onChange={(e) => handleChange("max_tokens", parseInt(e.target.value, 10))}
+        onChange={(e) => handleChange("max_tokens", e.target.value)}
       />
       <Input
         title="Num Suggestions"
         name="num_suggestions"
         value={settings.num_suggestions}
-        onChange={(e) => handleChange("num_suggestions", parseInt(e.target.value, 10))}
+        onChange={(e) => handleChange("num_suggestions", e.target.value)}
       />
 
       {usage && (
@@ -141,18 +137,10 @@ function Settings({
             Usage
           </h4>
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="uppercase ">Monthly:</span>
-            {' '}
-            {monthlyUsage}
-            {' '}
-            tokens
+            <span className="uppercase ">Monthly:</span> {monthlyUsage} tokens
           </p>
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="uppercase ">Total:</span>
-            {' '}
-            {totalUsage}
-            {' '}
-            tokens
+            <span className="uppercase ">Total:</span> {totalUsage} tokens
           </p>
         </div>
       )}

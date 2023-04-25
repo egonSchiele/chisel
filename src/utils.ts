@@ -101,13 +101,16 @@ export const fetchSuggestionsWrapper = async (
   text: string,
   dispatch: Dispatch<AnyAction>
 ) => {
-  const max_tokens_with_min = Math.min(settings.max_tokens, 500);
+  const _max_tokens = parseInt(settings.max_tokens, 10) || 1;
+  const _num_suggestions = parseInt(settings.num_suggestions, 10) || 1;
+
+  const max_tokens_with_min = Math.min(_max_tokens, 500);
 
   setLoading(true);
   const result = await fd.fetchSuggestions(
     text,
     settings.model,
-    settings.num_suggestions,
+    _num_suggestions,
     max_tokens_with_min,
     prompt,
     label
