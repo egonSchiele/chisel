@@ -16,7 +16,6 @@
 - error handling w boundaries? Currently they show in console
 - When adding a book and chapter, the process is slow. For the short term change the + button to a loading spinner so people don’t double click it
 - by double clicking on the book, it will bring up the modal to change the name.
-- write a guide
 - Functionality for taking notes with no organization
 - use new dnd library for grid
 - should be able to change settings without a chapter selected
