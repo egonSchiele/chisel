@@ -47,3 +47,5 @@
 - show err messages instead of logging to console
 - reenable eslint
 - listitem dropdown is partly hidden (overflow-hidden?)
+- annotations: highlights, comments
+- select chapters (hold shift to select multiple) then drag to move
