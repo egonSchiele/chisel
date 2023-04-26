@@ -93,7 +93,7 @@ export default function List({
 
   return (
     <div
-      className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-screen overflow-scroll w-full ${className} ${
+      className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-screen overflow-y-scroll overflow-x-hidden w-full ${className} ${
         dragOver && "dark:bg-gray-700"
       } `}
       onDragOver={(e) => {
