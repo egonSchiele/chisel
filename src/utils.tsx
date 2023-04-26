@@ -229,7 +229,7 @@ function makeDiff(value, type: "added" | "removed" | "same"): Diff[] {
   return [obj];
 }
 
-export function getHtmlDiff(originalText, newText) {
+export function getHtmlDiff(originalText, newText, changesOnly = false) {
   let diff: Diff[] = [];
   if (originalText === "") {
     diff = makeDiff(newText, "added");
@@ -268,13 +268,14 @@ export function getHtmlDiff(originalText, newText) {
         );
         newLines.push("");
       } else {
+        /* if (changesOnly) continue; */
         originalLines.push(<span key={key}>{lines[i]}</span>);
         newLines.push(<span key={key}>{lines[i]}</span>);
       }
 
       if (i < lines.length - 1) {
-        originalLines.push(<br />);
-        newLines.push(<br />);
+        originalLines.push(<br key={key} />);
+        newLines.push(<br key={key} />);
       }
     }
   });
