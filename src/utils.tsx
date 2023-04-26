@@ -245,51 +245,74 @@ export function getHtmlDiff(originalText, newText, changesOnly = false) {
   const newLines = [];
 
   let parts = [];
-  const context = 2;
+  const context = 5;
   diff.forEach((part, i) => {
     if (!changesOnly) {
       parts.push(part);
     } else if (part.added || part.removed) {
       parts.push(part);
+      /* } else if (i > 1 && (diff[i - 2].added || diff[i - 2].removed)) {
+      parts.push(part);
+     */
     } else {
-      const prevPartModified = _.range(Math.max(0, i - context), i).find(
-        (j) => {
-          console.log(j);
-          const prevPart = diff[j];
-          return prevPart.removed || prevPart.added;
-        }
-      );
+      const lines = part.value.split("\n");
+      const prev = diff[Math.max(0, i - 1)];
+      const prevPartModified = prev.added || prev.removed;
 
-      const nextPartModified = _.range(
-        i,
-        Math.min(diff.length, i + context + 1)
-      ).find((j) => {
-        const nextPart = diff[j];
-        return nextPart.removed || nextPart.added;
-      });
+      const next = diff[Math.min(diff.length - 1, i + 1)];
+      const nextPartModified = next.added || next.removed;
 
-      console.log({ prevPartModified, nextPartModified });
       if (prevPartModified || nextPartModified) {
-        console.log("pushing");
-        parts.push(part);
+        if (
+          prevPartModified &&
+          nextPartModified &&
+          lines.length <= context * 2
+        ) {
+          parts.push(part);
+        } else {
+          let str = "";
+          if (prevPartModified) {
+            const contextLines = lines.slice(0, context);
+
+            const joined = contextLines.join("\n");
+            if (joined.match(/^\s+$/)) {
+              str = "";
+            } else {
+              str = joined + "...";
+            }
+          }
+          if (prevPartModified && nextPartModified) {
+            str += "...";
+          }
+          if (nextPartModified) {
+            const contextLines = lines.slice(
+              Math.max(0, lines.length - context),
+              lines.length
+            );
+
+            const joined = contextLines.join("\n");
+            if (joined.match(/^\s+$/)) {
+              str = "";
+            } else {
+              str = "..." + joined;
+            }
+          }
+          part.value = str;
+          parts.push(part);
+        }
       }
     }
   });
   let key = 0;
   parts.forEach((part) => {
-    console.log(part);
-    const lines = part.value.split("\n");
+    //const str = "START\n" + part.value + "\nEND";
+    const str = part.value;
+    const lines = str.split("\n");
 
     for (let i = 0; i < lines.length; i++) {
       key += 1;
       if (i === lines.length - 1 && lines[i] === "") {
         continue; // Skip the last empty line
-      }
-
-      if (!part.added && !part.removed) {
-        if (i > context && i < lines.length - context) {
-          continue;
-        }
       }
 
       if (part.added) {
