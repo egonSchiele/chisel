@@ -32,8 +32,12 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
       </Panel>
     );
   }
-
-  const { originalLines, newLines } = getHtmlDiff(patch, nextPatch, true);
+  const changesOnly = patch.length > 10000 || nextPatch.length > 10000;
+  const { originalLines, newLines } = getHtmlDiff(
+    patch,
+    nextPatch,
+    changesOnly
+  );
   return (
     <Panel
       title="History"
