@@ -37,7 +37,8 @@ export default function useLaunchItems(
   _cachedSelectedText,
   activeTextIndex,
   viewMode,
-  currentTextLength
+  currentTextLength,
+  newChapter
 ) {
   const launchItems = [
     /*   {
@@ -49,16 +50,7 @@ export default function useLaunchItems(
     }, */
     {
       label: "New Chapter",
-      onClick: async () => {
-        dispatch(librarySlice.actions.loading());
-        const result = await fd.newChapter(bookid, "New Chapter", "");
-        dispatch(librarySlice.actions.loaded());
-        if (result.tag === "error") {
-          dispatch(librarySlice.actions.setError(result.message));
-        } else {
-          dispatch(librarySlice.actions.addChapter(result.payload));
-        }
-      },
+      onClick: newChapter,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
     },
     {

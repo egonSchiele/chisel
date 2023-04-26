@@ -63,7 +63,7 @@ export default function Library() {
     dispatch(librarySlice.actions.setNoChapter());
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = async (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
       if (state.launcherOpen) {
@@ -95,7 +95,10 @@ export default function Library() {
         event.preventDefault();
         dispatch(librarySlice.actions.setViewMode("diff"));
       }
-    }
+    } /* else if (event.metaKey && event.shiftKey && event.key === "n") {
+      event.preventDefault();
+      await newChapter();
+    } */
   };
 
   useEffect(() => {
@@ -153,7 +156,8 @@ export default function Library() {
       editor._cachedSelectedText,
       editor.activeTextIndex,
       viewMode,
-      currentText.length
+      currentText.length,
+      newChapter
     );
     setLaunchItems(_launchItems);
   }, [
@@ -243,6 +247,19 @@ export default function Library() {
       credentials: "include",
       body,
     });
+  }
+
+  async function newChapter(title = "New Chapter", text = "") {
+    dispatch(librarySlice.actions.loading());
+    const result = await fd.newChapter(bookid, title, text);
+    dispatch(librarySlice.actions.loaded());
+    if (result.tag === "error") {
+      dispatch(librarySlice.actions.setError(result.message));
+      return;
+    }
+    const chapter = result.payload;
+    dispatch(librarySlice.actions.addChapter(chapter));
+    navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
   }
 
   async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
@@ -511,6 +528,7 @@ export default function Library() {
                 closeSidebar={() =>
                   dispatch(librarySlice.actions.closeChapterList())
                 }
+                newChapter={newChapter}
                 canCloseSidebar={
                   chapterid !== undefined || !state.selectedBookId
                 }

@@ -28,6 +28,7 @@ export default function ChapterList({
   onDelete,
   saveChapter,
   closeSidebar,
+  newChapter,
   canCloseSidebar = true,
 }: {
   bookid: string;
@@ -35,6 +36,7 @@ export default function ChapterList({
   onDelete: any;
   saveChapter: any;
   closeSidebar: () => void;
+  newChapter: (title?: string, text?: string) => void;
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
@@ -59,19 +61,6 @@ export default function ChapterList({
     }
     onDelete(chapterid);
   }
-
-  const newChapter = async (title = "New Chapter", text = "") => {
-    dispatch(librarySlice.actions.loading());
-    const result = await fd.newChapter(bookid, title, text);
-    dispatch(librarySlice.actions.loaded());
-    if (result.tag === "error") {
-      dispatch(librarySlice.actions.setError(result.message));
-      return;
-    }
-    const chapter = result.payload;
-    dispatch(librarySlice.actions.addChapter(chapter));
-    navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
-  };
 
   const dropHandler = (ev) => {
     ev.preventDefault();
