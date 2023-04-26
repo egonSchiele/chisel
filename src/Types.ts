@@ -1,3 +1,5 @@
+import { nanoid } from "nanoid";
+
 export type State = {
   books: Book[];
   error: string;
@@ -60,20 +62,22 @@ export type PlainTextBlock = {
   type: "plain";
   text: string;
   open?: boolean;
+  id?: string;
 };
 
 export type FoldableBlock = {
   type: "foldable";
   text: string;
   open: boolean;
+  id?: string;
 };
 
 export function plainTextBlock(text: string): PlainTextBlock {
-  return { type: "plain", open: true, text };
+  return { type: "plain", open: true, id: nanoid(), text };
 }
 
 export function foldableBlock(text: string): FoldableBlock {
-  return { type: "foldable", text, open: true };
+  return { type: "foldable", text, id: nanoid(), open: true };
 }
 
 export type TextBlock = PlainTextBlock | FoldableBlock;

@@ -20,6 +20,11 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
+  const currentText = useSelector((state: RootState) => {
+    const chapter = getSelectedChapter(state);
+    return chapter ? chapter.text : [];
+  });
+
   const currentChapterId = useSelector(
     (state: RootState) => state.library.selectedChapterId
   );
@@ -48,11 +53,11 @@ export default function Editor({ onSave }: { onSave: () => void }) {
               }}
               selector="text-editor-title"
             />
-            {_.range(0, currentChapterTextLength).map((index) => (
+            {currentText.map((text, index) => (
               <TextEditor
                 chapterid={currentChapterId}
                 index={index}
-                key={index}
+                key={text.id || index}
                 onSave={onSave}
               />
             ))}

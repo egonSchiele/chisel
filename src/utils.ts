@@ -7,6 +7,7 @@ import { RootState } from "./store";
 import { librarySlice } from "./reducers/librarySlice";
 import * as t from "./Types";
 import { Dispatch, AnyAction } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 export function useInterval(fn: any, delay: any) {
   const saved = useRef();
@@ -164,6 +165,11 @@ export function parseText(text: string): t.TextBlock[] {
   try {
     const data = JSON.parse(text);
     if (Array.isArray(data)) {
+      if (!data[0].id) {
+        data.forEach((block: t.TextBlock, index: number) => {
+          block.id = nanoid();
+        })
+      }
       return data;
     }
     return [t.plainTextBlock(text)];

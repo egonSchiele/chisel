@@ -419,15 +419,15 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
 
-      //console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
-      if (length === 0) {
+/*       console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
+ */      if (length === 0) {
         if (index === 0) {
           // newBlockBeforeCurrent
-          const newBlock = t.plainTextBlock("NEW!");
+          const newBlock = t.plainTextBlock("");
           chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
-/*     const cur = current(chapter.text)
-    console.log("cur", cur)
- */          state.saved = false;
+     const cur = current(chapter.text)
+ //   console.log("cur", cur)
+   //        state.saved = false;
           return;
         } else if (index === text.text.length - 1) {
           // newBlockAfterCurrent

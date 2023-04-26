@@ -130,13 +130,13 @@ function TextEditor({
         /* console.log(
           range,
           currentText.text,
-          currentText.text.length,
+          currentText.text.trim().length,
           currentChapterTextLength
         ); */
         if (range) {
           if (
             range.length === 0 &&
-            range.index === currentText.text.trim().length &&
+            range.index >= currentText.text.trim().length &&
             index < currentChapterTextLength - 1
           ) {
             event.preventDefault();
