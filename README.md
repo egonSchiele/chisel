@@ -1,6 +1,6 @@
 # Chisel
 
-A writing app for disorganized writers.
+An open source writing app.
 
 ### Installation
 
@@ -40,3 +40,23 @@ yarn nodemon # for the server
 ```
 NODE_OPTIONS=--experimental-vm-modules yarn test
 ```
+
+### Integration tests
+
+You'll first need to add login details for a real user in settings.js:
+
+```js
+testuser: {
+  userid: '',
+  email: '',
+  password: ''
+}
+```
+
+Now run:
+
+```
+yarn cypress
+```
+
+And follow the instructions.
