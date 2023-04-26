@@ -241,7 +241,7 @@ const getUserWithEmail = async (email) => {
   return users[0];
 };
 
-const createUser = async (email) => {
+const createUser = async (email, extraData = {}) => {
   console.log("creating user");
   console.log({ email });
   const userid = nanoid();
@@ -269,6 +269,7 @@ const createUser = async (email) => {
     },
     settings: {},
     created_at: Date.now(),
+    ...extraData,
   };
 
   const db = getFirestore();
@@ -282,6 +283,27 @@ const createUser = async (email) => {
     console.error("Error syncing user to Firestore:", error);
     return null;
   }
+};
+
+export const createGuestUser = async () => {
+  const email = nanoid() + "@guest.com";
+  const user = await createUser(email, {
+    guest: true,
+  });
+  return user;
+};
+
+export const loginGuestUser = async (req, res) => {
+  const user = await createGuestUser();
+  if (!user) {
+    console.log("Failed to create guest user");
+    res.redirect("/");
+    return;
+  }
+  const token = await stringToHash(user.userid);
+  res.cookie("userid", user.userid);
+  res.cookie("token", token);
+  res.redirect("/");
 };
 
 export const getUsers = async () => {

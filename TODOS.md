@@ -49,3 +49,4 @@
 - listitem dropdown is partly hidden (overflow-hidden?)
 - annotations: highlights, comments
 - select chapters (hold shift to select multiple) then drag to move
+- add keys to chapter text, Otherwise inserting a block above is causing errors

@@ -18,7 +18,8 @@ import {
   getUser,
   getUsers,
   saveUser,
-  getBooksForUser
+  getBooksForUser,
+  loginGuestUser,
 } from "./src/authentication/firebase.js";
 import {
   saveBook,
@@ -31,7 +32,7 @@ import {
   favoriteBook,
   getChapter,
   saveToHistory,
-  getHistory
+  getHistory,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 
@@ -51,7 +52,7 @@ const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false // Disable the `X-RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
 // Apply the rate limiting middleware to API calls only
@@ -165,6 +166,10 @@ app.post("/submitRegister", async (req, res) => {
   await submitRegister(req, res);
 });
 
+app.post("/loginGuestUser", async (req, res) => {
+  await loginGuestUser(req, res);
+});
+
 app.get("/logout", async (req, res) => {
   res.clearCookie("userid");
   res.clearCookie("token");
@@ -202,11 +207,11 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       design: {
         coverColor: "bg-dmlistitem2",
         labelColor: "bg-blue-700",
-        labelLinesColor: "border-yellow-400"
+        labelLinesColor: "border-yellow-400",
       },
       columnHeadings: [],
       rowHeadings: [],
-      favorite: false
+      favorite: false,
     };
     await saveBook(book);
     res.send(book);
@@ -226,7 +231,7 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
     text: [{ type: "plain", text: text || "", open: true }],
     pos: { x: 0, y: 0 },
     suggestions: [],
-    favorite: false
+    favorite: false,
   };
 
   await saveChapter(chapter);
@@ -279,7 +284,7 @@ function serveFile(filename, res) {
   res.cookie("csrfToken", token);
 
   const rendered = render(path.resolve(`./dist/${filename}`), {
-    csrfToken: token
+    csrfToken: token,
   });
   res.send(rendered).end();
 }
@@ -475,7 +480,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     prompt: req.body.prompt,
     max_tokens: req.body.max_tokens,
     model: req.body.model,
-    n: req.body.num_suggestions
+    n: req.body.num_suggestions,
   };
   if (chatModels.includes(req.body.model)) {
     endpoint = "https://api.openai.com/v1/chat/completions";
@@ -484,7 +489,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
       messages: [{ role: "user", content: req.body.prompt }],
       max_tokens: req.body.max_tokens,
       model: req.body.model,
-      n: req.body.num_suggestions
+      n: req.body.num_suggestions,
     };
     // "messages": [{"role": "user", "content": "Hello!"}]
   }
@@ -494,9 +499,9 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${settings.openAiApiKey}`
+      Authorization: `Bearer ${settings.openAiApiKey}`,
     },
-    body: JSON.stringify(reqBody)
+    body: JSON.stringify(reqBody),
   })
     .then((result) => {
       console.log({ result });
@@ -508,12 +513,12 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
           return;
         }
         user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.month.completion
-          += json.usage.completion_tokens;
+        user.usage.openai_api.tokens.month.completion +=
+          json.usage.completion_tokens;
 
         user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.total.completion
-          += json.usage.completion_tokens;
+        user.usage.openai_api.tokens.total.completion +=
+          json.usage.completion_tokens;
 
         await saveUser(user);
         /* {
@@ -529,7 +534,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
         let choices;
         if (chatModels.includes(req.body.model)) {
           choices = json.choices.map((choice) => ({
-            text: choice.message.content
+            text: choice.message.content,
           }));
         } else {
           choices = json.choices.map((choice) => ({ text: choice.text }));
