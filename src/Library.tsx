@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
-import { getCsrfToken, useInterval } from "./utils";
+import { getChapterText, getCsrfToken, useInterval } from "./utils";
 import Launcher from "./Launcher";
 import {
   CheckCircleIcon,
@@ -231,7 +231,7 @@ export default function Library() {
   async function saveToHistory(state: t.State) {
     const body = JSON.stringify({
       chapterid: currentChapter.chapterid,
-      text: currentChapter.text.map((t) => t.text).join("\n---\n"),
+      text: getChapterText(currentChapter),
       csrfToken: getCsrfToken(),
     });
 

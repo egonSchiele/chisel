@@ -42,7 +42,7 @@ export default function ChapterList({
   const [editing, setEditing] = React.useState(false);
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);
-
+  const navigate = useNavigate();
   async function deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading);
     const res = await fetch(`/api/deleteChapter`, {
@@ -70,6 +70,7 @@ export default function ChapterList({
     }
     const chapter = result.payload;
     dispatch(librarySlice.actions.addChapter(chapter));
+    navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
   };
 
   const dropHandler = (ev) => {
@@ -169,8 +170,6 @@ export default function ChapterList({
       </DragDropContext>
     </div>,
   ];
-
-  const navigate = useNavigate();
 
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";

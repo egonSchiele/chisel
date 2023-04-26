@@ -1,6 +1,5 @@
-import {
-  useRef, useEffect, useState, SetStateAction
-} from "react";
+import React, { useRef, useEffect, useState, SetStateAction } from "react";
+import * as JsDiff from "diff";
 import { useDispatch, useSelector } from "react-redux";
 import * as fd from "./fetchData";
 import { RootState } from "./store";
@@ -67,7 +66,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setValue = (value: T | ((val: T) => T)) => {
     try {
       // Allow value to be a function so we have same API as useState
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       // Save state
       setStoredValue(valueToStore);
       // Save to local storage
@@ -168,7 +168,7 @@ export function parseText(text: string): t.TextBlock[] {
       if (!data[0].id) {
         data.forEach((block: t.TextBlock, index: number) => {
           block.id = nanoid();
-        })
+        });
       }
       return data;
     }
@@ -205,4 +205,46 @@ export function useTraceUpdate(props) {
     }
     prev.current = props;
   });
+}
+
+export function getChapterText(chapter) {
+  return chapter.text.map((t) => t.text).join("\n---\n");
+}
+
+export function getHtmlDiff(originalText, newText) {
+  const diff = JsDiff.diffWordsWithSpace(originalText, newText);
+  const originalLines = [];
+  const newLines = [];
+
+  diff.forEach((part) => {
+    const lines = part.value.split("\n");
+
+    for (let i = 0; i < lines.length; i++) {
+      if (i === lines.length - 1 && lines[i] === "") {
+        continue; // Skip the last empty line
+      }
+
+      if (part.added) {
+        originalLines.push("");
+        newLines.push(
+          <span className="bg-green-300 dark:bg-green-700">{lines[i]}</span>
+        );
+      } else if (part.removed) {
+        originalLines.push(
+          <span className="bg-red-300 dark:bg-red-700">{lines[i]}</span>
+        );
+        newLines.push("");
+      } else {
+        originalLines.push(lines[i]);
+        newLines.push(lines[i]);
+      }
+
+      if (i < lines.length - 1) {
+        originalLines.push(<br />);
+        newLines.push(<br />);
+      }
+    }
+  });
+
+  return { originalLines, newLines };
 }

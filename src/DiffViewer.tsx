@@ -1,42 +1,10 @@
 import React from "react";
-import * as JsDiff from "diff";
+
 import Button from "./components/Button";
+import { getHtmlDiff } from "./utils";
 
 const DiffViewer = ({ originalText, newText, onClose }) => {
-  const diff = JsDiff.diffWordsWithSpace(originalText, newText);
-  const originalLines = [];
-  const newLines = [];
-
-  diff.forEach((part) => {
-    const lines = part.value.split("\n");
-
-    for (let i = 0; i < lines.length; i++) {
-      if (i === lines.length - 1 && lines[i] === "") {
-        continue; // Skip the last empty line
-      }
-
-      if (part.added) {
-        originalLines.push("");
-        newLines.push(
-          <span className="bg-green-300 dark:bg-green-700">{lines[i]}</span>
-        );
-      } else if (part.removed) {
-        originalLines.push(
-          <span className="bg-red-300 dark:bg-red-700">{lines[i]}</span>
-        );
-        newLines.push("");
-      } else {
-        originalLines.push(lines[i]);
-        newLines.push(lines[i]);
-      }
-
-      if (i < lines.length - 1) {
-        originalLines.push(<br />);
-        newLines.push(<br />);
-      }
-    }
-  });
-
+  const { originalLines, newLines } = getHtmlDiff(originalText, newText);
   return (
     <div className="">
       <Button onClick={onClose}>Close</Button>
