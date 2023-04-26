@@ -13,13 +13,13 @@ function History({
   chapterid,
   onSave,
   triggerHistoryRerender,
-  onClick
+  onClick,
 }) {
   const [history, setHistory] = useState<t.History>([]);
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
-        credentials: "include"
+        credentials: "include",
       });
       if (!res.ok) {
         console.log(res.statusText);
@@ -57,7 +57,7 @@ function History({
             e.stopPropagation();
             // account for history being reversed
             const newText = applyPatch(history.length - 1 - i);
-            onClick(newText);
+            onClick(e, newText);
           }}
           className="cursor-pointer"
           selector="history-panel"

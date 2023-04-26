@@ -169,15 +169,19 @@ export const librarySlice = createSlice({
     },
     restoreFromHistory(
       state: t.State,
-      action: PayloadAction<{ text: string }>
+      action: PayloadAction<{ text: string; metaKey: boolean }>
     ) {
-      const { text } = action.payload;
+      const { text, metaKey } = action.payload;
+      const { activeTextIndex } = state.editor;
       const chapter = getSelectedChapter({ library: state });
 
-      const blocks = text.split("\n---\n");
-      const newBlocks = blocks.map((blockText) => t.plainTextBlock(blockText));
-
-      chapter.text = newBlocks;
+      if (metaKey) {
+        chapter.text[activeTextIndex].text = text;
+      } else {
+        const blocks = text.split("\n---\n");
+        const newBlocks = blocks.map((blockText) => t.plainTextBlock(blockText));
+        chapter.text = newBlocks;
+      }
       state.editor._pushTextToEditor = text;
       state.saved = false;
     },

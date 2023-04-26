@@ -6,7 +6,7 @@ import {
   ClockIcon,
   Cog6ToothIcon,
   InformationCircleIcon,
-  XMarkIcon
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import History from "./History";
@@ -39,7 +39,7 @@ function Navigation({
   closeSidebar,
   maximize,
   fullscreen,
-  exitFullscreen
+  exitFullscreen,
 }) {
   const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
   return (
@@ -127,15 +127,16 @@ export default function Sidebar({
   onSettingsSave,
   onHistoryClick,
   triggerHistoryRerender,
-  maximize
+  maximize,
 }) {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
   // TODO
-  const infoText = state.editor.selectedText.length === 0
-    ? currentChapter.text[0].text
-    : state.editor.selectedText.contents;
+  const infoText =
+    state.editor.selectedText.length === 0
+      ? currentChapter.text[0].text
+      : state.editor.selectedText.contents;
   return (
     <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder">
       <div className="pt-xs">
@@ -143,8 +144,12 @@ export default function Sidebar({
           onClick={setActivePanel}
           closeSidebar={() => dispatch(librarySlice.actions.closeSidebar())}
           maximize={maximize}
-          fullscreen={() => dispatch(librarySlice.actions.setViewMode("fullscreen"))}
-          exitFullscreen={() => dispatch(librarySlice.actions.setViewMode("default"))}
+          fullscreen={() =>
+            dispatch(librarySlice.actions.setViewMode("fullscreen"))
+          }
+          exitFullscreen={() =>
+            dispatch(librarySlice.actions.setViewMode("default"))
+          }
         />
         {activePanel === "info" && (
           <List
@@ -162,7 +167,7 @@ export default function Sidebar({
                 suggestions={state.suggestions}
                 onClick={onSuggestionClick}
                 onDelete={onSuggestionDelete}
-              />
+              />,
             ]}
           />
         )}
@@ -177,8 +182,8 @@ export default function Sidebar({
                 bookid={currentChapter.bookid}
                 onSave={() => {}}
                 triggerHistoryRerender={triggerHistoryRerender}
-                onClick={onHistoryClick}
-              />
+                onClick={(e, newText) => onHistoryClick(e, newText)}
+              />,
             ]}
           />
         )}
@@ -193,7 +198,7 @@ export default function Sidebar({
                 usage={usage}
                 setSettings={setSettings}
                 onSave={onSettingsSave}
-              />
+              />,
             ]}
           />
         )}

@@ -439,10 +439,13 @@ export default function Library() {
             dispatch(librarySlice.actions.deleteSuggestion(index));
           }}
           onSettingsSave={() => {}}
-          onHistoryClick={async (newText) => {
+          onHistoryClick={async (e, newText) => {
             await onTextEditorSave(state);
             dispatch(
-              librarySlice.actions.restoreFromHistory({ text: newText })
+              librarySlice.actions.restoreFromHistory({
+                text: newText,
+                metaKey: e.metaKey,
+              })
             );
           }}
           triggerHistoryRerender={triggerHistoryRerender}
@@ -645,10 +648,13 @@ export default function Library() {
                 dispatch(librarySlice.actions.deleteSuggestion(index));
               }}
               onSettingsSave={() => {}}
-              onHistoryClick={async (newText) => {
+              onHistoryClick={async (e, newText) => {
                 await onTextEditorSave(state);
                 dispatch(
-                  librarySlice.actions.restoreFromHistory({ text: newText })
+                  librarySlice.actions.restoreFromHistory({
+                    text: newText,
+                    metaKey: e.metaKey,
+                  })
                 );
               }}
               triggerHistoryRerender={triggerHistoryRerender}
