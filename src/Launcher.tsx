@@ -32,9 +32,12 @@ export default function Launcher({
 }) {
   const [query, setQuery] = useState("");
 
-  const filteredItems = query === ""
-    ? items
-    : items.filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
+  const filteredItems =
+    query === ""
+      ? items
+      : items.filter((item) =>
+          item.label.toLowerCase().includes(query.toLowerCase())
+        );
 
   return (
     <Transition.Root
@@ -95,17 +98,23 @@ export default function Launcher({
                       <Combobox.Option
                         key={i}
                         value={item}
-                        className={({ active }) => classNames(
-                          "cursor-default select-none px-4 py-2",
-                          active && "bg-gray-300 dark:bg-dmsidebar",
-                        )}
+                        className={({ active }) =>
+                          classNames(
+                            "cursor-default select-none px-4 py-2",
+                            active && "bg-gray-300 dark:bg-dmsidebar"
+                          )
+                        }
                       >
                         <div className="flex">
-                          <div className=" mt-0.5">
-                            {item.icon}
-                            {' '}
+                          <div className=" mt-0.5">{item.icon} </div>
+                          <div className="ml-1 flex-grow">
+                            {item.label}{" "}
+                            {item.tooltip && (
+                              <span className=" text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-700 px-1">
+                                {item.tooltip}
+                              </span>
+                            )}
                           </div>
-                          <div className="ml-1 flex-grow">{item.label}</div>
                         </div>
                       </Combobox.Option>
                     ))}

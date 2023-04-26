@@ -192,6 +192,7 @@ export const success = (payload: any = null): Success => ({
 
 export type MenuItem = {
   label: string;
+  tooltip?: string;
   icon?: any;
   onClick: () => void;
   className?: string;

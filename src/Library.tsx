@@ -95,7 +95,11 @@ export default function Library() {
         event.preventDefault();
         dispatch(librarySlice.actions.setViewMode("diff"));
       }
-    } /* else if (event.metaKey && event.shiftKey && event.key === "n") {
+    } else if (event.altKey && event.key === "n") {
+      event.preventDefault();
+      await newChapter();
+    }
+    /* } else if (event.shiftKey && event.altKey && event.key === "n") {
       event.preventDefault();
       await newChapter();
     } */

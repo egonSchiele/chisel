@@ -52,6 +52,7 @@ export default function useLaunchItems(
       label: "New Chapter",
       onClick: newChapter,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Alt+n",
     },
     {
       label: "Grid",
