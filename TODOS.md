@@ -50,3 +50,6 @@
 - annotations: highlights, comments
 - select chapters (hold shift to select multiple) then drag to move
 - add keys to chapter text, Otherwise inserting a block above is causing errors
+
+
+- I have sort of a dumb feature that I've always wanted but I don't know enough about writing editors coding to build it. I use Scrivener these days for writing, and I have a Characters tab and a Places/Locations tab. Basically a lot of world-building things. What I'd love is that if I could hover over the character/location name, it would provide a hover pop up or clickable link that would take me to that character. The reason is that I'll create a character with red hair or a Boston accent, and then later I'll write them into a scene and not remember which one they had, and so I have to go searching for it. Would be cool if it could just automatically detect that i'm talking about that character and then link to them.
