@@ -37,11 +37,6 @@ export default function Editor({ onSave }: { onSave: () => void }) {
         </div>
         <div className="h-screen overflow-scroll w-full">
           <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
-            {/*  <Button
-              onClick={() => dispatch(librarySlice.actions.extractBlock())}
-            >
-              Extract
-            </Button> */}
             <ContentEditable
               value={currentChapterTitle}
               className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"

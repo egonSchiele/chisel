@@ -40,6 +40,7 @@ function TextEditor({
     (state: RootState) => state.library.editor.activeTextIndex
   );
 
+  const isActive = activeTextIndex === index;
   const currentText = useSelector(getText(index));
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
 
@@ -58,7 +59,7 @@ function TextEditor({
   }, [quillRef.current, chapterid, _pushTextToEditor]);
 
   useEffect(() => {
-    if (activeTextIndex === index) {
+    if (isActive) {
       focus();
     }
   }, [activeTextIndex]);
@@ -113,9 +114,11 @@ function TextEditor({
       event.preventDefault();
 
       onSave();
-    } else if (event.altKey && event.shiftKey && event.code === "ArrowDown") {
-      event.preventDefault();
-      dispatch(librarySlice.actions.extractBlock());
+    } else if (event.altKey && event.shiftKey) {
+      if (event.code === "ArrowDown" || event.code === "ArrowUp") {
+        event.preventDefault();
+        dispatch(librarySlice.actions.extractBlock());
+      }
     } else if (event.shiftKey && event.code === "Tab") {
       event.preventDefault();
       setOpen(!open);
@@ -124,11 +127,16 @@ function TextEditor({
         // @ts-ignore
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
-
+        /* console.log(
+          range,
+          currentText.text,
+          currentText.text.length,
+          currentChapterTextLength
+        ); */
         if (range) {
           if (
             range.length === 0 &&
-            range.index === currentText.text.length - 1 &&
+            range.index === currentText.text.trim().length &&
             index < currentChapterTextLength - 1
           ) {
             event.preventDefault();
@@ -155,7 +163,7 @@ function TextEditor({
   const handleKeyDownWhenClosed = (event) => {
     if (open) return;
     if (event.key === "Tab") {
-      if (index === activeTextIndex) {
+      if (isActive) {
         event.preventDefault();
         setOpen(true);
         focus();
@@ -197,9 +205,17 @@ function TextEditor({
                 setOpen(false);
               }}
             >
-              <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+              <ChevronDownIcon
+                className={`w-5 h-5 ${
+                  isActive ? "text-gray-300" : "text-gray-500"
+                }`}
+              />
             </div>
-            <div className="flex-grow border-l border-gray-500 pl-sm">
+            <div
+              className={`flex-grow border-l ${
+                isActive ? "border-gray-300" : "border-gray-500"
+              } pl-sm`}
+            >
               <ReactQuill
                 ref={quillRef}
                 placeholder="Write something..."

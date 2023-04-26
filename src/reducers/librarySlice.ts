@@ -9,6 +9,7 @@ import {
 } from "../utils";
 
 import { RootState } from "../store";
+import { current } from "immer";
 
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
@@ -381,6 +382,7 @@ export const librarySlice = createSlice({
       const newBlock = t.plainTextBlock("");
       const chapter = getSelectedChapter({ library: state });
       chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+      state.editor.activeTextIndex += 1
 
       state.saved = false;
     },
@@ -417,19 +419,21 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
 
+      //console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
       if (length === 0) {
         if (index === 0) {
           // newBlockBeforeCurrent
-          const newBlock = t.plainTextBlock("");
+          const newBlock = t.plainTextBlock("NEW!");
           chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
-    
-          state.saved = false;
+/*     const cur = current(chapter.text)
+    console.log("cur", cur)
+ */          state.saved = false;
           return;
         } else if (index === text.text.length - 1) {
           // newBlockAfterCurrent
           const newBlock = t.plainTextBlock("");
           chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
-    
+          state.editor.activeTextIndex += 1
           state.saved = false;
           return;
         } else {
