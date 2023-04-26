@@ -211,15 +211,44 @@ export function getChapterText(chapter) {
   return chapter.text.map((t) => t.text).join("\n---\n");
 }
 
+type Diff = {
+  value: string;
+  added?: boolean;
+  removed?: boolean;
+};
+function makeDiff(value, type: "added" | "removed" | "same"): Diff[] {
+  const obj: Diff = {
+    value,
+  };
+  if (type === "added") {
+    obj.added = true;
+  }
+  if (type === "removed") {
+    obj.removed = true;
+  }
+  return [obj];
+}
+
 export function getHtmlDiff(originalText, newText) {
-  const diff = JsDiff.diffWordsWithSpace(originalText, newText);
+  let diff: Diff[] = [];
+  if (originalText === "") {
+    diff = makeDiff(newText, "added");
+  } else if (newText === "") {
+    diff = makeDiff(originalText, "removed");
+  } else if (originalText === newText) {
+    diff = makeDiff(originalText, "same");
+  } else {
+    diff = JsDiff.diffWordsWithSpace(originalText, newText);
+  }
   const originalLines = [];
   const newLines = [];
 
+  let key = 0;
   diff.forEach((part) => {
     const lines = part.value.split("\n");
 
     for (let i = 0; i < lines.length; i++) {
+      key += 1;
       if (i === lines.length - 1 && lines[i] === "") {
         continue; // Skip the last empty line
       }
@@ -227,16 +256,20 @@ export function getHtmlDiff(originalText, newText) {
       if (part.added) {
         originalLines.push("");
         newLines.push(
-          <span className="bg-green-300 dark:bg-green-700">{lines[i]}</span>
+          <span key={key} className="bg-green-300 dark:bg-green-700">
+            {lines[i]}
+          </span>
         );
       } else if (part.removed) {
         originalLines.push(
-          <span className="bg-red-300 dark:bg-red-700">{lines[i]}</span>
+          <span key={key} className="bg-red-300 dark:bg-red-700">
+            {lines[i]}
+          </span>
         );
         newLines.push("");
       } else {
-        originalLines.push(lines[i]);
-        newLines.push(lines[i]);
+        originalLines.push(<span key={key}>{lines[i]}</span>);
+        newLines.push(<span key={key}>{lines[i]}</span>);
       }
 
       if (i < lines.length - 1) {

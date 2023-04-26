@@ -16,6 +16,23 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
   const fullscreen = viewMode === "fullscreen";
 
+  if (!fullscreen) {
+    return (
+      <Panel
+        title="History"
+        // @ts-ignore
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e, patch);
+        }}
+        className="cursor-pointer"
+        selector="history-panel"
+      >
+        <pre className="text-xs xl:text-sm">{rawPatch}</pre>
+      </Panel>
+    );
+  }
+
   const { originalLines, newLines } = getHtmlDiff(patch, nextPatch);
   return (
     <Panel
@@ -28,17 +45,14 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
       className="cursor-pointer"
       selector="history-panel"
     >
-      {fullscreen && (
-        <div className="grid grid-cols-2 gap-4 m-md font-mono">
-          <div className="p-sm bg-gray-300 dark:bg-gray-700 rounded-md">
-            {originalLines}
-          </div>
-          <div className="p-sm bg-gray-300 dark:bg-gray-700 rounded-md">
-            {newLines}
-          </div>
+      <div className="grid grid-cols-2 gap-4 m-md font-mono">
+        <div className="p-sm bg-gray-300 dark:bg-gray-700 rounded-md">
+          {originalLines}
         </div>
-      )}
-      {!fullscreen && <pre className="text-xs xl:text-sm">{rawPatch}</pre>}
+        <div className="p-sm bg-gray-300 dark:bg-gray-700 rounded-md">
+          {newLines}
+        </div>
+      </div>
     </Panel>
   );
 }
