@@ -80,7 +80,7 @@ export default function BookList({
         onDelete={() => deleteBook(book.bookid, onDelete)}
         onFavorite={() => favoriteBook(book.bookid, onChange)}
         onRename={() => startRenameBook(book)}
-        selector="booklist"
+        selector={tag ? `booklist-${tag}` : "booklist"}
         tag={tag}
       />
     );
