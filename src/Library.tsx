@@ -39,7 +39,17 @@ export default function Library() {
   const selectedBook = useSelector(getSelectedBook);
 
   const currentChapter = getSelectedChapter({ library: state });
-
+  const compostBookId = useSelector((state: RootState) => {
+    console.log("state.library.books", state.library.books);
+    const compostBook = state.library.books.find(
+      (b: t.Book) => b.tag === "compost"
+    );
+    console.log("compostBook", compostBook);
+    if (compostBook) {
+      return compostBook.bookid;
+    }
+    return null;
+  });
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>({
     model: "",
@@ -98,6 +108,9 @@ export default function Library() {
     } else if (event.altKey && event.key === "n") {
       event.preventDefault();
       await newChapter();
+    } else if (event.shiftKey && event.metaKey && event.key === "c") {
+      event.preventDefault();
+      await newCompostNote();
     }
   };
 
@@ -161,6 +174,7 @@ export default function Library() {
       currentText.length,
       newChapter,
       newBook,
+      newCompostNote,
       onEditorSave,
       () => {}
     );
@@ -267,17 +281,30 @@ export default function Library() {
     });
   }
 
-  async function newChapter(title = "New Chapter", text = "") {
+  async function newChapter(title = "New Chapter", text = "", _bookid = null) {
+    const theBookid = _bookid || bookid;
     dispatch(librarySlice.actions.loading());
-    const result = await fd.newChapter(bookid, title, text);
+    const result = await fd.newChapter(theBookid, title, text);
     dispatch(librarySlice.actions.loaded());
     if (result.tag === "error") {
       dispatch(librarySlice.actions.setError(result.message));
       return;
     }
     const chapter = result.payload;
-    dispatch(librarySlice.actions.addChapter(chapter));
-    navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
+    dispatch(librarySlice.actions.addChapter({ chapter, bookid: theBookid }));
+    console.log(
+      "going to",
+      `/book/${theBookid}/chapter/${chapter.chapterid}`,
+      compostBookId
+    );
+    navigate(`/book/${theBookid}/chapter/${chapter.chapterid}`, {});
+  }
+
+  async function newCompostNote() {
+    const title = new Date().toDateString();
+    console.log("new compost note", compostBookId);
+
+    await newChapter(title, "", compostBookId);
   }
 
   async function newBook() {

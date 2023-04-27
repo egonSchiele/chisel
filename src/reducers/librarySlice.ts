@@ -91,7 +91,7 @@ export const librarySlice = createSlice({
   reducers: {
     setBooks(state: t.State, action: PayloadAction<t.Book[]>) {
       const books = action.payload;
-      books.forEach((book) => {
+      books.forEach((book) => {        
         book.chapters.forEach((chapter) => {
           if (isString(chapter.text)) {
             chapter.text = [
@@ -122,9 +122,10 @@ export const librarySlice = createSlice({
         (chapter) => chapter.chapterid !== chapterid
       );
     },
-    addChapter(state: t.State, action: PayloadAction<t.Chapter>) {
-      const chapter = action.payload;
-      const book = getSelectedBook({ library: state });
+    addChapter(state: t.State, action: PayloadAction<{chapter: t.Chapter; bookid: string}>) {
+      const {chapter, bookid} = action.payload;
+      const book = state.books.find((book) => book.bookid === bookid);
+      if (!book) return;
       book.chapters.push(chapter);
       book.chapterOrder.push(chapter.chapterid);
     },
