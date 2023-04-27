@@ -12,6 +12,8 @@ import { getHtmlDiff } from "./utils";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 
+const WINDOW = 5;
+
 function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
   const fullscreen = viewMode === "fullscreen";
@@ -40,7 +42,7 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
   );
   return (
     <Panel
-      title="History"
+      title={`History [${index}]`}
       // @ts-ignore
       onClick={(e) => {
         e.stopPropagation();
@@ -69,6 +71,10 @@ function History({
   onClick,
 }) {
   const [history, setHistory] = useState<t.History>([]);
+  const [page, setPage] = useState(0);
+  const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const fullscreen = viewMode === "fullscreen";
+
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
@@ -100,12 +106,63 @@ function History({
 
   if (!history || history.length === 0) return <p>No history</p>;
   const reverseHistory = [...history].reverse();
+
+  if (!fullscreen) {
+    return (
+      <div className="grid grid-cols-1 gap-3">
+        {reverseHistory.map((patch, i) => (
+          <HistoryPanel
+            key={i}
+            index={i}
+            onClick={onClick}
+            patch={""}
+            nextPatch={""}
+            rawPatch={patch}
+          />
+        ))}
+      </div>
+    );
+  }
+
   const patches = reverseHistory.map((_, i) =>
     applyPatch(history.length - 1 - i)
   );
+  let total = reverseHistory.length;
+  let start = page * WINDOW + 1;
+  let end = Math.min(start + WINDOW, total + 1);
+
+  /*  const handleKeyDown = async (event) => {
+    if (event.key === "ArrowRight") {
+      if (end < total) {
+        event.preventDefault();
+        setPage(page + 1);
+      }
+    } else if (event.key === "ArrowLeft") {
+      if (start !== 0) {
+        event.preventDefault();
+        setPage(page - 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown, start, end, total]); */
+
   return (
     <div className="grid grid-cols-1 gap-3">
-      {_.range(1, reverseHistory.length + 1).map((i) => (
+      <div className="flex content-start gap-2">
+        <p>
+          {start} - {end - 1} of {total}
+        </p>
+        {start !== 0 && <Button onClick={() => setPage(page - 1)}>Prev</Button>}
+        {end < total && <Button onClick={() => setPage(page + 1)}>Next</Button>}
+      </div>
+      {_.range(start, end).map((i) => (
         <HistoryPanel
           key={i}
           index={i}
