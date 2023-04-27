@@ -224,7 +224,7 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
   const { chapterid, text } = req.body;
-
+  console.log("saveToHistory", chapterid, text);
   await saveToHistory(chapterid, text);
   res.status(200).end();
 });

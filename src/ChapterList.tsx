@@ -221,6 +221,7 @@ export default function ChapterList({
         items={dropdownMenuItems}
         label="Chapter Menu"
         selector="chapter-menu"
+        className="-translate-x-1/4"
       />
     ),
     onClick: () => {},
