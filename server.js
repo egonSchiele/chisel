@@ -35,6 +35,7 @@ import {
   getHistory,
   makeNewBook,
   makeNewChapter,
+  deleteBooks,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 
@@ -534,6 +535,11 @@ app.get("/admin", requireAdmin, async (req, res) => {
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   const data = await getUsers();
   res.status(200).json(data);
+});
+
+app.get("/api/admin/deleteTestUserBooks", requireAdmin, async (req, res) => {
+  await deleteBooks("ZMLuWv0J2HkI30kEfm5xs");
+  res.status(200).end();
 });
 
 const port = process.env.PORT || 80;

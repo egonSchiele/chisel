@@ -107,7 +107,6 @@ export const getBooks = async (userid) => {
 
   if (books.empty) {
     console.log("No books found.");
-    return [];
   }
   const allBooks = [];
   const promises = asArray(books).map(async (book) => {
@@ -327,3 +326,22 @@ export function makeNewChapter(text, title, bookid, data = {}) {
   };
   return chapter;
 }
+
+export const deleteBooks = async (userid) => {
+  console.log("deleting books for user", userid);
+
+  const books = await db
+    .collection("books")
+    .where("userid", "==", userid)
+    .get();
+
+  if (books.empty) {
+    console.log("No books found to delete.");
+  } else {
+    const batch = db.batch();
+    books.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+  }
+};
