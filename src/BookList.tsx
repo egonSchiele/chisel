@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch } from "react-redux";
 import * as t from "./Types";
 import List from "./components/List";
@@ -68,8 +68,11 @@ export default function BookList({
     await onChange();
   }
 
-  const items = books.map((book) => (
-    <li key={book.bookid}>
+  const compostBook = books.find((book) => book.tag === "compost");
+  const otherBooks = books.filter((book) => book.tag !== "compost");
+
+  function bookListItem(book, tag = null) {
+    return (
       <ListItem
         link={`/book/${book.bookid}`}
         title={book.title}
@@ -78,9 +81,25 @@ export default function BookList({
         onFavorite={() => favoriteBook(book.bookid, onChange)}
         onRename={() => startRenameBook(book)}
         selector="booklist"
+        tag={tag}
       />
-    </li>
+    );
+  }
+
+  const items = otherBooks.map((book) => (
+    <li key={book.bookid}>{bookListItem(book)}</li>
   ));
+
+  if (compostBook) {
+    items.unshift(
+      <li
+        key={compostBook.bookid}
+        className="flex pb-xs border-b border-gray-300 dark:border-gray-700 mb-xs"
+      >
+        {bookListItem(compostBook, "compost")}
+      </li>
+    );
+  }
 
   function close() {
     dispatch(librarySlice.actions.closeBookList());

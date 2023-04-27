@@ -115,6 +115,7 @@ export type Book = {
   columnHeadings: string[];
   rowHeadings: string[];
   favorite: boolean;
+  tag?: "compost";
 };
 
 export type Coords = {

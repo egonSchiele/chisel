@@ -2,11 +2,11 @@ import rateLimit from "express-rate-limit";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-// import fs from "fs"
+
 import * as fs from "fs";
 import path from "path";
 import cookieParser from "cookie-parser";
-// import * as t from "./src/Types";
+
 import { nanoid } from "nanoid";
 import handlebars from "handlebars";
 import {
@@ -33,6 +33,8 @@ import {
   getChapter,
   saveToHistory,
   getHistory,
+  makeNewBook,
+  makeNewChapter,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 
@@ -196,23 +198,9 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
     console.log("no userid");
     res.status(404).end();
   } else {
-    const bookid = nanoid();
-    const book = {
+    const book = makeNewBook({
       userid,
-      bookid,
-      title: "Untitled",
-      author: "Unknown",
-      chapters: [],
-      chapterOrder: [],
-      design: {
-        coverColor: "bg-dmlistitem2",
-        labelColor: "bg-blue-700",
-        labelLinesColor: "border-yellow-400",
-      },
-      columnHeadings: [],
-      rowHeadings: [],
-      favorite: false,
-    };
+    });
     await saveBook(book);
     res.send(book);
     // res.redirect(`/book/${bookid}`);
@@ -223,16 +211,8 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   const userid = getUserId(req);
   console.log(req.body);
   const { bookid, title, text } = req.body;
-  const chapterid = nanoid();
-  const chapter = {
-    bookid,
-    chapterid,
-    title,
-    text: [{ type: "plain", text: text || "", open: true }],
-    pos: { x: 0, y: 0 },
-    suggestions: [],
-    favorite: false,
-  };
+
+  const chapter = makeNewChapter(text, title, bookid);
 
   await saveChapter(chapter);
 

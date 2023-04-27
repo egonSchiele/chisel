@@ -1,7 +1,7 @@
 import React from "react";
 
 import Button from "./components/Button";
-import { getHtmlDiff } from "./utils";
+import { getHtmlDiff } from "./diff";
 
 const DiffViewer = ({ originalText, newText, onClose }) => {
   const { originalLines, newLines } = getHtmlDiff(originalText, newText);

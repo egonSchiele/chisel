@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import * as t from "./Types";
 import ListMenu from "./ListMenu";
 
@@ -12,7 +12,8 @@ export default function ListItem({
   onDelete,
   onRename,
   content = "",
-  selector = "listitem"
+  selector = "listitem",
+  tag = null,
 }: {
   link: string;
   title: string;
@@ -22,6 +23,7 @@ export default function ListItem({
   onRename: () => void;
   content?: string;
   selector?: string;
+  tag?: string;
 }) {
   const selectedCss = selected
     ? "bg-listitemhover dark:bg-dmlistitemhover"
@@ -29,16 +31,16 @@ export default function ListItem({
   const listMenuItems: t.MenuItem[] = [
     {
       label: "Delete",
-      onClick: onDelete
+      onClick: onDelete,
     },
     {
       label: "Rename",
-      onClick: onRename
-    }
+      onClick: onRename,
+    },
   ];
   return (
     <div
-      className={`flex text-black dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} ${
+      className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} ${
         content && "border-b border-gray-300 dark:border-gray-700"
       }`}
     >
@@ -50,10 +52,13 @@ export default function ListItem({
         {!content && (
           <div className="w-full">
             <p
-              className="px-xs overflow-hidden text-ellipsis whitespace-nowrap"
+              className="px-xs overflow-hidden text-ellipsis whitespace-nowrap flex content-start"
               data-selector={`${selector}-list-item`}
             >
-              {title}
+              {tag === "compost" && (
+                <BoltIcon className="w-5 h-5 flex-grow mr-xs" />
+              )}{" "}
+              <span className="flex-grow w-full">{title}</span>
             </p>
           </div>
         )}

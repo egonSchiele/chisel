@@ -1,9 +1,9 @@
+import { nanoid } from "nanoid";
 import { getFirestore } from "firebase-admin/firestore";
 import * as Diff from "diff";
 import admin from "firebase-admin";
 import settings from "../../settings.js";
 import serviceAccountKey from "../../serviceAccountKey.json" assert { type: "json" };
-// const serviceAccountKey = await import(settings.firebaseServiceAccountKeyPath);
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey),
@@ -122,8 +122,34 @@ export const getBooks = async (userid) => {
   await Promise.all(promises);
   console.log(
     "allBooks",
-    allBooks.map((book) => book.bookid),
+    allBooks.map((book) => book.bookid)
   );
+
+  const compost = allBooks.find((book) => book.tag === "compost");
+  if (!compost) {
+    console.log("no compost book");
+    const compostBook = makeNewBook({
+      userid,
+      tag: "compost",
+      title: "Compost Heap",
+    });
+
+    const compostText =
+      "This is a place to store all your random ideas, thoughts, and notes. Like a compost heap: https://austinkleon.com/2021/10/10/i-am-a-compost-heap/";
+    const compostTitle = "Welcome to your compost heap!";
+    const compostChapter = makeNewChapter(
+      compostText,
+      compostTitle,
+      compostBook.bookid
+    );
+    await saveChapter(compostChapter);
+    await saveBook(compostBook);
+
+    compostBook.chapters = [compostChapter];
+    compostBook.chapterOrder = [compostChapter.chapterid];
+
+    allBooks.push(compostBook);
+  }
   return allBooks;
 };
 
@@ -136,12 +162,12 @@ export const saveChapter = async (chapter) => {
   }
 
   if (
-    settings.limits.chapterLength > 0
-    && chapter.text
-    && chapter.text.length >= settings.limits.chapterLength
+    settings.limits.chapterLength > 0 &&
+    chapter.text &&
+    chapter.text.length >= settings.limits.chapterLength
   ) {
     throw new Error(
-      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`,
+      `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
     );
   }
 
@@ -183,7 +209,7 @@ export const deleteChapter = async (chapterid, bookid) => {
   }
   if (book.chapterOrder) {
     book.chapterOrder = book.chapterOrder.filter(
-      (_chapterid) => _chapterid !== chapterid,
+      (_chapterid) => _chapterid !== chapterid
     );
   }
   await saveBook(book);
@@ -241,11 +267,11 @@ export const saveToHistory = async (chapterid, text) => {
   const { history } = bookObj.data();
 
   if (
-    settings.limits.historyLength > 0
-    && history.length >= settings.limits.historyLength
+    settings.limits.historyLength > 0 &&
+    history.length >= settings.limits.historyLength
   ) {
     throw new Error(
-      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`,
+      `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
     );
   }
 
@@ -267,3 +293,33 @@ export const saveToHistory = async (chapterid, text) => {
   docRef = db.collection("history").doc(chapterid);
   await docRef.set({ history });
 };
+
+export function makeNewBook(data = {}) {
+  const bookid = nanoid();
+  const book = {
+    bookid,
+    title: "Untitled",
+    author: "Unknown",
+    chapters: [],
+    chapterOrder: [],
+    columnHeadings: [],
+    rowHeadings: [],
+    ...data,
+  };
+  return book;
+}
+
+export function makeNewChapter(text, title, bookid, data = {}) {
+  const chapterid = nanoid();
+  const chapter = {
+    chapterid,
+    title,
+    bookid,
+    text: [{ type: "plain", text, open: true }],
+    pos: { x: 0, y: 0 },
+    suggestions: [],
+    favorite: false,
+    ...data,
+  };
+  return chapter;
+}
