@@ -34,35 +34,27 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   }
 
   return (
-    <div className="flex w-full h-full">
-      <div className="w-full h-full col-span-4">
-        <div className="h-0 pb-1 w-full flex">
-          <div className="flex flex-none" />
-          <div className="flex flex-grow" />
-        </div>
-        <div className="h-screen overflow-scroll w-full">
-          <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
-            <ContentEditable
-              value={currentChapterTitle}
-              className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
-              onSubmit={(title) => {
-                dispatch(librarySlice.actions.setTitle(title));
-              }}
-              nextFocus={() => {
-                dispatch(librarySlice.actions.setActiveTextIndex(0));
-              }}
-              selector="text-editor-title"
-            />
-            {currentText.map((text, index) => (
-              <TextEditor
-                chapterid={currentChapterId}
-                index={index}
-                key={text.id || index}
-                onSave={onSave}
-              />
-            ))}
-          </div>
-        </div>
+    <div className="flex h-screen overflow-scroll w-full">
+      <div className="mx-auto max-w-7xl px-sm lg:px-md mb-sm h-full">
+        <ContentEditable
+          value={currentChapterTitle}
+          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
+          onSubmit={(title) => {
+            dispatch(librarySlice.actions.setTitle(title));
+          }}
+          nextFocus={() => {
+            dispatch(librarySlice.actions.setActiveTextIndex(0));
+          }}
+          selector="text-editor-title"
+        />
+        {currentText.map((text, index) => (
+          <TextEditor
+            chapterid={currentChapterId}
+            index={index}
+            key={text.id || index}
+            onSave={onSave}
+          />
+        ))}
       </div>
     </div>
   );

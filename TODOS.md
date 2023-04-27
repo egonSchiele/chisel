@@ -9,14 +9,12 @@
 - Ability to star history.
 - bookmark sections of a chapter? or highlights?
 - built-in writing streak
-- only show 10 most recent history items, with a load more button
 - error handling w boundaries? Currently they show in console
 - When adding a book and chapter, the process is slow. For the short term change the + button to a loading spinner so people don’t double click it
 - by double clicking on the book, it will bring up the modal to change the name.
-- Functionality for taking notes with no organization
 - use new dnd library for grid
 - should be able to change settings without a chapter selected
-- add save + prompts functionality back to launcher
+- add prompts functionality back to launcher
 
 ## P3
 
@@ -24,7 +22,6 @@
 - ask ai to outline entire book
 - download all data
 - offline mode
-- search
 - drag and drop should only work for text files
 - support other writing formats: comics, screenplays
 - translate to other languages
@@ -34,7 +31,6 @@
 
 - Use advice from Steven pinker book.
 - prompt library
-- Daily log functionality
 - tables? https://jspreadsheets.com
 - switrch grid mode to redux
 - show err messages instead of logging to console

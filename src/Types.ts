@@ -116,7 +116,17 @@ export type Book = {
   rowHeadings: string[];
   favorite: boolean;
   tag?: "compost";
+  synopsis?: string;
+  characters?: Character[];
+  genre?: string;
+  style?: string;
 };
+
+export type Character = {
+  name: string;
+  description: string;
+  imageUrl: string;
+}
 
 export type Coords = {
   x: number;

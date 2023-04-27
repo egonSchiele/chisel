@@ -33,6 +33,7 @@ import {
 } from "./reducers/librarySlice";
 import useLaunchItems from "./launchItems";
 import DiffViewer from "./DiffViewer";
+import BookEditor from "./BookEditor";
 
 export default function Library() {
   const state = useSelector((state: RootState) => state.library);
@@ -74,7 +75,11 @@ export default function Library() {
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
 
   const handleKeyDown = async (event) => {
-    if (event.key === "Escape") {
+    if (event.metaKey && event.code === "KeyS") {
+      event.preventDefault();
+      console.log("saving");
+      onEditorSave();
+    } else if (event.key === "Escape") {
       event.preventDefault();
       if (state.launcherOpen) {
         dispatch(librarySlice.actions.toggleLauncher());
@@ -254,14 +259,19 @@ export default function Library() {
     const book = getSelectedBook({ library: state });
     if (!chapter) {
       console.log("No chapter to save");
-      return;
+    } else {
+      await saveChapter(chapter, state.suggestions);
     }
-    await saveChapter(chapter, state.suggestions);
+    if (!book) {
+      console.log("No book to save");
+    } else {
+      await saveBook(book);
+    }
 
-    if (!book) return;
-    await saveBook(book);
-    await saveToHistory(state);
-    setTriggerHistoryRerender((t) => t + 1);
+    if (chapter) {
+      await saveToHistory(state);
+      setTriggerHistoryRerender((t) => t + 1);
+    }
   }
 
   async function saveToHistory(state: t.State) {
@@ -373,6 +383,7 @@ export default function Library() {
       },
       body,
     });
+    dispatch(librarySlice.actions.setSaved(true));
   }
 
   const addToContents = (text: string) => {
@@ -621,6 +632,24 @@ export default function Library() {
             </div>
 
             <div className="flex-grow" />
+            {bookid && !chapterid && (
+              <div className="mr-sm mt-xs">
+                {!state.saved && (
+                  <NavButton label="Unsaved" onClick={() => {}}>
+                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                  </NavButton>
+                )}
+
+                {state.saved && (
+                  <NavButton label="Saved" onClick={() => {}}>
+                    <CheckCircleIcon
+                      className="h-5 w-5 text-green-700 dark:text-green-300"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+              </div>
+            )}
             {chapterid && (
               <div className="flex-none">
                 {state.loading && (
@@ -685,6 +714,9 @@ export default function Library() {
                 </NavButton>
               </div>
             )}
+          </div>
+          <div className="flex-grow h-full w-full">
+            {bookid && !currentChapter && <BookEditor />}
           </div>
           <div className="flex-grow h-full w-full">
             {currentChapter && <Editor onSave={onEditorSave} />}

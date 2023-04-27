@@ -304,6 +304,10 @@ export function makeNewBook(data = {}) {
     chapterOrder: [],
     columnHeadings: [],
     rowHeadings: [],
+    synopsis: "",
+    characters: [],
+    genre: "",
+    style: "",
     ...data,
   };
   return book;

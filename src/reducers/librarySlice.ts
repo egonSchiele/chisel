@@ -193,6 +193,18 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    setBookTitle(state: t.State, action) {
+      const book = getSelectedBook({ library: state });
+      book.title = action.payload;
+
+      state.saved = false;
+    },
+    setBookSynopsis(state: t.State, action) {
+      const book = getSelectedBook({ library: state });
+      book.synopsis = action.payload;
+
+      state.saved = false;
+    },
     setSuggestions(state: t.State, action: PayloadAction<t.Suggestion[]>) {
       if (action.payload) {
         state.suggestions = action.payload;

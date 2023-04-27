@@ -110,11 +110,7 @@ function TextEditor({
 
   const handleKeyDown = (event) => {
     setEdited(true);
-    if (event.metaKey && event.code === "KeyS") {
-      event.preventDefault();
-
-      onSave();
-    } else if (event.altKey && event.shiftKey) {
+    if (event.altKey && event.shiftKey) {
       if (event.code === "ArrowDown" || event.code === "ArrowUp") {
         event.preventDefault();
         dispatch(librarySlice.actions.extractBlock());

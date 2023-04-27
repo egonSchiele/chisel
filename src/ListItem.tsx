@@ -76,9 +76,11 @@ export default function ListItem({
           </div>
         )}
       </Link>
-      <div className="flex flex-none cursor-pointer items-center mr-xs">
-        <ListMenu items={listMenuItems} selector={selector} />
-      </div>
+      {tag !== "compost" && (
+        <div className="flex flex-none cursor-pointer items-center mr-xs">
+          <ListMenu items={listMenuItems} selector={selector} />
+        </div>
+      )}
     </div>
   );
 }
