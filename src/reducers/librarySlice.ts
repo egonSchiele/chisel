@@ -644,3 +644,13 @@ export const getSelectedBookChapters = (
   }
   return chapters;
 };
+
+export const getCharacters = (
+  state: RootState
+): t.Character[] | null => {
+  const book = getSelectedBook(state);
+
+  if (!book) return null;
+  return book.characters;
+}
+
