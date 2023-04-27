@@ -14,6 +14,7 @@ export default function Input({
   onBlur = null,
   onKeyDown = null,
   selector = "",
+  icon = null,
 }) {
   const roundedCss = rounded ? "rounded-md" : "";
   return (
@@ -25,6 +26,11 @@ export default function Input({
         >
           {title}
         </label>
+      )}
+      {icon && (
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          {icon}
+        </div>
       )}
       <div className="mt-xs mb-sm">
         <input

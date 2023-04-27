@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowsUpDownIcon,
   EllipsisHorizontalIcon,
+  MagnifyingGlassCircleIcon,
+  MagnifyingGlassIcon,
   PlusIcon,
   ViewColumnsIcon,
   XMarkIcon,
@@ -17,8 +19,9 @@ import Button from "./components/Button";
 import ListMenu from "./ListMenu";
 import ListItem from "./ListItem";
 import Popup from "./Popup";
-import { getCsrfToken } from "./utils";
+import { getChapterText, getCsrfToken } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
+import Input from "./components/Input";
 // import Draggable from "react-draggable";
 
 export default function ChapterList({
@@ -44,6 +47,7 @@ export default function ChapterList({
   const [editing, setEditing] = React.useState(false);
   const [showPopup, setShowPopup] = React.useState(false);
   const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
   async function deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading);
@@ -93,8 +97,20 @@ export default function ChapterList({
     dispatch(librarySlice.actions.setChapterOrder(ids));
   };
 
-  const sublist = () =>
-    chapters.map((chapter, index) => (
+  const sublist = () => {
+    let _chapters;
+    if (searchTerm === "" || searchTerm.match(/^\s+$/)) {
+      _chapters = chapters;
+    } else {
+      _chapters = chapters.filter(
+        (chapter) =>
+          chapter.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          getChapterText(chapter)
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      );
+    }
+    return _chapters.map((chapter, index) => (
       <li
         key={chapter.chapterid}
         className={
@@ -116,6 +132,7 @@ export default function ChapterList({
         />
       </li>
     ));
+  };
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
@@ -231,6 +248,21 @@ export default function ChapterList({
       },
     ];
   }
+  const search = (
+    <Input
+      name="search"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="relative"
+      inputClassName="pl-10"
+      icon={
+        <MagnifyingGlassIcon
+          className="h-6 w-6 text-gray-300 dark:text-gray-600"
+          aria-hidden="true"
+        />
+      }
+    />
+  );
   return (
     <>
       {showPopup && (
@@ -243,7 +275,7 @@ export default function ChapterList({
       )}
       <List
         title={editing ? "Editing" : "Chapters"}
-        items={editing ? sublistDraggable() : sublist()}
+        items={editing ? sublistDraggable() : [search, ...sublist()]}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
         className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
