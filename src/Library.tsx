@@ -162,7 +162,7 @@ export default function Library() {
       newChapter,
       newBook,
       onEditorSave,
-      getTextForSuggestions
+      () => {}
     );
     setLaunchItems(_launchItems);
   }, [
@@ -175,7 +175,6 @@ export default function Library() {
     viewMode,
     currentText.length,
     onEditorSave,
-    getTextForSuggestions,
   ]);
 
   const fetchBooks = async () => {

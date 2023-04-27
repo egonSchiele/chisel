@@ -159,7 +159,7 @@ export default function useLaunchItems(
     });
   });
 
-  settings.prompts.forEach((prompt, i) => {
+  /*   settings.prompts.forEach((prompt, i) => {
     launchItems.push({
       label: prompt.label,
       onClick: () => {
@@ -176,7 +176,7 @@ export default function useLaunchItems(
 
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
     });
-  });
+  }); */
 
   if (panels.sidebar.open) {
     launchItems.push({
