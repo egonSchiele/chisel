@@ -507,7 +507,24 @@ export const librarySlice = createSlice({
         const endBlock = t.plainTextBlock(endText);
         chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
       }
+    },
+    addCharacter(state: t.State, action: PayloadAction<string>) {
+      const book = getSelectedBook({ library: state });
+      
+      if (book.characters) {
+        book.characters.push(t.newCharacter());
+      } else {
+        book.characters = [t.newCharacter()];
+      }
+      
+      state.saved = false;
+    },
+    editCharacter(state: t.State, action: PayloadAction<{index: number; character: t.Character}>) {
+      const book = getSelectedBook({ library: state });
+      book.characters[action.payload.index] = action.payload.character;
+      state.saved = false;
     }
+
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBooksThunk.pending, (state) => {

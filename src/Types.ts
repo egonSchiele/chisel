@@ -128,6 +128,15 @@ export type Character = {
   imageUrl: string;
 }
 
+export function newCharacter(data={}): Character {
+  return {
+    name: "",
+    description: "",
+    imageUrl: "",
+    ...data
+  };
+}
+
 export type Coords = {
   x: number;
   y: number;
