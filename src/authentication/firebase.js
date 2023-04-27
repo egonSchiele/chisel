@@ -8,6 +8,8 @@ import settings from "../../settings.js";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
+const mainPageUrl = process.env.NODE_ENV === "production" ? "https://egonschiele.github.io/chisel-docs/" : "/login.html";
+
 async function stringToHash(str) {
   const encoder = new TextEncoder();
   const salt = settings.tokenSalt;
@@ -30,11 +32,11 @@ export const requireLogin = (req, res, next) => {
     next();
   } else if (!req.cookies.userid) {
     console.log("no userid");
-    res.redirect("https://egonschiele.github.io/chisel-docs/");
+    res.redirect(mainPageUrl);
   } else {
     stringToHash(req.cookies.userid).then((hash) => {
       if (hash !== req.cookies.token) {
-        res.redirect("https://egonschiele.github.io/chisel-docs/");
+        res.redirect(mainPageUrl);
       } else {
         next();
       }
@@ -48,15 +50,15 @@ export const requireAdmin = (req, res, next) => {
    */
   if (!req.cookies.userid) {
     console.log("no userid");
-    res.redirect("https://egonschiele.github.io/chisel-docs/");
+    res.redirect(mainPageUrl);
   } else {
     stringToHash(req.cookies.userid).then(async (hash) => {
       if (hash !== req.cookies.token) {
-        res.redirect("https://egonschiele.github.io/chisel-docs/");
+        res.redirect(mainPageUrl);
       } else {
         const user = await getUser(req);
         if (!user.admin) {
-          res.redirect("https://egonschiele.github.io/chisel-docs/");
+          res.redirect(mainPageUrl);
         } else {
           next();
         }
