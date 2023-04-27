@@ -60,6 +60,7 @@ const apiLimiter = rateLimit({
 
 // Apply the rate limiting middleware to API calls only
 app.use("/api", apiLimiter);
+app.use("/loginGuestUser", apiLimiter);
 
 const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
