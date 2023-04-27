@@ -31,16 +31,6 @@ async function favoriteBook(bookid: string, onChange) {
   await onChange();
 }
 
-async function newBook(dispatch) {
-  const res = await fd.newBook();
-  if (res.tag === "error") {
-    console.log(res.message);
-  } else {
-    const book = res.payload;
-    dispatch(librarySlice.actions.addBook(book));
-  }
-}
-
 const buttonStyles =
   "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
@@ -51,6 +41,7 @@ export default function BookList({
   onChange,
   onDelete,
   saveBook,
+  newBook,
   canCloseSidebar = true,
 }: {
   books: t.Book[];
@@ -58,6 +49,7 @@ export default function BookList({
   onChange: () => void;
   onDelete: (bookid: string) => void;
   saveBook: (book: t.Book) => void;
+  newBook: () => void;
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
@@ -108,7 +100,7 @@ export default function BookList({
   const leftMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-    onClick: () => newBook(dispatch),
+    onClick: () => newBook(),
     className: buttonStyles,
   };
 

@@ -99,10 +99,6 @@ export default function Library() {
       event.preventDefault();
       await newChapter();
     }
-    /* } else if (event.shiftKey && event.altKey && event.key === "n") {
-      event.preventDefault();
-      await newChapter();
-    } */
   };
 
   useEffect(() => {
@@ -146,6 +142,8 @@ export default function Library() {
 
   const [launchItems, setLaunchItems] = useState<t.MenuItem[]>([]);
 
+  const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
+
   useEffect(() => {
     const _launchItems = useLaunchItems(
       dispatch,
@@ -161,7 +159,10 @@ export default function Library() {
       editor.activeTextIndex,
       viewMode,
       currentText.length,
-      newChapter
+      newChapter,
+      newBook,
+      onEditorSave,
+      getTextForSuggestions
     );
     setLaunchItems(_launchItems);
   }, [
@@ -173,6 +174,8 @@ export default function Library() {
     editor.activeTextIndex,
     viewMode,
     currentText.length,
+    onEditorSave,
+    getTextForSuggestions,
   ]);
 
   const fetchBooks = async () => {
@@ -209,6 +212,18 @@ export default function Library() {
       dispatch(librarySlice.actions.openSidebar());
       dispatch(librarySlice.actions.setActivePanel(panel));
     }
+  }
+
+  function getTextForSuggestions() {
+    let { text } = currentText[editor.activeTextIndex];
+    if (
+      state._cachedSelectedText &&
+      state._cachedSelectedText.contents &&
+      state._cachedSelectedText.contents.length > 0
+    ) {
+      text = state._cachedSelectedText.contents;
+    }
+    return text;
   }
 
   function onSuggestionLoad() {
@@ -266,6 +281,16 @@ export default function Library() {
     navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
   }
 
+  async function newBook() {
+    const res = await fd.newBook();
+    if (res.tag === "error") {
+      console.log(res.message);
+    } else {
+      const book = res.payload;
+      dispatch(librarySlice.actions.addBook(book));
+    }
+  }
+
   async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
     const chapter = { ..._chapter };
     chapter.suggestions = suggestions;
@@ -304,8 +329,6 @@ export default function Library() {
     };
     func();
   }, 5000);
-
-  const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
 
   async function saveBook(_book: t.Book) {
     if (!_book) {
@@ -507,6 +530,7 @@ export default function Library() {
                   navigate("/");
                 }
               }}
+              newBook={newBook}
               canCloseSidebar={chapterid !== undefined}
               saveBook={saveBook}
             />

@@ -38,21 +38,30 @@ export default function useLaunchItems(
   activeTextIndex,
   viewMode,
   currentTextLength,
-  newChapter
+  newChapter,
+  newBook,
+  onEditorSave,
+  getTextForSuggestions
 ) {
   const launchItems = [
-    /*   {
+    {
       label: "Save",
       onClick: () => {
-        onTextEditorSave(state);
+        onEditorSave();
       },
+      tooltip: "Command+s",
       icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
-    }, */
+    },
     {
       label: "New Chapter",
       onClick: newChapter,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
       tooltip: "Alt+n",
+    },
+    {
+      label: "New Book",
+      onClick: newBook,
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: "Grid",
@@ -150,7 +159,7 @@ export default function useLaunchItems(
     });
   });
 
-  /*   settings.prompts.forEach((prompt, i) => {
+  settings.prompts.forEach((prompt, i) => {
     launchItems.push({
       label: prompt.label,
       onClick: () => {
@@ -160,13 +169,14 @@ export default function useLaunchItems(
           onSuggestionLoad,
           prompt.text,
           prompt.label,
-          editor,
+          getTextForSuggestions(),
           dispatch
         );
       },
-      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />
+
+      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
     });
-  }); */
+  });
 
   if (panels.sidebar.open) {
     launchItems.push({
@@ -193,6 +203,7 @@ export default function useLaunchItems(
         dispatch(librarySlice.actions.setViewMode("default"));
       },
       icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Esc",
     });
   } else {
     launchItems.push({
@@ -227,6 +238,7 @@ export default function useLaunchItems(
         dispatch(librarySlice.actions.extractBlock());
       },
       icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Alt+Shift+Down",
     });
   }
   if (activeTextIndex !== 0) {
@@ -264,6 +276,7 @@ export default function useLaunchItems(
         dispatch(librarySlice.actions.setViewMode("diff"));
       },
       icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+Shift+d",
     });
   }
   return launchItems;
