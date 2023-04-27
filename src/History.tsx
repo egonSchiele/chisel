@@ -114,7 +114,7 @@ function History({
           <HistoryPanel
             key={i}
             index={i}
-            onClick={onClick}
+            onClick={(e) => onClick(e, applyPatch(history.length - 1 - i))}
             patch={""}
             nextPatch={""}
             rawPatch={patch}
@@ -166,7 +166,7 @@ function History({
         <HistoryPanel
           key={i}
           index={i}
-          onClick={onClick}
+          onClick={(e) => onClick(e, patches[i - 1])}
           patch={i === reverseHistory.length ? "" : patches[i]}
           nextPatch={i > 0 ? patches[i - 1] : ""}
           rawPatch={reverseHistory[i - 1]}

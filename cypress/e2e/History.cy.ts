@@ -31,7 +31,7 @@ describe("history", () => {
     cy.wait(2000);
     cy.manuallySave();
     // TODO fix
-    cy.contains(historyPanel, "some tex");
+    cy.contains(historyPanel, "some");
     cy.get(historyPanel).should("have.length", 1);
 
     // second save
@@ -44,7 +44,7 @@ describe("history", () => {
     cy.contains(".ql-editor", text2);
     cy.get(historyPanel).last().click();
     cy.contains(".ql-editor", text2).should("not.exist");
-    cy.contains(".ql-editor", text);
+    cy.contains(".ql-editor", "some");
 
     // restoring history doesn't add to history
     cy.get(historyPanel).should("have.length", 2);

@@ -41,11 +41,9 @@ export default function Library() {
 
   const currentChapter = getSelectedChapter({ library: state });
   const compostBookId = useSelector((state: RootState) => {
-    console.log("state.library.books", state.library.books);
     const compostBook = state.library.books.find(
       (b: t.Book) => b.tag === "compost"
     );
-    console.log("compostBook", compostBook);
     if (compostBook) {
       return compostBook.bookid;
     }
@@ -312,7 +310,6 @@ export default function Library() {
 
   async function newCompostNote() {
     const title = new Date().toDateString();
-    console.log("new compost note", compostBookId);
 
     await newChapter(title, "", compostBookId);
   }
@@ -528,6 +525,7 @@ export default function Library() {
                 metaKey: e.metaKey,
               })
             );
+            dispatch(librarySlice.actions.setViewMode("default"));
           }}
           triggerHistoryRerender={triggerHistoryRerender}
         />
@@ -760,6 +758,7 @@ export default function Library() {
                     metaKey: e.metaKey,
                   })
                 );
+                dispatch(librarySlice.actions.setViewMode("default"));
               }}
               triggerHistoryRerender={triggerHistoryRerender}
             />

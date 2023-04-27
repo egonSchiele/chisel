@@ -251,6 +251,7 @@ export default function ChapterList({
   }
   const search = (
     <Input
+      key="search"
       name="search"
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}

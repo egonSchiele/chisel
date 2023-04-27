@@ -180,7 +180,7 @@ export const librarySlice = createSlice({
       if (metaKey) {
         chapter.text[activeTextIndex].text = text;
       } else {
-        const blocks = text.split("\n---\n");
+        const blocks = text.split("\n---\n");        
         const newBlocks = blocks.map((blockText) => t.plainTextBlock(blockText));
         chapter.text = newBlocks;
       }
