@@ -35,7 +35,7 @@ export default function ListMenu({
         leaveTo="opacity-0 translate-y-1"
       >
         <Popover.Panel
-          className={`absolute left-1/2 z-10 mt-5 flex w-screen max-w-min -translate-x-3/4 px-4 ${className}`}
+          className={`absolute left-1/2 z-10 mt-5 flex w-screen max-w-min px-4 ${className}`}
         >
           <div className="rounded-md bg-menu dark:bg-dmmenu p-xs text-sm text-black dark:text-gray-300 gap-1 shadow-2xl ring-1 ring-black ring-opacity-5">
             {items.map((item, index) => (

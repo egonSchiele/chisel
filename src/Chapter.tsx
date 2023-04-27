@@ -2,9 +2,7 @@
 import Draggable from "react-draggable"; // The default
 import { Routes, Route, Link } from "react-router-dom";
 
-import React, {
-  useEffect, useReducer, useRef, useState
-} from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import Panel from "./components/Panel";
 import * as t from "./Types";
 
@@ -13,7 +11,7 @@ export default function Chapter({
   onChange,
   dispatch,
   width,
-  height
+  height,
 }) {
   const updateChapterPosition = (e, data) => {
     const newChapter = { ...chapter };
@@ -25,7 +23,7 @@ export default function Chapter({
   };
   const def = JSON.stringify({
     x: chapter.pos.x * width,
-    y: chapter.pos.y * height
+    y: chapter.pos.y * height,
   });
   const small = width <= 100;
   return (
@@ -40,7 +38,7 @@ export default function Chapter({
         className="shadow absolute m-0 bg-sidebar hover:bg-gray-200 text-text dark:bg-dmsidebar dark:hover:bg-gray-600  dark:text-dmtext select-none overflow-hidden border dark:border-dmlistBorder border-listBorder"
         style={{
           height: `${height}px`,
-          width: `${width}px`
+          width: `${width}px`,
         }}
       >
         {!small && (
