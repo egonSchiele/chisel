@@ -26,6 +26,13 @@ function CharacterInfo() {
     if (character) {
       return (
         <div className="mt-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
+          {character.imageUrl.trim() !== "" && (
+            <img
+              src={character.imageUrl}
+              alt={character.name}
+              className="rounded-full mx-auto mb-sm"
+            />
+          )}
           <p className="text-lg font-semibold">{character.name}</p>
           <p className="text-sm">{character.description}</p>
         </div>

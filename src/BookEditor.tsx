@@ -12,13 +12,22 @@ function Character({
   character,
   onNameChange,
   onDescChange,
+  onImageUrlChange,
 }: {
   character: Character;
   onNameChange: (newName: string) => void;
   onDescChange: (newDesc: string) => void;
+  onImageUrlChange: (newImageUrl: string) => void;
 }) {
   return (
     <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
+      {character.imageUrl.trim() !== "" && (
+        <img
+          src={character.imageUrl}
+          alt={character.name}
+          className=" rounded-full mx-auto mb-sm"
+        />
+      )}
       <Input
         name="name"
         title="name"
@@ -31,6 +40,12 @@ function Character({
         value={character.description}
         onChange={(e) => onDescChange(e.target.value)}
         inputClassName="border-0"
+      />
+      <Input
+        name="imageUrl"
+        title="Image Url"
+        value={character.imageUrl}
+        onChange={(e) => onImageUrlChange(e.target.value)}
       />
     </div>
   );
@@ -94,6 +109,14 @@ export default function BookEditor() {
                     librarySlice.actions.editCharacter({
                       index: i,
                       character: { ...character, description: newDesc },
+                    })
+                  )
+                }
+                onImageUrlChange={(newImageUrl) =>
+                  dispatch(
+                    librarySlice.actions.editCharacter({
+                      index: i,
+                      character: { ...character, imageUrl: newImageUrl },
                     })
                   )
                 }
