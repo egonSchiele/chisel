@@ -142,8 +142,8 @@ export default function BookList({
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
         className="bg-sidebar dark:bg-dmsidebar"
-        swipeToClose="left"
-        close={close}
+        /* swipeToClose="left"
+        close={close} */
         open={open}
       />
     </>

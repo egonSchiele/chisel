@@ -286,8 +286,9 @@ export default function ChapterList({
         className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
         onDrop={dropHandler}
         selector="chapterlist"
-        swipeToClose="left"
+        /*         swipeToClose="left"
         close={closeSidebar}
+ */
       />
     </>
   );
