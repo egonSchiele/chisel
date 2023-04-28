@@ -36,7 +36,7 @@ module.exports = {
         dmtextsecondary: "#eee",
 
         editor: "#fff",
-        dmeditor: "#222",
+        dmeditor: "#2f2f31",
 
         button: "#0c1612",
         dmbutton: "rgb(28,27,30)",
@@ -73,7 +73,7 @@ module.exports = {
         dmlistitem2: "#303f3b",
 
         dmsettings: "#e4deae",
-        dmsettingspanel: "rgb(28,27,30)",
+        dmsettingspanel: "#2f2f31",
 
         dmchaptercard: "#2d695e",
         dmchaptercardhover: "#357a6e",

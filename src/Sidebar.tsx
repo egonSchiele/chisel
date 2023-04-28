@@ -138,7 +138,7 @@ export default function Sidebar({
       ? currentChapter.text[0].text
       : state.editor.selectedText.contents;
   return (
-    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder">
+    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder  pb-12">
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}
@@ -203,7 +203,6 @@ export default function Sidebar({
           />
         )}
       </div>
-      {/*         <div className="flex flex-shrink-0 border-t border-gray-200 p-4"> */}
     </div>
   );
 }
