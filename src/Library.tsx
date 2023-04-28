@@ -553,7 +553,11 @@ export default function Library() {
       )}
       <div className="flex h-full">
         {state.panels.bookList.open && (
-          <div className="flex-none w-36 xl:w-48 h-full">
+          <div
+            className={`flex-none h-full ${
+              state.panels.chapterList.open ? "w-48 xl:w-60" : "w-60"
+            }`}
+          >
             <BookList
               books={state.books}
               selectedBookId={state.selectedBookId}
@@ -574,7 +578,7 @@ export default function Library() {
         {state.panels.chapterList.open &&
           state.selectedBookId &&
           state.booksLoaded && (
-            <div className="flex-none w-40 xl:w-60 h-full">
+            <div className="flex-none w-48 xl:w-60 h-full">
               <ChapterList
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
@@ -593,7 +597,7 @@ export default function Library() {
                 }
                 newChapter={newChapter}
                 canCloseSidebar={
-                  chapterid !== undefined || !state.selectedBookId
+                  chapterid !== undefined || state.selectedBookId
                 }
               />
             </div>

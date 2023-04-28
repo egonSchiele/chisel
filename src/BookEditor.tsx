@@ -80,20 +80,22 @@ export default function BookEditor() {
           inputClassName="typography border-0 bg-editor text-editortext dark:bg-dmeditor dark:text-dmeditortext resize-none"
           rows={8}
         />
-        <div className="text-xl font-semibold mt-md mb-xs">
-          <span>Characters</span>
-          <Button
-            onClick={() => {
-              dispatch(librarySlice.actions.addCharacter());
-            }}
-            rounded={true}
-            className="ml-xs"
-            size="small"
-          >
-            Add Character
-          </Button>
-        </div>
-        <div className="grid gap-sm grid-cols-1 md:grid-cols-3 xl:grid-cols-4">
+        {book.tag !== "compost" && (
+          <div className="text-xl font-semibold mt-md mb-xs">
+            <span>Characters</span>
+            <Button
+              onClick={() => {
+                dispatch(librarySlice.actions.addCharacter());
+              }}
+              rounded={true}
+              className="ml-xs"
+              size="small"
+            >
+              Add Character
+            </Button>
+          </div>
+        )}
+        <div className="grid gap-sm grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
           {book.characters &&
             book.characters.map((character, i) => (
               <Character
