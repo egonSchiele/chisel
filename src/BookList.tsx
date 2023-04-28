@@ -121,6 +121,7 @@ export default function BookList({
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => newBook(),
     className: buttonStyles,
+    showSpinner: true,
   };
 
   return (

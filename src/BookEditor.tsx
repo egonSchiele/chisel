@@ -90,7 +90,7 @@ export default function BookEditor() {
             Add Character
           </Button>
         </div>
-        <div className="grid gap-sm grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-sm grid-cols-1 md:grid-cols-3 xl:grid-cols-4">
           {book.characters &&
             book.characters.map((character, i) => (
               <Character

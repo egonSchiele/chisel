@@ -191,6 +191,7 @@ export default function ChapterList({
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => newChapter("New chapter"),
     className: buttonStyles,
+    showSpinner: true,
   };
 
   const dropdownMenuItems = [

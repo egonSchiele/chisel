@@ -2,27 +2,39 @@ import React, { useEffect } from "react";
 import * as t from "../Types";
 import { useDispatch } from "react-redux";
 import { librarySlice } from "../reducers/librarySlice";
+import Spinner from "./Spinner";
 // Top left and top right menu items
 function MenuItem({
   label,
   icon,
   onClick,
   className = "",
+  showSpinner = false,
 }: {
   label: string;
   icon?: any;
   onClick: () => void;
   className?: string;
+  showSpinner?: boolean;
 }) {
+  const [_icon, setIcon] = React.useState(icon);
   return (
     <button
       type="button"
       className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 ${className}`}
-      onClick={onClick}
+      onClick={async () => {
+        if (showSpinner) {
+          setIcon(<Spinner className="w-5 h-5" />);
+        }
+        await onClick();
+        if (showSpinner) {
+          setIcon(icon);
+        }
+      }}
       data-label={label}
     >
       <span className="sr-only">{label}</span>
-      {icon}
+      {_icon}
     </button>
   );
 }
