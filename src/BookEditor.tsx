@@ -39,7 +39,8 @@ function Character({
         title="description"
         value={character.description}
         onChange={(e) => onDescChange(e.target.value)}
-        inputClassName="border-0"
+        inputClassName="border-0 resize-none"
+        rows={8}
       />
       <Input
         name="imageUrl"
@@ -59,7 +60,7 @@ export default function BookEditor() {
   }
   return (
     <div className="flex h-screen overflow-scroll w-full">
-      <div className="mx-auto px-sm lg:px-md mt-0 mb-md h-full w-full">
+      <div className="mx-auto px-sm lg:px-md mt-0 h-full w-full">
         <ContentEditable
           value={book.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
@@ -76,6 +77,8 @@ export default function BookEditor() {
             dispatch(librarySlice.actions.setBookSynopsis(e.target.value));
           }}
           title="Synopsis"
+          inputClassName="typography border-0 bg-editor text-editortext dark:bg-dmeditor dark:text-dmeditortext resize-none"
+          rows={8}
         />
         <div className="text-xl font-semibold mt-md mb-xs">
           <span>Characters</span>
@@ -123,6 +126,8 @@ export default function BookEditor() {
               />
             ))}
         </div>
+        {/* bottom padding */}
+        <div className="h-24" />
       </div>
     </div>
   );

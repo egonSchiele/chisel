@@ -716,7 +716,7 @@ export default function Library() {
           <div className="flex-grow h-full w-full">
             {bookid && !currentChapter && <BookEditor />}
           </div>
-          <div className="flex-grow h-full w-full bg-editor dark:bg-dmeditor">
+          <div className="flex-grow h-full w-full bg-editor dark:bg-dmeditor mb-60">
             {currentChapter && <Editor onSave={onEditorSave} />}
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
