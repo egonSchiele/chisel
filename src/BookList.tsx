@@ -114,6 +114,7 @@ export default function BookList({
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: close,
     className: buttonStyles,
+    animate: true,
   };
 
   const leftMenuItem = {
@@ -122,6 +123,7 @@ export default function BookList({
     onClick: () => newBook(),
     className: buttonStyles,
     showSpinner: true,
+    animate: true,
   };
 
   return (

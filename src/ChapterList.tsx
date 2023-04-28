@@ -184,6 +184,7 @@ export default function ChapterList({
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
     className: buttonStyles,
+    animate: true,
   };
 
   const newMenuItem = {
@@ -192,6 +193,7 @@ export default function ChapterList({
     onClick: () => newChapter("New chapter"),
     className: buttonStyles,
     showSpinner: true,
+    animate: true,
   };
 
   const dropdownMenuItems = [

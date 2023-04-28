@@ -10,18 +10,22 @@ function MenuItem({
   onClick,
   className = "",
   showSpinner = false,
+  animate = false,
 }: {
   label: string;
   icon?: any;
   onClick: () => void;
   className?: string;
   showSpinner?: boolean;
+  animate?: boolean;
 }) {
   const [_icon, setIcon] = React.useState(icon);
+  const animCss = animate
+    ? "transition ease-in-out hover:scale-125 duration-100 active:scale-75 hover:dark:text-white"
+    : "hover:dark:text-white";
   return (
-    <button
-      type="button"
-      className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 ring-0 ${className}`}
+    <div
+      className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 cursor-pointer ring-0 ${animCss} ${className}`}
       onClick={async () => {
         if (showSpinner) {
           setIcon(<Spinner className="w-5 h-5" />);
@@ -35,7 +39,7 @@ function MenuItem({
     >
       <span className="sr-only">{label}</span>
       {_icon}
-    </button>
+    </div>
   );
 }
 

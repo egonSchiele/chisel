@@ -15,10 +15,13 @@ export default function ListMenu({
   selector?: string;
   className?: string;
 }) {
+  const animCss =
+    "transition ease-in-out hover:scale-125 duration-100 active:scale-75 hover:dark:text-white";
+
   return (
     <Popover className="relative flex">
       <Popover.Button
-        className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+        className={`inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 ${animCss}`}
         data-selector={`${selector}-list-item-menu-button`}
       >
         <span className="sr-only">{label}</span>
@@ -41,11 +44,11 @@ export default function ListMenu({
             {items.map((item, index) => (
               <div
                 key={index}
-                className="px-sm py-xs rounded-md hover:bg-listitemhoverSecondary  dark:hover:bg-dmlistitemhoverSecondary flex"
+                className={`px-sm py-xs rounded-md hover:bg-listitemhoverSecondary  dark:hover:bg-dmlistitemhoverSecondary flex `}
                 onClick={item.onClick}
                 data-selector={`${selector}-list-item-button-${item.label}`}
               >
-                <div className=" mt-0">{item.icon} </div>
+                <div className={`mt-0 `}>{item.icon} </div>
                 <div className="ml-1 flex-grow whitespace-nowrap">
                   {item.label}
                 </div>
