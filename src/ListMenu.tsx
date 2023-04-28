@@ -21,7 +21,7 @@ export default function ListMenu({
   return (
     <Popover className="relative flex">
       <Popover.Button
-        className={`inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 ${animCss}`}
+        className={`inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 rounded-md ${animCss}`}
         data-selector={`${selector}-list-item-menu-button`}
       >
         <span className="sr-only">{label}</span>

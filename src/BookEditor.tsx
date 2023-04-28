@@ -13,11 +13,13 @@ function Character({
   onNameChange,
   onDescChange,
   onImageUrlChange,
+  onDelete,
 }: {
   character: Character;
   onNameChange: (newName: string) => void;
   onDescChange: (newDesc: string) => void;
   onImageUrlChange: (newImageUrl: string) => void;
+  onDelete: () => void;
 }) {
   return (
     <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
@@ -48,6 +50,14 @@ function Character({
         value={character.imageUrl}
         onChange={(e) => onImageUrlChange(e.target.value)}
       />
+      <Button
+        onClick={onDelete}
+        className="mt-sm"
+        size="small"
+        style="secondary"
+      >
+        Delete
+      </Button>
     </div>
   );
 }
@@ -90,6 +100,7 @@ export default function BookEditor() {
               rounded={true}
               className="ml-xs"
               size="small"
+              rounded={true}
             >
               Add Character
             </Button>
@@ -124,6 +135,9 @@ export default function BookEditor() {
                       character: { ...character, imageUrl: newImageUrl },
                     })
                   )
+                }
+                onDelete={() => {
+                  dispatch(librarySlice.actions.deleteCharacter({index: i}));
                 }
               />
             ))}

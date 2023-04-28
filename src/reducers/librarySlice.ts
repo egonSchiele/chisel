@@ -523,6 +523,11 @@ export const librarySlice = createSlice({
       const book = getSelectedBook({ library: state });
       book.characters[action.payload.index] = action.payload.character;
       state.saved = false;
+    },
+    deleteCharacter(state: t.State, action: PayloadAction<{index: number}>) {
+      const book = getSelectedBook({ library: state });
+      book.characters.splice(action.payload.index, 1);
+      state.saved = false;
     }
 
   },

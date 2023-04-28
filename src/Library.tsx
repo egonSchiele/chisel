@@ -11,6 +11,7 @@ import { getChapterText, getCsrfToken, useInterval } from "./utils";
 import Launcher from "./Launcher";
 import {
   CheckCircleIcon,
+  ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
@@ -608,17 +609,6 @@ export default function Library() {
             <div className="flex-none">
               {(!state.panels.bookList.open ||
                 !state.panels.chapterList.open) && (
-                /*       <button
-                  type="button"
-                  className="relative rounded-md inline-flex items-center bg-white dark:hover:bg-dmsidebar dark:bg-dmsidebarSecondary pl-0 pr-3 py-2 text-gray-400  hover:bg-gray-50 ring-0 "
-                  onClick={() => {
-
-                  }}
-                  data-selector
-                >
-                  <span className="sr-only">Open</span>
-                </button> */
-
                 <NavButton
                   label="Open"
                   onClick={() => {
@@ -629,6 +619,20 @@ export default function Library() {
                   selector="open-lists-button"
                 >
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
+
+              {state.panels.bookList.open && state.panels.chapterList.open && (
+                <NavButton
+                  label="Close"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.closeBookList());
+                    dispatch(librarySlice.actions.closeChapterList());
+                  }}
+                  className="p-0"
+                  selector="open-lists-button"
+                >
+                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
               )}
             </div>

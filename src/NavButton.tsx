@@ -13,7 +13,7 @@ export default function NavButton({
   return (
     <button
       type="button"
-      className={`relative inline-flex items-center px-1 text-black dark:text-gray-400  hover:bg-gray-50 ring-0 dark:hover:bg-dmsidebar ${animCss} ${className}`}
+      className={`relative inline-flex items-center px-1 text-black dark:text-gray-400 rounded-md hover:bg-gray-50 ring-0 dark:hover:bg-dmsidebar ${animCss} ${className}`}
       onClick={onClick}
       data-selector={selector}
     >
