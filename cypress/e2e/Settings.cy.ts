@@ -9,8 +9,8 @@ const historyPanel = "div[data-selector='history-panel']";
 const promptLabel = "NewPrompt!";
 const promptText = "This is a new prompt!";
 
-describe("history", () => {
-  it("adds to history on save", () => {
+describe("settings", () => {
+  it("adds a new prompt using settings", () => {
     cy.login();
 
     cy.newBook();
