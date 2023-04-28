@@ -53,8 +53,9 @@ function Character({
       <Button
         onClick={onDelete}
         className="mt-sm"
-        size="small"
+        size="medium"
         style="secondary"
+        rounded={true}
       >
         Delete
       </Button>
@@ -100,13 +101,12 @@ export default function BookEditor() {
               rounded={true}
               className="ml-xs"
               size="small"
-              rounded={true}
             >
               Add Character
             </Button>
           </div>
         )}
-        <div className="grid gap-sm grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
           {book.characters &&
             book.characters.map((character, i) => (
               <Character
@@ -137,8 +137,8 @@ export default function BookEditor() {
                   )
                 }
                 onDelete={() => {
-                  dispatch(librarySlice.actions.deleteCharacter({index: i}));
-                }
+                  dispatch(librarySlice.actions.deleteCharacter({ index: i }));
+                }}
               />
             ))}
         </div>
