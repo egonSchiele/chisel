@@ -34,7 +34,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   }
 
   return (
-    <div className="flex h-screen overflow-scroll w-full">
+    <div className="flex h-screen overflow-scroll w-full max-w-3xl mx-auto ">
       <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}

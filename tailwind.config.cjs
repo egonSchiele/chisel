@@ -31,7 +31,12 @@ module.exports = {
 
         text: "#000",
         dmtext: "#fff",
+        editortext: "#000",
+        dmeditortext: "#ccc",
         dmtextsecondary: "#eee",
+
+        editor: "#fff",
+        dmeditor: "#222",
 
         button: "#0c1612",
         dmbutton: "rgb(28,27,30)",

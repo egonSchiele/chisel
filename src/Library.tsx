@@ -599,7 +599,7 @@ export default function Library() {
             </div>
           )}
 
-        <div className="h-full flex flex-col flex-grow">
+        <div className="h-full flex flex-col flex-grow bg-editor dark:bg-dmeditor">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
               {(!state.panels.bookList.open ||
@@ -656,15 +656,6 @@ export default function Library() {
                   </NavButton>
                 )}
 
-                <NavButton
-                  label="Focus Mode"
-                  onClick={() =>
-                    dispatch(librarySlice.actions.setViewMode("focus"))
-                  }
-                >
-                  <EyeIcon className="h-5 w-5" aria-hidden="true" />
-                </NavButton>
-
                 {!state.saved && (
                   <NavButton label="Unsaved" onClick={() => {}}>
                     <MinusIcon className="h-5 w-5" aria-hidden="true" />
@@ -679,6 +670,15 @@ export default function Library() {
                     />
                   </NavButton>
                 )}
+
+                <NavButton
+                  label="Focus Mode"
+                  onClick={() =>
+                    dispatch(librarySlice.actions.setViewMode("focus"))
+                  }
+                >
+                  <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
 
                 <NavButton
                   label="Prompts"
@@ -716,7 +716,7 @@ export default function Library() {
           <div className="flex-grow h-full w-full">
             {bookid && !currentChapter && <BookEditor />}
           </div>
-          <div className="flex-grow h-full w-full">
+          <div className="flex-grow h-full w-full bg-editor dark:bg-dmeditor">
             {currentChapter && <Editor onSave={onEditorSave} />}
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
