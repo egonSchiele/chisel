@@ -293,6 +293,7 @@ export default function useLaunchItems(
         dispatch(librarySlice.actions.setViewMode("readonly"));
       },
       icon: <PencilIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+Shift+r",
     });
   }
 
