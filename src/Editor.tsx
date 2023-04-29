@@ -44,7 +44,10 @@ export default function Editor({ onSave }: { onSave: () => void }) {
           </h1>
           <div className="grid grid-col-1">
             {currentText.map((text, index) => (
-              <pre key={index} className="typography font-sans">
+              <pre
+                key={index}
+                className="typography font-sans first:first-letter:text-5xl first:first-letter:font-bold"
+              >
                 {text.text}{" "}
               </pre>
             ))}
