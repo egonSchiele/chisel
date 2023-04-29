@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
 import TextEditor from "./TextEditor";
@@ -31,13 +31,40 @@ export default function Editor({ onSave }: { onSave: () => void }) {
 
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
 
+  const readonlyDiv = useRef(null);
+
+  const handleKeyDown = async (event) => {
+    if (!readonlyDiv.current) return;
+    const div = readonlyDiv.current;
+    if (event.code === "Space") {
+      div.scroll({ top: div.scrollTop + 400, behavior: "smooth" });
+    }
+    if (event.code === "ArrowDown") {
+      div.scroll({ top: div.scrollTop + 400, behavior: "smooth" });
+    }
+    if (event.code === "ArrowUp") {
+      div.scroll({ top: div.scrollTop - 400, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown, readonlyDiv]);
+
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;
   }
 
   if (viewMode === "readonly") {
     return (
-      <div className="flex h-screen overflow-auto w-full max-w-3xl mx-auto  ">
+      <div
+        ref={readonlyDiv}
+        className="flex h-screen overflow-auto w-full max-w-3xl mx-auto  "
+      >
         <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
           <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
             {currentChapterTitle}
@@ -52,6 +79,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
               </pre>
             ))}
           </div>
+          <div className="h-24" />
         </div>
       </div>
     );
