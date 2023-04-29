@@ -83,12 +83,10 @@ export default function Library() {
       event.preventDefault();
       if (state.launcherOpen) {
         dispatch(librarySlice.actions.toggleLauncher());
-      } else if (state.viewMode === "fullscreen") {
-        dispatch(librarySlice.actions.setViewMode("default"));
-      } else if (state.viewMode === "diff") {
-        dispatch(librarySlice.actions.setViewMode("default"));
       } else if (state.viewMode === "focus") {
         focusModeClose();
+      } else if (state.viewMode !== "default") {
+        dispatch(librarySlice.actions.setViewMode("default"));
       } else if (
         state.panels.sidebar.open ||
         state.panels.prompts.open ||
