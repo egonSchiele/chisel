@@ -214,7 +214,7 @@ function TextEditor({
             >
               <ReactQuill
                 ref={quillRef}
-                placeholder="Write something..."
+                placeholder=""
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
