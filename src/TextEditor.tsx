@@ -221,6 +221,11 @@ function TextEditor({
                 onFocus={() =>
                   dispatch(librarySlice.actions.setActiveTextIndex(index))
                 }
+                modules={{
+                  history: {
+                    userOnly: true,
+                  },
+                }}
               />
             </div>
           </div>
