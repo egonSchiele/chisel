@@ -24,6 +24,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import { fetchSuggestionsWrapper } from "./utils";
+import { sortBy } from "lodash";
 
 function Leaf() {
   return (
@@ -162,10 +163,13 @@ export default function useLaunchItems(
   ];
 
   if (books) {
-    books.forEach((book, i) => {
-      book.chapters.forEach((chapter, i) => {
+    sortBy(books, ["title"]).forEach((book, i) => {
+      sortBy(book.chapters, ["title"]).forEach((chapter, i) => {
+        let label = chapter.title || "(No title)";
+        label = `${label} (${book.title})`;
+        if (label.length > 30) label = label.slice(0, 30) + "...";
         launchItems.push({
-          label: chapter.title || "(No title)",
+          label,
           onClick: () => {
             navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
           },
