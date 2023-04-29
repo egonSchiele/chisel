@@ -107,7 +107,7 @@ export default function BookEditor() {
     return <CompostBook />;
   }
   return (
-    <div className="flex h-screen overflow-scroll w-full">
+    <div className="flex h-screen overflow-auto w-full">
       <div className="mx-auto px-sm lg:px-md mt-0 h-full w-full">
         <ContentEditable
           value={book.title}

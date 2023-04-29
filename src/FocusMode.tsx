@@ -357,7 +357,10 @@ export default function FocusMode({ text, onClose, onChange }) {
           />
         </div>
         <div className="mt-8 pt-xs">
-          <div style={{"height": "calc(100vh - 10rem)"}} className="overflow-scroll mt-5 flex-grow flex max-w-screen-md mx-auto flex-wrap gap-xs content-start">
+          <div
+            style={{ height: "calc(100vh - 10rem)" }}
+            className="overflow-auto mt-5 flex-grow flex max-w-screen-md mx-auto flex-wrap gap-xs content-start"
+          >
             {wordComponents}
           </div>
         </div>

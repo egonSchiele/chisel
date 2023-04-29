@@ -34,7 +34,7 @@ export default function SlideOver({
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md w-historysmall">
                   <div
-                    className={`flex h-full flex-col overflow-y-scroll bg-sidebar dark:bg-dmsidebar ${
+                    className={`flex h-full flex-col overflow-y-auto bg-sidebar dark:bg-dmsidebar ${
                       size === "large" ? "w-historysmall" : ""
                     }`}
                   >

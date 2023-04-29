@@ -498,7 +498,7 @@ export default function Library() {
 
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
-      <div className="w-3/4 mx-auto flex-none h-screen overflow-scroll">
+      <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
         <Launcher
           items={launchItems}
           open={state.launcherOpen}
@@ -760,7 +760,7 @@ export default function Library() {
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
         {state.panels.prompts.open && currentChapter && (
-          <div className="w-36 xl:w-48 flex-none h-screen overflow-scroll">
+          <div className="w-36 xl:w-48 flex-none h-screen overflow-auto">
             <PromptsSidebar
               settings={settings}
               closeSidebar={() => dispatch(librarySlice.actions.closePrompts())}
@@ -773,7 +773,7 @@ export default function Library() {
         )}
 
         {state.panels.sidebar.open && currentChapter && (
-          <div className={`${sidebarWidth} flex-none h-screen overflow-scroll`}>
+          <div className={`${sidebarWidth} flex-none h-screen overflow-auto`}>
             <Sidebar
               settings={settings}
               setSettings={setSettings}
