@@ -16,6 +16,7 @@ import {
   EllipsisHorizontalCircleIcon,
   EyeIcon,
   MinusIcon,
+  PencilIcon,
   SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -664,6 +665,11 @@ export default function Library() {
                   </NavButton>
                 )}
 
+                {state.viewMode === "readonly" && (
+                  <span className="text-red-700 text-xs uppercase mr-xs">
+                    read only
+                  </span>
+                )}
                 {!state.saved && (
                   <NavButton label="Unsaved" onClick={() => {}}>
                     <MinusIcon className="h-5 w-5" aria-hidden="true" />
@@ -674,6 +680,30 @@ export default function Library() {
                   <NavButton label="Saved" onClick={() => {}}>
                     <CheckCircleIcon
                       className="h-5 w-5 text-green-700 dark:text-green-300"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+
+                {state.viewMode !== "readonly" && (
+                  <NavButton
+                    label="Read only"
+                    onClick={() =>
+                      dispatch(librarySlice.actions.setViewMode("readonly"))
+                    }
+                  >
+                    <PencilIcon className="h-5 w-5" aria-hidden="true" />
+                  </NavButton>
+                )}
+                {state.viewMode === "readonly" && (
+                  <NavButton
+                    label="Exit read only"
+                    onClick={() =>
+                      dispatch(librarySlice.actions.setViewMode("default"))
+                    }
+                  >
+                    <PencilIcon
+                      className="h-5 w-5 text-red-700"
                       aria-hidden="true"
                     />
                   </NavButton>

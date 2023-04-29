@@ -17,7 +17,7 @@ export type State = {
   launcherOpen: boolean;
 };
 
-export type ViewMode = "default" | "focus" | "fullscreen" | "grid" | "diff";
+export type ViewMode = "default" | "focus" | "fullscreen" | "grid" | "diff" | "readonly";
 
 export type Panel = {
   open: boolean;

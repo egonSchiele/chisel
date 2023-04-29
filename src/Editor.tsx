@@ -3,7 +3,7 @@ import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
 import TextEditor from "./TextEditor";
 import * as t from "./Types";
-import { getCsrfToken, useTraceUpdate } from "./utils";
+import { getChapterText, getCsrfToken, useTraceUpdate } from "./utils";
 import { RootState } from "./store";
 import {
   getSelectedChapter,
@@ -29,8 +29,29 @@ export default function Editor({ onSave }: { onSave: () => void }) {
     (state: RootState) => state.library.selectedChapterId
   );
 
+  const viewMode = useSelector((state: RootState) => state.library.viewMode);
+
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;
+  }
+
+  if (viewMode === "readonly") {
+    return (
+      <div className="flex h-screen overflow-scroll w-full max-w-3xl mx-auto  ">
+        <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
+          <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
+            {currentChapterTitle}
+          </h1>
+          <div className="grid grid-col-1">
+            {currentText.map((text, index) => (
+              <pre key={index} className="typography font-sans">
+                {text.text}{" "}
+              </pre>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
