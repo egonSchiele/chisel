@@ -19,6 +19,7 @@ import {
   EyeIcon,
   DocumentDuplicateIcon,
   PencilIcon,
+  WrenchIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -318,6 +319,16 @@ export default function useLaunchItems(
       },
       icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
       tooltip: "Command+Shift+d",
+    });
+  }
+
+  if (currentTextLength && currentTextLength > 0) {
+    launchItems.push({
+      label: "Convert title to title case",
+      onClick: () => {
+        dispatch(librarySlice.actions.setAPStyleTitle());
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
   return launchItems;

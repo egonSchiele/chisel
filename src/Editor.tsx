@@ -103,6 +103,10 @@ export default function Editor({ onSave }: { onSave: () => void }) {
         <ContentEditable
           value={currentChapterTitle}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
+          // This is needed so the first block gets focus when we hit enter
+          onClick={() => {
+            dispatch(librarySlice.actions.setActiveTextIndex(-1));
+          }}
           onSubmit={(title) => {
             dispatch(librarySlice.actions.setTitle(title));
           }}

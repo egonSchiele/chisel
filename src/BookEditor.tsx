@@ -29,7 +29,7 @@ function Character({
         <img
           src={character.imageUrl}
           alt={character.name}
-          className=" rounded-full mx-auto mb-sm"
+          className=" rounded-full mx-auto mb-sm max-h-96"
         />
       )}
       <Input

@@ -1,3 +1,4 @@
+import {apStyleTitleCase} from 'ap-style-title-case';
 import * as toolkitRaw from "@reduxjs/toolkit";
 import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
@@ -193,6 +194,12 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    setAPStyleTitle(state: t.State) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.title = apStyleTitleCase(chapter.title)
+      
+      state.saved = false;
+    },
     setBookTitle(state: t.State, action) {
       const book = getSelectedBook({ library: state });
       book.title = action.payload;
@@ -254,8 +261,7 @@ export const librarySlice = createSlice({
       state.editor.selectedText = { index: 0, length: 0, contents: "" };
     },
     clearCachedSelectedText(state) {
-      state.editor._cachedSelectedText = null;
-      
+      state.editor._cachedSelectedText = null;    
     },
     addSuggestion(
       state: t.State,

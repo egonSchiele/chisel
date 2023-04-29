@@ -3261,6 +3261,11 @@ anymatch@^3.0.3, anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+ap-style-title-case@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ap-style-title-case/-/ap-style-title-case-2.0.0.tgz#c9fddb3ca94f0eb87078e3f6164efd36df2dfb82"
+  integrity sha512-8vCoCer8ZTXjvCK+JQLU0YW0EWI+70lyP9Q33mafLG0VRT7UY1BHoDq7WzaQYwzh9t+eG94tEJuVHrEDcRP1Fg==
+
 arch@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/arch/-/arch-2.2.0.tgz#1bc47818f305764f23ab3306b0bfc086c5a29d11"
