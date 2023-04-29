@@ -424,7 +424,7 @@ export const librarySlice = createSlice({
     },
     extractBlock(state: t.State) {
       let { index, length, contents } = state.editor.selectedText;
-      if (length === 0 && state.editor._cachedSelectedText) {
+      if (length === 0 && state.editor._cachedSelectedText && state.editor._cachedSelectedText.length > 0) {
         index = state.editor._cachedSelectedText.index;
         length = state.editor._cachedSelectedText.length;
         contents = state.editor._cachedSelectedText.contents;
@@ -432,8 +432,8 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
 
-/*       console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
- */      if (length === 0) {
+/*        console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
+ */       if (length === 0) {
         if (index === 0) {
           // newBlockBeforeCurrent
           const newBlock = t.plainTextBlock("");

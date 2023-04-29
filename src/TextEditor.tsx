@@ -62,10 +62,11 @@ function TextEditor({
     if (isActive) {
       focus();
     }
-  }, [activeTextIndex]);
+  }, [activeTextIndex, open]);
 
   const focus = () => {
     if (!quillRef.current) return;
+
     // @ts-ignore
     const editor = quillRef.current.getEditor();
     editor.focus();
@@ -123,7 +124,7 @@ function TextEditor({
         // @ts-ignore
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
-        /* console.log(
+        /*  console.log(
           range,
           currentText.text,
           currentText.text.trim().length,
@@ -162,7 +163,6 @@ function TextEditor({
       if (isActive) {
         event.preventDefault();
         setOpen(true);
-        focus();
       }
     }
   };
