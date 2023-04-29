@@ -25,7 +25,7 @@ Cypress.Commands.add("newBook", (user) => {
   }).as("postNewBook");
 
   // Click the New button to add a new book
-  cy.get("button[data-label=New]").click();
+  cy.get("div[data-label=New]").click();
 
   cy.wait(2000);
 
@@ -36,7 +36,7 @@ Cypress.Commands.add("newBook", (user) => {
 
 Cypress.Commands.add("newChapter", (user) => {
   cy.get("div[data-selector='chapterlist-list']").within(() => {
-    cy.get("button[data-label=New]").click();
+    cy.get("div[data-label=New]").click();
   });
 
   cy.wait(2000);
