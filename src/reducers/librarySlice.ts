@@ -253,6 +253,10 @@ export const librarySlice = createSlice({
       state.editor._cachedSelectedText = state.editor.selectedText;
       state.editor.selectedText = { index: 0, length: 0, contents: "" };
     },
+    clearCachedSelectedText(state) {
+      state.editor._cachedSelectedText = null;
+      
+    },
     addSuggestion(
       state: t.State,
       action: PayloadAction<{ label: string; value: string }>

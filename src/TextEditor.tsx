@@ -211,6 +211,9 @@ function TextEditor({
               className={`flex-grow border-l ${
                 isActive ? "border-gray-300" : "border-gray-500"
               } pl-sm`}
+              onClick={() => {
+                dispatch(librarySlice.actions.clearCachedSelectedText());
+              }}
             >
               <ReactQuill
                 ref={quillRef}
