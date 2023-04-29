@@ -18,6 +18,7 @@ import {
   BarsArrowDownIcon,
   EyeIcon,
   DocumentDuplicateIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -282,6 +283,16 @@ export default function useLaunchItems(
         dispatch(librarySlice.actions.mergeBlockDown());
       },
       icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (viewMode !== "readonly") {
+    launchItems.push({
+      label: "Read Only Mode",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("readonly"));
+      },
+      icon: <PencilIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
 

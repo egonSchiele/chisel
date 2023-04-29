@@ -36,13 +36,23 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   const handleKeyDown = async (event) => {
     if (!readonlyDiv.current) return;
     const div = readonlyDiv.current;
-    if (event.code === "Space") {
+    if (event.shiftKey && event.code === "Space") {
+      event.preventDefault();
+      div.scroll({ top: div.scrollTop + 800, behavior: "smooth" });
+    } else if (event.code === "Space") {
+      event.preventDefault();
       div.scroll({ top: div.scrollTop + 400, behavior: "smooth" });
-    }
-    if (event.code === "ArrowDown") {
+    } else if (event.metaKey && event.code === "ArrowDown") {
+      event.preventDefault();
+      div.scroll({ top: div.scrollHeight, behavior: "smooth" });
+    } else if (event.metaKey && event.code === "ArrowUp") {
+      event.preventDefault();
+      div.scroll({ top: 0, behavior: "smooth" });
+    } else if (event.code === "ArrowDown") {
+      event.preventDefault();
       div.scroll({ top: div.scrollTop + 400, behavior: "smooth" });
-    }
-    if (event.code === "ArrowUp") {
+    } else if (event.code === "ArrowUp") {
+      event.preventDefault();
       div.scroll({ top: div.scrollTop - 400, behavior: "smooth" });
     }
   };

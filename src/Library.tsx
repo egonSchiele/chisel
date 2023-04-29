@@ -101,11 +101,15 @@ export default function Library() {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleLauncher());
     } else if (event.metaKey && event.shiftKey && event.key === "d") {
+      event.preventDefault();
+      if (state.viewMode === "diff") {
+        dispatch(librarySlice.actions.setViewMode("default"));
+        return;
+      }
       if (
         viewMode !== "diff" &&
         editor.activeTextIndex !== currentText.length - 1
       ) {
-        event.preventDefault();
         dispatch(librarySlice.actions.setViewMode("diff"));
       }
     } else if (event.altKey && event.key === "n") {
@@ -114,6 +118,13 @@ export default function Library() {
     } else if (event.shiftKey && event.metaKey && event.key === "c") {
       event.preventDefault();
       await newCompostNote();
+    } else if (event.shiftKey && event.metaKey && event.key === "r") {
+      event.preventDefault();
+      if (state.viewMode === "readonly") {
+        dispatch(librarySlice.actions.setViewMode("default"));
+      } else {
+        dispatch(librarySlice.actions.setViewMode("readonly"));
+      }
     }
   };
 
