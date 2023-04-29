@@ -113,8 +113,9 @@ function Settings({ settings, setSettings, usage, onSave }) {
         onChange={(e) => handleChange("model", e.target.value)}
       >
         <option>gpt-3.5-turbo</option>
-        <option>text-davinci-003</option>
+        {/*         <option>text-davinci-003</option>
         <option>davinci</option>
+ */}{" "}
         <option>curie</option>
       </Select>
 

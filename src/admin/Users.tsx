@@ -1,4 +1,5 @@
 import React from "react";
+import { sortBy } from "lodash";
 
 function User({ user, index }) {
   return (
@@ -18,7 +19,14 @@ export default function Users() {
   React.useEffect(() => {
     const func = async () => {
       const res = await fetch("/api/admin/users");
-      const users = await res.json();
+      let users = await res.json();
+      users = sortBy(
+        users,
+        (u) =>
+          u.usage.openai_api.tokens.total.completion +
+          u.usage.openai_api.tokens.total.prompt
+      );
+      users.reverse();
       setUsers(users);
     };
     func();
