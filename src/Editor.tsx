@@ -80,14 +80,16 @@ export default function Editor({ onSave }: { onSave: () => void }) {
             {currentChapterTitle}
           </h1>
           <div className="grid grid-col-1">
-            {currentText.map((text, index) => (
-              <pre
-                key={index}
-                className="typography font-sans first:first-letter:text-5xl first:first-letter:font-bold"
-              >
-                {text.text}{" "}
-              </pre>
-            ))}
+            {currentText
+              .filter((t) => t.open)
+              .map((text, index) => (
+                <pre
+                  key={index}
+                  className="typography font-sans first:first-letter:text-5xl first:first-letter:font-bold"
+                >
+                  {text.text}
+                </pre>
+              ))}
           </div>
           <div className="h-24" />
         </div>
