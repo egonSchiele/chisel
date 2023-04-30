@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import React from "react";
-import Book from "./Book";
-import Library from "./Library";
+/* import Book from "./Book";
+ */ import Library from "./Library";
 
 export default function App() {
   return (
@@ -10,7 +10,8 @@ export default function App() {
         <Route path="/book/:bookid/chapter/:chapterid" element={<Library />} />
         <Route path="/book/:bookid" element={<Library />} />
         <Route path="/" element={<Library />} />
-        <Route path="/grid/:bookid" element={<Book />} />
+        {/*         <Route path="/grid/:bookid" element={<Book />} />
+         */}{" "}
       </Routes>
     </div>
   );

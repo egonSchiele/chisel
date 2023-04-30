@@ -4,7 +4,7 @@ import settings from "../../settings.js";
 const title = "first chapter";
 const text = "some important text";
 
-describe("edit and switch", () => {
+/* describe("grid mode", () => {
   it("if you edit a chapter, move to another chapter, and then go back, your edits should show (issue #7)", () => {
     cy.login();
 
@@ -38,3 +38,4 @@ describe("edit and switch", () => {
     // finally, delete the book so we're back to a clean slate
   });
 });
+ */
