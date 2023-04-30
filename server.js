@@ -285,6 +285,10 @@ app.get("/", requireLogin, async (req, res) => {
   serveFile("library.html", res);
 });
 
+app.get("/home.html", requireLogin, async (req, res) => {
+  serveFile("library.html", res);
+});
+
 app.get("/404", async (req, res) => {
   res.sendFile(path.resolve("./dist/404.html"));
 });
