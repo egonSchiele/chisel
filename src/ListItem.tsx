@@ -11,6 +11,7 @@ export default function ListItem({
   onFavorite,
   onDelete,
   onRename,
+  onMove = null,
   content = "",
   selector = "listitem",
   tag = null,
@@ -21,6 +22,7 @@ export default function ListItem({
   onFavorite: () => void;
   onDelete: () => void;
   onRename: () => void;
+  onMove: () => void;
   content?: string;
   selector?: string;
   tag?: string;
@@ -38,6 +40,12 @@ export default function ListItem({
       onClick: onRename,
     },
   ];
+  if (onMove) {
+    listMenuItems.push({
+      label: "Move",
+      onClick: onMove,
+    });
+  }
   return (
     <div
       className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} ${

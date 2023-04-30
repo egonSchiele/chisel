@@ -11,6 +11,7 @@ import {
 
 import { RootState } from "../store";
 import { current } from "immer";
+import { sortBy } from 'lodash';
 
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
@@ -237,12 +238,26 @@ export const librarySlice = createSlice({
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapter) return;
+      let bookidChanged = false;
       book.chapters = book.chapters.map((c) => {
         if (c.chapterid === chapter.chapterid) {
+          if (c.bookid !== chapter.bookid) {
+            bookidChanged = true;
+          }
           return chapter;
         }
         return c;
       })
+      if (bookidChanged) {
+        book.chapterOrder = book.chapterOrder.filter((id) => id !== chapter.chapterid);
+        book.chapters = book.chapters.filter((c) => c.chapterid !== chapter.chapterid);
+        const newBook = state.books.find((b) => b.bookid === chapter.bookid);
+        if (newBook) {
+          newBook.chapterOrder.unshift(chapter.chapterid);
+          newBook.chapters.unshift(chapter);
+        }
+      }
+
     },
     addToContents(state: t.State, action: PayloadAction<string>) {
       const toAdd = action.payload;
@@ -667,10 +682,7 @@ export const getSelectedBookChapters = (
       const chapter = chapters.find((chapter) => chapter.chapterid === id);
       if (chapter) sortedChapters.push(chapter);
     });
-    const sortedByCreated = [...chapters];
-    /*     sortedByCreated.sort((a, b) =>
-      // @ts-ignore
-      a.created_at - b.created_at); */
+    const sortedByCreated = sortBy(chapters, ["created_at"])
     sortedByCreated.forEach((chapter) => {
       if (!sortedChapters.includes(chapter)) sortedChapters.push(chapter);
     });

@@ -22,6 +22,7 @@ export type State = {
 export type PopupData = {
   title: string;
   inputValue: string;
+  options?: SelectOption[];
   onSubmit: (value:string) => void;
 }
 
@@ -227,5 +228,10 @@ export type ReducerAction = {
   type: string;
   payload?: any;
 };
+
+export type SelectOption = {
+  label: string;
+  value: string;
+}
 
 type ActivePanel = "info" | "suggestions" | "settings" | "history";

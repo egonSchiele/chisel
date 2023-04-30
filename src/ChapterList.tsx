@@ -22,6 +22,8 @@ import Popup from "./Popup";
 import { getChapterText, getCsrfToken } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 import Input from "./components/Input";
+import { RootState } from "./store";
+import { sortBy } from "lodash";
 // import Draggable from "react-draggable";
 
 export default function ChapterList({
@@ -37,13 +39,19 @@ export default function ChapterList({
   bookid: string;
   selectedChapterId: string;
   onDelete: any;
-  saveChapter: any;
+  saveChapter: (chapter: t.Chapter) => Promise<void>;
   closeSidebar: () => void;
   newChapter: (title?: string, text?: string) => void;
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
   const chapters = useSelector(getSelectedBookChapters);
+  const bookOptions = useSelector((state: RootState) =>
+    sortBy(state.library.books, ["title"]).map((book) => ({
+      label: book.title,
+      value: book.bookid,
+    }))
+  );
   const [editing, setEditing] = React.useState(false);
 
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -127,6 +135,7 @@ export default function ChapterList({
           onDelete={() => deleteChapter(chapter.chapterid)}
           onFavorite={() => {}}
           onRename={() => startRenameChapter(chapter)}
+          onMove={() => startMoveChapter(chapter)}
           selector="chapterlist"
         />
       </li>
@@ -135,7 +144,12 @@ export default function ChapterList({
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
-    saveChapter(newChapter);
+    await saveChapter(newChapter);
+  }
+
+  async function moveChapter(chapter, bookid) {
+    const newChapter = { ...chapter, bookid };
+    await saveChapter(newChapter);
   }
 
   function startRenameChapter(chapter) {
@@ -144,6 +158,17 @@ export default function ChapterList({
         title: "Rename Chapter",
         inputValue: chapter.title,
         onSubmit: (newTitle) => renameChapter(chapter, newTitle),
+      })
+    );
+  }
+
+  function startMoveChapter(chapter) {
+    dispatch(
+      librarySlice.actions.showPopup({
+        title: "Move Chapter",
+        inputValue: chapter.bookid,
+        options: bookOptions,
+        onSubmit: (newBookId) => moveChapter(chapter, newBookId),
       })
     );
   }

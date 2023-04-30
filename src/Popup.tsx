@@ -3,8 +3,21 @@ import Input from "./components/Input";
 import Button from "./components/Button";
 import { useDispatch } from "react-redux";
 import { librarySlice } from "./reducers/librarySlice";
+import * as t from "./Types";
+import { isString } from "./utils";
+import Select from "./components/Select";
+function Popup({
+  title,
+  inputValue,
 
-function Popup({ title, inputValue, onSubmit }) {
+  onSubmit,
+  options = null,
+}: {
+  title: string;
+  inputValue: string;
+  onSubmit: (inputValue: string) => void;
+  options?: t.SelectOption[] | null;
+}) {
   const [inputValueState, setInputValueState] = useState(inputValue);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -24,11 +37,27 @@ function Popup({ title, inputValue, onSubmit }) {
             close();
           }}
         >
-          <Input
-            name={title}
-            value={inputValueState}
-            onChange={(e) => setInputValueState(e.target.value)}
-          />
+          {options && (
+            <Select
+              title={title}
+              name={title}
+              value={inputValueState}
+              onChange={(e) => setInputValueState(e.target.value)}
+            >
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+          )}
+          {!options && (
+            <Input
+              name={title}
+              value={inputValueState}
+              onChange={(e) => setInputValueState(e.target.value)}
+            />
+          )}
         </form>
         <div className="flex justify-end mt-4">
           <Button

@@ -1,7 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import React from "react";
-import { getSelectedBook, librarySlice } from "./reducers/librarySlice";
+import {
+  getSelectedBook,
+  getSelectedBookChapters,
+  librarySlice,
+} from "./reducers/librarySlice";
 import ContentEditable from "./components/ContentEditable";
 import TextArea from "./components/TextArea";
 import { Character } from "./Types";
@@ -99,6 +103,7 @@ function CompostBook() {
 
 export default function BookEditor() {
   const book = useSelector(getSelectedBook);
+  const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
   if (!book) {
     return <div>loading</div>;
@@ -184,8 +189,8 @@ export default function BookEditor() {
           <span>Chapters</span>
         </div>
         <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
-          {book.chapters &&
-            book.chapters.map((chapter, i) => (
+          {chapters &&
+            chapters.map((chapter, i) => (
               <Chapter key={i} chapter={chapter} bookid={book.bookid} />
             ))}
         </div>

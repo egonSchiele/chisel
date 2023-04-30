@@ -83,7 +83,9 @@ export default function Library() {
       onEditorSave();
     } else if (event.key === "Escape") {
       event.preventDefault();
-      if (state.launcherOpen) {
+      if (state.popupOpen) {
+        dispatch(librarySlice.actions.hidePopup());
+      } else if (state.launcherOpen) {
         dispatch(librarySlice.actions.toggleLauncher());
       } else if (state.viewMode === "focus") {
         focusModeClose();
@@ -607,6 +609,7 @@ export default function Library() {
           <Popup
             title={state.popupData.title}
             inputValue={state.popupData.inputValue}
+            options={state.popupData.options}
             onSubmit={state.popupData.onSubmit}
           />
         )}
