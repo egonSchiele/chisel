@@ -74,22 +74,15 @@ export type PlainTextBlock = {
   id?: string;
 };
 
-export type FoldableBlock = {
-  type: "foldable";
-  text: string;
-  open: boolean;
-  id?: string;
+export type ReferenceBlock = PlainTextBlock & {
+  reference: true;
 };
 
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text };
 }
 
-export function foldableBlock(text: string): FoldableBlock {
-  return { type: "foldable", text, id: nanoid(), open: true };
-}
-
-export type TextBlock = PlainTextBlock | FoldableBlock;
+export type TextBlock = PlainTextBlock | ReferenceBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 

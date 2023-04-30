@@ -101,7 +101,7 @@ export const librarySlice = createSlice({
             chapter.text = [
               t.plainTextBlock(chapter.text as unknown as string)
             ];
-          }
+          } 
         });
       });
       state.books = action.payload;

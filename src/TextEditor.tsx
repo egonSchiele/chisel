@@ -19,7 +19,11 @@ import {
   getText,
   librarySlice,
 } from "./reducers/librarySlice";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  Cog6ToothIcon,
+  LightBulbIcon,
+} from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useTraceUpdate } from "./utils";
 
@@ -202,18 +206,33 @@ function TextEditor({
       <div className="mb-sm h-full w-full">
         {open && (
           <div className="flex">
-            <div
-              className="flex-none cursor-pointer mr-xs"
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              <ChevronDownIcon
-                className={`w-5 h-5 ${
-                  isActive ? "text-gray-300" : "text-gray-500"
-                }`}
-              />
+            <div className="flex-none ">
+              <div
+                className="h-5 cursor-pointer mr-xs"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <ChevronDownIcon
+                  className={`w-5 h-5 ${
+                    isActive ? "text-gray-300" : "text-gray-500"
+                  }`}
+                />
+              </div>
+              <div
+                className="h-5 cursor-pointer mr-xs mt-xs hidden"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <Cog6ToothIcon
+                  className={`w-5 h-5 ${
+                    isActive ? "text-gray-300" : "text-gray-500"
+                  }`}
+                />
+              </div>
             </div>
+
             <div
               className={`flex-grow border-l ${
                 isActive ? "border-gray-300" : "border-gray-500"
