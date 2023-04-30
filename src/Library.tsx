@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store";
 import {
   fetchBooksThunk,
+  getChapter,
   getSelectedBook,
   getSelectedChapter,
   librarySlice,
@@ -168,6 +169,16 @@ export default function Library() {
     return chapter ? chapter.text : [];
   });
 
+  const currentChapterTitle = useSelector((state: RootState) => {
+    const chapter = getSelectedChapter(state);
+    return chapter ? chapter.title : "";
+  });
+
+  const currentBookTitle = useSelector((state: RootState) => {
+    const book = getSelectedBook(state);
+    return book ? book.title : "";
+  });
+
   const [launchItems, setLaunchItems] = useState<t.MenuItem[]>([]);
 
   const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
@@ -176,6 +187,7 @@ export default function Library() {
     const _launchItems = useLaunchItems(
       dispatch,
       bookid,
+      chapterid,
       togglePanel,
       navigate,
       settings,
@@ -191,11 +203,16 @@ export default function Library() {
       newBook,
       newCompostNote,
       onEditorSave,
-      () => {}
+      () => {},
+      currentBookTitle,
+      renameBook,
+      currentChapterTitle,
+      renameChapter
     );
     setLaunchItems(_launchItems);
   }, [
     bookid,
+    chapterid,
     settings,
     panels,
     books,
@@ -336,10 +353,14 @@ export default function Library() {
     }
   }
 
-  async function saveChapter(_chapter: t.Chapter, suggestions: t.Suggestion[]) {
+  async function saveChapter(
+    _chapter: t.Chapter,
+    suggestions: t.Suggestion[] | null
+  ) {
     const chapter = { ..._chapter };
-    chapter.suggestions = suggestions;
-
+    if (suggestions !== null) {
+      chapter.suggestions = suggestions;
+    }
     const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
     const result = await fetch("/api/saveChapter", {
       method: "POST",
@@ -374,6 +395,20 @@ export default function Library() {
     };
     func();
   }, 5000);
+
+  async function renameBook(bookid: string, newTitle: string) {
+    const book = state.books.find((b) => b.bookid === bookid);
+    if (!book) return;
+    const newBook = { ...book, title: newTitle };
+    await saveBook(newBook);
+  }
+
+  async function renameChapter(chapterid: string, newTitle: string) {
+    const chapter = getChapter(chapterid)({ library: state });
+    if (!chapter) return;
+    const newChapter = { ...chapter, title: newTitle };
+    await saveChapter(newChapter, null);
+  }
 
   async function saveBook(book: t.Book) {
     if (!book) {
@@ -613,7 +648,7 @@ export default function Library() {
                     navigate(`/book/${state.selectedBookId}`);
                   }
                 }}
-                saveChapter={(chapter) => saveChapter(chapter, [])}
+                saveChapter={(chapter) => saveChapter(chapter, null)}
                 closeSidebar={() =>
                   dispatch(librarySlice.actions.closeChapterList())
                 }

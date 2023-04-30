@@ -48,6 +48,7 @@ function Leaf() {
 export default function useLaunchItems(
   dispatch,
   bookid,
+  chapterid,
   togglePanel,
   navigate,
   settings,
@@ -63,7 +64,11 @@ export default function useLaunchItems(
   newBook,
   newCompostNote,
   onEditorSave,
-  getTextForSuggestions
+  getTextForSuggestions,
+  bookTitle,
+  renameBook,
+  chapterTitle,
+  renameChapter
 ) {
   const launchItems = [
     {
@@ -327,6 +332,38 @@ export default function useLaunchItems(
       label: "Convert title to title case",
       onClick: () => {
         dispatch(librarySlice.actions.setAPStyleTitle());
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (chapterid) {
+    launchItems.push({
+      label: "Rename Chapter",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.showPopup({
+            title: "Rename Chapter",
+            inputValue: chapterTitle,
+            onSubmit: (newTitle) => renameChapter(chapterid, newTitle),
+          })
+        );
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (bookid) {
+    launchItems.push({
+      label: "Rename Book",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.showPopup({
+            title: "Rename bBok",
+            inputValue: bookTitle,
+            onSubmit: (newTitle) => renameBook(bookid, newTitle),
+          })
+        );
       },
       icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
     });
