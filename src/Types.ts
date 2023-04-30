@@ -108,9 +108,6 @@ export type Book = {
   chapterOrder: ChapterId[];
   chapters: Chapter[];
   design: {
-    coverColor: string;
-    labelColor: string;
-    labelLinesColor: string;
   };
   columnHeadings: string[];
   rowHeadings: string[];
