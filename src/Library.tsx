@@ -357,7 +357,7 @@ export default function Library() {
       // Since we depend on a cache version of the selected book when picking a chapter
       // we must also set the chapter on said cache whenever save occurs.
       // This avoids the issue in which switching a chapter looses your last saved work.
-      dispatch(librarySlice.actions.setSelectedBookChapter(chapter));
+      dispatch(librarySlice.actions.updateChapter(chapter));
     }
   }
 
@@ -375,16 +375,19 @@ export default function Library() {
     func();
   }, 5000);
 
-  async function saveBook(_book: t.Book) {
-    if (!_book) {
+  async function saveBook(book: t.Book) {
+    if (!book) {
       console.log("no book");
       return;
     }
 
-    const book = { ..._book };
+    const bookNoChapters = { ...book };
 
-    book.chapters = [];
-    const body = JSON.stringify({ book, csrfToken: getCsrfToken() });
+    bookNoChapters.chapters = [];
+    const body = JSON.stringify({
+      book: bookNoChapters,
+      csrfToken: getCsrfToken(),
+    });
     const result = await fetch("/api/saveBook", {
       method: "POST",
       headers: {
@@ -392,6 +395,7 @@ export default function Library() {
       },
       body,
     });
+    dispatch(librarySlice.actions.updateBook(book));
     dispatch(librarySlice.actions.setSaved(true));
   }
 
@@ -580,7 +584,6 @@ export default function Library() {
             <BookList
               books={state.books}
               selectedBookId={state.selectedBookId}
-              onChange={fetchBooks}
               onDelete={(deletedBookid) => {
                 dispatch(librarySlice.actions.deleteBook(deletedBookid));
                 if (deletedBookid === bookid) {

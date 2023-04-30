@@ -22,14 +22,12 @@ async function deleteBook(bookid: string, onDelete) {
   onDelete(bookid);
 }
 
-async function favoriteBook(bookid: string, onChange) {
+async function favoriteBook(bookid: string) {
   const res = await fd.favoriteBook(bookid);
   if (res.tag === "error") {
     console.log(res.message);
     return;
   }
-
-  await onChange();
 }
 
 const buttonStyles =
@@ -39,7 +37,6 @@ const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 export default function BookList({
   books,
   selectedBookId,
-  onChange,
   onDelete,
   saveBook,
   newBook,
@@ -47,7 +44,6 @@ export default function BookList({
 }: {
   books: t.Book[];
   selectedBookId: string;
-  onChange: () => void;
   onDelete: (bookid: string) => void;
   saveBook: (book: t.Book) => void;
   newBook: () => void;
@@ -60,15 +56,14 @@ export default function BookList({
       librarySlice.actions.showPopup({
         title: "Rename Book",
         inputValue: book.title,
-        onSubmit: (newTitle) => renameBook(book, newTitle, onChange),
+        onSubmit: (newTitle) => renameBook(book, newTitle),
       })
     );
   }
 
-  async function renameBook(book, newTitle, onChange) {
+  async function renameBook(book, newTitle) {
     const newBook = { ...book, title: newTitle };
     saveBook(newBook);
-    await onChange();
   }
 
   const compostBook = books.find((book) => book.tag === "compost");
@@ -84,7 +79,7 @@ export default function BookList({
         title={book.title}
         selected={book.bookid === selectedBookId}
         onDelete={() => deleteBook(book.bookid, onDelete)}
-        onFavorite={() => favoriteBook(book.bookid, onChange)}
+        onFavorite={() => favoriteBook(book.bookid)}
         onRename={() => startRenameBook(book)}
         selector={tag ? `booklist-${tag}` : "booklist"}
         tag={tag}

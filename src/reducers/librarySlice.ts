@@ -118,6 +118,16 @@ export const librarySlice = createSlice({
       const bookid = action.payload;
       state.books = state.books.filter((book) => book.bookid !== bookid);
     },
+    updateBook(state: t.State, action: PayloadAction<t.Book>) {
+      const book = action.payload;
+      if (!book) return;
+      state.books = state.books.map((b) => {
+        if (b.bookid === book.bookid) {
+          return book;
+        }
+        return b;
+      })
+    },
     deleteChapter(state: t.State, action: PayloadAction<string>) {
       const chapterid = action.payload;
       const book = getSelectedBook({ library: state });
@@ -223,16 +233,16 @@ export const librarySlice = createSlice({
     setSaved(state: t.State, action: PayloadAction<boolean>) {
       state.saved = action.payload;
     },
-    setSelectedBookChapter(state: t.State, action: PayloadAction<t.Chapter>) {
-      const _chapter = action.payload;
+    updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
+      const chapter = action.payload;
       const book = getSelectedBook({ library: state });
-      const idx = book.chapters.findIndex(
-        (sbChapter) => sbChapter.chapterid === _chapter.chapterid
-      );
-
-      if (idx >= 0) {
-        book.chapters[idx] = _chapter;
-      }
+      if (!book || !chapter) return;
+      book.chapters = book.chapters.map((c) => {
+        if (c.chapterid === chapter.chapterid) {
+          return chapter;
+        }
+        return c;
+      })
     },
     addToContents(state: t.State, action: PayloadAction<string>) {
       const toAdd = action.payload;
