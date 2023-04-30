@@ -15,6 +15,7 @@ import { postWithCsrf } from "./fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
 import _ from "lodash";
+import { useKeyboardScroll } from "./hooks";
 
 export default function Editor({ onSave }: { onSave: () => void }) {
   const dispatch = useDispatch();
@@ -32,38 +33,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
 
   const readonlyDiv = useRef(null);
-
-  const handleKeyDown = async (event) => {
-    if (!readonlyDiv.current) return;
-    const div = readonlyDiv.current;
-    if (event.shiftKey && event.code === "Space") {
-      event.preventDefault();
-      div.scroll({ top: div.scrollTop + 800, behavior: "smooth" });
-    } else if (event.code === "Space") {
-      event.preventDefault();
-      div.scroll({ top: div.scrollTop + 400, behavior: "smooth" });
-    } else if (event.metaKey && event.code === "ArrowDown") {
-      event.preventDefault();
-      div.scroll({ top: div.scrollHeight, behavior: "smooth" });
-    } else if (event.metaKey && event.code === "ArrowUp") {
-      event.preventDefault();
-      div.scroll({ top: 0, behavior: "smooth" });
-    } else if (event.code === "ArrowDown") {
-      event.preventDefault();
-      div.scroll({ top: div.scrollTop + 400, behavior: "smooth" });
-    } else if (event.code === "ArrowUp") {
-      event.preventDefault();
-      div.scroll({ top: div.scrollTop - 400, behavior: "smooth" });
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown, readonlyDiv]);
+  useKeyboardScroll(readonlyDiv);
 
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;

@@ -129,6 +129,13 @@ export default function Library() {
       } else {
         dispatch(librarySlice.actions.setViewMode("readonly"));
       }
+    } else if (event.shiftKey && event.metaKey && event.key === "f") {
+      event.preventDefault();
+      if (state.viewMode === "focus") {
+        dispatch(librarySlice.actions.setViewMode("default"));
+      } else {
+        dispatch(librarySlice.actions.setViewMode("focus"));
+      }
     }
   };
 

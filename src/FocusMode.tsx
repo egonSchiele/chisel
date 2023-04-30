@@ -2,7 +2,7 @@ import { daleChall } from "dale-chall";
 import { stemmer } from "stemmer";
 
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { hedges } from "hedges";
 import NavButton from "./NavButton";
 import { fillers } from "fillers";
@@ -14,6 +14,7 @@ import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 import * as fd from "./fetchData";
 import * as _ from "lodash";
+import { useKeyboardScroll } from "./hooks";
 
 type Annotation = {
   type: AnnotationType;
@@ -305,7 +306,7 @@ export default function FocusMode({ text, onClose, onChange }) {
   const [activeGroups, setActiveGroups] = useState([]);
   const [currentWord, setCurrentWord] = useState(null);
   const words = split(mostRecentText);
-  const lines = mostRecentText.split(". ");
+  const lines = mostRecentText.split(/\.\s+/);
   const normalizedWords: string[] = words.map(normalize);
   const wordAnnotations: Annotation[][] = [];
 
@@ -388,6 +389,9 @@ export default function FocusMode({ text, onClose, onChange }) {
     };
   }, [handleKeyDown]);
 
+  const focusDiv = useRef(null);
+  useKeyboardScroll(focusDiv);
+
   const wordComponents = words.map((word: string, i: number) => {
     const annotations = wordAnnotations[i] || [];
     return (
@@ -432,6 +436,7 @@ export default function FocusMode({ text, onClose, onChange }) {
           <div
             style={{ height: "calc(100vh - 10rem)" }}
             className="overflow-auto mt-5 flex-grow flex max-w-screen-md mx-auto flex-wrap content-start"
+            ref={focusDiv}
           >
             {wordComponents}
           </div>
