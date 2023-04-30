@@ -186,7 +186,7 @@ export default function BookEditor() {
         </div>
 
         <div className="text-xl font-semibold mt-md mb-xs">
-          <span>Chapters</span>
+          <span>Chapters ({chapters ? chapters.length : 0})</span>
         </div>
         <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
           {chapters &&
