@@ -159,10 +159,17 @@ function TextEditor({
 
   const handleKeyDownWhenClosed = (event) => {
     if (open) return;
+    if (!isActive) return;
     if (event.key === "Tab") {
-      if (isActive) {
-        event.preventDefault();
-        setOpen(true);
+      event.preventDefault();
+      setOpen(true);
+    } else if (event.code === "ArrowDown") {
+      if (index < currentChapterTextLength - 1) {
+        dispatch(librarySlice.actions.setActiveTextIndex(index + 1));
+      }
+    } else if (event.code === "ArrowUp") {
+      if (index > 0) {
+        dispatch(librarySlice.actions.setActiveTextIndex(index - 1));
       }
     }
   };

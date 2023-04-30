@@ -22,7 +22,7 @@ export default function ListItem({
   onFavorite: () => void;
   onDelete: () => void;
   onRename: () => void;
-  onMove: () => void;
+  onMove?: () => void;
   content?: string;
   selector?: string;
   tag?: string;
