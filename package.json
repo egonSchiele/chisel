@@ -54,6 +54,7 @@
     "ap-style-title-case": "^2.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dale-chall": "^2.0.1",
     "diff": "^5.1.0",
     "diff-match-patch": "^1.0.5",
     "dotenv": "^16.0.3",
@@ -76,6 +77,7 @@
     "react-quill": "^2.0.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
+    "stemmer": "^2.0.1",
     "syllable": "^5.0.1"
   },
   "scripts": {

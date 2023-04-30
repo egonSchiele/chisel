@@ -1,3 +1,6 @@
+import { daleChall } from "dale-chall";
+import { stemmer } from "stemmer";
+
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import { hedges } from "hedges";
@@ -10,6 +13,7 @@ import Button from "./components/Button";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 import * as fd from "./fetchData";
+import * as _ from "lodash";
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
@@ -128,17 +132,30 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   );
 }
 
-const clicheTextAsWords = cliches.map((fragment) =>
+const clicheTextAsWords: string[][] = cliches.map((fragment) =>
   split(fragment).map(normalize)
 );
 
+const jargonTextAsWords = jargon.map((tuple) => {
+  const [jargonText, alternative] = tuple;
+  return split(jargonText).map(normalize);
+});
+
+const jargonTextAlternatives = jargon.map((tuple) => {
+  const [jargonText, alternative] = tuple;
+  return alternative;
+});
+
 type Annotation = {
-  type: "hedge" | "filler" | "cliche";
+  type: AnnotationType;
   word?: string;
   alternatives?: string[];
   groupid?: number;
   startIndex?: number;
+  length?: number;
 };
+
+type AnnotationType = "hedge" | "filler" | "cliche" | "jargon";
 
 function Word({
   word,
@@ -217,6 +234,43 @@ function Word({
   );
 }
 
+function findMultiWordAnnotations(
+  words: string[],
+  badPhrases: string[][],
+  type: AnnotationType,
+  alternatives = []
+) {
+  let groupid = 1;
+  let idsAndAnnotations: { ids: number[]; annotation: Annotation }[] = [];
+  badPhrases.forEach((badPhrase, i) => {
+    const index = findSubarray(words, badPhrase);
+    if (index !== -1) {
+      const ids = _.range(index, index + badPhrase.length);
+      const annotation: Annotation = {
+        type,
+        groupid,
+        startIndex: index,
+        length: badPhrase.length,
+      };
+      if (alternatives[i]) {
+        annotation.alternatives = [alternatives[i]];
+      }
+      idsAndAnnotations.push({ ids, annotation });
+      groupid++;
+    }
+  });
+  return idsAndAnnotations;
+}
+
+function addAnnotations(results, annotations) {
+  results.forEach((data) => {
+    const { ids, annotation } = data;
+    ids.forEach((id) => {
+      annotations[id].push(annotation);
+    });
+  });
+}
+
 export default function FocusMode({ text, onClose, onChange }) {
   const [history, setHistory] = useState([text]);
   const mostRecentText = history[history.length - 1];
@@ -224,45 +278,29 @@ export default function FocusMode({ text, onClose, onChange }) {
   const [currentWord, setCurrentWord] = useState(null);
   const words = split(mostRecentText);
 
-  const normalizedWords = words.map(normalize);
-  const wordAnnotations = {};
+  const normalizedWords: string[] = words.map(normalize);
+  const wordAnnotations: Annotation[][] = [];
 
   for (let i = 0; i < words.length; i++) {
-    wordAnnotations[i] = [];
+    wordAnnotations.push([]);
   }
 
-  let groupid = 1;
-  clicheTextAsWords.forEach((clicheTextAsWord) => {
-    const index = findSubarray(normalizedWords, clicheTextAsWord);
-    if (index !== -1) {
-      for (let i = index; i < index + clicheTextAsWord.length; i++) {
-        wordAnnotations[i].push({
-          type: "cliche",
-          groupid,
-          startIndex: index,
-          length: clicheTextAsWord.length,
-        });
-      }
-      groupid++;
-    }
-  });
+  let results = findMultiWordAnnotations(
+    normalizedWords,
+    clicheTextAsWords,
+    "cliche"
+  );
 
-  jargon.forEach((tuple) => {
-    const [jargonText, alternative] = tuple;
-    const jargonTextAsWords = split(jargonText).map(normalize);
-    const index = findSubarray(normalizedWords, jargonTextAsWords);
-    if (index !== -1) {
-      for (let i = index; i < index + jargonTextAsWords.length; i++) {
-        wordAnnotations[i].push({
-          type: "jargon",
-          groupid,
-          startIndex: index,
-          length: jargonTextAsWords.length,
-        });
-      }
-      groupid++;
-    }
-  });
+  addAnnotations(results, wordAnnotations);
+
+  results = findMultiWordAnnotations(
+    normalizedWords,
+    jargonTextAsWords,
+    "jargon",
+    jargonTextAlternatives
+  );
+
+  addAnnotations(results, wordAnnotations);
 
   normalizedWords.forEach((word, i) => {
     if (hedges.includes(word)) {
@@ -271,6 +309,9 @@ export default function FocusMode({ text, onClose, onChange }) {
     if (fillers.includes(word)) {
       wordAnnotations[i].push({ type: "filler" });
     }
+    /* if (!daleChall.includes(stemmer(word))) {
+      wordAnnotations[i].push({ type: "complex" });
+    } */
   });
 
   function replaceWord(index, newWord) {
