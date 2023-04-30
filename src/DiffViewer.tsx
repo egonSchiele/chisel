@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import * as JsDiff from "diff";
 import Button from "./components/Button";
 import { getHtmlDiff } from "./diff";
@@ -19,20 +19,33 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
       </div>
     );
   }
+  /*  return (
+    <p>
+      {originalText.length}, {newText.length}
+    </p>
+  ); */
   const { originalLines, newLines } = getHtmlDiff(originalText, newText);
 
   return (
-    <div className="">
+    <div className="h-screen overflow-scroll">
       <Button onClick={onClose}>Close</Button>
       <Button onClick={() => setRaw(true)}>Raw</Button>
-      <div className="grid grid-cols-2 gap-4 m-md font-mono">
-        <div className="p-sm bg-gray-100 dark:bg-gray-700 rounded-md">
-          {originalLines}
+      <Suspense
+        fallback={
+          <div>
+            Diffing {originalText.length} chars vs {newText.length} chars{" "}
+          </div>
+        }
+      >
+        <div className="grid grid-cols-2 gap-4 m-md font-mono">
+          <div className="p-sm bg-gray-100 dark:bg-gray-700 rounded-md">
+            {originalLines}
+          </div>
+          <div className="p-sm bg-gray-100 dark:bg-gray-700 rounded-md">
+            {newLines}
+          </div>
         </div>
-        <div className="p-sm bg-gray-100 dark:bg-gray-700 rounded-md">
-          {newLines}
-        </div>
-      </div>
+      </Suspense>
     </div>
   );
 };
