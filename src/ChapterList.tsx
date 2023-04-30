@@ -45,8 +45,7 @@ export default function ChapterList({
   const dispatch = useDispatch();
   const chapters = useSelector(getSelectedBookChapters);
   const [editing, setEditing] = React.useState(false);
-  const [showPopup, setShowPopup] = React.useState(false);
-  const [currentChapter, setCurrentChapter] = React.useState(chapters[0]);
+
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
   async function deleteChapter(chapterid: string) {
@@ -137,12 +136,16 @@ export default function ChapterList({
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };
     saveChapter(newChapter);
-    setShowPopup(false);
   }
 
   function startRenameChapter(chapter) {
-    setCurrentChapter(chapter);
-    setShowPopup(true);
+    dispatch(
+      librarySlice.actions.showPopup({
+        title: "Rename Chapter",
+        inputValue: chapter.title,
+        onSubmit: (newTitle) => renameChapter(chapter, newTitle),
+      })
+    );
   }
 
   const sublistDraggable = () => [
@@ -270,14 +273,6 @@ export default function ChapterList({
   );
   return (
     <>
-      {showPopup && (
-        <Popup
-          title="Rename Chapter"
-          inputValue={currentChapter.title}
-          onClose={() => setShowPopup(false)}
-          onChange={(newTitle) => renameChapter(currentChapter, newTitle)}
-        />
-      )}
       <List
         title={editing ? "Editing" : "Chapters"}
         items={editing ? sublistDraggable() : [search, ...sublist()]}

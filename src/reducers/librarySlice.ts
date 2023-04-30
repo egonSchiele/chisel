@@ -69,7 +69,9 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     loading: true,
     booksLoaded: false,
     viewMode: "default",
-    launcherOpen: false
+    launcherOpen: false,
+    popupOpen: false,
+    popupData: null
   };
 };
 
@@ -372,6 +374,13 @@ export const librarySlice = createSlice({
     },
     toggleLauncher(state) {
       state.launcherOpen = !state.launcherOpen;
+    },
+    hidePopup(state) {
+      state.popupOpen = false;
+    },
+    showPopup(state, action: PayloadAction<t.PopupData>) {
+      state.popupOpen = true;
+      state.popupData = action.payload;
     },
     noBookSelected(state) {
       state.selectedBookId = null;

@@ -54,18 +54,20 @@ export default function BookList({
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
-  const [showPopup, setShowPopup] = React.useState(false);
-  const [currentBook, setCurrentBook] = React.useState(books[0]);
 
   function startRenameBook(book) {
-    setCurrentBook(book);
-    setShowPopup(true);
+    dispatch(
+      librarySlice.actions.showPopup({
+        title: "Rename Book",
+        inputValue: book.title,
+        onSubmit: (newTitle) => renameBook(book, newTitle, onChange),
+      })
+    );
   }
 
   async function renameBook(book, newTitle, onChange) {
     const newBook = { ...book, title: newTitle };
     saveBook(newBook);
-    setShowPopup(false);
     await onChange();
   }
 
@@ -132,14 +134,6 @@ export default function BookList({
 
   return (
     <>
-      {showPopup && (
-        <Popup
-          title="Rename Book"
-          inputValue={currentBook.title}
-          onClose={() => setShowPopup(false)}
-          onChange={(newTitle) => renameBook(currentBook, newTitle, onChange)}
-        />
-      )}
       <List
         title="Books"
         items={items}

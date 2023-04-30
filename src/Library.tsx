@@ -36,6 +36,7 @@ import {
 import useLaunchItems from "./launchItems";
 import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
+import Popup from "./Popup";
 
 export default function Library() {
   const state = useSelector((state: RootState) => state.library);
@@ -563,6 +564,13 @@ export default function Library() {
         </div>
       )}
       <div className="flex h-full">
+        {state.popupOpen && state.popupData && (
+          <Popup
+            title={state.popupData.title}
+            inputValue={state.popupData.inputValue}
+            onSubmit={state.popupData.onSubmit}
+          />
+        )}
         {state.panels.bookList.open && (
           <div
             className={`flex-none h-full ${

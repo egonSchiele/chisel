@@ -15,7 +15,15 @@ export type State = {
   _temporaryFocusModeState?: string;
   viewMode: ViewMode;
   launcherOpen: boolean;
+  popupOpen: boolean;
+  popupData: PopupData | null;
 };
+
+export type PopupData = {
+  title: string;
+  inputValue: string;
+  onSubmit: (value:string) => void;
+}
 
 export type ViewMode = "default" | "focus" | "fullscreen" | "grid" | "diff" | "readonly";
 

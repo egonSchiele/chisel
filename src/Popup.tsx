@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Input from "./components/Input";
 import Button from "./components/Button";
+import { useDispatch } from "react-redux";
+import { librarySlice } from "./reducers/librarySlice";
 
-function Popup({
-  onClose, title, inputValue, onChange,
-}) {
+function Popup({ title, inputValue, onSubmit }) {
   const [inputValueState, setInputValueState] = useState(inputValue);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     setInputValueState(inputValue);
   }, [inputValue]);
+
+  const close = () => dispatch(librarySlice.actions.hidePopup());
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-20">
@@ -18,7 +20,8 @@ function Popup({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onChange(inputValueState);
+            onSubmit(inputValueState);
+            close();
           }}
         >
           <Input
@@ -29,13 +32,16 @@ function Popup({
         </form>
         <div className="flex justify-end mt-4">
           <Button
-            onClick={onClose}
+            onClick={close}
             className="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded mr-2"
           >
             Cancel
           </Button>
           <Button
-            onClick={() => onChange(inputValueState)}
+            onClick={() => {
+              onSubmit(inputValueState);
+              close();
+            }}
             className="bg-blue-500 text-white font-semibold py-2 px-4 rounded"
             selector="popup-ok-button"
           >
