@@ -1,3 +1,4 @@
+import DiffMatchPatch from "diff-match-patch";
 import React from "react";
 import * as JsDiff from "diff";
 type Diff = {
@@ -16,6 +17,59 @@ function makeDiff(value, type: "added" | "removed" | "same"): Diff[] {
     obj.removed = true;
   }
   return [obj];
+}
+
+export function getFastHtmlDiff(originalText, newText, changesOnly = false) {
+  const dmp = new DiffMatchPatch();
+  dmp.Match_Distance = 100;
+  const diff = dmp.diff_main(originalText, newText);
+  dmp.diff_cleanupSemantic(diff);
+
+  let key = 0;
+  const originalLines = [];
+  const newLines = [];
+  diff.forEach((part) => {
+    //const str = "START\n" + part.value + "\nEND";
+    const str = part[1];
+    const lines = str.split("\n");
+
+    for (let i = 0; i < lines.length; i++) {
+      key += 1;
+      if (i === lines.length - 1 && lines[i] === "") {
+        continue; // Skip the last empty line
+      }
+
+      if (part[0] === 1) {
+        originalLines.push("");
+        newLines.push(
+          <span key={key} className="bg-green-300 dark:bg-green-700">
+            {lines[i]}
+          </span>
+        );
+      } else if (part[0] === -1) {
+        originalLines.push(
+          <span key={key} className="bg-red-300 dark:bg-red-700">
+            {lines[i]}
+          </span>
+        );
+        newLines.push("");
+      } else {
+        /* if (changesOnly) continue; */
+        originalLines.push(<span key={key}>{lines[i]}</span>);
+        key += 1;
+        newLines.push(<span key={key}>{lines[i]}</span>);
+      }
+
+      if (i < lines.length - 1) {
+        key += 1;
+        originalLines.push(<br key={key} />);
+        key += 1;
+        newLines.push(<br key={key} />);
+      }
+    }
+  });
+
+  return { originalLines, newLines };
 }
 
 export function getHtmlDiff(originalText, newText, changesOnly = false) {

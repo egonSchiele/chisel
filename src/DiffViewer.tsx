@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import * as JsDiff from "diff";
 import Button from "./components/Button";
-import { getHtmlDiff } from "./diff";
+import { getFastHtmlDiff, getHtmlDiff } from "./diff";
 
 const DiffViewer = ({ originalText, newText, onClose }) => {
   const [raw, setRaw] = React.useState(false);
@@ -24,7 +24,7 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
       {originalText.length}, {newText.length}
     </p>
   ); */
-  const { originalLines, newLines } = getHtmlDiff(originalText, newText);
+  const { originalLines, newLines } = getFastHtmlDiff(originalText, newText);
 
   return (
     <div className="h-screen overflow-scroll">
