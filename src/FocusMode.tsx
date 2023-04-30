@@ -14,6 +14,18 @@ import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 import * as fd from "./fetchData";
 import * as _ from "lodash";
+
+type Annotation = {
+  type: AnnotationType;
+  word?: string;
+  alternatives?: string[];
+  groupid?: number;
+  startIndex?: number;
+  length?: number;
+};
+
+type AnnotationType = "hedge" | "filler" | "cliche" | "jargon" | "longline";
+
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
@@ -146,17 +158,6 @@ const jargonTextAlternatives = jargon.map((tuple) => {
   return alternative;
 });
 
-type Annotation = {
-  type: AnnotationType;
-  word?: string;
-  alternatives?: string[];
-  groupid?: number;
-  startIndex?: number;
-  length?: number;
-};
-
-type AnnotationType = "hedge" | "filler" | "cliche" | "jargon";
-
 function Word({
   word,
   annotations,
@@ -182,11 +183,13 @@ function Word({
 
   const simpleTags = annotations
     .filter((tag) => !tag.groupid)
+    .filter((tag) => tag.type !== "longline")
     .map((tag) => tag.type);
   const tagsWithGroupid = annotations.filter((tag) => tag.groupid);
   const complexTags = tagsWithGroupid.map((tag) => tag.type);
   const groupids = tagsWithGroupid.map((tag) => tag.groupid);
-
+  const hasLongLine =
+    annotations.find((tag) => tag.type === "longline") !== undefined;
   const activeGroupids = groupids.filter((groupid) =>
     activeGroups.includes(groupid)
   );
@@ -195,7 +198,10 @@ function Word({
     className = "bg-gray-300 dark:bg-gray-600";
   }
   if (activeGroupids.length > 0) {
-    className = "bg-gray-200 dark:bg-gray-700";
+    className = "bg-gray-200 dark:bg-green-500";
+  }
+  if (hasLongLine) {
+    className = "border-b-2 border-red-700";
   }
 
   return (
@@ -209,7 +215,7 @@ function Word({
       onClick={() => {
         setCurrentWord(index);
       }}
-      className={`flex-none max-w-fit cursor-pointer max-h-fit m-0 p-0 ${className}`}
+      className={`flex-none max-w-fit cursor-pointer max-h-fit m-0 p-0 mb-xs pr-xs ${className}`}
     >
       {/*   <p className="text-sm font-light antialiased dark:text-gray-300 text-end">
         {syllable(word)}
@@ -224,7 +230,7 @@ function Word({
           onChange(index, newWord);
         }}
       /> */}
-      <div className="h-sm text-sm font-light antialiased dark:text-gray-300">
+      <div className="h-sm text-sm mb-xs font-light antialiased dark:text-gray-300">
         {simpleTags.join(", ")}
         {complexTags.join(", ")}
         {/*         {JSON.stringify(annotations)}
@@ -262,6 +268,28 @@ function findMultiWordAnnotations(
   return idsAndAnnotations;
 }
 
+function findLongLines(lines) {
+  let count = 0;
+  let idsAndAnnotations: { ids: number[]; annotation: Annotation }[] = [];
+  let groupid = 0;
+  lines.forEach((line) => {
+    const lineWords = split(line);
+    if (lineWords.length > 20) {
+      const annotation: Annotation = {
+        type: "longline",
+        groupid,
+        startIndex: count,
+        length: lineWords.length,
+      };
+      const ids = _.range(count, count + lineWords.length);
+      idsAndAnnotations.push({ ids, annotation });
+      groupid++;
+    }
+    count += lineWords.length;
+  });
+  return idsAndAnnotations;
+}
+
 function addAnnotations(results, annotations) {
   results.forEach((data) => {
     const { ids, annotation } = data;
@@ -277,7 +305,7 @@ export default function FocusMode({ text, onClose, onChange }) {
   const [activeGroups, setActiveGroups] = useState([]);
   const [currentWord, setCurrentWord] = useState(null);
   const words = split(mostRecentText);
-
+  const lines = mostRecentText.split(". ");
   const normalizedWords: string[] = words.map(normalize);
   const wordAnnotations: Annotation[][] = [];
 
@@ -300,6 +328,9 @@ export default function FocusMode({ text, onClose, onChange }) {
     jargonTextAlternatives
   );
 
+  addAnnotations(results, wordAnnotations);
+
+  results = findLongLines(lines);
   addAnnotations(results, wordAnnotations);
 
   normalizedWords.forEach((word, i) => {
@@ -400,7 +431,7 @@ export default function FocusMode({ text, onClose, onChange }) {
         <div className="mt-8 pt-xs">
           <div
             style={{ height: "calc(100vh - 10rem)" }}
-            className="overflow-auto mt-5 flex-grow flex max-w-screen-md mx-auto flex-wrap gap-xs content-start"
+            className="overflow-auto mt-5 flex-grow flex max-w-screen-md mx-auto flex-wrap content-start"
           >
             {wordComponents}
           </div>
