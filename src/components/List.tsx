@@ -131,7 +131,9 @@ export default function List({
       <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder">
         {leftMenuItem &&
           Array.isArray(leftMenuItem) &&
-          leftMenuItem.map((item, index) => <MenuItem key={index} {...item} />)}
+          leftMenuItem.map((item, index) => (
+            <MenuItem key={item.label} {...item} />
+          ))}
         {leftMenuItem && !Array.isArray(leftMenuItem) && (
           <MenuItem {...leftMenuItem} />
         )}
