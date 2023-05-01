@@ -186,7 +186,9 @@ function Word({
     .filter((tag) => !tag.groupid)
     .filter((tag) => tag.type !== "longline")
     .map((tag) => tag.type);
-  const tagsWithGroupid = annotations.filter((tag) => tag.groupid);
+  const tagsWithGroupid = annotations
+    .filter((tag) => tag.groupid)
+    .filter((tag) => tag.type !== "longline");
   const complexTags = tagsWithGroupid.map((tag) => tag.type);
   const groupids = tagsWithGroupid.map((tag) => tag.groupid);
   const hasLongLine =
