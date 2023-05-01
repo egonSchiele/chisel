@@ -9,6 +9,7 @@ export const useKeyboardScroll = (htmlRef, speed=400) => {
       div.scroll({ top: div.scrollTop + (speed*2), behavior: "smooth" });
     } else if (event.code === "Space") {
       event.preventDefault();
+      
       div.scroll({ top: div.scrollTop + speed, behavior: "smooth" });
     } else if (event.metaKey && event.code === "ArrowDown") {
       event.preventDefault();
@@ -18,10 +19,10 @@ export const useKeyboardScroll = (htmlRef, speed=400) => {
       div.scroll({ top: 0, behavior: "smooth" });
     } else if (event.code === "ArrowDown") {
       event.preventDefault();
-      div.scroll({ top: div.scrollTop + speed, behavior: "smooth" });
+      div.scroll({ top: div.scrollTop + (speed/2), behavior: "smooth" });
     } else if (event.code === "ArrowUp") {
       event.preventDefault();
-      div.scroll({ top: div.scrollTop - speed, behavior: "smooth" });
+      div.scroll({ top: div.scrollTop - (speed/2), behavior: "smooth" });
     }
   };
 
