@@ -14,6 +14,14 @@ try {
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
+function success() {
+  return { success: true };
+}
+
+function failure(message) {
+  return { success: false, message };
+}
+
 export const saveBook = async (book) => {
   console.log(`saving book ${book.bookid}`);
 
@@ -22,14 +30,26 @@ export const saveBook = async (book) => {
     return;
   }
 
-  book.created_at = Date.now();
   const docRef = db.collection("books").doc(book.bookid);
   try {
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.created_at && data.created_at > book.created_at) {
+        return failure(
+          `Could not save, your copy of this book is older than the one in the database. Please refresh to get the latest updates, then try again.`
+        );
+      }
+    }
+    book.created_at = Date.now();
+
     await docRef.set(book);
     console.log("Successfully synced book to Firestore");
   } catch (error) {
     console.error("Error syncing book to Firestore:", error);
+    return failure("Error saving book");
   }
+  return success();
 };
 
 export const getBook = async (bookid) => {
@@ -156,8 +176,7 @@ export const saveChapter = async (chapter) => {
   console.log(`saving chapter ${chapter.chapterid}`);
 
   if (!chapter) {
-    console.log("no chapter to save");
-    return;
+    return failure("no chapter to save");
   }
 
   if (
@@ -165,19 +184,31 @@ export const saveChapter = async (chapter) => {
     chapter.text &&
     chapter.text.length >= settings.limits.chapterLength
   ) {
-    throw new Error(
+    return failure(
       `Chapter is too long. Limit: ${settings.limits.chapterLength}, your chapter: ${chapter.text.length}`
     );
   }
 
-  chapter.created_at = Date.now();
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   try {
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.created_at && data.created_at > chapter.created_at) {
+        return failure(
+          `Could not save, your copy of this chapter is older than the one in the database. Please refresh to get the latest updates, then try again.`
+        );
+      }
+    }
+    chapter.created_at = Date.now();
+
     await docRef.set(chapter);
     console.log("Successfully synced chapter to Firestore");
   } catch (error) {
     console.error("Error syncing chapter to Firestore:", error);
+    return failure("Error saving chapter");
   }
+  return success();
 };
 
 export const getChapter = async (chapterid) => {
@@ -261,7 +292,7 @@ export const saveToHistory = async (chapterid, text) => {
     const history = [text];
     const docRef = db.collection("history").doc(chapterid);
     await docRef.set({ history });
-    return;
+    return success();
   }
   const { history } = bookObj.data();
 
@@ -269,7 +300,7 @@ export const saveToHistory = async (chapterid, text) => {
     settings.limits.historyLength > 0 &&
     history.length >= settings.limits.historyLength
   ) {
-    throw new Error(
+    return failure(
       `History limit reached: ${settings.limits.historyLength}, ${chapterid}`
     );
   }
@@ -281,16 +312,15 @@ export const saveToHistory = async (chapterid, text) => {
 
   // const old = history[history.length - 1];
   console.log("old", old);
-  if (old === text) {
+  if (old.trim() === text.trim()) {
     console.log("no change");
-    return;
+    return success();
   }
-  console.log("text", text);
   const patch = Diff.createPatch(chapterid, old, text, "-", "-");
-  console.log("patch", patch);
   history.push(patch);
   docRef = db.collection("history").doc(chapterid);
   await docRef.set({ history });
+  return success();
 };
 
 export function makeNewBook(data = {}) {

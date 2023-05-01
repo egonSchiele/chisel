@@ -184,15 +184,23 @@ app.get("/logout", async (req, res) => {
 app.post("/api/saveBook", requireLogin, async (req, res) => {
   const { book } = req.body;
 
-  await saveBook(book);
-  res.status(200).end();
+  const result = await saveBook(book);
+  if (result.success) {
+    res.status(200).end();
+  } else {
+    res.status(400).send(result.message).end();
+  }
 });
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
   const { chapter } = req.body;
   console.log(chapter);
-  await saveChapter(chapter);
-  res.status(200).end();
+  const result = await saveChapter(chapter);
+  if (result.success) {
+    res.status(200).end();
+  } else {
+    res.status(400).send(result.message).end();
+  }
 });
 
 app.post("/api/newBook", requireLogin, async (req, res) => {
@@ -226,8 +234,15 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
   const { chapterid, text } = req.body;
   console.log("saveToHistory", chapterid, text);
-  await saveToHistory(chapterid, text);
+
+  const result = await saveToHistory(chapterid, text);
   res.status(200).end();
+
+  if (result.success) {
+    res.status(200).end();
+  } else {
+    res.status(400).send(result.message).end();
+  }
 });
 
 app.get(

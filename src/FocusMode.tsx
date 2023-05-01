@@ -13,7 +13,7 @@ import Button from "./components/Button";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 import * as fd from "./fetchData";
-import * as _ from "lodash";
+import _ from "lodash";
 import { useKeyboardScroll } from "./hooks";
 
 type Annotation = {

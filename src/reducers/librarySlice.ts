@@ -11,8 +11,7 @@ import {
 
 import { RootState } from "../store";
 import { current } from "immer";
-import { sortBy } from 'lodash';
-
+import _ from "lodash";
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
 
@@ -692,7 +691,7 @@ export const getSelectedBookChapters = (
       const chapter = chapters.find((chapter) => chapter.chapterid === id);
       if (chapter) sortedChapters.push(chapter);
     });
-    const sortedByCreated = sortBy(chapters, ["created_at"])
+    const sortedByCreated = _.sortBy(chapters, ["created_at"])
     sortedByCreated.forEach((chapter) => {
       if (!sortedChapters.includes(chapter)) sortedChapters.push(chapter);
     });
