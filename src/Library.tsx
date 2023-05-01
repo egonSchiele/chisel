@@ -338,11 +338,7 @@ export default function Library() {
     }
     const chapter = result.payload;
     dispatch(librarySlice.actions.addChapter({ chapter, bookid: theBookid }));
-    console.log(
-      "going to",
-      `/book/${theBookid}/chapter/${chapter.chapterid}`,
-      compostBookId
-    );
+
     navigate(`/book/${theBookid}/chapter/${chapter.chapterid}`, {});
   }
 

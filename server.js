@@ -20,6 +20,7 @@ import {
   saveUser,
   getBooksForUser,
   loginGuestUser,
+  resetMonthlyTokenCounts,
 } from "./src/authentication/firebase.js";
 import {
   saveBook,
@@ -555,6 +556,15 @@ app.get("/api/admin/deleteTestUserBooks", requireAdmin, async (req, res) => {
   await deleteBooks("ZMLuWv0J2HkI30kEfm5xs");
   res.status(200).end();
 });
+
+app.get(
+  "/api/admin/resetMonthlyTokenCounts",
+  requireAdmin,
+  async (req, res) => {
+    await resetMonthlyTokenCounts();
+    res.status(200).end();
+  }
+);
 
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Server running on port ${port}`));

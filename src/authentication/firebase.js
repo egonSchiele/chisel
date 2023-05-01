@@ -8,7 +8,10 @@ import settings from "../../settings.js";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
-const mainPageUrl = process.env.NODE_ENV === "production" ? "https://egonschiele.github.io/chisel-docs/" : "/login.html";
+const mainPageUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://egonschiele.github.io/chisel-docs/"
+    : "/login.html";
 
 async function stringToHash(str) {
   const encoder = new TextEncoder();
@@ -333,6 +336,24 @@ export const getUsers = async () => {
   /*   console.log(">>", userMap);
   console.log("2>>", userData);
  */ return withBooks;
+};
+
+export const resetMonthlyTokenCounts = async () => {
+  const db = getFirestore();
+  const users = await db.collection("users").get();
+
+  const userMap = {};
+
+  const userData = [];
+  const res = users.forEach(async (user) => {
+    const data = user.data();
+
+    data.usage.openai_api.tokens.month.prompt = 0;
+    data.usage.openai_api.tokens.month.completion = 0;
+    saveUser(data);
+  });
+
+  console.log(">>", userData);
 };
 
 export const getBooksForUser = async (userid) => {
