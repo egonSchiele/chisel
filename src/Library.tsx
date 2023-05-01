@@ -403,6 +403,8 @@ export default function Library() {
       const chapter = getSelectedChapter({ library: state });
       if (chapter) {
         await saveChapter(chapter, state.suggestions);
+      } else {
+        console.log("No chapter to save");
       }
       const book = getSelectedBook({ library: state });
 

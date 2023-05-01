@@ -131,6 +131,10 @@ Cypress.Commands.add("manuallySave", (user) => {
   cy.wait(2000);
 });
 
+Cypress.Commands.add("autoSave", (user) => {
+  cy.wait(6000);
+});
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite

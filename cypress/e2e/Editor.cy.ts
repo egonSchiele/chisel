@@ -19,8 +19,8 @@ describe("editor", () => {
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
     cy.get(".ql-editor").last().type(`${text}{enter}`);
 
-    // should auto save
-    cy.wait(5000);
+    
+    cy.autoSave();
 
     cy.visit("http://localhost:80/");
     cy.get("a[data-selector='booklist-list-item-link']").click();

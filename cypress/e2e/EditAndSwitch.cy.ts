@@ -24,8 +24,7 @@ describe("edit and switch", () => {
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
     cy.get(".ql-editor").last().type(`${text}{enter}`);
 
-    // should auto save
-    cy.wait(5000);
+    cy.autoSave();
 
     // go to the other chapter
     cy.get("a[data-selector='chapterlist-list-item-link']").last().click();
