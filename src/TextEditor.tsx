@@ -233,8 +233,13 @@ function TextEditor({
                   }`}
                 />
               </div>
-              <div
-                className="h-5 cursor-pointer mr-xs mt-xs hidden"
+              {currentText.reference && (
+                <div className="m-0 p-0 mt-xs mr-xs text-center uppercase text-xs rounded border text-gray-500 border-gray-500">
+                  R
+                </div>
+              )}
+              {/* <div
+                className="h-5 cursor-pointer mr-xs mt-xs"
                 onClick={() => {
                   setOpen(false);
                 }}
@@ -244,7 +249,7 @@ function TextEditor({
                     isActive ? "text-gray-300" : "text-gray-500"
                   }`}
                 />
-              </div>
+              </div> */}
             </div>
 
             <div
