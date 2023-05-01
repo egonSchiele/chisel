@@ -226,6 +226,7 @@ function TextEditor({
                 onClick={() => {
                   setOpen(false);
                 }}
+                data-selector={`close-${index}`}
               >
                 <ChevronDownIcon
                   className={`w-5 h-5 ${
@@ -259,6 +260,7 @@ function TextEditor({
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}
+              data-selector={`texteditor-${index}`}
             >
               <ReactQuill
                 ref={quillRef}
@@ -289,11 +291,17 @@ function TextEditor({
               onClick={() => {
                 setOpen(true);
               }}
+              data-selector={`open-${index}`}
             >
               <ChevronRightIcon className="w-5 h-5 text-gray-500" />
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
-              <p className="text-gray-500">{textPreview}</p>
+              <p
+                className="text-gray-500"
+                data-selector={`text-preview-${index}`}
+              >
+                {textPreview}
+              </p>
             </div>
           </div>
         )}

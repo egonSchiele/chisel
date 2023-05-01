@@ -13,6 +13,7 @@ import Button from "./components/Button";
 import Input from "./components/Input";
 import { getChapterText } from "./utils";
 import { Link, useNavigate } from "react-router-dom";
+import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 
 function Character({
   character,
@@ -41,6 +42,7 @@ function Character({
         title="name"
         value={character.name}
         onChange={(e) => onNameChange(e.target.value)}
+        selector={`character-${character.name}-name`}
       />
       <TextArea
         name="description"
@@ -49,12 +51,14 @@ function Character({
         onChange={(e) => onDescChange(e.target.value)}
         inputClassName="border-0 resize-none"
         rows={8}
+        selector={`character-${character.name}-description`}
       />
       <Input
         name="imageUrl"
         title="Image Url"
         value={character.imageUrl}
         onChange={(e) => onImageUrlChange(e.target.value)}
+        selector={`character-${character.name}-imageUrl`}
       />
       <Button
         onClick={onDelete}
@@ -104,6 +108,12 @@ function CompostBook() {
       <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
         Compost Heap
       </h1>
+      <a
+        href="https://egonschiele.github.io/chisel-docs/docs/advanced-features/compost"
+        className="uppercase text-sm underline-offset-2 underline text-gray-400 "
+      >
+        What is a compost heap?
+      </a>
       <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
         {book.chapters &&
           book.chapters.map((chapter, i) => (
@@ -167,6 +177,7 @@ export default function BookEditor() {
             rounded={true}
             className="ml-xs"
             size="small"
+            selector="add-character-button"
           >
             Add Character
           </Button>
