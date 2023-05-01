@@ -92,7 +92,7 @@ const csrf = (req, res, next) => {
         c.csrfToken,
         req.body.csrfToken
       );
-      res.send("csrf failed").end();
+      res.status(400).send("CSRF failed. Try refreshing your browser.").end();
     }
   } else {
     next();

@@ -5,7 +5,8 @@ export const fetchBook = async (bookid: string): Promise<t.Result> => {
   if (!bookid) return t.error("No bookid");
   const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
   if (!res.ok) {
-    return t.error(res.statusText);
+    const text = await res.text();
+    return t.error(`Error fetching book: ${text}`);
   }
   const data: t.Book = await res.json();
 
@@ -19,7 +20,8 @@ export const fetchBook = async (bookid: string): Promise<t.Result> => {
 export const fetchSettings = async () => {
   const res = await fetch(`/api/settings`, { credentials: "include" });
   if (!res.ok) {
-    return t.error(res.statusText);
+    const text = await res.text();
+    return t.error(`Error fetching settings: ${text}`);
   }
   const data = await res.json();
 
@@ -93,7 +95,8 @@ export const newChapter = async (
     body
   });
   if (!res.ok) {
-    return t.error(res.statusText);
+    const text = await res.text();
+    return t.error(`Error creating new chapter: ${text}`);
   }
   const data = await res.json();
   return t.success(data);
@@ -103,7 +106,8 @@ export async function deleteBook(bookid: string) {
   const res = await postWithCsrf(`/api/deleteBook`, { bookid });
 
   if (!res.ok) {
-    return t.error(res.statusText);
+    const text = await res.text();
+    return t.error(`Error deleting book: ${text}`);
   }
   return t.success();
 }
@@ -112,15 +116,17 @@ export async function favoriteBook(bookid: string) {
   const res = await postWithCsrf(`/api/favoriteBook`, { bookid });
 
   if (!res.ok) {
-    return t.error(res.statusText);
-  }
+    const text = await res.text();
+    return t.error(`Error favoriting book: ${text}`);
+    }
   return t.success();
 }
 
 export async function newBook() {
   const res = await postWithCsrf(`/api/newBook`, {});
   if (!res.ok) {
-    return t.error(res.statusText);
+    const text = await res.text();
+    return t.error(`Error creating new book: ${text}`);
   }
   const book = await res.json();
   return t.success(book);
@@ -131,7 +137,7 @@ export async function fetchSynonyms(word: string) {
 
   const res = await fetch(`https://api.datamuse.com/words?ml=${word}&max=20`);
   if (!res.ok) {
-    return t.error(res.statusText);
+    return t.error(`error fetching synonyms: ${res.statusText}`);
   }
   const response = await res.json();
 

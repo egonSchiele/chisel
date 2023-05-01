@@ -12,13 +12,13 @@ import { RootState } from "./store";
 import {
   getSelectedChapter,
   getText,
-  librarySlice
+  librarySlice,
 } from "./reducers/librarySlice";
 
 export default function PromptsSidebar({
   settings,
   closeSidebar,
-  onLoad
+  onLoad,
 }: {
   settings: t.UserSettings;
   closeSidebar: () => void;
@@ -38,13 +38,13 @@ export default function PromptsSidebar({
     const res = await fd.fetchSynonyms(word);
     setLoading(false);
     if (res.tag === "error") {
-      console.log("error w synonyms", res.message);
+      dispatch(librarySlice.actions.setError(res.message));
       return;
     }
     dispatch(
       librarySlice.actions.addSuggestion({
         label: "Synonyms",
-        value: res.payload.join(", ")
+        value: res.payload.join(", "),
       })
     );
     dispatch(librarySlice.actions.setSaved(false));
@@ -54,9 +54,9 @@ export default function PromptsSidebar({
   function getTextForSuggestions() {
     let { text } = currentText;
     if (
-      state._cachedSelectedText
-      && state._cachedSelectedText.contents
-      && state._cachedSelectedText.contents.length > 0
+      state._cachedSelectedText &&
+      state._cachedSelectedText.contents &&
+      state._cachedSelectedText.contents.length > 0
     ) {
       text = state._cachedSelectedText.contents;
     }
@@ -66,15 +66,17 @@ export default function PromptsSidebar({
   const prompts = settings.prompts.map((prompt, i) => (
     <li
       key={i}
-      onClick={() => fetchSuggestionsWrapper(
-        settings,
-        setLoading,
-        onLoad,
-        prompt.text,
-        prompt.label,
-        getTextForSuggestions(),
-        dispatch
-      )}
+      onClick={() =>
+        fetchSuggestionsWrapper(
+          settings,
+          setLoading,
+          onLoad,
+          prompt.text,
+          prompt.label,
+          getTextForSuggestions(),
+          dispatch
+        )
+      }
       className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
       data-selector={`prompt-${prompt.label}-button`}
     >
@@ -82,21 +84,22 @@ export default function PromptsSidebar({
     </li>
   ));
 
-  const buttonStyles = "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles =
+    "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
-    className: buttonStyles
+    className: buttonStyles,
   };
 
   const leftMenuItem = loading
     ? {
-      label: "Loading",
-      icon: <Spinner />,
-      onClick: () => {},
-      className: buttonStyles
-    }
+        label: "Loading",
+        icon: <Spinner />,
+        onClick: () => {},
+        className: buttonStyles,
+      }
     : null;
 
   const actions = [
@@ -106,7 +109,7 @@ export default function PromptsSidebar({
       className="py-xs text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
     >
       <p className="px-xs">Get synonyms</p>
-    </li>
+    </li>,
   ];
 
   return (

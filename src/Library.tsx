@@ -351,7 +351,7 @@ export default function Library() {
   async function newBook() {
     const res = await fd.newBook();
     if (res.tag === "error") {
-      console.log(res.message);
+      dispatch(librarySlice.actions.setError(res.message));
     } else {
       const book = res.payload;
       dispatch(librarySlice.actions.addBook(book));
@@ -376,7 +376,8 @@ export default function Library() {
     });
 
     if (!result.ok) {
-      dispatch(librarySlice.actions.setError(result.statusText));
+      const text = await result.text();
+      dispatch(librarySlice.actions.setError(text));
     } else {
       dispatch(librarySlice.actions.clearError());
       dispatch(librarySlice.actions.setSaved(true));
