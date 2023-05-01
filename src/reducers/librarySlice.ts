@@ -418,6 +418,16 @@ export const librarySlice = createSlice({
       console.log("setActiveTextIndex", action.payload);
       state.editor.activeTextIndex = action.payload;
     },
+    markBlockAsReference(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text[action.payload].reference = true;
+      state.saved = false;
+    },
+    unmarkBlockAsReference(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text[action.payload].reference = false;
+      state.saved = false;
+    },
     openBlock(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       chapter.text[action.payload].open = true;

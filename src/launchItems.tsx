@@ -20,6 +20,7 @@ import {
   DocumentDuplicateIcon,
   PencilIcon,
   WrenchIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -366,6 +367,23 @@ export default function useLaunchItems(
         );
       },
       icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (activeTextIndex !== null && activeTextIndex !== undefined) {
+    launchItems.push({
+      label: "Mark block as reference",
+      onClick: () => {
+        dispatch(librarySlice.actions.markBlockAsReference(activeTextIndex));
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+    launchItems.push({
+      label: "Unmark block as reference",
+      onClick: () => {
+        dispatch(librarySlice.actions.unmarkBlockAsReference(activeTextIndex));
+      },
+      icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
   return launchItems;

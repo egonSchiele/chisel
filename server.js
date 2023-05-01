@@ -272,6 +272,15 @@ function serveFile(filename, res) {
 }
 
 app.get(
+  "/book/:bookid/chapter/:chapterid/:textindex",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    serveFile("chapter.html", res);
+  }
+);
+app.get(
   "/book/:bookid/chapter/:chapterid",
   requireLogin,
   checkBookAccess,

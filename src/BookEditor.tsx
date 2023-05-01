@@ -84,6 +84,19 @@ function Chapter({ chapter, bookid }) {
   );
 }
 
+function Block({ block, chapterid, bookid, index }) {
+  const navigate = useNavigate();
+  return (
+    <div
+      className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm cursor-pointer"
+      onClick={() => navigate(`/book/${bookid}/chapter/${chapterid}/${index}`)}
+    >
+      {/* <h3 className="text-xl font-semibold">{chapter.title}</h3> */}
+      <p className="text-gray-800 dark:text-gray-300">{block.text}</p>
+    </div>
+  );
+}
+
 function CompostBook() {
   const book = useSelector(getSelectedBook);
   return (
@@ -105,6 +118,17 @@ export default function BookEditor() {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
+  let referenceBlocks = [];
+  if (chapters) {
+    chapters.forEach((chapter) => {
+      chapter.text.forEach((block, index) => {
+        if (block.reference) {
+          referenceBlocks.push({ block, index, chapterid: chapter.chapterid });
+        }
+      });
+    });
+  }
+
   if (!book) {
     return <div>loading</div>;
   }
@@ -193,6 +217,21 @@ export default function BookEditor() {
             chapters.map((chapter, i) => (
               <Chapter key={i} chapter={chapter} bookid={book.bookid} />
             ))}
+        </div>
+
+        <div className="text-xl font-semibold mt-md mb-xs">
+          <span>Reference</span>
+        </div>
+        <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
+          {referenceBlocks.map(({ block, chapterid, index }, i) => (
+            <Block
+              key={i}
+              block={block}
+              index={index}
+              chapterid={chapterid}
+              bookid={book.bookid}
+            />
+          ))}
         </div>
 
         {/* bottom padding */}

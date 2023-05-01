@@ -26,6 +26,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useTraceUpdate } from "./utils";
+import { useParams } from "react-router-dom";
 
 function TextEditor({
   chapterid,
@@ -52,6 +53,7 @@ function TextEditor({
   const { open } = currentText;
 
   const quillRef = useRef();
+  const inputDiv = useRef();
 
   const [edited, setEdited] = useState(false);
   useEffect(() => {
@@ -67,6 +69,18 @@ function TextEditor({
       focus();
     }
   }, [activeTextIndex, open]);
+
+  const { textindex } = useParams();
+
+  useEffect(() => {
+    if (!inputDiv.current) return;
+    // @ts-ignore
+    console.log("textindex", textindex, index);
+    if (textindex === index.toString()) {
+      // @ts-ignore
+      inputDiv.current.scrollIntoView();
+    }
+  }, [inputDiv, textindex]);
 
   const focus = () => {
     if (!quillRef.current) return;
@@ -203,7 +217,7 @@ function TextEditor({
       <div className="ql-editor hidden">hi</div>
       <div className="ql-toolbar ql-snow hidden">hi</div>
 
-      <div className="mb-sm h-full w-full">
+      <div className="mb-sm h-full w-full" ref={inputDiv}>
         {open && (
           <div className="flex">
             <div className="flex-none ">

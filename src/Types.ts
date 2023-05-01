@@ -72,17 +72,14 @@ export type PlainTextBlock = {
   text: string;
   open?: boolean;
   id?: string;
-};
-
-export type ReferenceBlock = PlainTextBlock & {
-  reference: true;
+  reference?: boolean;
 };
 
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text };
 }
 
-export type TextBlock = PlainTextBlock | ReferenceBlock;
+export type TextBlock = PlainTextBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 
