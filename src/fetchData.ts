@@ -40,6 +40,7 @@ export const fetchSuggestions = async (
   label: string
 ) => {
   const prompt = _prompt.replaceAll("{{text}}", text);
+  
   const body = JSON.stringify({
     prompt,
     model,

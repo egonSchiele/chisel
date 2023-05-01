@@ -14,8 +14,8 @@ try {
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
-function success() {
-  return { success: true };
+function success(data = {}) {
+  return { success: true, data };
 }
 
 function failure(message) {
@@ -32,15 +32,15 @@ export const saveBook = async (book) => {
 
   const docRef = db.collection("books").doc(book.bookid);
   try {
-    const doc = await docRef.get();
+    /*  const doc = await docRef.get();
     if (doc.exists) {
       const data = doc.data();
       if (data.created_at && data.created_at > book.created_at) {
         return failure(
-          `Could not save, your copy of this book is older than the one in the database. Please refresh to get the latest updates, then try again.`
+          `Could not save, your copy of this book is older than the one in the database. Db: ${data.created_at}, your copy: ${book.created_at}. Please refresh to get the latest updates, then try again.`
         );
       }
-    }
+    } */
     book.created_at = Date.now();
 
     await docRef.set(book);
@@ -49,7 +49,7 @@ export const saveBook = async (book) => {
     console.error("Error syncing book to Firestore:", error);
     return failure("Error saving book");
   }
-  return success();
+  return success({ created_at: book.created_at });
 };
 
 export const getBook = async (bookid) => {
@@ -191,15 +191,15 @@ export const saveChapter = async (chapter) => {
 
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   try {
-    const doc = await docRef.get();
+    /*  const doc = await docRef.get();
     if (doc.exists) {
       const data = doc.data();
       if (data.created_at && data.created_at > chapter.created_at) {
         return failure(
-          `Could not save, your copy of this chapter is older than the one in the database. Please refresh to get the latest updates, then try again.`
+          `Could not save, your copy of this chapter is older than the one in the database. Db: ${data.created_at}, your copy: ${chapter.created_at}. Please refresh to get the latest updates, then try again.`
         );
       }
-    }
+    } */
     chapter.created_at = Date.now();
 
     await docRef.set(chapter);
@@ -208,7 +208,7 @@ export const saveChapter = async (chapter) => {
     console.error("Error syncing chapter to Firestore:", error);
     return failure("Error saving chapter");
   }
-  return success();
+  return success({ created_at: chapter.created_at });
 };
 
 export const getChapter = async (chapterid) => {

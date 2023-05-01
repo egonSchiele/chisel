@@ -91,6 +91,7 @@ export type Chapter = {
   pos: Pos;
   suggestions: Suggestion[];
   favorite: boolean;
+  created_at?: number;
 };
 
 export type Column = {
@@ -116,6 +117,7 @@ export type Book = {
   characters?: Character[];
   genre?: string;
   style?: string;
+  created_at?: number;
 };
 
 export type Character = {

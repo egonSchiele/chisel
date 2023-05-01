@@ -121,9 +121,15 @@ export const librarySlice = createSlice({
     updateBook(state: t.State, action: PayloadAction<t.Book>) {
       const book = action.payload;
       if (!book) return;
+      
       state.books = state.books.map((b) => {
         if (b.bookid === book.bookid) {
-          return book;
+          // This is because save chapter and save book both happen in the same cycle.
+          // We are going to update the book but not update its chapters.
+          // saveChapter updates the chapter in the redux store.
+          // If we include the chapters here, it will overwrite the updates from saveChapter.
+
+          return {...book, chapters: b.chapters}
         }
         return b;
       })
@@ -237,14 +243,17 @@ export const librarySlice = createSlice({
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapter) return;
+      
       let bookidChanged = false;
       book.chapters = book.chapters.map((c) => {
         if (c.chapterid === chapter.chapterid) {
           if (c.bookid !== chapter.bookid) {
             bookidChanged = true;
           }
+      
           return chapter;
         }
+      
         return c;
       })
       if (bookidChanged) {
@@ -256,6 +265,7 @@ export const librarySlice = createSlice({
           newBook.chapters.unshift(chapter);
         }
       }
+      
 
     },
     addToContents(state: t.State, action: PayloadAction<string>) {
@@ -414,7 +424,7 @@ export const librarySlice = createSlice({
       state.selectedChapterId = null;
     },
     setActiveTextIndex(state: t.State, action: PayloadAction<number>) {
-      console.log("setActiveTextIndex", action.payload);
+      
       state.editor.activeTextIndex = action.payload;
     },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {

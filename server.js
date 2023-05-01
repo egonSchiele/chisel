@@ -186,7 +186,7 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 
   const result = await saveBook(book);
   if (result.success) {
-    res.status(200).end();
+    res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
   }
@@ -197,7 +197,7 @@ app.post("/api/saveChapter", requireLogin, async (req, res) => {
   console.log(chapter);
   const result = await saveChapter(chapter);
   if (result.success) {
-    res.status(200).end();
+    res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
   }

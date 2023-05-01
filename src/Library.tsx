@@ -79,7 +79,7 @@ export default function Library() {
   const handleKeyDown = async (event) => {
     if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
-      console.log("saving");
+
       onEditorSave();
     } else if (event.key === "Escape") {
       event.preventDefault();
@@ -292,16 +292,21 @@ export default function Library() {
 
   async function onTextEditorSave(state: t.State) {
     const chapter = getSelectedChapter({ library: state });
-    const book = getSelectedBook({ library: state });
     if (!chapter) {
       console.log("No chapter to save");
     } else {
       await saveChapter(chapter, state.suggestions);
     }
+    const book = getSelectedBook({ library: state });
     if (!book) {
       console.log("No book to save");
     } else {
-      await saveBook(book);
+      try {
+        await saveBook(book);
+      } catch (e) {
+        console.log("Error saving book", e);
+        dispatch(librarySlice.actions.setError(e.message));
+      }
     }
 
     if (chapter) {
@@ -362,7 +367,7 @@ export default function Library() {
     _chapter: t.Chapter,
     suggestions: t.Suggestion[] | null
   ) {
-    const chapter = { ..._chapter };
+    let chapter: t.Chapter = { ..._chapter };
     if (suggestions !== null) {
       chapter.suggestions = suggestions;
     }
@@ -375,10 +380,14 @@ export default function Library() {
       body,
     });
 
-    if (!result.ok) {
+    if (!result.ok || result.status !== 200) {
       const text = await result.text();
+
       dispatch(librarySlice.actions.setError(text));
     } else {
+      const data = await result.json();
+      chapter.created_at = data.created_at;
+
       dispatch(librarySlice.actions.clearError());
       dispatch(librarySlice.actions.setSaved(true));
       // Since we depend on a cache version of the selected book when picking a chapter
@@ -396,8 +405,14 @@ export default function Library() {
         await saveChapter(chapter, state.suggestions);
       }
       const book = getSelectedBook({ library: state });
+
       if (!book) return;
-      await saveBook(book);
+      try {
+        await saveBook(book);
+      } catch (e) {
+        console.log("Error saving book", e);
+        dispatch(librarySlice.actions.setError(e.message));
+      }
     };
     func();
   }, 5000);
@@ -422,7 +437,7 @@ export default function Library() {
       return;
     }
 
-    const bookNoChapters = { ...book };
+    let bookNoChapters = { ...book };
 
     bookNoChapters.chapters = [];
     const body = JSON.stringify({
@@ -436,8 +451,22 @@ export default function Library() {
       },
       body,
     });
-    dispatch(librarySlice.actions.updateBook(book));
-    dispatch(librarySlice.actions.setSaved(true));
+    if (!result.ok || result.status !== 200) {
+      const text = await result.text();
+
+      dispatch(librarySlice.actions.setError(text));
+    } else {
+      const data = await result.json();
+
+      // We are going to update the book but not update its chapters.
+      // This is because save chapter and save book both happen in the same cycle.
+      // saveChapter updates the chapter in the redux store.
+      // If we include the chapters here, it will overwrite the updates from saveChapter.
+      bookNoChapters.created_at = data.created_at;
+      dispatch(librarySlice.actions.clearError());
+      dispatch(librarySlice.actions.setSaved(true));
+      dispatch(librarySlice.actions.updateBook(bookNoChapters));
+    }
   }
 
   const addToContents = (text: string) => {
