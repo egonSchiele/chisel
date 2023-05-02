@@ -76,10 +76,10 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
     "react-error-boundary": "^4.0.4",
-    "react-highlight": "^0.15.0",
     "react-quill": "^2.0.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
+    "react-syntax-highlighter": "^15.5.0",
     "stemmer": "^2.0.1",
     "syllable": "^5.0.1"
   },

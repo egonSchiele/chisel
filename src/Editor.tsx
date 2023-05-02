@@ -1,4 +1,5 @@
-import Highlight from "react-highlight";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
@@ -61,12 +62,9 @@ export default function Editor({ onSave }: { onSave: () => void }) {
                   return (
                     <div>
                       <label>{text.language}</label>
-                      <Highlight
-                        key={index}
-                        className={`language-${text.language || "javascript"}`}
-                      >
+                      <SyntaxHighlighter language="javascript" style={docco}>
                         {con}
-                      </Highlight>
+                      </SyntaxHighlighter>
                     </div>
                   );
                 } else {
