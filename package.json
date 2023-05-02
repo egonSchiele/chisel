@@ -92,6 +92,7 @@
     "depcheck": "depcheck",
     "lint": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
     "prepare": "husky install",
-    "prettier": "prettier"
+    "prettier": "prettier",
+    "buildstats": "NODE_ENV=production webpack --mode=production --json > stats.json"
   }
 }
