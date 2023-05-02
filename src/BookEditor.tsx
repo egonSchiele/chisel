@@ -81,9 +81,9 @@ function Chapter({ chapter, bookid }) {
       onClick={() => navigate(`/book/${bookid}/chapter/${chapter.chapterid}`)}
     >
       <h3 className="text-xl font-semibold">{chapter.title}</h3>
-      <p className="text-gray-800 dark:text-gray-300">
+      <pre className="text-gray-800 dark:text-gray-300 font-sans">
         {getChapterText(chapter).slice(0, 500)}
-      </p>
+      </pre>
     </div>
   );
 }
@@ -96,7 +96,9 @@ function Block({ block, chapterid, bookid, index }) {
       onClick={() => navigate(`/book/${bookid}/chapter/${chapterid}/${index}`)}
     >
       {/* <h3 className="text-xl font-semibold">{chapter.title}</h3> */}
-      <p className="text-gray-800 dark:text-gray-300">{block.text}</p>
+      <pre className="text-gray-800 dark:text-gray-300 font-sans">
+        {block.text}
+      </pre>
     </div>
   );
 }
