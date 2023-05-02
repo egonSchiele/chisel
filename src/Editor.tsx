@@ -14,7 +14,6 @@ import {
 import { postWithCsrf } from "./fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
-import _ from "lodash";
 import { useKeyboardScroll } from "./hooks";
 
 export default function Editor({ onSave }: { onSave: () => void }) {

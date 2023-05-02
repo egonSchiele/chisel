@@ -1,5 +1,5 @@
 import * as Diff from "diff";
-import _ from "lodash";
+import range from "lodash/range";
 import React, { useState, useEffect } from "react";
 import { produce } from "immer";
 import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
@@ -162,7 +162,7 @@ function History({
         {start !== 0 && <Button onClick={() => setPage(page - 1)}>Prev</Button>}
         {end < total && <Button onClick={() => setPage(page + 1)}>Next</Button>}
       </div>
-      {_.range(start, end).map((i) => (
+      {range(start, end).map((i) => (
         <HistoryPanel
           key={i}
           index={i}

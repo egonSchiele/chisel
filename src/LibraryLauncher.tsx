@@ -30,7 +30,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store";
 import { fetchSuggestionsWrapper } from "./utils";
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 import Launcher from "./Launcher";
 import { State } from "./Types";
 import { useNavigate } from "react-router-dom";
@@ -210,8 +210,8 @@ export default function LibraryLauncher({
   ];
 
   if (state.books) {
-    _.sortBy(state.books, ["title"]).forEach((book, i) => {
-      _.sortBy(book.chapters, ["title"]).forEach((chapter, i) => {
+    sortBy(state.books, ["title"]).forEach((book, i) => {
+      sortBy(book.chapters, ["title"]).forEach((chapter, i) => {
         let label = chapter.title || "(No title)";
         label = `${label} (${book.title})`;
         if (label.length > 30) label = label.slice(0, 30) + "...";

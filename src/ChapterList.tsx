@@ -23,7 +23,7 @@ import { getChapterText, getCsrfToken } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 import Input from "./components/Input";
 import { RootState } from "./store";
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 
 // import Draggable from "react-draggable";
 
@@ -48,7 +48,7 @@ export default function ChapterList({
   const dispatch = useDispatch();
   const chapters = useSelector(getSelectedBookChapters);
   const bookOptions = useSelector((state: RootState) =>
-    _.sortBy(state.library.books, ["title"]).map((book) => ({
+    sortBy(state.library.books, ["title"]).map((book) => ({
       label: book.title,
       value: book.bookid,
     }))

@@ -1,5 +1,6 @@
 import React from "react";
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
+import sum from "lodash/sum";
 
 function User({ user, index }) {
   /*   const chaptersLength = sum(user.books.map((b) => b.chapters.length));
@@ -32,7 +33,7 @@ export default function Users() {
     const func = async () => {
       const res = await fetch("/api/admin/users");
       let users = await res.json();
-      users = _.sortBy(
+      users = sortBy(
         users,
         (u) =>
           u.usage.openai_api.tokens.month.completion +
@@ -41,14 +42,14 @@ export default function Users() {
       users.reverse();
       setUsers(users);
 
-      let tokens = _.sum(
+      let tokens = sum(
         users.map(
           (u) =>
             u.usage.openai_api.tokens.total.completion +
             u.usage.openai_api.tokens.total.prompt
         )
       );
-      let books = _.sum(users.map((u) => u.books.length));
+      let books = sum(users.map((u) => u.books.length));
       let usersCount = users.length;
       /* let chapters = sum(
         users.map((u) => sum(u.books.map((b) => b.chapters.length)))

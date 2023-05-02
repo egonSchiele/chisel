@@ -11,7 +11,7 @@ import Popup from "./Popup";
 import { getCsrfToken } from "./utils";
 import * as fd from "./fetchData";
 import { librarySlice } from "./reducers/librarySlice";
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 
 async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
@@ -67,7 +67,7 @@ export default function BookList({
   }
 
   const compostBook = books.find((book) => book.tag === "compost");
-  const otherBooks = _.sortBy(
+  const otherBooks = sortBy(
     books.filter((book) => book.tag !== "compost"),
     ["title"]
   );

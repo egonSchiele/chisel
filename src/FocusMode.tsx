@@ -1,6 +1,6 @@
 import { daleChall } from "dale-chall";
 import { stemmer } from "stemmer";
-
+import range from "lodash/range";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
 import { hedges } from "hedges";
@@ -13,7 +13,6 @@ import Button from "./components/Button";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 import * as fd from "./fetchData";
-import _ from "lodash";
 import { useKeyboardScroll } from "./hooks";
 
 type Annotation = {
@@ -254,7 +253,7 @@ function findMultiWordAnnotations(
   badPhrases.forEach((badPhrase, i) => {
     const index = findSubarray(words, badPhrase);
     if (index !== -1) {
-      const ids = _.range(index, index + badPhrase.length);
+      const ids = range(index, index + badPhrase.length);
       const annotation: Annotation = {
         type,
         groupid,
@@ -284,7 +283,7 @@ function findLongLines(lines) {
         startIndex: count,
         length: lineWords.length,
       };
-      const ids = _.range(count, count + lineWords.length);
+      const ids = range(count, count + lineWords.length);
       idsAndAnnotations.push({ ids, annotation });
       groupid++;
     }
