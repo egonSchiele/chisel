@@ -212,5 +212,6 @@ export function getChapterText(chapter) {
   return chapter.text.map((t) => t.text).join("\n---\n");
 }
 
-
-
+export function isTruthy(x) {
+  return !!x;
+}

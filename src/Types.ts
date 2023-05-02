@@ -19,6 +19,20 @@ export type State = {
   popupData: PopupData | null;
 };
 
+export type SelectedText = {
+  index: number;
+  length: number;
+  contents: string;
+};
+
+export type EditorState = {
+  contents: any;
+  activeTextIndex: number;
+  selectedText: SelectedText;
+  _cachedSelectedText?: SelectedText;
+  _pushTextToEditor?: string;
+};
+
 export type PopupData = {
   title: string;
   inputValue: string;
@@ -37,19 +51,7 @@ export type PanelState = {
   [key: string]: Panel;
 };
 
-export type SelectedText = {
-  index: number;
-  length: number;
-  contents: string;
-};
 
-export type EditorState = {
-  contents: any;
-  activeTextIndex: number;
-  selectedText: SelectedText;
-  _cachedSelectedText?: SelectedText;
-  _pushTextToEditor?: string;
-};
 
 export type InfoPanelState = {
   syllables: number;

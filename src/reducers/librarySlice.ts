@@ -402,6 +402,23 @@ export const librarySlice = createSlice({
       localStorage.setItem("sidebarOpen", "true");
       localStorage.setItem("promptsOpen", "true");
     },
+    openOnlyPanel(state, action: PayloadAction<string>) {
+      
+      const bookListOpen = action.payload === "bookList";
+      const chapterListOpen = action.payload === "chapterList";
+      const sidebarOpen = action.payload === "sidebar";
+      const promptsOpen = action.payload === "prompts";
+
+      state.panels.bookList.open = bookListOpen;
+      state.panels.chapterList.open = chapterListOpen;
+      state.panels.sidebar.open = sidebarOpen;
+      state.panels.prompts.open = promptsOpen;
+
+      localStorage.setItem("bookListOpen", bookListOpen.toString());
+      localStorage.setItem("chapterListOpen", chapterListOpen.toString());
+      localStorage.setItem("sidebarOpen", sidebarOpen.toString());
+      localStorage.setItem("promptsOpen", promptsOpen.toString());
+    },
     setActivePanel(state: t.State, action: PayloadAction<string>) {
       state.panels.sidebar.activePanel = action.payload;
       localStorage.setItem("activePanel", action.payload);

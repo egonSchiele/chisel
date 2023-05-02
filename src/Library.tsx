@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
 import * as fd from "./fetchData";
-import { getChapterText, getCsrfToken, useInterval } from "./utils";
+import { getChapterText, getCsrfToken, isTruthy, useInterval } from "./utils";
 import Launcher from "./Launcher";
 import {
   CheckCircleIcon,
@@ -34,13 +34,13 @@ import {
   getSelectedChapter,
   librarySlice,
 } from "./reducers/librarySlice";
-import useLaunchItems from "./launchItems";
 import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
 import Popup from "./Popup";
+import LibraryLauncher from "./LibraryLauncher";
 
 export default function Library() {
-  const state = useSelector((state: RootState) => state.library);
+  const state: t.State = useSelector((state: RootState) => state.library);
   const selectedBook = useSelector(getSelectedBook);
 
   const currentChapter = getSelectedChapter({ library: state });
@@ -188,49 +188,7 @@ export default function Library() {
     return book ? book.title : "";
   });
 
-  const [launchItems, setLaunchItems] = useState<t.MenuItem[]>([]);
-
   const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
-
-  useEffect(() => {
-    const _launchItems = useLaunchItems(
-      dispatch,
-      bookid,
-      chapterid,
-      togglePanel,
-      navigate,
-      settings,
-      setLoading,
-      onSuggestionLoad,
-      panels,
-      books,
-      editor._cachedSelectedText,
-      editor.activeTextIndex,
-      viewMode,
-      currentText.length,
-      newChapter,
-      newBook,
-      newCompostNote,
-      onEditorSave,
-      () => {},
-      currentBookTitle,
-      renameBook,
-      currentChapterTitle,
-      renameChapter
-    );
-    setLaunchItems(_launchItems);
-  }, [
-    bookid,
-    chapterid,
-    settings,
-    panels,
-    books,
-    editor._cachedSelectedText,
-    editor.activeTextIndex,
-    viewMode,
-    currentText.length,
-    onEditorSave,
-  ]);
 
   const fetchBooks = async () => {
     dispatch(fetchBooksThunk());
@@ -255,30 +213,6 @@ export default function Library() {
   }, []);
 
   const navigate = useNavigate();
-
-  function togglePanel(panel: string) {
-    if (
-      state.panels.sidebar.open &&
-      state.panels.sidebar.activePanel === panel
-    ) {
-      dispatch(librarySlice.actions.closeSidebar());
-    } else {
-      dispatch(librarySlice.actions.openSidebar());
-      dispatch(librarySlice.actions.setActivePanel(panel));
-    }
-  }
-
-  function getTextForSuggestions() {
-    let { text } = currentText[editor.activeTextIndex];
-    if (
-      state._cachedSelectedText &&
-      state._cachedSelectedText.contents &&
-      state._cachedSelectedText.contents.length > 0
-    ) {
-      text = state._cachedSelectedText.contents;
-    }
-    return text;
-  }
 
   function onSuggestionLoad() {
     dispatch(librarySlice.actions.openSidebar());
@@ -585,11 +519,17 @@ export default function Library() {
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
-        <Launcher
-          items={launchItems}
-          open={state.launcherOpen}
-          close={onLauncherClose}
-        />
+        {state.launcherOpen && (
+          <LibraryLauncher
+            onEditorSave={onEditorSave}
+            newChapter={newChapter}
+            newBook={newBook}
+            newCompostNote={newCompostNote}
+            renameBook={renameBook}
+            renameChapter={renameChapter}
+            onLauncherClose={onLauncherClose}
+          />
+        )}
 
         <Sidebar
           settings={settings}
@@ -623,11 +563,17 @@ export default function Library() {
 
   return (
     <div className="h-screen">
-      <Launcher
-        items={launchItems}
-        open={state.launcherOpen}
-        close={onLauncherClose}
-      />
+      {state.launcherOpen && (
+        <LibraryLauncher
+          onEditorSave={onEditorSave}
+          newChapter={newChapter}
+          newBook={newBook}
+          newCompostNote={newCompostNote}
+          renameBook={renameBook}
+          renameChapter={renameChapter}
+          onLauncherClose={onLauncherClose}
+        />
+      )}
       {state.error && (
         <div className="bg-red-700 p-2 text-white flex">
           <p className="flex-grow">{state.error}</p>
@@ -692,7 +638,7 @@ export default function Library() {
                 }
                 newChapter={newChapter}
                 canCloseSidebar={
-                  chapterid !== undefined || state.selectedBookId
+                  chapterid !== undefined || isTruthy(state.selectedBookId)
                 }
               />
             </div>
