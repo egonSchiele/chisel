@@ -508,6 +508,20 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    deleteBlock(state: t.State, action: PayloadAction<number>) {
+      const index = action.payload;
+      const chapter = getSelectedChapter({ library: state });
+      if (chapter.text.length === 1) return;
+      let newActiveIndex = index;
+      if (index === 0) {        
+          newActiveIndex = 1;        
+      } else {
+        newActiveIndex = index - 1;
+      }
+      state.editor.activeTextIndex = newActiveIndex;
+      chapter.text.splice(index, 1);
+      state.saved = false;
+    },
     extractBlock(state: t.State) {
       let { index, length, contents } = state.editor.selectedText;
       if (length === 0 && state.editor._cachedSelectedText && state.editor._cachedSelectedText.length > 0) {

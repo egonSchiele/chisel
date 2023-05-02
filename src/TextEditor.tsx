@@ -173,6 +173,19 @@ function TextEditor({
           }
         }
       }
+    } else if (event.code === "Backspace") {
+      if (quillRef && quillRef.current) {
+        if (currentText && currentText.text.trim().length === 0) {
+          // @ts-ignore
+          const quill = quillRef.current.getEditor();
+          const range = quill.getSelection();
+
+          if (range.index === 0) {
+            event.preventDefault();
+            dispatch(librarySlice.actions.deleteBlock(index));
+          }
+        }
+      }
     }
   };
 
