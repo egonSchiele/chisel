@@ -1,0 +1,455 @@
+import React from "react";
+import {
+  getSelectedBook,
+  getSelectedChapter,
+  librarySlice,
+} from "./reducers/librarySlice";
+import * as fd from "./fetchData";
+import {
+  DocumentArrowDownIcon,
+  PlusIcon,
+  ViewColumnsIcon,
+  ClockIcon,
+  InformationCircleIcon,
+  ClipboardIcon,
+  Cog6ToothIcon,
+  Bars3BottomLeftIcon,
+  BookOpenIcon,
+  SparklesIcon,
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+  Bars3Icon,
+  BarsArrowUpIcon,
+  BarsArrowDownIcon,
+  EyeIcon,
+  DocumentDuplicateIcon,
+  PencilIcon,
+  WrenchIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store";
+import { fetchSuggestionsWrapper } from "./utils";
+import _ from "lodash";
+import Launcher from "./Launcher";
+import { State } from "./Types";
+import { useNavigate } from "react-router-dom";
+
+export default function LibraryLauncher({
+  onEditorSave,
+  newChapter,
+  newBook,
+  newCompostNote,
+  renameBook,
+  renameChapter,
+  onLauncherClose,
+}) {
+  const state: State = useSelector((state: RootState) => state.library);
+  const currentBook = useSelector(getSelectedBook);
+
+  const currentChapter = getSelectedChapter({ library: state });
+  const currentText = useSelector((state: RootState) => {
+    const chapter = getSelectedChapter(state);
+    return chapter ? chapter.text : [];
+  });
+
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  function togglePanel(panel: string) {
+    if (
+      state.panels.sidebar.open &&
+      state.panels.sidebar.activePanel === panel
+    ) {
+      dispatch(librarySlice.actions.closeSidebar());
+    } else {
+      dispatch(librarySlice.actions.openSidebar());
+      dispatch(librarySlice.actions.setActivePanel(panel));
+    }
+  }
+
+  function getTextForSuggestions() {
+    let { text } = currentText[state.editor.activeTextIndex];
+    if (
+      state.editor._cachedSelectedText &&
+      state.editor._cachedSelectedText.contents &&
+      state.editor._cachedSelectedText.contents.length > 0
+    ) {
+      text = state.editor._cachedSelectedText.contents;
+    }
+    return text;
+  }
+
+  const launchItems = [
+    {
+      label: "Save",
+      onClick: () => {
+        onEditorSave();
+      },
+      tooltip: "Command+s",
+      icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+    {
+      label: "New Chapter",
+      onClick: newChapter,
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Alt+n",
+    },
+    {
+      label: "New Book",
+      onClick: newBook,
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+    {
+      label: "New Compost Note",
+      onClick: newCompostNote,
+      icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+Shift+c",
+    },
+    /*  {
+      label: "Grid",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        navigate(`/grid/${bookid}`);
+      },
+    }, */
+    {
+      label: state.panels.bookList.open ? "Close Book List" : "Open Book List",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleBookList());
+      },
+    },
+    {
+      label: state.panels.chapterList.open
+        ? "Close Chapter List"
+        : "Open Chapter List",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleChapterList());
+      },
+    },
+    {
+      label: state.panels.prompts.open ? "Close Prompts" : "Open Prompts",
+      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.togglePrompts());
+      },
+    },
+    {
+      label:
+        state.panels.sidebar.open &&
+        state.panels.sidebar.activePanel === "history"
+          ? "Close History"
+          : "Open History",
+      icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("history");
+      },
+    },
+    {
+      label:
+        state.panels.sidebar.open && state.panels.sidebar.activePanel === "info"
+          ? "Close Info"
+          : "Open Info",
+      icon: <InformationCircleIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("info");
+      },
+    },
+    {
+      label:
+        state.panels.sidebar.open &&
+        state.panels.sidebar.activePanel === "suggestions"
+          ? "Close Suggestions"
+          : "Open Suggestions",
+      icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("suggestions");
+      },
+    },
+    {
+      label:
+        state.panels.sidebar.open &&
+        state.panels.sidebar.activePanel === "settings"
+          ? "Close Settings"
+          : "Open Settings",
+      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        togglePanel("settings");
+      },
+    },
+    {
+      label: "Show Book List Only",
+      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.openOnlyPanel("bookList"));
+      },
+    },
+    {
+      label: "Show Chapter List Only",
+      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.openOnlyPanel("chapterList"));
+      },
+    },
+    {
+      label: "Show Prompts Only",
+      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.openOnlyPanel("prompts"));
+      },
+    },
+    {
+      label: "Show Sidebar Only",
+      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.openOnlyPanel("sidebar"));
+      },
+    },
+  ];
+
+  if (state.books) {
+    _.sortBy(state.books, ["title"]).forEach((book, i) => {
+      _.sortBy(book.chapters, ["title"]).forEach((chapter, i) => {
+        let label = chapter.title || "(No title)";
+        label = `${label} (${book.title})`;
+        if (label.length > 30) label = label.slice(0, 30) + "...";
+        launchItems.push({
+          label,
+          onClick: () => {
+            navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
+          },
+          icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+        });
+      });
+    });
+  }
+
+  state.books.forEach((book, i) => {
+    launchItems.push({
+      label: book.title,
+      onClick: () => {
+        navigate(`/book/${book.bookid}`);
+      },
+      icon: <BookOpenIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  });
+
+  /*   settings.prompts.forEach((prompt, i) => {
+    launchItems.push({
+      label: prompt.label,
+      onClick: () => {
+        fetchSuggestionsWrapper(
+          settings,
+          setLoading,
+          onSuggestionLoad,
+          prompt.text,
+          prompt.label,
+          getTextForSuggestions(),
+          dispatch
+        );
+      },
+
+      icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }); */
+
+  if (state.panels.sidebar.open) {
+    launchItems.push({
+      label: "Close Sidebar",
+      onClick: () => {
+        dispatch(librarySlice.actions.closeSidebar());
+      },
+      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  } else {
+    launchItems.push({
+      label: "Open Sidebar",
+      onClick: () => {
+        dispatch(librarySlice.actions.openSidebar());
+      },
+      icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (state.viewMode === "fullscreen") {
+    launchItems.push({
+      label: "Exit Fullscreen",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("default"));
+      },
+      icon: <ArrowsPointingInIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Esc",
+    });
+  } else {
+    launchItems.push({
+      label: "View Sidebar In Fullscreen",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("fullscreen"));
+      },
+      icon: <ArrowsPointingOutIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  launchItems.push({
+    label: "New Block Before Current",
+    onClick: () => {
+      dispatch(librarySlice.actions.newBlockBeforeCurrent());
+    },
+    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  launchItems.push({
+    label: "New Block After Current",
+    onClick: () => {
+      dispatch(librarySlice.actions.newBlockAfterCurrent());
+    },
+    icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  if (
+    state.editor._cachedSelectedText &&
+    state.editor._cachedSelectedText.length > 0
+  ) {
+    launchItems.push({
+      label: "Extract Block",
+      onClick: () => {
+        dispatch(librarySlice.actions.extractBlock());
+      },
+      icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Alt+Shift+Down",
+    });
+  }
+  if (state.editor.activeTextIndex !== 0) {
+    launchItems.push({
+      label: "Merge Block Up",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockUp());
+      },
+      icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+  if (state.editor.activeTextIndex !== currentText.length - 1) {
+    launchItems.push({
+      label: "Merge Block Down",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockDown());
+      },
+      icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (state.viewMode !== "readonly") {
+    launchItems.push({
+      label: "Read Only Mode",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("readonly"));
+      },
+      icon: <PencilIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+Shift+r",
+    });
+  }
+
+  if (state.viewMode !== "focus") {
+    launchItems.push({
+      label: "Focus Mode",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("focus"));
+      },
+      icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+  if (
+    state.viewMode !== "diff" &&
+    state.editor.activeTextIndex !== currentText.length - 1
+  ) {
+    launchItems.push({
+      label: "Diff with block below",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("diff"));
+      },
+      icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+Shift+d",
+    });
+  }
+
+  if (currentText.length && currentText.length > 0) {
+    launchItems.push({
+      label: "Convert title to title case",
+      onClick: () => {
+        dispatch(librarySlice.actions.setAPStyleTitle());
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (currentChapter) {
+    launchItems.push({
+      label: "Rename Chapter",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.showPopup({
+            title: "Rename Chapter",
+            inputValue: currentChapter.title,
+            onSubmit: (newTitle) =>
+              renameChapter(currentChapter.chapterid, newTitle),
+          })
+        );
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (currentBook) {
+    launchItems.push({
+      label: "Rename Book",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.showPopup({
+            title: "Rename Book",
+            inputValue: currentBook.title,
+            onSubmit: (newTitle) => renameBook(currentBook.bookid, newTitle),
+          })
+        );
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (
+    state.editor.activeTextIndex !== null &&
+    state.editor.activeTextIndex !== undefined
+  ) {
+    launchItems.push({
+      label: "Mark block as reference",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.markBlockAsReference(
+            state.editor.activeTextIndex
+          )
+        );
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+    launchItems.push({
+      label: "Unmark block as reference",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.unmarkBlockAsReference(
+            state.editor.activeTextIndex
+          )
+        );
+      },
+      icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  return (
+    <Launcher
+      items={launchItems}
+      open={state.launcherOpen}
+      close={onLauncherClose}
+    />
+  );
+}

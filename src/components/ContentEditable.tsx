@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 const DEFAULT_CLASSES = "focus:outline-none";
 
@@ -22,6 +22,24 @@ export default function ContentEditable({
     onSubmit(content);
   };
 
+  const div = useRef(null);
+  useEffect(() => {
+    if (!div.current) return;
+    function onPaste(e) {
+      try {
+        e.preventDefault();
+        var text = e.clipboardData.getData("text/plain");
+        document.execCommand("insertHTML", false, text);
+      } catch (e) {
+        console.error("error on paste", e);
+      }
+    }
+    div.current.addEventListener("paste", onPaste);
+    return () => {
+      if (div.current) div.current.removeEventListener("paste", onPaste);
+    };
+  }, [div.current]);
+
   const onKeyDown = (evt) => {
     if ((evt.metaKey && evt.code === "KeyS") || evt.key === "Enter") {
       evt.preventDefault();
@@ -44,6 +62,7 @@ export default function ContentEditable({
       onInput={handleChange}
       data-selector={selector}
       onClick={onClick}
+      ref={div}
     >
       {value}
     </div>
