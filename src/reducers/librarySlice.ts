@@ -513,9 +513,7 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       if (chapter.text.length === 1) return;
       let newActiveIndex = index;
-      if (index === 0) {        
-          newActiveIndex = 1;        
-      } else {
+      if (index !== 0) {
         newActiveIndex = index - 1;
       }
       state.editor.activeTextIndex = newActiveIndex;
