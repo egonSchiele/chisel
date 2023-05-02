@@ -1,8 +1,6 @@
 import * as Diff from "diff";
 import range from "lodash/range";
 import React, { useState, useEffect } from "react";
-import { produce } from "immer";
-import { PencilIcon, TagIcon } from "@heroicons/react/24/solid";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import Select from "./components/Select";

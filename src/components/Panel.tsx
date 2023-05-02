@@ -1,5 +1,4 @@
 import React from "react";
-import { BeakerIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Panel({

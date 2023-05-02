@@ -78,7 +78,11 @@ export type PlainTextBlock = {
 };
 
 export function plainTextBlock(text: string): PlainTextBlock {
-  return { type: "plain", open: true, id: nanoid(), text };
+  return { type: "plain", open: true, id: nanoid(), text, reference: false };
+}
+
+export function plainTextBlockFromData(text: string, open:boolean, reference:boolean): PlainTextBlock {
+  return { type: "plain", open, id: nanoid(), text, reference };
 }
 
 export type TextBlock = PlainTextBlock;

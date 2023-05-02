@@ -210,6 +210,37 @@ export function getChapterText(chapter) {
   return chapter.text.map((t) => t.text).join("\n---\n");
 }
 
+export function saveTextToHistory(chapter:t.Chapter):string {
+  const texts = chapter.text.map((t) => {
+      if (t.type === "plain") {
+        const { type, open, reference } = t;
+        if (!open || reference) {
+          const jsonFrontMatter = JSON.stringify({type, open, reference});
+          return `${jsonFrontMatter}\n\n${t.text}`;
+        }
+        return t.text;
+      }
+      return t.text;
+  })
+  return texts.join("\n---\n");
+}
+
+export function restoreBlockFromHistory(text:string):t.TextBlock {
+  try {
+  const lines = text.split("\n");
+  const jsonFrontMatter = lines[0];
+  const blockText = lines.slice(2).join("\n");
+  const frontMatter = JSON.parse(jsonFrontMatter);
+  if (frontMatter.type === "plain") {
+    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference);
+  } else {
+    return t.plainTextBlock(blockText);
+  }
+  } catch (e) {
+    return t.plainTextBlock(text);
+  }
+}
+
 export function isTruthy(x) {
   return !!x;
 }

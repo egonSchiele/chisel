@@ -6,6 +6,7 @@ import {
   isString,
   localStorageOrDefault,
   parseText,
+  restoreBlockFromHistory,
   strSplice
 } from "../utils";
 
@@ -201,7 +202,11 @@ export const librarySlice = createSlice({
         chapter.text[activeTextIndex].text = text;
       } else {
         const blocks = text.split("\n---\n");        
-        const newBlocks = blocks.map((blockText) => t.plainTextBlock(blockText));
+        const newBlocks = blocks.map((blockText) => {
+          return restoreBlockFromHistory(blockText);
+          
+        })
+        
         chapter.text = newBlocks;
       }
       state.editor._pushTextToEditor = text;
