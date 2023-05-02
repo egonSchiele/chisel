@@ -271,6 +271,7 @@ function TextEditor({
                 onFocus={() =>
                   dispatch(librarySlice.actions.setActiveTextIndex(index))
                 }
+                scrolling-container="html"
                 modules={{
                   history: {
                     userOnly: true,
