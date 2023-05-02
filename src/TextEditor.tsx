@@ -29,6 +29,42 @@ import {
 import { useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
 
+function LanguageSelector({ chapterid, index }) {
+  const dispatch = useDispatch();
+  const currentText = useSelector(getText(index));
+  const languages = [
+    "javascript",
+    "typescript",
+    "python",
+    "ruby",
+    "c",
+    "haskell",
+    "rust",
+  ];
+  const { language } = currentText;
+  return (
+    <Select
+      title="Language"
+      name="language"
+      value={language}
+      onChange={(e) => {
+        dispatch(
+          librarySlice.actions.setLanguage({
+            index,
+            language: e.target.value,
+          })
+        );
+      }}
+    >
+      {languages.map((lang) => (
+        <option key={lang} value={lang}>
+          {lang}
+        </option>
+      ))}
+    </Select>
+  );
+}
+
 function TextEditor({
   chapterid,
   index,
@@ -276,9 +312,13 @@ function TextEditor({
               }}
               data-selector={`texteditor-${index}`}
             >
+              {currentText.syntaxHighlighting && (
+                <LanguageSelector chapterid={chapterid} index={index} />
+              )}
               <ReactQuill
                 ref={quillRef}
                 placeholder=""
+                className={`${currentText.syntaxHighlighting && "font-mono"}`}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}

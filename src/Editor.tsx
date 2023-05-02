@@ -56,12 +56,18 @@ export default function Editor({ onSave }: { onSave: () => void }) {
               .filter((t) => t.open)
               .map((text: t.TextBlock, index) => {
                 if (text.syntaxHighlighting) {
-                  const con = text.text; //.replaceAll("\n", "\n\n");
+                  const con = text.text.trim().replaceAll("  ", "\t");
 
                   return (
-                    <Highlight key={index} className="language-javascript">
-                      {con}
-                    </Highlight>
+                    <div>
+                      <label>{text.language}</label>
+                      <Highlight
+                        key={index}
+                        className={`language-${text.language || "javascript"}`}
+                      >
+                        {con}
+                      </Highlight>
+                    </div>
                   );
                 } else {
                   return (

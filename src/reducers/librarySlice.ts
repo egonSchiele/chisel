@@ -450,6 +450,12 @@ export const librarySlice = createSlice({
       
       state.editor.activeTextIndex = action.payload;
     },
+    setLanguage(state: t.State, action: PayloadAction<{index:number; language:string}>) {
+      const chapter = getSelectedChapter({ library: state });
+      const { index, language } = action.payload;
+      chapter.text[index].language = language;
+      state.saved = false;
+    },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       chapter.text[action.payload].reference = true;
