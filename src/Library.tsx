@@ -717,7 +717,6 @@ export default function Library() {
             )}
             {chapterid && (
               <LibErrorBoundary component="navigation">
-                (
                 <div className="flex-none">
                   {state.loading && (
                     <NavButton
@@ -815,7 +814,6 @@ export default function Library() {
                     />
                   </NavButton>
                 </div>
-                )
               </LibErrorBoundary>
             )}
           </div>

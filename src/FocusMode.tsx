@@ -29,11 +29,11 @@ type AnnotationType = "hedge" | "filler" | "cliche" | "jargon" | "longline";
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
-  const fetchSynonyms = async (word) => {
+  const fetchSynonyms = async () => {
     if (!selected) return;
     if (selected.length < 3) return;
 
-    const res = await fd.fetchSynonyms(selected);
+    const res = await fd.fetchSynonyms(normalize(selected));
     if (res.tag === "error") {
       console.log("error w synonyms", res.message);
       return;
@@ -43,7 +43,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
   };
 
   useEffect(() => {
-    fetchSynonyms(selected);
+    fetchSynonyms();
   }, [selected]);
 
   const items = [];
