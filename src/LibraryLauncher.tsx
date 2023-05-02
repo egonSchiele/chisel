@@ -443,6 +443,28 @@ export default function LibraryLauncher({
       },
       icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
     });
+    launchItems.push({
+      label: "Turn on syntax highlighting for block",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.turnOnSyntaxHighlightingForBlock(
+            state.editor.activeTextIndex
+          )
+        );
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+    launchItems.push({
+      label: "Turn off syntax highlighting for block",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.turnOffSyntaxHighlightingForBlock(
+            state.editor.activeTextIndex
+          )
+        );
+      },
+      icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+    });
   }
 
   return (

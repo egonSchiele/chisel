@@ -1,3 +1,5 @@
+import Highlight from "react-highlight";
+
 import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,14 +54,26 @@ export default function Editor({ onSave }: { onSave: () => void }) {
           <div className="grid grid-col-1">
             {currentText
               .filter((t) => t.open)
-              .map((text, index) => (
-                <pre
-                  key={index}
-                  className="typography font-sans first:first-letter:text-5xl first:first-letter:font-bold"
-                >
-                  {text.text}
-                </pre>
-              ))}
+              .map((text: t.TextBlock, index) => {
+                if (text.syntaxHighlighting) {
+                  const con = text.text; //.replaceAll("\n", "\n\n");
+
+                  return (
+                    <Highlight key={index} className="language-javascript">
+                      {con}
+                    </Highlight>
+                  );
+                } else {
+                  return (
+                    <pre
+                      key={index}
+                      className="typography font-sans first:first-letter:text-5xl first:first-letter:font-bold"
+                    >
+                      {text.text}
+                    </pre>
+                  );
+                }
+              })}
           </div>
           <div className="h-24" />
         </div>
