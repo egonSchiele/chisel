@@ -286,14 +286,21 @@ function TextEditor({
               index === activeTextIndex && "border border-gray-500"
             }`}
           >
-            <div
-              className="flex-none cursor-pointer mr-xs"
-              onClick={() => {
-                setOpen(true);
-              }}
-              data-selector={`open-${index}`}
-            >
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+            <div className="flex-none">
+              <div
+                className="flex-none cursor-pointer mr-xs"
+                onClick={() => {
+                  setOpen(true);
+                }}
+                data-selector={`open-${index}`}
+              >
+                <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              </div>
+              {currentText.reference && (
+                <div className="m-0 p-0 mt-xs mr-xs text-center uppercase text-xs rounded border text-gray-500 border-gray-500">
+                  R
+                </div>
+              )}
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
               <p
