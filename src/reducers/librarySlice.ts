@@ -460,6 +460,16 @@ export const librarySlice = createSlice({
       chapter.text[action.payload].reference = false;
       state.saved = false;
     },
+    turnOnSyntaxHighlightingForBlock(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text[action.payload].syntaxHighlighting = true;
+      state.saved = false;
+    },
+    turnOffSyntaxHighlightingForBlock(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.text[action.payload].syntaxHighlighting = false;
+      state.saved = false;
+    },
     openBlock(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       chapter.text[action.payload].open = true;
