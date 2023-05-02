@@ -1,5 +1,5 @@
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
@@ -60,9 +60,11 @@ export default function Editor({ onSave }: { onSave: () => void }) {
                   const con = text.text.trim().replaceAll("  ", "\t");
 
                   return (
-                    <div>
-                      <label>{text.language}</label>
-                      <SyntaxHighlighter language="javascript" style={docco}>
+                    <div className="my-sm">
+                      <label className="p-xs relative text-xs xl:text-sm text-slate-600 dark:text-white font-light uppercase mb-xs">
+                        {text.language}
+                      </label>
+                      <SyntaxHighlighter language="javascript" style={a11yDark}>
                         {con}
                       </SyntaxHighlighter>
                     </div>
