@@ -9,7 +9,9 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
   if (raw) {
     return (
       <div className="">
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose} selector="diff-view-close">
+          Close
+        </Button>
         <Button onClick={() => setRaw(false)}>Formatted</Button>
         <div className="grid grid-cols-1 m-md font-mono">
           {JsDiff.diffChars(originalText, newText).map((part, i) => {
@@ -27,8 +29,10 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
   const { originalLines, newLines } = getFastHtmlDiff(originalText, newText);
 
   return (
-    <div className="h-screen overflow-scroll">
-      <Button onClick={onClose}>Close</Button>
+    <div className="h-screen overflow-scroll" id="diff-view">
+      <Button onClick={onClose} selector="diff-view-close">
+        Close
+      </Button>
       <Button onClick={() => setRaw(true)}>Raw</Button>
       <Suspense
         fallback={

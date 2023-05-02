@@ -135,6 +135,12 @@ Cypress.Commands.add("autoSave", (user) => {
   cy.wait(6000);
 });
 
+Cypress.Commands.add("launcher", (cmd, element="body") => {
+  cy.get(element).type("{cmd+shift+p}");
+  cy.get("input[data-selector='launcher-search-input']").type(`${cmd}{enter}`);
+
+});
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite

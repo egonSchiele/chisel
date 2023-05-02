@@ -784,6 +784,7 @@ export default function Library() {
                     onClick={() =>
                       dispatch(librarySlice.actions.setViewMode("readonly"))
                     }
+                    selector="readonly-open"
                   >
                     <PencilIcon className="h-5 w-5" aria-hidden="true" />
                   </NavButton>
@@ -794,6 +795,7 @@ export default function Library() {
                     onClick={() =>
                       dispatch(librarySlice.actions.setViewMode("default"))
                     }
+                    selector="readonly-close"
                   >
                     <PencilIcon
                       className="h-5 w-5 text-red-700"

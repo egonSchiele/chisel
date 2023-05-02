@@ -11,12 +11,15 @@
 - editing a prompt in settings: Settings
 - full screen mode: Fullscreen
 - Deleting a chapter/book updates UI: DeleteBook
-
+- creating blocks, diffing blocks: Blocks
+- Test the launcher: Blocks
+- Read only mode: Blocks
+- Clicking a prompt fetches ai suggestions: Prompts
 ## TODO
 - Reordering chapters
-- Clicking a prompt fetches ai suggestions
-- focus mode
-
-
-- close chapter/book by clicking X
-- if chapter/book is closed, you can click the arrow to open
+- Selecting a characters name in the editor shows them in the info panel.
+- Chapters show up on front matter.
+- Reference blocks. 
+- restoring history with multiple blocks
+- full screen mode history. 
+- merging blocks: commented out in Blocks

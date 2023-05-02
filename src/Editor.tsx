@@ -44,6 +44,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
       <div
         ref={readonlyDiv}
         className="flex h-screen overflow-auto w-full max-w-3xl mx-auto  "
+        id="readonly"
       >
         <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
           <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
