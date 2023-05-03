@@ -19,7 +19,7 @@ export default function Select({
       <select
         id={name}
         name={name}
-        className={`mt-xs mb-sm block w-full rounded-md border-0 py-1 pl-3 pr-10 text-gray-900  dark:border-gray-700 dark:bg-black dark:text-dmtext ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 ${className}`}
+        className={`mt-xs mb-sm block w-full rounded-md border-0 py-1 pl-3 pr-10 text-gray-900  dark:border-gray-700 dark:bg-black dark:text-dmtext ring-1 ring-inset ring-gray-300 dark:ring-gray-500 focus:ring-2  sm:text-sm sm:leading-6 ${className}`}
         value={value}
         onChange={onChange}
       >

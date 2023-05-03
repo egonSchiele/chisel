@@ -39,6 +39,7 @@ function LanguageSelector({ chapterid, index }) {
       title="Language"
       name="language"
       value={language}
+      className="w-fit dark:bg-gray-800 dark:border-gray-500 dark:text-gray-300 "
       onChange={(e) => {
         dispatch(
           librarySlice.actions.setLanguage({
