@@ -53,6 +53,7 @@
     "@types/dompurify": "^3.0.2",
     "@types/node": "^18.15.9",
     "ap-style-title-case": "^2.0.0",
+    "browser-detect": "^0.2.28",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

@@ -46,7 +46,7 @@ import BookEditor from "./BookEditor";
 import Popup from "./Popup";
 import LibraryLauncher from "./LibraryLauncher";
 
-export default function Library() {
+export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
   const selectedBook = useSelector(getSelectedBook);
 
@@ -615,7 +615,7 @@ export default function Library() {
             />
           </LibErrorBoundary>
         )}
-        {state.panels.bookList.open && (
+        {state.panels.bookList.open && !mobile && (
           <LibErrorBoundary component="book list">
             <div
               className={`flex-none h-full ${
@@ -639,46 +639,57 @@ export default function Library() {
             </div>
           </LibErrorBoundary>
         )}
-        {state.panels.chapterList.open &&
-          state.selectedBookId &&
-          state.booksLoaded && (
-            <LibErrorBoundary component="chapter list">
-              <div className="flex-none w-48 xl:w-60 h-full">
-                <ChapterList
-                  bookid={state.selectedBookId}
-                  selectedChapterId={chapterid || ""}
-                  onDelete={(deletedChapterid) => {
-                    dispatch(
-                      librarySlice.actions.deleteChapter(deletedChapterid)
-                    );
-                    if (deletedChapterid === chapterid) {
-                      dispatch(librarySlice.actions.noChapterSelected());
-                      navigate(`/book/${state.selectedBookId}`);
-                    }
-                  }}
-                  saveChapter={(chapter) => saveChapter(chapter, null)}
-                  closeSidebar={() =>
-                    dispatch(librarySlice.actions.closeChapterList())
+        {state.panels.chapterList.open && state.selectedBookId && !mobile && (
+          <LibErrorBoundary component="chapter list">
+            <div className="flex-none w-48 xl:w-60 h-full">
+              <ChapterList
+                bookid={state.selectedBookId}
+                selectedChapterId={chapterid || ""}
+                onDelete={(deletedChapterid) => {
+                  dispatch(
+                    librarySlice.actions.deleteChapter(deletedChapterid)
+                  );
+                  if (deletedChapterid === chapterid) {
+                    dispatch(librarySlice.actions.noChapterSelected());
+                    navigate(`/book/${state.selectedBookId}`);
                   }
-                  newChapter={newChapter}
-                  canCloseSidebar={
-                    chapterid !== undefined || isTruthy(state.selectedBookId)
-                  }
-                />
-              </div>
-            </LibErrorBoundary>
-          )}
+                }}
+                saveChapter={(chapter) => saveChapter(chapter, null)}
+                closeSidebar={() =>
+                  dispatch(librarySlice.actions.closeChapterList())
+                }
+                newChapter={newChapter}
+                canCloseSidebar={
+                  chapterid !== undefined || isTruthy(state.selectedBookId)
+                }
+              />
+            </div>
+          </LibErrorBoundary>
+        )}
 
         <div className="h-full flex flex-col flex-grow bg-editor dark:bg-dmeditor">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
               {(!state.panels.bookList.open ||
-                !state.panels.chapterList.open) && (
+                !state.panels.chapterList.open) &&
+                !mobile && (
+                  <NavButton
+                    label="Open"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.openBookList());
+                      dispatch(librarySlice.actions.openChapterList());
+                    }}
+                    className="p-0"
+                    selector="open-lists-button"
+                  >
+                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                  </NavButton>
+                )}
+              {mobile && (
                 <NavButton
                   label="Open"
                   onClick={() => {
-                    dispatch(librarySlice.actions.openBookList());
-                    dispatch(librarySlice.actions.openChapterList());
+                    navigate(`/book/${state.selectedBookId}`);
                   }}
                   className="p-0"
                   selector="open-lists-button"
@@ -687,19 +698,21 @@ export default function Library() {
                 </NavButton>
               )}
 
-              {state.panels.bookList.open && state.panels.chapterList.open && (
-                <NavButton
-                  label="Close"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.closeBookList());
-                    dispatch(librarySlice.actions.closeChapterList());
-                  }}
-                  className="p-0"
-                  selector="open-lists-button"
-                >
-                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                </NavButton>
-              )}
+              {state.panels.bookList.open &&
+                state.panels.chapterList.open &&
+                !mobile && (
+                  <NavButton
+                    label="Close"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.closeBookList());
+                      dispatch(librarySlice.actions.closeChapterList());
+                    }}
+                    className="p-0"
+                    selector="open-lists-button"
+                  >
+                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                  </NavButton>
+                )}
             </div>
 
             <div className="flex-grow" />
@@ -780,45 +793,49 @@ export default function Library() {
                     </NavButton>
                   )}
 
-                  <NavButton
-                    label="Focus Mode"
-                    onClick={() =>
-                      dispatch(librarySlice.actions.setViewMode("focus"))
-                    }
-                  >
-                    <EyeIcon className="h-5 w-5" aria-hidden="true" />
-                  </NavButton>
+                  {!mobile && (
+                    <>
+                      <NavButton
+                        label="Focus Mode"
+                        onClick={() =>
+                          dispatch(librarySlice.actions.setViewMode("focus"))
+                        }
+                      >
+                        <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                      </NavButton>
 
-                  <NavButton
-                    label="Prompts"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.togglePrompts());
-                      if (!state.panels.prompts.open) {
-                        dispatch(librarySlice.actions.closeBookList());
-                        dispatch(librarySlice.actions.closeChapterList());
-                      }
-                    }}
-                    selector="prompts-button"
-                  >
-                    <SparklesIcon className="h-5 w-5" aria-hidden="true" />
-                  </NavButton>
+                      <NavButton
+                        label="Prompts"
+                        onClick={() => {
+                          dispatch(librarySlice.actions.togglePrompts());
+                          if (!state.panels.prompts.open) {
+                            dispatch(librarySlice.actions.closeBookList());
+                            dispatch(librarySlice.actions.closeChapterList());
+                          }
+                        }}
+                        selector="prompts-button"
+                      >
+                        <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+                      </NavButton>
 
-                  <NavButton
-                    label="Sidebar"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.toggleSidebar());
-                      if (!state.panels.sidebar.open) {
-                        dispatch(librarySlice.actions.closeBookList());
-                        dispatch(librarySlice.actions.closeChapterList());
-                      }
-                    }}
-                    selector="sidebar-button"
-                  >
-                    <EllipsisHorizontalCircleIcon
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    />
-                  </NavButton>
+                      <NavButton
+                        label="Sidebar"
+                        onClick={() => {
+                          dispatch(librarySlice.actions.toggleSidebar());
+                          if (!state.panels.sidebar.open) {
+                            dispatch(librarySlice.actions.closeBookList());
+                            dispatch(librarySlice.actions.closeChapterList());
+                          }
+                        }}
+                        selector="sidebar-button"
+                      >
+                        <EllipsisHorizontalCircleIcon
+                          className="h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      </NavButton>
+                    </>
+                  )}
                 </div>
               </LibErrorBoundary>
             )}
@@ -839,7 +856,7 @@ export default function Library() {
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
-        {state.panels.prompts.open && currentChapter && (
+        {state.panels.prompts.open && currentChapter && !mobile && (
           <div className="w-36 xl:w-48 flex-none h-screen overflow-auto">
             <LibErrorBoundary component="Prompts sidebar">
               <PromptsSidebar
@@ -856,7 +873,7 @@ export default function Library() {
           </div>
         )}
 
-        {state.panels.sidebar.open && currentChapter && (
+        {state.panels.sidebar.open && currentChapter && !mobile && (
           <div className={`${sidebarWidth} flex-none h-screen overflow-auto`}>
             <LibErrorBoundary component="sidebar">
               <Sidebar

@@ -3,7 +3,7 @@ import express from "express";
 import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import browser from "browser-detect";
 import * as fs from "fs";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -75,6 +75,10 @@ const noCache = (req, res, next) => {
   res.setHeader("Expires", "0");
   next();
 };
+
+function isMobile(req) {
+  return browser(req.headers["user-agent"]).mobile;
+}
 
 const csrf = (req, res, next) => {
   if (req.method !== "GET") {
@@ -295,7 +299,11 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    serveFile("chapter.html", res);
+    if (isMobile(req)) {
+      serveFile("mobile.html", res);
+    } else {
+      serveFile("chapter.html", res);
+    }
   }
 );
 app.get(
@@ -304,16 +312,28 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    serveFile("chapter.html", res);
+    if (isMobile(req)) {
+      serveFile("mobile.html", res);
+    } else {
+      serveFile("chapter.html", res);
+    }
   }
 );
 
 app.get("/", requireLogin, async (req, res) => {
-  serveFile("library.html", res);
+  if (isMobile(req)) {
+    serveFile("mobile.html", res);
+  } else {
+    serveFile("library.html", res);
+  }
 });
 
 app.get("/home.html", requireLogin, async (req, res) => {
-  serveFile("library.html", res);
+  if (isMobile(req)) {
+    serveFile("mobile.html", res);
+  } else {
+    serveFile("library.html", res);
+  }
 });
 
 app.get("/404", async (req, res) => {
@@ -367,7 +387,11 @@ app.get("/books", requireLogin, noCache, async (req, res) => {
 });
 
 app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  serveFile("book.html", res);
+  if (isMobile(req)) {
+    serveFile("mobile.html", res);
+  } else {
+    serveFile("book.html", res);
+  }
 });
 
 app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {

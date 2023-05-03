@@ -46,7 +46,7 @@ export default function ChapterList({
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
-  const chapters = useSelector(getSelectedBookChapters);
+  const chapters = useSelector(getSelectedBookChapters) || [];
   const bookOptions = useSelector((state: RootState) =>
     sortBy(state.library.books, ["title"]).map((book) => ({
       label: book.title,

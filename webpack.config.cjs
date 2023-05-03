@@ -39,6 +39,7 @@ module.exports = {
     login: "./empty.tsx",
     privacy: "./empty.tsx",
     register: "./empty.tsx",
+    mobile: "./mobile.tsx",
     home: "./home.tsx",
     userguide: "./userguide.tsx",
     404: "./empty.tsx",
