@@ -54,6 +54,14 @@ const formats = [
   "video", */
 ];
 
+function Tag({ letter }) {
+  return (
+    <div className="m-0 p-0 mt-xs mr-xs text-center uppercase text-xs rounded border text-gray-500 border-gray-500">
+      {letter}
+    </div>
+  );
+}
+
 function LanguageSelector({ chapterid, index }) {
   const dispatch = useDispatch();
   const currentText: t.CodeBlock = useSelector(getText(index)) as t.CodeBlock;
@@ -302,11 +310,9 @@ function TextEditor({
                   }`}
                 />
               </div>
-              {currentText.reference && (
-                <div className="m-0 p-0 mt-xs mr-xs text-center uppercase text-xs rounded border text-gray-500 border-gray-500">
-                  R
-                </div>
-              )}
+              {currentText.reference && <Tag letter="R" />}
+              {currentText.type === "code" && <Tag letter="C" />}
+              {currentText.type === "markdown" && <Tag letter="M" />}
               {/* <div
                 className="h-5 cursor-pointer mr-xs mt-xs"
                 onClick={() => {
@@ -348,6 +354,7 @@ function TextEditor({
                   history: {
                     userOnly: true,
                   },
+                  toolbar: false,
                 }}
                 formats={formats}
               />
@@ -370,11 +377,9 @@ function TextEditor({
               >
                 <ChevronRightIcon className="w-5 h-5 text-gray-500" />
               </div>
-              {currentText.reference && (
-                <div className="m-0 p-0 mt-xs mr-xs text-center uppercase text-xs rounded border text-gray-500 border-gray-500">
-                  R
-                </div>
-              )}
+              {currentText.reference && <Tag letter="R" />}
+              {currentText.type === "code" && <Tag letter="C" />}
+              {currentText.type === "markdown" && <Tag letter="M" />}
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
               <p
