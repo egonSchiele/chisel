@@ -305,9 +305,9 @@ function TextEditor({
               }}
               data-selector={`texteditor-${index}`}
             >
-              {currentText.syntaxHighlighting && (
+              {/*  {currentText.syntaxHighlighting && (
                 <LanguageSelector chapterid={chapterid} index={index} />
-              )}
+              )} */}
               <ReactQuill
                 ref={quillRef}
                 placeholder=""
