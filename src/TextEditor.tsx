@@ -56,7 +56,7 @@ const formats = [
 
 function LanguageSelector({ chapterid, index }) {
   const dispatch = useDispatch();
-  const currentText = useSelector(getText(index));
+  const currentText: t.CodeBlock = useSelector(getText(index)) as t.CodeBlock;
 
   const { language } = currentText;
   return (
@@ -336,7 +336,7 @@ function TextEditor({
               <ReactQuill
                 ref={quillRef}
                 placeholder=""
-                className={`${currentText.syntaxHighlighting && "font-mono"}`}
+                className={`${currentText.type === "code" && "font-mono"}`}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}

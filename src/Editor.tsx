@@ -1,5 +1,3 @@
-import * as DOMPurify from "dompurify";
-import { marked } from "marked";
 import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,8 +15,8 @@ import { postWithCsrf } from "./fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
 import { useKeyboardScroll } from "./hooks";
-import SyntaxHighlighter from "./languages";
-import zenburn from "react-syntax-highlighter/dist/esm/styles/hljs/zenburn";
+import CodeBlock from "./components/CodeBlock";
+import MarkdownBlock from "./components/MarkdownBlock";
 export default function Editor({ onSave }: { onSave: () => void }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -56,33 +54,21 @@ export default function Editor({ onSave }: { onSave: () => void }) {
             {currentText
               .filter((t) => t.open)
               .map((text: t.TextBlock, index) => {
-                if (text.syntaxHighlighting) {
-                  const con = text.text.trim().replaceAll("  ", "\t");
-
+                if (text.type === "code") {
                   return (
-                    <div className="my-sm" key={index}>
-                      <div className="relative text-xs xl:text-sm text-gray-600 dark:text-gray-300 font-light uppercase mb-xs">
-                        {text.language}
-                      </div>
-                      <SyntaxHighlighter
-                        language={text.language}
-                        style={zenburn}
-                      >
-                        {con}
-                      </SyntaxHighlighter>
-                    </div>
-                  );
-                } else {
-                  let html = marked.parse(text.text);
-
-                  html = DOMPurify.sanitize(html);
-
-                  return (
-                    <div
+                    <CodeBlock
+                      text={text.text}
+                      language={text.language}
                       key={index}
-                      className="typography markdown"
-                      dangerouslySetInnerHTML={{ __html: html }}
                     />
+                  );
+                } else if (text.type === "markdown") {
+                  return <MarkdownBlock text={text.text} key={index} />;
+                } else {
+                  return (
+                    <pre key={index} className="typography font-sans">
+                      {text.text}
+                    </pre>
                   );
                 }
               })}

@@ -453,8 +453,11 @@ export const librarySlice = createSlice({
     setLanguage(state: t.State, action: PayloadAction<{index:number; language:string}>) {
       const chapter = getSelectedChapter({ library: state });
       const { index, language } = action.payload;
-      chapter.text[index].language = language;
-      chapter.text[index].syntaxHighlighting = true;
+
+      const block = chapter.text[index] as t.CodeBlock;
+
+      block.type = "code";
+      block.language = language;
       state.saved = false;
     },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {
@@ -467,14 +470,10 @@ export const librarySlice = createSlice({
       chapter.text[action.payload].reference = false;
       state.saved = false;
     },
-    turnOnSyntaxHighlightingForBlock(state: t.State, action: PayloadAction<number>) {
+    setBlockType(state: t.State, action: PayloadAction<{index: number; type: t.BlockType}>) {
       const chapter = getSelectedChapter({ library: state });
-      chapter.text[action.payload].syntaxHighlighting = true;
-      state.saved = false;
-    },
-    turnOffSyntaxHighlightingForBlock(state: t.State, action: PayloadAction<number>) {
-      const chapter = getSelectedChapter({ library: state });
-      chapter.text[action.payload].syntaxHighlighting = false;
+      const { index, type } = action.payload;
+      chapter.text[index].type = type;
       state.saved = false;
     },
     openBlock(state: t.State, action: PayloadAction<number>) {

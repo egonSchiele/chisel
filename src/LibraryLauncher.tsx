@@ -32,7 +32,7 @@ import { AppDispatch, RootState } from "./store";
 import { fetchSuggestionsWrapper } from "./utils";
 import sortBy from "lodash/sortBy";
 import Launcher from "./Launcher";
-import { State } from "./Types";
+import { State, blockTypes } from "./Types";
 import { useNavigate } from "react-router-dom";
 import { languages } from "./languages";
 
@@ -453,38 +453,23 @@ export default function LibraryLauncher({
         icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
       });
     }
-    if (!currentTextBlock.syntaxHighlighting) {
-      launchItems.push({
-        label: "Convert to code block",
-        onClick: () => {
-          dispatch(
-            librarySlice.actions.turnOnSyntaxHighlightingForBlock(
-              state.editor.activeTextIndex
-            )
-          );
-        },
-        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
-      });
-    }
-    if (currentTextBlock.syntaxHighlighting) {
-      launchItems.push({
-        label: "Convert to text block",
-        onClick: () => {
-          dispatch(
-            librarySlice.actions.turnOffSyntaxHighlightingForBlock(
-              state.editor.activeTextIndex
-            )
-          );
-        },
-        icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
-      });
-    }
-  }
+    blockTypes.forEach((blockType) => {
+      if (currentTextBlock.type !== blockType) {
+        launchItems.push({
+          label: `Convert to ${blockType}`,
+          onClick: () => {
+            dispatch(
+              librarySlice.actions.setBlockType({
+                index: state.editor.activeTextIndex,
+                type: blockType,
+              })
+            );
+          },
+          icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        });
+      }
+    });
 
-  if (
-    state.editor.activeTextIndex !== null &&
-    state.editor.activeTextIndex !== undefined
-  ) {
     languages.forEach((language) => {
       launchItems.push({
         label: `Set language to ${language}`,

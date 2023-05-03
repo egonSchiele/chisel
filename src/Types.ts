@@ -69,25 +69,45 @@ export type Pos = {
   y: number;
 };
 
-export type PlainTextBlock = {
-  type: "plain";
+export type BaseBlock = {
   text: string;
   open?: boolean;
   id?: string;
   reference?: boolean;
-  syntaxHighlighting?: boolean;
-  language?: string;
 };
 
+export type PlainTextBlock = BaseBlock & {
+  type: "plain";
+}
+export type MarkdownBlock = BaseBlock & {
+  type: "markdown";
+}
+
+export type CodeBlock = BaseBlock & {
+  type: "code";
+  language?: string;
+}
+
+export const blockTypes = ["plain", "markdown", "code"];
+export type BlockType = "plain" | "markdown" | "code";
+
 export function plainTextBlock(text: string): PlainTextBlock {
-  return { type: "plain", open: true, id: nanoid(), text, reference: false, syntaxHighlighting: false, language: "plaintext" };
+  return { type: "plain", open: true, id: nanoid(), text, reference: false };
 }
 
-export function plainTextBlockFromData(text: string, open:boolean, reference:boolean, syntaxHighlighting:boolean, language:string): PlainTextBlock {
-  return { type: "plain", open, id: nanoid(), text, reference, syntaxHighlighting, language };
+export function plainTextBlockFromData(text: string, open:boolean, reference:boolean): PlainTextBlock {
+  return { type: "plain", open, id: nanoid(), text, reference };
 }
 
-export type TextBlock = PlainTextBlock;
+export function markdownBlockFromData(text: string, open:boolean, reference:boolean): MarkdownBlock {
+  return { type: "markdown", open, id: nanoid(), text, reference };
+}
+
+export function codeBlockFromData(text: string, open:boolean, reference:boolean, language:string): CodeBlock {
+  return { type: "code", open, id: nanoid(), text, reference, language };
+}
+
+export type TextBlock = PlainTextBlock | MarkdownBlock | CodeBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 
