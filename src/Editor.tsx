@@ -50,7 +50,7 @@ export default function Editor() {
           <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
             {currentChapterTitle}
           </h1>
-          <div className="grid grid-col-1">
+          <div className="w-full">
             {currentText
               .filter((t) => t.open)
               .map((text: t.TextBlock, index) => {
@@ -66,7 +66,7 @@ export default function Editor() {
                   return <MarkdownBlock text={text.text} key={index} />;
                 } else {
                   return (
-                    <pre key={index} className="typography font-sans">
+                    <pre key={index} className="w-full typography font-sans">
                       {text.text}
                     </pre>
                   );
@@ -84,7 +84,7 @@ export default function Editor() {
       <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}
-          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"
+          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mt-sm md:mt-0"
           /* // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));

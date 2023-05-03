@@ -326,9 +326,9 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow border-l ${
+              className={`flex-grow border-l w-full pl-sm pr-md ${
                 isActive ? "border-gray-300" : "border-gray-500"
-              } pl-sm`}
+              }`}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}

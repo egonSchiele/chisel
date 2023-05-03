@@ -579,7 +579,7 @@ export default function Library({ mobile = false }) {
   }
 
   return (
-    <div className="h-screen">
+    <div className="h-screen w-full">
       {state.launcherOpen && (
         <LibErrorBoundary component="launcher">
           <LibraryLauncher
@@ -604,7 +604,7 @@ export default function Library({ mobile = false }) {
           </div>
         </div>
       )}
-      <div className="flex h-full">
+      <div className="flex h-full w-full">
         {state.popupOpen && state.popupData && (
           <LibErrorBoundary component="popup">
             <Popup
@@ -667,7 +667,7 @@ export default function Library({ mobile = false }) {
           </LibErrorBoundary>
         )}
 
-        <div className="h-full flex flex-col flex-grow bg-editor dark:bg-dmeditor">
+        <div className="h-full w-full flex flex-col flex-grow bg-editor dark:bg-dmeditor">
           <div className="flex-none h-fit m-xs flex">
             <div className="flex-none">
               {(!state.panels.bookList.open ||
