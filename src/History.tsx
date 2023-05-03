@@ -64,9 +64,9 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
 function History({
   bookid,
   chapterid,
-  onSave,
   triggerHistoryRerender,
   onClick,
+  addToHistory,
 }) {
   const [history, setHistory] = useState<t.History>([]);
   const [page, setPage] = useState(0);
@@ -108,6 +108,7 @@ function History({
   if (!fullscreen) {
     return (
       <div className="grid grid-cols-1 gap-3">
+        <Button onClick={addToHistory}>Add to History</Button>
         {reverseHistory.map((patch, i) => (
           <HistoryPanel
             key={i}

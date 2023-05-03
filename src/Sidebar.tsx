@@ -128,6 +128,7 @@ export default function Sidebar({
   onHistoryClick,
   triggerHistoryRerender,
   maximize,
+  addToHistory,
 }) {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
@@ -180,9 +181,9 @@ export default function Sidebar({
                 key="history"
                 chapterid={currentChapter.chapterid}
                 bookid={currentChapter.bookid}
-                onSave={() => {}}
                 triggerHistoryRerender={triggerHistoryRerender}
                 onClick={(e, newText) => onHistoryClick(e, newText)}
+                addToHistory={addToHistory}
               />,
             ]}
           />

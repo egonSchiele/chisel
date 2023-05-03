@@ -84,10 +84,13 @@ export default function Library() {
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
 
   const handleKeyDown = async (event) => {
+    if (event.metaKey && event.shiftKey && event.code === "KeyS") {
+      event.preventDefault();
+      onTextEditorSave(state, true);
+    }
     if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
-
-      onEditorSave();
+      onTextEditorSave(state, false);
     } else if (event.key === "Escape") {
       event.preventDefault();
       if (state.popupOpen) {
@@ -231,7 +234,7 @@ export default function Library() {
     []
   );
 
-  async function onTextEditorSave(state: t.State) {
+  async function onTextEditorSave(state: t.State, shouldSaveToHistory = false) {
     const chapter = getSelectedChapter({ library: state });
     if (!chapter) {
       console.log("No chapter to save");
@@ -250,7 +253,7 @@ export default function Library() {
       }
     }
 
-    if (chapter) {
+    if (chapter && shouldSaveToHistory) {
       await saveToHistory(state);
       setTriggerHistoryRerender((t) => t + 1);
     }
@@ -566,6 +569,9 @@ export default function Library() {
             );
             dispatch(librarySlice.actions.setViewMode("default"));
           }}
+          addToHistory={async () => {
+            await onTextEditorSave(state, true);
+          }}
           triggerHistoryRerender={triggerHistoryRerender}
         />
       </div>
@@ -827,7 +833,7 @@ export default function Library() {
           <div className="flex-grow h-full w-full bg-editor dark:bg-dmeditor mb-60">
             {currentChapter && (
               <LibErrorBoundary component="editor">
-                <Editor onSave={onEditorSave} />
+                <Editor />
               </LibErrorBoundary>
             )}
           </div>
@@ -878,6 +884,9 @@ export default function Library() {
                   dispatch(librarySlice.actions.setViewMode("default"));
                 }}
                 triggerHistoryRerender={triggerHistoryRerender}
+                addToHistory={async () => {
+                  await onTextEditorSave(state, true);
+                }}
               />
             </LibErrorBoundary>
           </div>

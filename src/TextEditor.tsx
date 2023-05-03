@@ -94,11 +94,9 @@ function LanguageSelector({ chapterid, index }) {
 function TextEditor({
   chapterid,
   index,
-  onSave,
 }: {
   chapterid: string;
   index: number;
-  onSave: () => void;
 }) {
   const _pushTextToEditor = useSelector(
     (state: RootState) => state.library.editor._pushTextToEditor

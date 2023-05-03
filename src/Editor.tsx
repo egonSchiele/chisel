@@ -17,7 +17,7 @@ import ContentEditable from "./components/ContentEditable";
 import { useKeyboardScroll } from "./hooks";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
-export default function Editor({ onSave }: { onSave: () => void }) {
+export default function Editor() {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
@@ -102,7 +102,6 @@ export default function Editor({ onSave }: { onSave: () => void }) {
             chapterid={currentChapterId}
             index={index}
             key={text.id || index}
-            onSave={onSave}
           />
         ))}
         {/* bottom padding */}
