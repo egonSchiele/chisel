@@ -108,7 +108,7 @@ function History({
   if (!fullscreen) {
     return (
       <div className="grid grid-cols-1 gap-3">
-        <Button onClick={addToHistory}>Add to History</Button>
+        <Button onClick={addToHistory}>Commit to History</Button>
         {reverseHistory.map((patch, i) => (
           <HistoryPanel
             key={i}

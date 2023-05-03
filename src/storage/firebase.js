@@ -348,7 +348,7 @@ export function makeNewChapter(text, title, bookid, data = {}) {
     chapterid,
     title,
     bookid,
-    text: [{ type: "plain", text, open: true }],
+    text: [{ type: "markdown", text, open: true }],
     pos: { x: 0, y: 0 },
     suggestions: [],
     favorite: false,
