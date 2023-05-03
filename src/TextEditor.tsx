@@ -29,6 +29,31 @@ import {
 import { useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
 import { languages } from "./languages";
+
+const formats = [
+  /*   "background",
+  "bold",
+  "color",
+  "font",
+  "code",
+  "italic",
+  "link",
+  "size",
+  "strike",
+  "script",
+  "underline",
+  "blockquote",
+  // "header",
+  "indent",
+  // "list", <-- commented-out to suppress auto bullets
+  "align",
+  "direction",
+  "code-block",
+  "formula",
+  "image",
+  "video", */
+];
+
 function LanguageSelector({ chapterid, index }) {
   const dispatch = useDispatch();
   const currentText = useSelector(getText(index));
@@ -324,6 +349,7 @@ function TextEditor({
                     userOnly: true,
                   },
                 }}
+                formats={formats}
               />
             </div>
           </div>
