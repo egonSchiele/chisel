@@ -102,7 +102,13 @@ function History({
     return old;
   };
 
-  if (!history || history.length === 0) return <p>No history</p>;
+  if (!history || history.length === 0)
+    return (
+      <div className="grid grid-cols-1 gap-3">
+        <Button onClick={addToHistory}>Commit to History</Button>
+        <p>No history</p>
+      </div>
+    );
   const reverseHistory = [...history].reverse();
 
   if (!fullscreen) {
