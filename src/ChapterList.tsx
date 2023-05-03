@@ -30,11 +30,11 @@ import sortBy from "lodash/sortBy";
 export default function ChapterList({
   bookid,
   selectedChapterId,
-
   onDelete,
   saveChapter,
   closeSidebar,
   newChapter,
+  mobile = false,
   canCloseSidebar = true,
 }: {
   bookid: string;
@@ -43,6 +43,7 @@ export default function ChapterList({
   saveChapter: (chapter: t.Chapter) => Promise<void>;
   closeSidebar: () => void;
   newChapter: (title?: string, text?: string) => void;
+  mobile?: boolean;
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
@@ -217,10 +218,18 @@ export default function ChapterList({
 
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
-  const rightMenuItem = canCloseSidebar && {
+  let rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
+    className: buttonStyles,
+    animate: true,
+  };
+
+  rightMenuItem = mobile && {
+    label: "Back",
+    icon: <p>Back</p>,
+    onClick: () => navigate("/"),
     className: buttonStyles,
     animate: true,
   };

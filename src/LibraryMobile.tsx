@@ -234,6 +234,7 @@ export default function Library() {
                 }
                 newChapter={newChapter}
                 canCloseSidebar={false}
+                mobile={true}
               />
             </div>
           </LibErrorBoundary>

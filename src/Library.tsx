@@ -694,7 +694,7 @@ export default function Library({ mobile = false }) {
                   className="p-0"
                   selector="open-lists-button"
                 >
-                  <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
               )}
 
