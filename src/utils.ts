@@ -171,9 +171,9 @@ export function parseText(text: string): t.TextBlock[] {
       }
       return data;
     }
-    return [t.plainTextBlock(text)];
+    return [t.markdownBlock(text)];
   } catch (e) {
-    return [t.plainTextBlock(text)];
+    return [t.markdownBlock(text)];
   }
 }
 
@@ -213,14 +213,16 @@ export function getChapterText(chapter) {
 export function saveTextToHistory(chapter:t.Chapter):string {
   const texts = chapter.text.map((t) => {
       if (t.type === "plain") {
-        const { type, open, reference, syntaxHighlighting, language } = t;
-        if (!open || reference || syntaxHighlighting) {
-          const jsonFrontMatter = JSON.stringify({type, open, reference, syntaxHighlighting, language});
+        const { type, open, reference } = t;
+          const jsonFrontMatter = JSON.stringify({type, open, reference});
           return `${jsonFrontMatter}\n\n${t.text}`;
-        }
+      } else if (t.type === "code") {
+        const { type, open, reference, language } = t;
+        const jsonFrontMatter = JSON.stringify({type, open, reference, language});
+        return `${jsonFrontMatter}\n\n${t.text}`;
+      } else {
         return t.text;
       }
-      return t.text;
   })
   return texts.join("\n---\n");
 }
@@ -232,12 +234,14 @@ export function restoreBlockFromHistory(text:string):t.TextBlock {
   const blockText = lines.slice(2).join("\n");
   const frontMatter = JSON.parse(jsonFrontMatter);
   if (frontMatter.type === "plain") {
-    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.syntaxHighlighting, frontMatter.language);
+    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference);
+  } else if (frontMatter.type === "code") {
+    return t.codeBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.language);
   } else {
-    return t.plainTextBlock(blockText);
+    return t.markdownBlockFromData(blockText, frontMatter.open, frontMatter.reference);
   }
   } catch (e) {
-    return t.plainTextBlock(text);
+    return t.markdownBlock(text);
   }
 }
 

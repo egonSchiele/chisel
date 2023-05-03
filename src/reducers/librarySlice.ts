@@ -26,7 +26,7 @@ type DefaultChapter = {
 
 const defaults = {
   title: "",
-  text: [t.plainTextBlock("default textt")],
+  text: [t.markdownBlock("a simple default text")],
   chapterid: "",
   suggestions: []
 };
@@ -99,9 +99,7 @@ export const librarySlice = createSlice({
       books.forEach((book) => {        
         book.chapters.forEach((chapter) => {
           if (isString(chapter.text)) {
-            chapter.text = [
-              t.plainTextBlock(chapter.text as unknown as string)
-            ];
+            chapter.text = parseText(chapter.text as unknown as string);
           } 
         });
       });
@@ -487,14 +485,14 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     newBlockBeforeCurrent(state: t.State) {
-      const newBlock = t.plainTextBlock("");
+      const newBlock = newBlockFromCurrent(state)
       const chapter = getSelectedChapter({ library: state });
       chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
 
       state.saved = false;
     },
     newBlockAfterCurrent(state: t.State) {
-      const newBlock = t.plainTextBlock("");
+      const newBlock = newBlockFromCurrent(state)
       const chapter = getSelectedChapter({ library: state });
       chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
       state.editor.activeTextIndex += 1
@@ -550,7 +548,7 @@ export const librarySlice = createSlice({
  */       if (length === 0) {
         if (index === 0) {
           // newBlockBeforeCurrent
-          const newBlock = t.plainTextBlock("");
+          const newBlock = newBlockFromCurrent(state)
           chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
      const cur = current(chapter.text)
  //   console.log("cur", cur)
@@ -558,7 +556,7 @@ export const librarySlice = createSlice({
           return;
         } else if (index === text.text.length - 1) {
           // newBlockAfterCurrent
-          const newBlock = t.plainTextBlock("");
+          const newBlock = newBlockFromCurrent(state)
           chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
           state.editor.activeTextIndex += 1
           state.saved = false;
@@ -568,7 +566,8 @@ export const librarySlice = createSlice({
         }
       }
       const newText = strSplice(text.text, index, length).trim();
-      const newBlock = t.plainTextBlock(contents.trim());
+      const newBlock = newBlockFromCurrent(state, contents.trim());
+      
       // all the text before the selection
       const startText = text.text.slice(0, index).trim();
       // all the text after the selection
@@ -618,7 +617,8 @@ export const librarySlice = createSlice({
 
         text.text = startText;
         state.editor._pushTextToEditor = startText;
-        const endBlock = t.plainTextBlock(endText);
+        
+        const endBlock = newBlockFromCurrent(state, endText)
         chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
       }
     },
@@ -770,3 +770,18 @@ export const getCharacters = (
   return book.characters;
 }
 
+export function newBlockFromCurrent(state:t.State, defaultText=""):t.TextBlock|null {
+  const chapter = getSelectedChapter({ library: state });
+  if (!chapter) return null;
+  if (state.editor.activeTextIndex === null || state.editor.activeTextIndex === undefined) return null;
+
+  const text = chapter.text[state.editor.activeTextIndex];
+  if (text.type === "plain") {
+    return t.plainTextBlock(defaultText);
+  } else if (text.type === "markdown") {
+    return t.markdownBlock(defaultText);
+  } else if (text.type === "code") {
+    return t.codeBlock(defaultText, text.language);
+  }
+  return null;
+}

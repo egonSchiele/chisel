@@ -94,6 +94,13 @@ export type BlockType = "plain" | "markdown" | "code";
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
 }
+export function markdownBlock(text: string): MarkdownBlock {
+  return { type: "markdown", open: true, id: nanoid(), text, reference: false };
+}
+
+export function codeBlock(text: string, language:string): CodeBlock {
+  return { type: "code", open: true, id: nanoid(), text, reference: false, language };
+}
 
 export function plainTextBlockFromData(text: string, open:boolean, reference:boolean): PlainTextBlock {
   return { type: "plain", open, id: nanoid(), text, reference };
