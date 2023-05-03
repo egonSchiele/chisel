@@ -17,6 +17,7 @@ import ContentEditable from "./components/ContentEditable";
 import { useKeyboardScroll } from "./hooks";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
+import TableBlock from "./components/TableBlock";
 export default function Editor({ onSave }: { onSave: () => void }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -64,6 +65,8 @@ export default function Editor({ onSave }: { onSave: () => void }) {
                   );
                 } else if (text.type === "markdown") {
                   return <MarkdownBlock text={text.text} key={index} />;
+                } else if (text.type === "table") {
+                  return <TableBlock text={text.text} key={index} />;
                 } else {
                   return (
                     <pre key={index} className="typography font-sans">

@@ -52,6 +52,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/dompurify": "^3.0.2",
     "@types/node": "^18.15.9",
+    "@types/tabulator-tables": "^5.4.7",
     "ap-style-title-case": "^2.0.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -84,6 +85,7 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
     "react-syntax-highlighter": "^15.5.0",
+    "react-tabulator": "^0.18.1",
     "stemmer": "^2.0.1",
     "syllable": "^5.0.1"
   },

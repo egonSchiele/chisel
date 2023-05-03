@@ -423,10 +423,7 @@ export default function LibraryLauncher({
     });
   }
 
-  if (
-    state.editor.activeTextIndex !== null &&
-    state.editor.activeTextIndex !== undefined
-  ) {
+  if (currentTextBlock) {
     if (!currentTextBlock.reference) {
       launchItems.push({
         label: "Mark block as reference",

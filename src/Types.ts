@@ -88,8 +88,16 @@ export type CodeBlock = BaseBlock & {
   language?: string;
 }
 
-export const blockTypes = ["plain", "markdown", "code"];
-export type BlockType = "plain" | "markdown" | "code";
+export type TableBlock = {
+  type: "table";
+  text: string;
+  open?: boolean;
+  id?: string;
+  reference?: boolean;
+};
+
+export const blockTypes = ["plain", "markdown", "code", "table"];
+export type BlockType = "plain" | "markdown" | "code" | "table";
 
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
@@ -114,7 +122,7 @@ export function codeBlockFromData(text: string, open:boolean, reference:boolean,
   return { type: "code", open, id: nanoid(), text, reference, language };
 }
 
-export type TextBlock = PlainTextBlock | MarkdownBlock | CodeBlock;
+export type TextBlock = PlainTextBlock | MarkdownBlock | CodeBlock | TableBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 
