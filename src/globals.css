@@ -90,7 +90,10 @@
     @apply text-xl;
     @apply font-bold;
     @apply my-sm;
-    
+  }
+
+  .markdown ul, .markdown li {
+    list-style-type: '– ' !important;
   }
 
   /* 
