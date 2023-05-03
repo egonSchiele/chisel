@@ -17,6 +17,8 @@ import csharp from "react-syntax-highlighter/dist/esm/languages/hljs/csharp";
 import css from "react-syntax-highlighter/dist/esm/languages/hljs/css";
 import kotlin from "react-syntax-highlighter/dist/esm/languages/hljs/kotlin";
 import swift from "react-syntax-highlighter/dist/esm/languages/hljs/swift";
+import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
+import yaml from "react-syntax-highlighter/dist/esm/languages/hljs/yaml";
 
 SyntaxHighlighter.registerLanguage("javascript", js);
 SyntaxHighlighter.registerLanguage("haskell", haskell);
@@ -36,6 +38,8 @@ SyntaxHighlighter.registerLanguage("csharp", csharp);
 SyntaxHighlighter.registerLanguage("css", css);
 SyntaxHighlighter.registerLanguage("kotlin", kotlin);
 SyntaxHighlighter.registerLanguage("swift", swift);
+SyntaxHighlighter.registerLanguage("json", json);
+SyntaxHighlighter.registerLanguage("yaml", yaml);
 
 export const languages = [
   "javascript",
@@ -56,6 +60,8 @@ export const languages = [
   "css",
   "kotlin",
   "swift",
+  "json",
+  "yaml",
 ];
 
 export default SyntaxHighlighter;

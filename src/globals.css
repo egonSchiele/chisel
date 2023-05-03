@@ -74,6 +74,25 @@
     @apply font-georgia;
   }
 
+  .markdown h1 {
+    @apply text-3xl;
+    @apply font-bold;
+    @apply my-sm;
+    
+  }
+  .markdown h2 {
+    @apply text-2xl;
+    @apply font-bold;
+    @apply my-sm;
+    
+  }
+  .markdown h3 {
+    @apply text-xl;
+    @apply font-bold;
+    @apply my-sm;
+    
+  }
+
   /* 
     .h3 {
         @apply text-md;

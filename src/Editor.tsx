@@ -1,3 +1,5 @@
+import * as DOMPurify from "dompurify";
+import { marked } from "marked";
 import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -71,13 +73,16 @@ export default function Editor({ onSave }: { onSave: () => void }) {
                     </div>
                   );
                 } else {
+                  let html = marked.parse(text.text);
+
+                  html = DOMPurify.sanitize(html);
+
                   return (
-                    <pre
+                    <div
                       key={index}
-                      className="typography font-sans first:first-letter:text-5xl first:first-letter:font-bold"
-                    >
-                      {text.text}
-                    </pre>
+                      className="typography markdown"
+                      dangerouslySetInnerHTML={{ __html: html }}
+                    />
                   );
                 }
               })}
