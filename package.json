@@ -52,6 +52,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/node": "^18.15.9",
     "ap-style-title-case": "^2.0.0",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dale-chall": "^2.0.1",

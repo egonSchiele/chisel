@@ -1,5 +1,6 @@
 import rateLimit from "express-rate-limit";
 import express from "express";
+import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -46,6 +47,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
+app.use(compression());
 
 app.use(express.static("public"));
 app.use(express.static("dist"));
