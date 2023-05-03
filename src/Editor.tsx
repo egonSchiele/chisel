@@ -1,6 +1,3 @@
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
-
 import React, { useCallback, useEffect, useRef } from "react";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +15,8 @@ import { postWithCsrf } from "./fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
 import { useKeyboardScroll } from "./hooks";
-
+import SyntaxHighlighter from "./languages";
+import zenburn from "react-syntax-highlighter/dist/esm/styles/hljs/zenburn";
 export default function Editor({ onSave }: { onSave: () => void }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -64,7 +62,10 @@ export default function Editor({ onSave }: { onSave: () => void }) {
                       <label className="p-xs relative text-xs xl:text-sm text-gray-600 dark:text-gray-300 font-light uppercase mb-xs">
                         {text.language}
                       </label>
-                      <SyntaxHighlighter language="javascript" style={a11yDark}>
+                      <SyntaxHighlighter
+                        language={text.language}
+                        style={zenburn}
+                      >
                         {con}
                       </SyntaxHighlighter>
                     </div>

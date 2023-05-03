@@ -28,19 +28,11 @@ import {
 
 import { useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
-
+import { languages } from "./languages";
 function LanguageSelector({ chapterid, index }) {
   const dispatch = useDispatch();
   const currentText = useSelector(getText(index));
-  const languages = [
-    "javascript",
-    "typescript",
-    "python",
-    "ruby",
-    "c",
-    "haskell",
-    "rust",
-  ];
+
   const { language } = currentText;
   return (
     <Select
