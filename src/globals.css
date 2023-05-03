@@ -96,6 +96,12 @@
     list-style-type: '– ' !important;
   }
 
+  .markdown img {
+    @apply my-sm;
+    @apply mx-auto;
+
+  }
+
   /* 
     .h3 {
         @apply text-md;
