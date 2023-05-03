@@ -57,6 +57,7 @@ export default function ChapterList({
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
+  const uploadFileRef = React.useRef<HTMLInputElement>(null);
   async function deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading);
     const res = await fetch(`/api/deleteChapter`, {
@@ -94,6 +95,14 @@ export default function ChapterList({
       });
     }
   };
+
+  function handleUpload(x) {
+    const files = x.target.files;
+    [...files].forEach(async (file, i) => {
+      const text = await file.text();
+      await newChapter(file.name, text);
+    });
+  }
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -232,12 +241,14 @@ export default function ChapterList({
       onClick: () => navigate(`/grid/${bookid}`),
       className: buttonStyles,
     },
- */ /*  {
+ */ {
       label: "Import",
       icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
-      onClick: () => {},
+      onClick: () => {
+        uploadFileRef.current.click();
+      },
       className: buttonStyles,
-    }, */
+    },
     {
       label: "Reorder",
       icon: <ArrowsUpDownIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -297,11 +308,22 @@ export default function ChapterList({
       }
     />
   );
+
+  const upload = (
+    <input
+      type="file"
+      id="imgupload"
+      className="hidden"
+      key="upload"
+      ref={uploadFileRef}
+      onChange={handleUpload}
+    />
+  );
   return (
     <>
       <List
         title={editing ? "Editing" : "Chapters"}
-        items={editing ? sublistDraggable() : [search, ...sublist()]}
+        items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
         className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
