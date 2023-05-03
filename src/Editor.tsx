@@ -61,7 +61,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
 
                   return (
                     <div className="my-sm">
-                      <label className="p-xs relative text-xs xl:text-sm text-slate-600 dark:text-white font-light uppercase mb-xs">
+                      <label className="p-xs relative text-xs xl:text-sm text-gray-600 dark:text-gray-300 font-light uppercase mb-xs">
                         {text.language}
                       </label>
                       <SyntaxHighlighter language="javascript" style={a11yDark}>
