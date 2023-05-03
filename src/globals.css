@@ -56,8 +56,13 @@
     @apply w-full;
   }
 
-  div.font-mono > .ql-editor > p {
-    font-family: 'Fira Code', monospace !important;    
+   .font-mono p {
+    font-family: monospace !important;
+    font-size: 16px !important;
+    line-height: 1.5rem !important;
+    font-smooth: 0em;
+    -webkit-font-smoothing: auto;    
+    
   }
 
   .heading {

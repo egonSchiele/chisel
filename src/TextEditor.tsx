@@ -36,7 +36,7 @@ function LanguageSelector({ chapterid, index }) {
   const { language } = currentText;
   return (
     <Select
-      title="Language"
+      title=""
       name="language"
       value={language}
       className="w-fit dark:bg-gray-800 dark:border-gray-500 dark:text-gray-300 "

@@ -59,9 +59,9 @@ export default function Editor({ onSave }: { onSave: () => void }) {
 
                   return (
                     <div className="my-sm" key={index}>
-                      <label className="p-xs relative text-xs xl:text-sm text-gray-600 dark:text-gray-300 font-light uppercase mb-xs">
+                      <div className="relative text-xs xl:text-sm text-gray-600 dark:text-gray-300 font-light uppercase mb-xs">
                         {text.language}
-                      </label>
+                      </div>
                       <SyntaxHighlighter
                         language={text.language}
                         style={zenburn}

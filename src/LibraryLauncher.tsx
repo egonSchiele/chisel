@@ -54,6 +54,11 @@ export default function LibraryLauncher({
     return chapter ? chapter.text : [];
   });
 
+  let currentTextBlock = null;
+  if (state.editor.activeTextIndex !== null) {
+    currentTextBlock = currentText[state.editor.activeTextIndex];
+  }
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -422,50 +427,58 @@ export default function LibraryLauncher({
     state.editor.activeTextIndex !== null &&
     state.editor.activeTextIndex !== undefined
   ) {
-    launchItems.push({
-      label: "Mark block as reference",
-      onClick: () => {
-        dispatch(
-          librarySlice.actions.markBlockAsReference(
-            state.editor.activeTextIndex
-          )
-        );
-      },
-      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-    launchItems.push({
-      label: "Unmark block as reference",
-      onClick: () => {
-        dispatch(
-          librarySlice.actions.unmarkBlockAsReference(
-            state.editor.activeTextIndex
-          )
-        );
-      },
-      icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-    launchItems.push({
-      label: "Turn on syntax highlighting for block",
-      onClick: () => {
-        dispatch(
-          librarySlice.actions.turnOnSyntaxHighlightingForBlock(
-            state.editor.activeTextIndex
-          )
-        );
-      },
-      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
-    });
-    launchItems.push({
-      label: "Turn off syntax highlighting for block",
-      onClick: () => {
-        dispatch(
-          librarySlice.actions.turnOffSyntaxHighlightingForBlock(
-            state.editor.activeTextIndex
-          )
-        );
-      },
-      icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
-    });
+    if (!currentTextBlock.reference) {
+      launchItems.push({
+        label: "Mark block as reference",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.markBlockAsReference(
+              state.editor.activeTextIndex
+            )
+          );
+        },
+        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    }
+    if (currentTextBlock.reference) {
+      launchItems.push({
+        label: "Unmark block as reference",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.unmarkBlockAsReference(
+              state.editor.activeTextIndex
+            )
+          );
+        },
+        icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    }
+    if (!currentTextBlock.syntaxHighlighting) {
+      launchItems.push({
+        label: "Convert to code block",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.turnOnSyntaxHighlightingForBlock(
+              state.editor.activeTextIndex
+            )
+          );
+        },
+        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    }
+    if (currentTextBlock.syntaxHighlighting) {
+      launchItems.push({
+        label: "Convert to text block",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.turnOffSyntaxHighlightingForBlock(
+              state.editor.activeTextIndex
+            )
+          );
+        },
+        icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    }
   }
 
   if (
