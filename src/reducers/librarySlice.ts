@@ -454,6 +454,7 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const { index, language } = action.payload;
       chapter.text[index].language = language;
+      chapter.text[index].syntaxHighlighting = true;
       state.saved = false;
     },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {

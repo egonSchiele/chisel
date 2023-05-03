@@ -34,6 +34,7 @@ import sortBy from "lodash/sortBy";
 import Launcher from "./Launcher";
 import { State } from "./Types";
 import { useNavigate } from "react-router-dom";
+import { languages } from "./languages";
 
 export default function LibraryLauncher({
   onEditorSave,
@@ -464,6 +465,26 @@ export default function LibraryLauncher({
         );
       },
       icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
+  if (
+    state.editor.activeTextIndex !== null &&
+    state.editor.activeTextIndex !== undefined
+  ) {
+    languages.forEach((language) => {
+      launchItems.push({
+        label: `Set language to ${language}`,
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.setLanguage({
+              index: state.editor.activeTextIndex,
+              language,
+            })
+          );
+        },
+        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      });
     });
   }
 

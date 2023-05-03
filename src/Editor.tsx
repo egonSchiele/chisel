@@ -58,7 +58,7 @@ export default function Editor({ onSave }: { onSave: () => void }) {
                   const con = text.text.trim().replaceAll("  ", "\t");
 
                   return (
-                    <div className="my-sm">
+                    <div className="my-sm" key={index}>
                       <label className="p-xs relative text-xs xl:text-sm text-gray-600 dark:text-gray-300 font-light uppercase mb-xs">
                         {text.language}
                       </label>
