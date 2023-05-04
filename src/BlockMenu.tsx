@@ -16,13 +16,13 @@ export default function BlockMenu({ currentText, index }) {
   const items: MenuItem[] = [];
 
   blockTypes.forEach((blockType) => {
-    let icon = <></>;
+    let icon = <div className="w-5 h-5" aria-hidden="true" />;
     if (currentText.type === blockType) {
       icon = <CheckIcon className="w-5 h-5 text-gray-500" aria-hidden="true" />;
       // <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
     }
     items.push({
-      label: `Convert to ${blockType}`,
+      label: blockType,
       onClick: () => {
         dispatch(
           librarySlice.actions.setBlockType({
@@ -33,6 +33,19 @@ export default function BlockMenu({ currentText, index }) {
       },
       icon,
     });
+  });
+
+  let icon = <div className="w-5 h-5" aria-hidden="true" />;
+  if (currentText.reference) {
+    icon = <CheckIcon className="w-5 h-5 text-gray-500" aria-hidden="true" />;
+    // <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+  }
+  items.push({
+    label: "reference",
+    onClick: () => {
+      dispatch(librarySlice.actions.toggleReference(index));
+    },
+    icon,
   });
 
   return <ListMenu items={items} buttonClassName="!text-gray-500 w-5 h-5" />;

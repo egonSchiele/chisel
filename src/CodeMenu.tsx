@@ -12,12 +12,13 @@ import ListMenu from "./ListMenu";
 import { useDispatch } from "react-redux";
 import { librarySlice } from "./reducers/librarySlice";
 import { languages } from "./languages";
+import Tag from "./components/Tag";
 export default function CodeMenu({ currentText, index }) {
   const dispatch = useDispatch();
   const items: MenuItem[] = [];
 
   languages.forEach((language) => {
-    let icon = <></>;
+    let icon = <div className="w-5 h-5" aria-hidden="true" />;
     if (currentText.language === language) {
       icon = <CheckIcon className="w-5 h-5 text-gray-500" aria-hidden="true" />;
     }
@@ -36,9 +37,6 @@ export default function CodeMenu({ currentText, index }) {
   });
 
   return (
-    <ListMenu
-      items={items}
-      icon={<Cog6ToothIcon className="text-gray-500 w-5 h-5" />}
-    />
+    <ListMenu items={items} icon={<Tag letter="C" className="w-5 h-5" />} />
   );
 }

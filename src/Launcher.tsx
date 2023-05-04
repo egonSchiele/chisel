@@ -1,17 +1,4 @@
-/*
-  This example requires some changes to your config:
-
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
+import { apStyleTitleCase } from "ap-style-title-case";
 import React, { Fragment, useState, useEffect } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -108,7 +95,7 @@ export default function Launcher({
                         <div className="flex">
                           <div className=" mt-0.5">{item.icon} </div>
                           <div className="ml-1 flex-grow">
-                            {item.label}{" "}
+                            {apStyleTitleCase(item.label)}{" "}
                             {item.tooltip && (
                               <span className=" text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-700 px-1">
                                 {item.tooltip}

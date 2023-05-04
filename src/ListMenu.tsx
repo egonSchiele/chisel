@@ -3,7 +3,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { EllipsisHorizontalIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { MenuItem } from "./Types";
-
+import { apStyleTitleCase } from "ap-style-title-case";
 export default function ListMenu({
   items,
   label = "Menu",
@@ -59,7 +59,7 @@ export default function ListMenu({
               >
                 <div className={`mt-0 `}>{item.icon} </div>
                 <div className="ml-1 flex-grow whitespace-nowrap">
-                  {item.label}
+                  {apStyleTitleCase(item.label)}
                 </div>
               </div>
             ))}

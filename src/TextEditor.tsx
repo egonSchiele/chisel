@@ -31,6 +31,7 @@ import { useParams } from "react-router-dom";
 import { languages } from "./languages";
 import BlockMenu from "./BlockMenu";
 import CodeMenu from "./CodeMenu";
+import Tag from "./components/Tag";
 
 const formats = [
   /*   "background",
@@ -55,14 +56,6 @@ const formats = [
   "image",
   "video", */
 ];
-
-function Tag({ letter }) {
-  return (
-    <div className="m-0 p-0 mt-xs mr-xs text-center uppercase text-xs rounded border text-gray-500 border-gray-500">
-      {letter}
-    </div>
-  );
-}
 
 function LanguageSelector({ chapterid, index }) {
   const dispatch = useDispatch();
@@ -310,14 +303,11 @@ function TextEditor({
                   }`}
                 />
               </div>
-              {isActive && (
-                <BlockMenu currentText={currentText} index={activeTextIndex} />
-              )}
-              {isActive && currentText.type === "code" && (
-                <CodeMenu currentText={currentText} index={activeTextIndex} />
+              {<BlockMenu currentText={currentText} index={index} />}
+              {currentText.type === "code" && (
+                <CodeMenu currentText={currentText} index={index} />
               )}
               {currentText.reference && <Tag letter="R" />}
-              {currentText.type === "code" && <Tag letter="C" />}
               {currentText.type === "markdown" && <Tag letter="M" />}
               {currentText.type === "plain" && <Tag letter="P" />}
               {/* <div
@@ -386,7 +376,9 @@ function TextEditor({
               </div>
 
               {currentText.reference && <Tag letter="R" />}
-              {currentText.type === "code" && <Tag letter="C" />}
+              {currentText.type === "code" && (
+                <CodeMenu currentText={currentText} index={index} />
+              )}
               {currentText.type === "markdown" && <Tag letter="M" />}
               {currentText.type === "plain" && <Tag letter="P" />}
             </div>

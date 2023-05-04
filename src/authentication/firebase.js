@@ -104,8 +104,9 @@ export const submitLogin = async (req, res) => {
     }
 
     const token = await stringToHash(user.userid);
-    res.cookie("userid", user.userid);
-    res.cookie("token", token);
+    const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+    res.cookie("userid", user.userid, { maxAge });
+    res.cookie("token", token, { maxAge });
     res.redirect("/");
   } catch (err) {
     console.log(err);

@@ -458,6 +458,12 @@ export const librarySlice = createSlice({
       block.language = language;
       state.saved = false;
     },
+    toggleReference(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      const text = chapter.text[action.payload];
+      text.reference = !text.reference;
+      state.saved = false;
+    },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       chapter.text[action.payload].reference = true;
