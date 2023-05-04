@@ -156,3 +156,14 @@ export async function postWithCsrf(url: string, body: any) {
   });
   return res;
 }
+
+export async function uploadBook(chapters) {
+  const res = await postWithCsrf(`/api/uploadBook`, {chapters});
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error uploading book: ${text}`);
+  }
+  const book = await res.json();
+  return t.success(book);
+}
+

@@ -50,7 +50,7 @@ export default function BookList({
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
-
+  const uploadFileRef = React.useRef<HTMLInputElement>(null);
   function startRenameBook(book) {
     dispatch(
       librarySlice.actions.showPopup({
@@ -115,6 +115,26 @@ export default function BookList({
     dispatch(librarySlice.actions.openBookList());
   }
 
+  async function handleUpload(x) {
+    const files = x.target.files;
+    const chapters = [];
+
+    const promises = [...files].map(async (file, i) => {
+      const text = await file.text();
+      chapters.push({ title: file.name, text });
+    });
+
+    await Promise.all(promises);
+
+    const res = await fd.uploadBook(chapters);
+    if (res.tag === "error") {
+      dispatch(librarySlice.actions.setError(res.message));
+    } else {
+      const book = res.payload;
+      dispatch(librarySlice.actions.addBook(book));
+    }
+  }
+
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
@@ -123,7 +143,7 @@ export default function BookList({
     animate: true,
   };
 
-  const leftMenuItem = {
+  const newMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
     onClick: () => newBook(),
@@ -132,11 +152,49 @@ export default function BookList({
     animate: true,
   };
 
+  const dropdownMenuItems = [
+    {
+      label: "Import Book",
+      icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        uploadFileRef.current.click();
+      },
+      className: buttonStyles,
+    },
+  ];
+
+  const dropdownMenu = {
+    label: "Menu",
+    icon: (
+      <ListMenu
+        items={dropdownMenuItems}
+        label="Book Menu"
+        selector="book-menu"
+        className="-translate-x-1/4"
+      />
+    ),
+    onClick: () => {},
+    className: buttonStyles,
+  };
+
+  let leftMenuItem = [newMenuItem, dropdownMenu];
+
+  const upload = (
+    <input
+      type="file"
+      id="imgupload"
+      className="hidden"
+      key="upload"
+      ref={uploadFileRef}
+      onChange={handleUpload}
+    />
+  );
+
   return (
     <>
       <List
         title="Books"
-        items={items}
+        items={[upload, ...items]}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
         className="bg-sidebar dark:bg-dmsidebar"

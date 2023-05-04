@@ -38,6 +38,8 @@ import {
   makeNewBook,
   makeNewChapter,
   deleteBooks,
+  success,
+  failure,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
@@ -223,6 +225,60 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
     res.send(book);
     // res.redirect(`/book/${bookid}`);
   }
+});
+app.post("/api/uploadBook", requireLogin, async (req, res) => {
+  const user = await getUser(req);
+  const userid = user.userid;
+  const chapters = req.body.chapters;
+
+  const book = makeNewBook({
+    userid,
+  });
+  const promises = chapters.map(async (chapter) => {
+    const newChapter = makeNewChapter(chapter.text, chapter.title, book.bookid);
+    await saveChapter(newChapter);
+    book.chapters.push(newChapter);
+  });
+  await Promise.all(promises);
+  const promptText = chapters
+    .map((chapter) => chapter.text)
+    .join("\n\n")
+    .substring(0, 5000);
+
+  const prompt = `Given this text, give me a synopsis of the book as well as its major characters. Return your response as JSON in this format: {synopsis: string, characters: [{name: string, description: string}]}. Return JSON, do not return raw text. Return the characters in the order of importance, with the most important character first. Here's the text: ${promptText}`;
+
+  const max_tokens = 1500;
+  const num_suggestions = 1;
+  const model = "gpt-3.5-turbo";
+
+  const suggestions = await getSuggestions(
+    user,
+    prompt,
+    max_tokens,
+    model,
+    num_suggestions
+  );
+
+  console.log(suggestions);
+  if (!suggestions) {
+    console.log("no suggestions");
+    return res.status(400).end();
+  }
+
+  if (suggestions.success) {
+    console.log(">>", suggestions.data.choices[0].text, "<<");
+    try {
+      const { synopsis, characters } = JSON.parse(
+        suggestions.data.choices[0].text
+      );
+      book.synopsis = synopsis;
+      book.characters = characters;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  await saveBook(book);
+  res.send(book);
 });
 
 app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
@@ -550,91 +606,19 @@ app.post(
 app.post("/api/suggestions", requireLogin, async (req, res) => {
   console.log({ body: req.body });
   const user = await getUser(req);
-  if (!user.permissions.openai_api) {
-    res.status(400).json({ error: "no openai api permissions" });
-    return;
-  }
-  let month_total = 0;
-  month_total += user.usage.openai_api.tokens.month.prompt;
-  month_total += user.usage.openai_api.tokens.month.completion;
-
-  if (month_total > settings.maxMonthlyTokens) {
-    res.status(400).json({ error: "Monthly token limit reached" });
-    return;
-  }
-  const chatModels = ["gpt-3.5-turbo"];
-  let endpoint = "https://api.openai.com/v1/completions";
   const prompt = req.body.prompt.substring(0, settings.maxPromptLength);
-  let reqBody = {
+  const suggestions = await getSuggestions(
+    user,
     prompt,
-    max_tokens: req.body.max_tokens,
-    model: req.body.model,
-    n: req.body.num_suggestions,
-  };
-  if (chatModels.includes(req.body.model)) {
-    endpoint = "https://api.openai.com/v1/chat/completions";
-
-    reqBody = {
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: req.body.max_tokens,
-      model: req.body.model,
-      n: req.body.num_suggestions,
-    };
-    // "messages": [{"role": "user", "content": "Hello!"}]
+    req.body.max_tokens,
+    req.body.model,
+    req.body.num_suggestions
+  );
+  if (suggestions.success) {
+    res.status(200).json(suggestions.data);
+  } else {
+    res.status(400).json({ error: suggestions.error });
   }
-
-  // console.log({ prompt: JSON.parse(req.body) });
-  fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${settings.openAiApiKey}`,
-    },
-    body: JSON.stringify(reqBody),
-  })
-    .then((result) => {
-      console.log({ result });
-      result.json().then(async (json) => {
-        console.log({ json });
-
-        if (json.error) {
-          res.status(400).json({ error: json.error.message });
-          return;
-        }
-        user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.month.completion +=
-          json.usage.completion_tokens;
-
-        user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-        user.usage.openai_api.tokens.total.completion +=
-          json.usage.completion_tokens;
-
-        await saveUser(user);
-        /* {
-  json: {
-    id: 'chatcmpl-6yYGIiBy74VzsfSeC7smESchLVt0X',
-    object: 'chat.completion',
-    created: 1679889402,
-    model: 'gpt-3.5-turbo-0301',
-    usage: { prompt_tokens: 137, completion_tokens: 33, total_tokens: 170 },
-    choices: [ [Object], [Object], [Object] ]
-  }
-} */
-        let choices;
-        if (chatModels.includes(req.body.model)) {
-          choices = json.choices.map((choice) => ({
-            text: choice.message.content,
-          }));
-        } else {
-          choices = json.choices.map((choice) => ({ text: choice.text }));
-        }
-        res.json({ choices });
-      });
-    })
-    .catch((error) => {
-      console.log({ error });
-      res.status(400).json({ error: error.message });
-    });
 });
 
 app.get("/admin", requireAdmin, async (req, res) => {
@@ -661,3 +645,78 @@ app.get(
 
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
+async function getSuggestions(
+  user,
+  prompt,
+  max_tokens,
+  model,
+  num_suggestions
+) {
+  if (!user.permissions.openai_api) {
+    return failure("no openai api permissions");
+  }
+  let month_total = 0;
+  month_total += user.usage.openai_api.tokens.month.prompt;
+  month_total += user.usage.openai_api.tokens.month.completion;
+
+  if (month_total > settings.maxMonthlyTokens) {
+    return failure("monthly token limit reached");
+  }
+  const chatModels = ["gpt-3.5-turbo"];
+  let endpoint = "https://api.openai.com/v1/completions";
+  //const prompt = req.body.prompt.substring(0, settings.maxPromptLength);
+  let reqBody = {
+    prompt,
+    max_tokens,
+    model,
+    n: num_suggestions,
+  };
+  if (chatModels.includes(model)) {
+    endpoint = "https://api.openai.com/v1/chat/completions";
+
+    reqBody = {
+      messages: [{ role: "user", content: prompt }],
+      max_tokens,
+      model,
+      n: num_suggestions,
+    };
+    // "messages": [{"role": "user", "content": "Hello!"}]
+  }
+
+  console.log(JSON.stringify(reqBody));
+
+  // console.log({ prompt: JSON.parse(req.body) });
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${settings.openAiApiKey}`,
+    },
+    body: JSON.stringify(reqBody),
+  });
+  const json = await res.json();
+
+  console.log({ json });
+
+  if (json.error) {
+    return failure(json.error.message);
+  }
+  user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
+  user.usage.openai_api.tokens.month.completion += json.usage.completion_tokens;
+
+  user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
+  user.usage.openai_api.tokens.total.completion += json.usage.completion_tokens;
+
+  await saveUser(user);
+
+  let choices;
+  if (chatModels.includes(model)) {
+    choices = json.choices.map((choice) => ({
+      text: choice.message.content,
+    }));
+  } else {
+    choices = json.choices.map((choice) => ({ text: choice.text }));
+  }
+  return success({ choices });
+}

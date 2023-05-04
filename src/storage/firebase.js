@@ -14,11 +14,11 @@ try {
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
-function success(data = {}) {
+export function success(data = {}) {
   return { success: true, data };
 }
 
-function failure(message) {
+export function failure(message) {
   return { success: false, message };
 }
 
