@@ -99,7 +99,10 @@
   .markdown img {
     @apply my-sm;
     @apply mx-auto;
+  }
 
+  .markdown a {
+    @apply underline;
   }
 
   /* 
