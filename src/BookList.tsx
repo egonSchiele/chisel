@@ -137,7 +137,7 @@ export default function BookList({
 
   const rightMenuItem = canCloseSidebar && {
     label: "Close",
-    icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+    icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: close,
     className: buttonStyles,
     animate: true,
@@ -145,7 +145,7 @@ export default function BookList({
 
   const newMenuItem = {
     label: "New",
-    icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+    icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: () => newBook(),
     className: buttonStyles,
     showSpinner: true,
@@ -155,7 +155,7 @@ export default function BookList({
   const dropdownMenuItems = [
     {
       label: "Import Book",
-      icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         uploadFileRef.current.click();
       },
@@ -171,6 +171,7 @@ export default function BookList({
         label="Book Menu"
         selector="book-menu"
         className="-translate-x-1/4"
+        buttonClassName="ml-xs"
       />
     ),
     onClick: () => {},

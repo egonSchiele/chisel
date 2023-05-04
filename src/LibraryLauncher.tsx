@@ -114,14 +114,14 @@ export default function LibraryLauncher({
     },
     /*  {
       label: "Grid",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         navigate(`/grid/${bookid}`);
       },
     }, */
     {
       label: state.panels.bookList.open ? "Close Book List" : "Open Book List",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.toggleBookList());
       },
@@ -130,14 +130,14 @@ export default function LibraryLauncher({
       label: state.panels.chapterList.open
         ? "Close Chapter List"
         : "Open Chapter List",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.toggleChapterList());
       },
     },
     {
       label: state.panels.prompts.open ? "Close Prompts" : "Open Prompts",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.togglePrompts());
       },
@@ -148,7 +148,7 @@ export default function LibraryLauncher({
         state.panels.sidebar.activePanel === "history"
           ? "Close History"
           : "Open History",
-      icon: <ClockIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ClockIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("history");
       },
@@ -158,7 +158,7 @@ export default function LibraryLauncher({
         state.panels.sidebar.open && state.panels.sidebar.activePanel === "info"
           ? "Close Info"
           : "Open Info",
-      icon: <InformationCircleIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <InformationCircleIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("info");
       },
@@ -169,7 +169,7 @@ export default function LibraryLauncher({
         state.panels.sidebar.activePanel === "suggestions"
           ? "Close Suggestions"
           : "Open Suggestions",
-      icon: <ClipboardIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ClipboardIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("suggestions");
       },
@@ -180,35 +180,35 @@ export default function LibraryLauncher({
         state.panels.sidebar.activePanel === "settings"
           ? "Close Settings"
           : "Open Settings",
-      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         togglePanel("settings");
       },
     },
     {
       label: "Show Book List Only",
-      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.openOnlyPanel("bookList"));
       },
     },
     {
       label: "Show Chapter List Only",
-      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.openOnlyPanel("chapterList"));
       },
     },
     {
       label: "Show Prompts Only",
-      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.openOnlyPanel("prompts"));
       },
     },
     {
       label: "Show Sidebar Only",
-      icon: <Cog6ToothIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.openOnlyPanel("sidebar"));
       },

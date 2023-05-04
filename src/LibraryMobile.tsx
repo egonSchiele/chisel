@@ -45,12 +45,23 @@ import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
 import Popup from "./Popup";
 import LibraryLauncher from "./LibraryLauncher";
+import Button from "./components/Button";
 
 export default function Library() {
   const state: t.State = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch<AppDispatch>();
 
   const { bookid, chapterid } = useParams();
+
+  const compostBookId = useSelector((state: RootState) => {
+    const compostBook = state.library.books.find(
+      (b: t.Book) => b.tag === "compost"
+    );
+    if (compostBook) {
+      return compostBook.bookid;
+    }
+    return null;
+  });
 
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
@@ -99,6 +110,11 @@ export default function Library() {
       const book = res.payload;
       dispatch(librarySlice.actions.addBook(book));
     }
+  }
+
+  async function newCompostNote() {
+    const title = new Date().toDateString();
+    await newChapter(title, "", compostBookId);
   }
 
   // TODO reuse code
@@ -195,7 +211,7 @@ export default function Library() {
       <div className="flex h-full">
         {!bookid && (
           <LibErrorBoundary component="book list">
-            <div className="h-full w-full">
+            <div className="h-full w-full relative">
               <BookList
                 books={state.books}
                 selectedBookId={state.selectedBookId}
@@ -210,6 +226,17 @@ export default function Library() {
                 canCloseSidebar={false}
                 saveBook={saveBook}
               />
+              {compostBookId && (
+                <Button
+                  onClick={() => newCompostNote()}
+                  className="absolute bottom-md right-md"
+                  style="secondary"
+                  size="large"
+                  rounded={true}
+                >
+                  New note
+                </Button>
+              )}
             </div>
           </LibErrorBoundary>
         )}

@@ -233,7 +233,7 @@ export default function ChapterList({
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   let rightMenuItem = canCloseSidebar && {
     label: "Close",
-    icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+    icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
     className: buttonStyles,
     animate: true,
@@ -249,7 +249,7 @@ export default function ChapterList({
 
   const newMenuItem = {
     label: "New",
-    icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+    icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: () => newChapter("New chapter"),
     className: buttonStyles,
     showSpinner: true,
@@ -259,13 +259,13 @@ export default function ChapterList({
   const dropdownMenuItems = [
     /*     {
       label: "Grid mode",
-      icon: <ViewColumnsIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => navigate(`/grid/${bookid}`),
       className: buttonStyles,
     },
  */ {
       label: "Import",
-      icon: <PlusIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         uploadFileRef.current.click();
       },
@@ -273,7 +273,7 @@ export default function ChapterList({
     },
     {
       label: "Reorder",
-      icon: <ArrowsUpDownIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+      icon: <ArrowsUpDownIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => setEditing(true),
       className: buttonStyles,
     },

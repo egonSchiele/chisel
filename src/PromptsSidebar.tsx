@@ -88,7 +88,7 @@ export default function PromptsSidebar({
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   const rightMenuItem = {
     label: "Close",
-    icon: <XMarkIcon className="w-4 h-4 xl:w-5 xl:h-5" />,
+    icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
     className: buttonStyles,
   };

@@ -293,7 +293,6 @@ export default function Library({ mobile = false }) {
 
   async function newCompostNote() {
     const title = new Date().toDateString();
-
     await newChapter(title, "", compostBookId);
   }
 
