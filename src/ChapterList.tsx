@@ -147,6 +147,11 @@ export default function ChapterList({
           onFavorite={() => {}}
           onRename={() => startRenameChapter(chapter)}
           onMove={() => startMoveChapter(chapter)}
+          onExport={() => {
+            let title = chapter.title || "untitled";
+            title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
+            window.location.pathname = `/api/exportChapter/${chapter.bookid}/${chapter.chapterid}/${title}.md`;
+          }}
           selector="chapterlist"
         />
       </li>

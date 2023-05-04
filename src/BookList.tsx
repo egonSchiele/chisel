@@ -81,6 +81,11 @@ export default function BookList({
         onDelete={() => deleteBook(book.bookid, onDelete)}
         onFavorite={() => favoriteBook(book.bookid)}
         onRename={() => startRenameBook(book)}
+        onExport={() => {
+          let title = book.title || "untitled";
+          title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
+          window.location.pathname = `/api/exportBook/${book.bookid}/${title}.zip`;
+        }}
         selector={tag ? `booklist-${tag}` : "booklist"}
         tag={tag}
       />

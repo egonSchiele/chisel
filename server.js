@@ -7,7 +7,7 @@ import browser from "browser-detect";
 import * as fs from "fs";
 import path from "path";
 import cookieParser from "cookie-parser";
-
+import AdmZip from "adm-zip";
 import { nanoid } from "nanoid";
 import handlebars from "handlebars";
 import {
@@ -40,6 +40,7 @@ import {
   deleteBooks,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
+import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
 
 dotenv.config();
 
@@ -420,6 +421,56 @@ app.get(
       res.status(200).json(book);
     } catch (error) {
       console.error("Error getting book:", error);
+      res.status(400).json({ error });
+    }
+  }
+);
+
+app.get(
+  "/api/exportBook/:bookid/:title",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    try {
+      let { book } = res.locals;
+
+      // creating archives
+      const zip = new AdmZip();
+
+      book.chapters.forEach((chapter) => {
+        const content = chapterToMarkdown(chapter, false);
+        let title = chapter.title || "untitled";
+        title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase() + ".md";
+        zip.addFile(title, Buffer.from(content, "utf8"), "");
+      });
+      const finalZip = zip.toBuffer();
+
+      res.status(200).send(finalZip);
+    } catch (error) {
+      console.error("Error getting chapter:", error);
+      res.status(400).json({ error });
+    }
+  }
+);
+app.get(
+  "/api/exportChapter/:bookid/:chapterid/:title",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    const { chapterid, title } = req.params;
+    try {
+      let { chapter } = res.locals;
+      // Not needed if checkChapterAccess occurs
+      if (!chapter) {
+        chapter = await getChapter(chapterid);
+      }
+
+      res.set("Content-Disposition", `attachment; filename="${title}"`);
+
+      res.status(200).send(chapterToMarkdown(chapter, false));
+    } catch (error) {
+      console.error("Error getting chapter:", error);
       res.status(400).json({ error });
     }
   }

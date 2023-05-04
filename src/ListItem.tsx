@@ -12,6 +12,7 @@ export default function ListItem({
   onDelete,
   onRename,
   onMove = null,
+  onExport = null,
   content = "",
   selector = "listitem",
   tag = null,
@@ -23,6 +24,7 @@ export default function ListItem({
   onDelete: () => void;
   onRename: () => void;
   onMove?: () => void;
+  onExport?: () => void;
   content?: string;
   selector?: string;
   tag?: string;
@@ -44,6 +46,12 @@ export default function ListItem({
     listMenuItems.push({
       label: "Move",
       onClick: onMove,
+    });
+  }
+  if (onExport) {
+    listMenuItems.push({
+      label: "Export",
+      onClick: onExport,
     });
   }
   return (
