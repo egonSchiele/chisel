@@ -180,6 +180,11 @@ export const librarySlice = createSlice({
       chapter.text[index].text = text;
       state.saved = false;
     },
+    setChapterStatus(state: t.State, action: PayloadAction<t.ChapterStatus>) {
+      const chapter = getSelectedChapter({ library: state });
+      chapter.status = action.payload;
+      state.saved = false;
+    },
     pushTextToEditor(state: t.State, action: PayloadAction<t.NewTextForBlock>) {
       const { index, text } = action.payload;
       state.editor._pushTextToEditor = text;

@@ -128,34 +128,42 @@ export default function ChapterList({
             .includes(searchTerm.toLowerCase())
       );
     }
-    return _chapters.map((chapter, index) => (
-      <li
-        key={chapter.chapterid}
-        className={
-          !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
-        }
-      >
-        <ListItem
-          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
-          title={chapter.title || "(no title)"}
-          content={`${chapter.text
-            .map((t) => t.text)
-            .join(". ")
-            .substring(0, 50)}...`}
-          selected={chapter.chapterid === selectedChapterId}
-          onDelete={() => deleteChapter(chapter.chapterid)}
-          onFavorite={() => {}}
-          onRename={() => startRenameChapter(chapter)}
-          onMove={() => startMoveChapter(chapter)}
-          onExport={() => {
-            let title = chapter.title || "untitled";
-            title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
-            window.location.pathname = `/api/exportChapter/${chapter.bookid}/${chapter.chapterid}/${title}.md`;
-          }}
-          selector="chapterlist"
-        />
-      </li>
-    ));
+    return _chapters.map((chapter, index) => {
+      let title = chapter.title || "(no title)";
+      if (chapter.status && chapter.status === "done") {
+        title = `✅ ${title}`;
+      } else if (chapter.status && chapter.status === "in-progress") {
+        title = `🚧 ${title}`;
+      }
+      return (
+        <li
+          key={chapter.chapterid}
+          className={
+            !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
+          }
+        >
+          <ListItem
+            link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+            title={title}
+            content={`${chapter.text
+              .map((t) => t.text)
+              .join(". ")
+              .substring(0, 50)}...`}
+            selected={chapter.chapterid === selectedChapterId}
+            onDelete={() => deleteChapter(chapter.chapterid)}
+            onFavorite={() => {}}
+            onRename={() => startRenameChapter(chapter)}
+            onMove={() => startMoveChapter(chapter)}
+            onExport={() => {
+              let title = chapter.title || "untitled";
+              title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
+              window.location.pathname = `/api/exportChapter/${chapter.bookid}/${chapter.chapterid}/${title}.md`;
+            }}
+            selector="chapterlist"
+          />
+        </li>
+      );
+    });
   };
 
   async function renameChapter(chapter, newTitle) {

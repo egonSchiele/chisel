@@ -32,7 +32,7 @@ import { AppDispatch, RootState } from "./store";
 import { fetchSuggestionsWrapper } from "./utils";
 import sortBy from "lodash/sortBy";
 import Launcher from "./Launcher";
-import { State, blockTypes } from "./Types";
+import { State, blockTypes, chapterStatuses } from "./Types";
 import { useNavigate } from "react-router-dom";
 import { languages } from "./languages";
 
@@ -500,6 +500,20 @@ export default function LibraryLauncher({
         },
         icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
       });
+    });
+  }
+
+  if (currentChapter) {
+    chapterStatuses.forEach((status) => {
+      if (currentChapter.status !== status) {
+        launchItems.push({
+          label: `Mark as ${status.replaceAll("-", " ")}`,
+          onClick: () => {
+            dispatch(librarySlice.actions.setChapterStatus(status));
+          },
+          icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        });
+      }
     });
   }
 

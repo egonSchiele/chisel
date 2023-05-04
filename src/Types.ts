@@ -128,7 +128,12 @@ export type Chapter = {
   suggestions: Suggestion[];
   favorite: boolean;
   created_at?: number;
+  updated_at?: number;
+  status?: ChapterStatus;
 };
+
+export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done" ;
+export const chapterStatuses = ["not-started", "in-progress", "paused", "done"];
 
 export type Column = {
   title: string;
