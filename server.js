@@ -245,7 +245,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
     .join("\n\n")
     .substring(0, 5000);
 
-  const prompt = `Given this text, give me a synopsis of the book as well as its major characters. Return your response as JSON in this format: {synopsis: string, characters: [{name: string, description: string}]}. Return JSON, do not return raw text. Return the characters in the order of importance, with the most important character first. Here's the text: ${promptText}`;
+  const prompt = `Given this text, give me a synopsis of the book as well as its major characters. Also include links to any other books you think are related, ideally on project Gutenberg. Also any image URLs for images you think are good at visualizing this book. Return your response as JSON in this format: {synopsis: string, characters: [{name: string, description: string}], links:string[], image_urls:[]}. Return JSON, do not return raw text. Return the characters in the order of importance, with the most important character first. Here's the text: ${promptText}`;
 
   const max_tokens = 1500;
   const num_suggestions = 1;
@@ -262,19 +262,20 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
   console.log(suggestions);
   if (!suggestions) {
     console.log("no suggestions");
-    return res.status(400).end();
+    await saveBook(book);
+    return res.send(book);
   }
 
   if (suggestions.success) {
-    console.log(">>", suggestions.data.choices[0].text, "<<");
+    const text = suggestions.data.choices[0].text;
+    console.log(text);
     try {
-      const { synopsis, characters } = JSON.parse(
-        suggestions.data.choices[0].text
-      );
+      const { synopsis, characters } = JSON.parse(text);
       book.synopsis = synopsis;
       book.characters = characters;
     } catch (e) {
       console.log(e);
+      book.synopsis = text;
     }
   }
   await saveBook(book);
