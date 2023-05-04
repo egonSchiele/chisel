@@ -423,11 +423,20 @@ export default function LibraryLauncher({
     });
   }
 
-  if (
-    state.editor.activeTextIndex !== null &&
-    state.editor.activeTextIndex !== undefined
-  ) {
-    if (!currentTextBlock.reference) {
+  if (currentTextBlock) {
+    if (currentTextBlock.reference) {
+      launchItems.push({
+        label: "Unmark block as reference",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.unmarkBlockAsReference(
+              state.editor.activeTextIndex
+            )
+          );
+        },
+        icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    } else {
       launchItems.push({
         label: "Mark block as reference",
         onClick: () => {
@@ -440,17 +449,25 @@ export default function LibraryLauncher({
         icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
       });
     }
-    if (currentTextBlock.reference) {
+    if (currentTextBlock.open) {
       launchItems.push({
-        label: "Unmark block as reference",
+        label: "Close/Fold block",
         onClick: () => {
           dispatch(
-            librarySlice.actions.unmarkBlockAsReference(
-              state.editor.activeTextIndex
-            )
+            librarySlice.actions.closeBlock(state.editor.activeTextIndex)
           );
         },
         icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    } else {
+      launchItems.push({
+        label: "Open block",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.openBlock(state.editor.activeTextIndex)
+          );
+        },
+        icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
       });
     }
     blockTypes.forEach((blockType) => {

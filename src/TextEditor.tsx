@@ -308,8 +308,8 @@ function TextEditor({
                 <CodeMenu currentText={currentText} index={index} />
               )}
               {currentText.reference && <Tag letter="R" />}
-              {currentText.type === "markdown" && <Tag letter="M" />}
-              {currentText.type === "plain" && <Tag letter="P" />}
+              {/* {currentText.type === "markdown" && <Tag letter="M" />}
+              {currentText.type === "plain" && <Tag letter="P" />} */}
               {/* <div
                 className="h-5 cursor-pointer mr-xs mt-xs"
                 onClick={() => {
@@ -376,11 +376,9 @@ function TextEditor({
               </div>
 
               {currentText.reference && <Tag letter="R" />}
-              {currentText.type === "code" && (
+              {/*   {currentText.type === "code" && (
                 <CodeMenu currentText={currentText} index={index} />
-              )}
-              {currentText.type === "markdown" && <Tag letter="M" />}
-              {currentText.type === "plain" && <Tag letter="P" />}
+              )} */}
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
               <p
