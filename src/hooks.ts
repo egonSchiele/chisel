@@ -1,28 +1,35 @@
 import { useEffect } from "react";
 
-export const useKeyboardScroll = (htmlRef, speed=400) => {
+export const useKeyboardScroll = (htmlRef, speed=400, callback=null) => {
     const handleKeyDown = async (event) => {
     if (!htmlRef.current) return;
     const div = htmlRef.current;
+    const curScroll = div.scrollTop;
+    let newScroll = curScroll;
     if (event.shiftKey && event.code === "Space") {
       event.preventDefault();
-      div.scroll({ top: div.scrollTop + (speed*2), behavior: "smooth" });
+      newScroll = div.scrollTop + (speed*2);
     } else if (event.code === "Space") {
       event.preventDefault();
-      
-      div.scroll({ top: div.scrollTop + speed, behavior: "smooth" });
+      newScroll = div.scrollTop + speed;
     } else if (event.metaKey && event.code === "ArrowDown") {
       event.preventDefault();
-      div.scroll({ top: div.scrollHeight, behavior: "smooth" });
+      newScroll = div.scrollHeight;
     } else if (event.metaKey && event.code === "ArrowUp") {
       event.preventDefault();
-      div.scroll({ top: 0, behavior: "smooth" });
+      newScroll = 0;
     } else if (event.code === "ArrowDown") {
       event.preventDefault();
-      div.scroll({ top: div.scrollTop + (speed/2), behavior: "smooth" });
+      newScroll = div.scrollTop + (speed/2);
     } else if (event.code === "ArrowUp") {
       event.preventDefault();
-      div.scroll({ top: div.scrollTop - (speed/2), behavior: "smooth" });
+      newScroll = div.scrollTop - (speed/2);
+    }
+    if (newScroll !== curScroll) {
+      div.scroll({ top: newScroll, behavior: "smooth" });
+      if (callback) {
+        callback(newScroll);
+      }
     }
   };
 

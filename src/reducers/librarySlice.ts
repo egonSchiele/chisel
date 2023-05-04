@@ -330,6 +330,9 @@ export const librarySlice = createSlice({
     setViewMode(state: t.State, action: PayloadAction<t.ViewMode>) {
       state.viewMode = action.payload;
     },
+    setScrollTo(state: t.State, action: PayloadAction<number>) {
+      state.scrollTo = action.payload;
+    },
     openBookList(state) {
       state.panels.bookList.open = true;
       localStorage.setItem("bookListOpen", "true");

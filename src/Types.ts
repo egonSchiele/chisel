@@ -17,6 +17,7 @@ export type State = {
   launcherOpen: boolean;
   popupOpen: boolean;
   popupData: PopupData | null;
+  scrollTo?: number;
 };
 
 export type SelectedText = {

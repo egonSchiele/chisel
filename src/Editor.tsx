@@ -30,10 +30,23 @@ export default function Editor() {
     (state: RootState) => state.library.selectedChapterId
   );
 
+  const scrollTo = useSelector((state: RootState) => state.library.scrollTo);
+
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
 
   const readonlyDiv = useRef(null);
-  useKeyboardScroll(readonlyDiv);
+  const editDiv = useRef(null);
+  function scrollCallback(scrollTop) {
+    dispatch(librarySlice.actions.setScrollTo(scrollTop));
+  }
+  useKeyboardScroll(readonlyDiv, 400, scrollCallback);
+
+  useEffect(() => {
+    if (scrollTo && editDiv.current) {
+      editDiv.current.scroll({ top: scrollTo, behavior: "smooth" });
+      dispatch(librarySlice.actions.setScrollTo(null));
+    }
+  }, [scrollTo, editDiv.current]);
 
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;
@@ -80,7 +93,10 @@ export default function Editor() {
   }
 
   return (
-    <div className="flex h-screen overflow-auto w-full max-w-3xl mx-auto  ">
+    <div
+      className="flex h-screen overflow-auto w-full max-w-3xl mx-auto"
+      ref={editDiv}
+    >
       <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}
