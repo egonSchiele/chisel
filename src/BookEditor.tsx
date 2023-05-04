@@ -1,3 +1,4 @@
+import md5 from "md5";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import React from "react";
@@ -14,6 +15,7 @@ import Input from "./components/Input";
 import { getChapterText } from "./utils";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
+import { chapterToMarkdown } from "./serverUtils";
 
 function Character({
   character,
@@ -131,6 +133,7 @@ export default function BookEditor() {
   const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
   let referenceBlocks = [];
+  const chapterHashes = {};
   if (chapters) {
     chapters.forEach((chapter) => {
       chapter.text.forEach((block, index) => {
@@ -138,7 +141,23 @@ export default function BookEditor() {
           referenceBlocks.push({ block, index, chapterid: chapter.chapterid });
         }
       });
+      const markdown = chapterToMarkdown(chapter);
+      if (markdown.trim() !== "") {
+        const key = md5(markdown.trim());
+        if (chapterHashes[key]) {
+          chapterHashes[key].push(chapter);
+        } else {
+          chapterHashes[key] = [chapter];
+        }
+      }
     });
+  }
+
+  const dupes = [];
+  for (const key in chapterHashes) {
+    if (chapterHashes[key].length > 1) {
+      dupes.push(chapterHashes[key]);
+    }
   }
 
   if (!book) {
@@ -246,6 +265,32 @@ export default function BookEditor() {
             />
           ))}
         </div>
+        {dupes.length > 0 && (
+          <>
+            <div className="text-xl font-semibold mt-md mb-xs">
+              <span>Duplicates</span>
+            </div>
+            <p>The following chapters are duplicates of each other:</p>
+            <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
+              {dupes.map((chapters, i) => (
+                <ul
+                  key={i}
+                  className="list-decimal border border-gray-500 p-sm rounded-md my-sm text-md"
+                >
+                  {chapters.map((chapter, j) => (
+                    <li key={j} className="ml-md">
+                      <Link
+                        to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
+                      >
+                        {chapter.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </>
+        )}
 
         {/* bottom padding */}
         <div className="h-24" />
