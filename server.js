@@ -564,8 +564,9 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
   }
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
+  const prompt = req.body.prompt.substring(0, settings.maxPromptLength);
   let reqBody = {
-    prompt: req.body.prompt,
+    prompt,
     max_tokens: req.body.max_tokens,
     model: req.body.model,
     n: req.body.num_suggestions,
@@ -574,7 +575,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     endpoint = "https://api.openai.com/v1/chat/completions";
 
     reqBody = {
-      messages: [{ role: "user", content: req.body.prompt }],
+      messages: [{ role: "user", content: prompt }],
       max_tokens: req.body.max_tokens,
       model: req.body.model,
       n: req.body.num_suggestions,

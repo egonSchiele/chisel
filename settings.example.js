@@ -1,6 +1,7 @@
 export default {
   openAiApiKey: "",
   maxMonthlyTokens: 100000,
+  maxPromptLength: 2048,
   storage: "firebase",
   tokenSalt: "",
   firebaseConfig: {
