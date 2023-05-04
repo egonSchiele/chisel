@@ -9,11 +9,15 @@ export default function ListMenu({
   label = "Menu",
   selector = "menu",
   className = "",
+  buttonClassName = "",
+  icon = null,
 }: {
   items: MenuItem[];
   label?: string;
   selector?: string;
   className?: string;
+  buttonClassName?: string;
+  icon?: React.ReactNode;
 }) {
   const animCss =
     "transition ease-in-out hover:scale-125 duration-100 active:scale-75 hover:dark:text-white";
@@ -25,7 +29,12 @@ export default function ListMenu({
         data-selector={`${selector}-list-item-menu-button`}
       >
         <span className="sr-only">{label}</span>
-        <EllipsisHorizontalIcon className="w-4 h-4 text-slate-400" />
+        {!icon && (
+          <EllipsisHorizontalIcon
+            className={`w-4 h-4 text-slate-400 ${buttonClassName}`}
+          />
+        )}
+        {icon && icon}
       </Popover.Button>
 
       <Transition

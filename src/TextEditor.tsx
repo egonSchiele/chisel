@@ -29,6 +29,8 @@ import {
 import { useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
 import { languages } from "./languages";
+import BlockMenu from "./BlockMenu";
+import CodeMenu from "./CodeMenu";
 
 const formats = [
   /*   "background",
@@ -308,9 +310,16 @@ function TextEditor({
                   }`}
                 />
               </div>
+              {isActive && (
+                <BlockMenu currentText={currentText} index={activeTextIndex} />
+              )}
+              {isActive && currentText.type === "code" && (
+                <CodeMenu currentText={currentText} index={activeTextIndex} />
+              )}
               {currentText.reference && <Tag letter="R" />}
               {currentText.type === "code" && <Tag letter="C" />}
               {currentText.type === "markdown" && <Tag letter="M" />}
+              {currentText.type === "plain" && <Tag letter="P" />}
               {/* <div
                 className="h-5 cursor-pointer mr-xs mt-xs"
                 onClick={() => {
@@ -375,9 +384,11 @@ function TextEditor({
               >
                 <ChevronRightIcon className="w-5 h-5 text-gray-500" />
               </div>
+
               {currentText.reference && <Tag letter="R" />}
               {currentText.type === "code" && <Tag letter="C" />}
               {currentText.type === "markdown" && <Tag letter="M" />}
+              {currentText.type === "plain" && <Tag letter="P" />}
             </div>
             <div className="flex-grow border-l border-gray-500 pl-sm">
               <p
