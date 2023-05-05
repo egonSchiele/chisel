@@ -1,3 +1,4 @@
+import similarity from "compute-cosine-similarity";
 import rateLimit from "express-rate-limit";
 import express from "express";
 import compression from "compression";
@@ -668,6 +669,7 @@ app.get(
     const { book } = res.locals;
     const chapters = await getChaptersForBook(book.bookid);
     const user = await getUser(req);
+    const timestamp = Date.now();
     let promises = chapters.map(async (chapter) => {
       const embeddings = await getEmbeddings(
         user,
@@ -680,12 +682,65 @@ app.get(
     promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
       if (embeddings.success) {
         chapter.embeddings = embeddings.data;
+        chapter.embeddingsLastCalculatedAt = timestamp;
         await saveChapter(chapter);
       }
     });
-    await Promise.all(promises);
+    book.lastTrainedAt = timestamp;
+    await Promise.all([...promises, saveBook(book)]);
 
-    res.status(200).json({ allEmbeddings });
+    res.status(200).json({ lastTrainedAt: timestamp });
+  }
+);
+
+app.post(
+  "/api/askQuestion/:bookid",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    const { book } = res.locals;
+    const chapters = await getChaptersForBook(book.bookid);
+    const user = await getUser(req);
+    const { question } = req.body;
+    const questionEmbeddings = await getEmbeddings(user, question);
+
+    // Use cosine similarity to find the most similar chapter.
+    // We will use that as context for GPT when asking our question
+
+    let max = 0;
+    let mostSimilarChapter;
+    chapters.forEach((chapter) => {
+      if (chapter.embeddings) {
+        const similarityScore = similarity(
+          questionEmbeddings.data,
+          chapter.embeddings
+        );
+        console.log({
+          similarityScore,
+          text: chapterToMarkdown(chapter, false),
+        });
+        if (similarityScore > max) {
+          max = similarityScore;
+          mostSimilarChapter = chapter;
+        }
+      }
+    });
+
+    console.log({ max, text: chapterToMarkdown(mostSimilarChapter, false) });
+
+    const prompt = `Context: ${chapterToMarkdown(
+      mostSimilarChapter,
+      false
+    )}\n\nQuestion: ${question}\n\nAnswer:`;
+
+    const suggestions = await getSuggestions(user, prompt);
+    console.log({ suggestions });
+    if (suggestions.success) {
+      const answer = suggestions.data.choices[0].text;
+      res.status(200).json({ answer });
+    } else {
+      res.status(400).json({ error: suggestions.error });
+    }
   }
 );
 
@@ -765,9 +820,9 @@ async function updateUsage(user, usage) {
 async function getSuggestions(
   user,
   prompt,
-  max_tokens,
-  model,
-  num_suggestions,
+  max_tokens = 500,
+  model = "gpt-3.5-turbo",
+  num_suggestions = 1,
   _messages = null
 ) {
   const check = checkUsage(user);
@@ -833,7 +888,7 @@ async function getEmbeddings(user, _text) {
   }
 
   //const input = _text.substring(0, settings.maxPromptLength);
-  const input = _text.substring(0, 50);
+  const input = _text.substring(0, 1000);
   const endpoint = "https://api.openai.com/v1/embeddings";
   const reqBody = {
     input,

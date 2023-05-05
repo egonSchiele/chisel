@@ -184,8 +184,19 @@ export async function trainOnBook(bookid) {
     const text = await res.text();
     return t.error(`Error training: ${text}`);
   }
-  const embeddings = await res.json();
-  console.log(embeddings)
-  return t.success(embeddings);
+  const json = await res.json();
+  console.log(json)
+  return t.success(json.lastTrainedAt);
+}
+
+export async function askQuestion(bookid, question) {
+  const res = await postWithCsrf(`/api/askQuestion/${bookid}`, {question});
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error asking question: ${text}`);
+  }
+  const json = await res.json();
+  console.log(json)
+  return t.success(json.answer);
 }
 

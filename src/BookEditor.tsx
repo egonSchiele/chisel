@@ -1,3 +1,4 @@
+import * as fd from "./fetchData";
 import md5 from "md5";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
@@ -101,6 +102,78 @@ function Block({ block, chapterid, bookid, index }) {
       <pre className="text-gray-800 dark:text-gray-300 font-sans">
         {block.text}
       </pre>
+    </div>
+  );
+}
+
+function TrainingData({ book }) {
+  const trained = !!book.lastTrainedAt;
+  const buttonLabel = trained ? "Re-Train" : "Train";
+  const [question, setQuestion] = React.useState("");
+  const [answer, setAnswer] = React.useState("");
+  const dispatch = useDispatch();
+  return (
+    <div>
+      {trained && (
+        <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
+          <div className="">Last Trained</div>
+          <div className="font-semibold">
+            {new Date(book.lastTrainedAt).toLocaleString()}
+          </div>
+        </div>
+      )}
+      {!trained && <p>Never Trained</p>}
+
+      <Button
+        onClick={async () => {
+          const lastTrainedAt = await fd.trainOnBook(book.bookid);
+          if (lastTrainedAt.tag === "success") {
+            dispatch(
+              librarySlice.actions.setLastTrainedAt(lastTrainedAt.payload)
+            );
+          } else {
+            dispatch(librarySlice.actions.setError(lastTrainedAt.message));
+          }
+        }}
+        className="mt-sm"
+        size="medium"
+        style="secondary"
+        rounded={true}
+      >
+        {buttonLabel}
+      </Button>
+      <h2 className="text-xl font-semibold mt-md mb-xs">Ask a question</h2>
+      <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
+        <Input
+          name="question"
+          title="Question"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          selector={`question`}
+        />
+        <Button
+          onClick={async () => {
+            const _answer = await fd.askQuestion(book.bookid, question);
+            if (_answer.tag === "success") {
+              setAnswer(_answer.payload);
+            } else {
+              dispatch(librarySlice.actions.setError(_answer.message));
+            }
+          }}
+          className="mt-sm"
+          size="medium"
+          style="secondary"
+          rounded={true}
+        >
+          Ask
+        </Button>
+        <div className="mt-sm">
+          <h2 className="text-xl font-semibold mt-md mb-xs">Answer</h2>
+          <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
+            <p>{answer}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -292,6 +365,12 @@ export default function BookEditor() {
           </>
         )}
 
+        <div className="text-xl font-semibold mt-md mb-xs">
+          <span>Training</span>
+        </div>
+        <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
+          <TrainingData book={book} />
+        </div>
         {/* bottom padding */}
         <div className="h-24" />
       </div>
