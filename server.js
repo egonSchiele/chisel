@@ -40,6 +40,7 @@ import {
   deleteBooks,
   success,
   failure,
+  getChaptersForBook,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
@@ -642,6 +643,52 @@ app.get(
   }
 );
 
+app.get(
+  "/api/getEmbeddings/:bookid/:chapterid",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    const { chapter } = res.locals;
+    const user = await getUser(req);
+    const embeddings = await getEmbeddings(
+      user,
+      chapterToMarkdown(chapter, false)
+    );
+    console.log({ embeddings });
+    res.status(200).json({ embeddings });
+  }
+);
+
+app.get(
+  "/api/trainOnBook/:bookid",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    const { book } = res.locals;
+    const chapters = await getChaptersForBook(book.bookid);
+    const user = await getUser(req);
+    let promises = chapters.map(async (chapter) => {
+      const embeddings = await getEmbeddings(
+        user,
+        chapterToMarkdown(chapter, false)
+      );
+      return { chapter, embeddings };
+    });
+    const allEmbeddings = await Promise.all(promises);
+    console.log({ allEmbeddings });
+    promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
+      if (embeddings.success) {
+        chapter.embeddings = embeddings.data;
+        await saveChapter(chapter);
+      }
+    });
+    await Promise.all(promises);
+
+    res.status(200).json({ allEmbeddings });
+  }
+);
+
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
@@ -689,14 +736,7 @@ async function getSuggestionsJSON(
   return failure(text);
 }
 
-async function getSuggestions(
-  user,
-  prompt,
-  max_tokens,
-  model,
-  num_suggestions,
-  _messages = null
-) {
+function checkUsage(user) {
   if (!user.permissions.openai_api) {
     return failure("no openai api permissions");
   }
@@ -708,6 +748,31 @@ async function getSuggestions(
     return failure("monthly guest token limit reached");
   } else if (month_total > settings.maxMonthlyTokens) {
     return failure("monthly token limit reached");
+  }
+  return success();
+}
+
+async function updateUsage(user, usage) {
+  user.usage.openai_api.tokens.month.prompt += usage.prompt_tokens;
+  user.usage.openai_api.tokens.month.completion += usage.completion_tokens;
+
+  user.usage.openai_api.tokens.total.prompt += usage.prompt_tokens;
+  user.usage.openai_api.tokens.total.completion += usage.completion_tokens;
+
+  await saveUser(user);
+}
+
+async function getSuggestions(
+  user,
+  prompt,
+  max_tokens,
+  model,
+  num_suggestions,
+  _messages = null
+) {
+  const check = checkUsage(user);
+  if (!check.success) {
+    return check;
   }
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
@@ -748,13 +813,7 @@ async function getSuggestions(
   if (json.error) {
     return failure(json.error.message);
   }
-  user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-  user.usage.openai_api.tokens.month.completion += json.usage.completion_tokens;
-
-  user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-  user.usage.openai_api.tokens.total.completion += json.usage.completion_tokens;
-
-  await saveUser(user);
+  await updateUsage(user, json.usage);
 
   let choices;
   if (chatModels.includes(model)) {
@@ -765,4 +824,43 @@ async function getSuggestions(
     choices = json.choices.map((choice) => ({ text: choice.text }));
   }
   return success({ choices });
+}
+
+async function getEmbeddings(user, _text) {
+  const check = checkUsage(user);
+  if (!check.success) {
+    return check;
+  }
+
+  //const input = _text.substring(0, settings.maxPromptLength);
+  const input = _text.substring(0, 50);
+  const endpoint = "https://api.openai.com/v1/embeddings";
+  const reqBody = {
+    input,
+    model: "text-embedding-ada-002",
+  };
+  console.log(JSON.stringify(reqBody));
+
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${settings.openAiApiKey}`,
+    },
+    body: JSON.stringify(reqBody),
+  });
+  const json = await res.json();
+
+  console.log({ json });
+
+  if (json.error) {
+    return failure(json.error.message);
+  }
+  await updateUsage(user, json.usage);
+
+  if (json.data) {
+    const embeddings = json.data[0].embedding;
+    return success(embeddings);
+  }
+  return failure("no data for embeddings");
 }

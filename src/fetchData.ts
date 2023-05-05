@@ -167,3 +167,25 @@ export async function uploadBook(chapters) {
   return t.success(book);
 }
 
+export async function getEmbeddings(chapter) {
+  const res = await fetch(`/api/getEmbeddings/${chapter.bookid}/${chapter.chapterid}`)
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error getting embeddings: ${text}`);
+  }
+  const embeddings = await res.json();
+  console.log(embeddings)
+  return t.success(embeddings);
+}
+
+export async function trainOnBook(bookid) {
+  const res = await fetch(`/api/trainOnBook/${bookid}`)
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error training: ${text}`);
+  }
+  const embeddings = await res.json();
+  console.log(embeddings)
+  return t.success(embeddings);
+}
+

@@ -130,6 +130,7 @@ export type Chapter = {
   created_at?: number;
   updated_at?: number;
   status?: ChapterStatus;
+  embeddings?: number[];
 };
 
 export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done" ;
