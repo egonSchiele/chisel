@@ -351,7 +351,10 @@ export default function Library({ mobile = false }) {
       }
       const book = getSelectedBook({ library: state });
 
-      if (!book) return;
+      if (!book) {
+        console.log("No book to save");
+        return;
+      }
       try {
         await saveBook(book);
       } catch (e) {

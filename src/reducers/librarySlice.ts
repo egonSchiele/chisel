@@ -249,6 +249,23 @@ export const librarySlice = createSlice({
     setSaved(state: t.State, action: PayloadAction<boolean>) {
       state.saved = action.payload;
     },
+    moveChapter(state: t.State, action: PayloadAction<string>) {
+      const chapter = getSelectedChapter({ library: state });
+      const book = getSelectedBook({ library: state });
+      book.chapterOrder = book.chapterOrder.filter((id) => id !== chapter.chapterid);
+      book.chapters = book.chapters.filter((c) => c.chapterid !== chapter.chapterid);
+
+      const newBookId = action.payload;
+      chapter.bookid = newBookId;
+
+      const newBook = state.books.find((b) => b.bookid === newBookId);
+      if (newBook) {
+        newBook.chapterOrder.unshift(chapter.chapterid);
+        newBook.chapters.unshift(chapter);
+      }
+
+      state.saved = false;
+    },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });

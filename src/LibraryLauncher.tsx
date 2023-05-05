@@ -26,6 +26,7 @@ import {
   PencilIcon,
   WrenchIcon,
   XMarkIcon,
+  ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store";
@@ -512,6 +513,24 @@ export default function LibraryLauncher({
             dispatch(librarySlice.actions.setChapterStatus(status));
           },
           icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        });
+      }
+    });
+
+    state.books.forEach((book, i) => {
+      if (book.bookid !== currentChapter.bookid) {
+        launchItems.push({
+          label: `Move to ${book.title}`,
+          onClick: () => {
+            const currentBookId = currentChapter.bookid;
+            dispatch(librarySlice.actions.moveChapter(book.bookid));
+            navigate(
+              `/book/${book.bookid}/chapter/${currentChapter.chapterid}`
+            );
+          },
+          icon: (
+            <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
+          ),
         });
       }
     });
