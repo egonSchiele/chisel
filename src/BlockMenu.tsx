@@ -51,7 +51,8 @@ export default function BlockMenu({ currentText, index }) {
   return (
     <ListMenu
       items={items}
-      icon={<Cog6ToothIcon className="w-5 h-5 text-gray-500" />}
+      //icon={<Cog6ToothIcon className="w-5 h-5 text-gray-500" />}
+      buttonClassName="w-5 h-5 dark:text-gray-500"
     />
   );
 }

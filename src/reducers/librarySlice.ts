@@ -14,6 +14,7 @@ import { RootState } from "../store";
 import { current } from "immer";
 
 import sortBy from "lodash/sortBy";
+import { nanoid } from 'nanoid';
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
 
@@ -522,6 +523,7 @@ export const librarySlice = createSlice({
       prev.text += `\n${cur.text}`;
       cur.text = "deleted";
       chapter.text.splice(index, 1);
+      prev.id = nanoid();
 
       state.saved = false;
     },
@@ -533,6 +535,7 @@ export const librarySlice = createSlice({
       const next = chapter.text[index + 1];
       cur.text += `\n${next.text}`;
       chapter.text.splice(index + 1, 1);
+      cur.id = nanoid();
 
       state.saved = false;
     },
@@ -571,6 +574,7 @@ export const librarySlice = createSlice({
         } else if (index === text.text.length - 1) {
           // newBlockAfterCurrent
           const newBlock = newBlockFromCurrent(state)
+          
           chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
           state.editor.activeTextIndex += 1
           state.saved = false;
