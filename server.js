@@ -360,7 +360,7 @@ app.get(
     if (isMobile(req)) {
       serveFile("mobile.html", res);
     } else {
-      serveFile("chapter.html", res);
+      serveFile("library.html", res);
     }
   }
 );
@@ -373,7 +373,7 @@ app.get(
     if (isMobile(req)) {
       serveFile("mobile.html", res);
     } else {
-      serveFile("chapter.html", res);
+      serveFile("library.html", res);
     }
   }
 );
@@ -448,12 +448,12 @@ app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
   if (isMobile(req)) {
     serveFile("mobile.html", res);
   } else {
-    serveFile("book.html", res);
+    serveFile("library.html", res);
   }
 });
 
 app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  serveFile("book.html", res);
+  serveFile("library.html", res);
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
