@@ -704,7 +704,9 @@ async function getSuggestions(
   month_total += user.usage.openai_api.tokens.month.prompt;
   month_total += user.usage.openai_api.tokens.month.completion;
 
-  if (month_total > settings.maxMonthlyTokens) {
+  if (user.guest && month_total > settings.maxMonthlyGuestTokens) {
+    return failure("monthly guest token limit reached");
+  } else if (month_total > settings.maxMonthlyTokens) {
     return failure("monthly token limit reached");
   }
   const chatModels = ["gpt-3.5-turbo"];

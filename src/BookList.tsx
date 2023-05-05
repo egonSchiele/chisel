@@ -126,7 +126,9 @@ export default function BookList({
 
     await Promise.all(promises);
 
+    dispatch(librarySlice.actions.loading());
     const res = await fd.uploadBook(chapters);
+    dispatch(librarySlice.actions.loaded());
     if (res.tag === "error") {
       dispatch(librarySlice.actions.setError(res.message));
     } else {
