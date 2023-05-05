@@ -243,7 +243,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
   const promptText = chapters
     .map((chapter) => chapter.text)
     .join("\n\n")
-    .substring(0, 5000);
+    .substring(0, 10000);
 
   const prompt = `Given this text, give me a synopsis of the book as well as its major characters. For the characters, return a name, description, and image URL of what you think this character looks like. Also include links to any other books you think are related. Here's the text: ${promptText}`;
 
