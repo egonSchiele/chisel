@@ -32,7 +32,7 @@ function Character({
 }) {
   return (
     <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
-      {character.imageUrl.trim() !== "" && (
+      {character.imageUrl && character.imageUrl.trim() !== "" && (
         <img
           src={character.imageUrl}
           alt={character.name}

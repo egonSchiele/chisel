@@ -26,7 +26,7 @@ function CharacterInfo() {
     if (character) {
       return (
         <div className="mt-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
-          {character.imageUrl.trim() !== "" && (
+          {character.imageUrl && character.imageUrl.trim() !== "" && (
             <img
               src={character.imageUrl}
               alt={character.name}

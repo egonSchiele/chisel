@@ -245,38 +245,36 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
     .join("\n\n")
     .substring(0, 5000);
 
-  const prompt = `Given this text, give me a synopsis of the book as well as its major characters. Also include links to any other books you think are related, ideally on project Gutenberg. Also any image URLs for images you think are good at visualizing this book. Return your response as JSON in this format: {synopsis: string, characters: [{name: string, description: string}], links:string[], image_urls:[]}. Return JSON, do not return raw text. Return the characters in the order of importance, with the most important character first. Here's the text: ${promptText}`;
+  const prompt = `Given this text, give me a synopsis of the book as well as its major characters. For the characters, return a name, description, and image URL of what you think this character looks like. Also include links to any other books you think are related. Here's the text: ${promptText}`;
 
+  const schema =
+    " {title:string, author:string, synopsis: string, characters: [{name: string, description: string, imageUrl:string}], links:string[]}";
   const max_tokens = 1500;
   const num_suggestions = 1;
   const model = "gpt-3.5-turbo";
 
-  const suggestions = await getSuggestions(
+  const suggestions = await getSuggestionsJSON(
     user,
     prompt,
     max_tokens,
     model,
-    num_suggestions
+    num_suggestions,
+    schema
   );
 
-  console.log(suggestions);
-  if (!suggestions) {
-    console.log("no suggestions");
-    await saveBook(book);
-    return res.send(book);
-  }
-
   if (suggestions.success) {
-    const text = suggestions.data.choices[0].text;
-    console.log(text);
     try {
-      const { synopsis, characters } = JSON.parse(text);
-      book.synopsis = synopsis;
+      const { title, author, synopsis, characters, links } = suggestions.data;
+      book.synopsis = synopsis + "\n\n" + links.join("\n");
       book.characters = characters;
+      book.title = title;
+      book.author = author;
     } catch (e) {
       console.log(e);
-      book.synopsis = text;
+      book.synopsis = JSON.stringify(suggestions.data);
     }
+  } else {
+    book.synopsis = suggestions.message;
   }
   await saveBook(book);
   res.send(book);
@@ -284,7 +282,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
 
 app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   const userid = getUserId(req);
-  console.log(req.body);
+
   const { bookid, title, text } = req.body;
 
   const chapter = makeNewChapter(text, title, bookid);
@@ -647,12 +645,57 @@ app.get(
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
+async function getSuggestionsJSON(
+  user,
+  _prompt,
+  max_tokens,
+  model,
+  num_suggestions,
+  schema,
+  retries = 3
+) {
+  const prompt = `Please respond ONLY with valid json that conforms to this schema: ${schema}. Do not include additional text other than the object json as we will parse this object with JSON.parse. If you do not respond with valid json, we will ask you to try again. Prompt: ${_prompt}`;
+
+  const messages = [{ role: "user", content: prompt }];
+  let tries = 0;
+  let text;
+  while (tries < retries) {
+    const suggestions = await getSuggestions(
+      user,
+      "",
+      max_tokens,
+      model,
+      num_suggestions,
+      messages
+    );
+    if (suggestions.success) {
+      text = suggestions.data.choices[0].text;
+      try {
+        const json = JSON.parse(text);
+        return success(json);
+      } catch (e) {
+        console.log(e);
+        tries += 1;
+        messages.push({
+          role: "system",
+          content: `JSON.parse error: ${e.message}`,
+        });
+      }
+    } else {
+      return suggestions;
+      //tries += 1;
+    }
+  }
+  return failure(text);
+}
+
 async function getSuggestions(
   user,
   prompt,
   max_tokens,
   model,
-  num_suggestions
+  num_suggestions,
+  _messages = null
 ) {
   if (!user.permissions.openai_api) {
     return failure("no openai api permissions");
@@ -676,13 +719,13 @@ async function getSuggestions(
   if (chatModels.includes(model)) {
     endpoint = "https://api.openai.com/v1/chat/completions";
 
+    const messages = _messages || [{ role: "user", content: prompt }];
     reqBody = {
-      messages: [{ role: "user", content: prompt }],
+      messages,
       max_tokens,
       model,
       n: num_suggestions,
     };
-    // "messages": [{"role": "user", "content": "Hello!"}]
   }
 
   console.log(JSON.stringify(reqBody));
