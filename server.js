@@ -1,3 +1,4 @@
+import zip from "lodash";
 import similarity from "compute-cosine-similarity";
 import rateLimit from "express-rate-limit";
 import express from "express";
@@ -436,7 +437,7 @@ app.post("/api/settings", requireLogin, async (req, res) => {
   }
 });
 
-app.get("/books", requireLogin, noCache, async (req, res) => {
+app.get("/api/books", requireLogin, noCache, async (req, res) => {
   const userid = getUserId(req);
   if (!userid) {
     console.log("no userid");
@@ -680,20 +681,25 @@ app.get(
         );
       })
       .map(async (chapter) => {
-        const embeddings = await getEmbeddings(
-          user,
-          chapterToMarkdown(chapter, false)
-        );
+        const blockPromises = chapter.text.map(async (block) => {
+          const blockEmbeddings = await getEmbeddings(user, block.text);
+          return blockEmbeddings;
+        });
+        const embeddings = await Promise.all(blockPromises);
         return { chapter, embeddings };
       });
     const allEmbeddings = await Promise.all(promises);
     promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
-      if (embeddings.success) {
-        chapter.embeddings = embeddings.data;
-        chapter.embeddingsLastCalculatedAt = timestamp;
-        await saveChapter(chapter);
-      }
+      chapter.text.forEach((block, i) => {
+        if (embeddings[i].success) {
+          block.embeddings = embeddings[i].data;
+        }
+      });
+
+      chapter.embeddingsLastCalculatedAt = timestamp;
+      await saveChapter(chapter);
     });
+
     book.lastTrainedAt = timestamp;
     await Promise.all([...promises, saveBook(book)]);
 
@@ -707,33 +713,34 @@ app.post(
   checkBookAccess,
   async (req, res) => {
     const { book } = res.locals;
-    const chapters = await getChaptersForBook(book.bookid);
+    const chapters = await getChaptersForBook(book.bookid, true);
     const user = await getUser(req);
     const { question } = req.body;
     const questionEmbeddings = await getEmbeddings(user, question);
-
     // Use cosine similarity to find the most similar chapter.
     // We will use that as context for GPT when asking our question
 
     let max = 0;
-    let mostSimilarChapter;
+    let mostSimilarBlock;
     chapters.forEach((chapter) => {
-      if (chapter.embeddings) {
-        const similarityScore = similarity(
-          questionEmbeddings.data,
-          chapter.embeddings
-        );
-        if (similarityScore > max) {
-          max = similarityScore;
-          mostSimilarChapter = chapter;
+      chapter.text.forEach((block) => {
+        if (block.embeddings && block.embeddings.length > 0) {
+          const similarityScore = similarity(
+            questionEmbeddings.data,
+            block.embeddings
+          );
+          if (similarityScore > max) {
+            max = similarityScore;
+            mostSimilarBlock = block;
+          }
         }
-      }
+      });
     });
 
-    const prompt = `Context: ${chapterToMarkdown(
-      mostSimilarChapter,
-      false
-    )}\n\nQuestion: ${question}\n\nAnswer:`;
+    console.log({ max, mostSimilarBlock });
+
+    const prompt = `Context: ${mostSimilarBlock.text}
+    \n\nQuestion: ${question}\n\nAnswer:`;
 
     const suggestions = await getSuggestions(user, prompt);
 

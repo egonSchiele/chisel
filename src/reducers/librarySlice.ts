@@ -81,7 +81,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
 export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThunk(
   "library/fetchBooks",
   async (_payload, { dispatch, signal }) => {
-    const res = await fetch(`/books`, {
+    const res = await fetch(`/api/books`, {
       credentials: "include",
       signal
     });

@@ -71,7 +71,7 @@ export const getBook = async (bookid) => {
   return book;
 };
 
-export const getChaptersForBook = async (bookid) => {
+export const getChaptersForBook = async (bookid, includeEmbeddings = false) => {
   const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
 
   const chapters = await chapterRef.get();
@@ -81,7 +81,17 @@ export const getChaptersForBook = async (bookid) => {
   }
   const allChapters = [];
   chapters.forEach((chapter) => {
-    allChapters.push(chapter.data());
+    const chapterData = chapter.data();
+    if (includeEmbeddings) {
+      allChapters.push(chapterData);
+    } else {
+      if (chapterData.text && Array.isArray(chapterData.text)) {
+        chapterData.text.forEach((t) => {
+          t.embeddings = [];
+        });
+      }
+      allChapters.push(chapterData);
+    }
   });
   return allChapters;
 };
@@ -131,6 +141,7 @@ export const getBooks = async (userid) => {
   const allBooks = [];
   const promises = asArray(books).map(async (book) => {
     const chapters = await getChaptersForBook(book.bookid);
+
     book.chapters = chapters;
     if (book.chapterTitles) {
       book.chapterOrder = book.chapterTitles.map((c) => c.chapterid);
@@ -154,7 +165,7 @@ export const getBooks = async (userid) => {
     });
 
     const compostText =
-      "This is a place to store all your random ideas, thoughts, and notes. Like a compost heap: https://austinkleon.com/2021/10/10/i-am-a-compost-heap/";
+      "This is a place to store all your random ideas, thoughts, and notes. Like a compost heap: https://egonschiele.github.io/chisel-docs/docs/advanced-features/compost/";
     const compostTitle = "Welcome to your compost heap!";
     const compostChapter = makeNewChapter(
       compostText,
