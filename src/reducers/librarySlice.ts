@@ -482,6 +482,35 @@ export const librarySlice = createSlice({
       
       state.editor.activeTextIndex = action.payload;
     },
+    gotoNextOpenBlock(state: t.State) {
+      if (state.editor.activeTextIndex === null || state.editor.activeTextIndex === undefined) {
+        state.editor.activeTextIndex = 0;
+      } else {
+        const index = state.editor.activeTextIndex;
+        const chapter = getSelectedChapter({ library: state });
+        const nextTexts = chapter.text.slice(index + 1);
+        const nextOpenText = nextTexts.find((text) => text.open);
+        if (nextOpenText) {
+          state.editor.activeTextIndex = chapter.text.indexOf(nextOpenText);
+        }
+      }
+      state.saved = false;      
+    },
+    gotoPreviousOpenBlock(state: t.State) {
+      if (state.editor.activeTextIndex === null || state.editor.activeTextIndex === undefined) {
+        state.editor.activeTextIndex = 0;
+      } else {
+        const index = state.editor.activeTextIndex;
+        const chapter = getSelectedChapter({ library: state });
+        const prevTexts = chapter.text.slice(0, index);
+        const prevOpenText = prevTexts.reverse().find((text) => text.open);
+        
+        if (prevOpenText) {
+          state.editor.activeTextIndex = chapter.text.indexOf(prevOpenText);
+        }
+      }
+      state.saved = false;      
+    },
     setLanguage(state: t.State, action: PayloadAction<{index:number; language:string}>) {
       const chapter = getSelectedChapter({ library: state });
       const { index, language } = action.payload;

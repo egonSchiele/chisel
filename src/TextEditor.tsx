@@ -211,7 +211,7 @@ function TextEditor({
             index < currentChapterTextLength - 1
           ) {
             event.preventDefault();
-            dispatch(librarySlice.actions.setActiveTextIndex(index + 1));
+            dispatch(librarySlice.actions.gotoNextOpenBlock());
           }
         }
       }
@@ -224,7 +224,7 @@ function TextEditor({
         if (range) {
           if (range.length === 0 && range.index === 0 && index > 0) {
             event.preventDefault();
-            dispatch(librarySlice.actions.setActiveTextIndex(index - 1));
+            dispatch(librarySlice.actions.gotoPreviousOpenBlock());
           }
         }
       }
@@ -299,7 +299,7 @@ function TextEditor({
               >
                 <ChevronDownIcon
                   className={`w-5 h-5 ${
-                    isActive ? "text-gray-300" : "text-gray-500"
+                    isActive ? "text-gray-400" : "text-gray-500"
                   }`}
                 />
               </div>
@@ -326,7 +326,7 @@ function TextEditor({
 
             <div
               className={`flex-grow border-l w-full pl-sm pr-md ${
-                isActive ? "border-gray-300" : "border-gray-500"
+                isActive ? "border-gray-400" : "border-gray-500"
               }`}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());

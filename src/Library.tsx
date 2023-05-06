@@ -139,6 +139,7 @@ export default function Library({ mobile = false }) {
         dispatch(librarySlice.actions.setViewMode("default"));
       } else {
         dispatch(librarySlice.actions.setViewMode("readonly"));
+        dispatch(librarySlice.actions.closeAllPanels());
       }
     } else if (event.shiftKey && event.metaKey && event.key === "f") {
       event.preventDefault();
