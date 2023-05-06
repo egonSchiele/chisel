@@ -568,8 +568,8 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    mergeBlockUp(state: t.State) {
-      const index = state.editor.activeTextIndex;
+    mergeBlockUp(state: t.State, action: PayloadAction<number|null>) {
+      const index = action.payload || state.editor.activeTextIndex;
       if (index === 0) return;
       const chapter = getSelectedChapter({ library: state });
       const cur = chapter.text[index];
@@ -581,8 +581,8 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    mergeBlockDown(state: t.State) {
-      const index = state.editor.activeTextIndex;
+    mergeBlockDown(state: t.State, action: PayloadAction<number|null>) {
+      const index = action.payload || state.editor.activeTextIndex;
       const chapter = getSelectedChapter({ library: state });
       if (index === chapter.text.length - 1) return;
       const cur = chapter.text[index];

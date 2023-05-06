@@ -2,6 +2,8 @@ import React, { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import {
+  BarsArrowDownIcon,
+  BarsArrowUpIcon,
   CheckIcon,
   Cog6ToothIcon,
   EllipsisHorizontalIcon,
@@ -13,7 +15,22 @@ import { useDispatch } from "react-redux";
 import { librarySlice } from "./reducers/librarySlice";
 export default function BlockMenu({ currentText, index }) {
   const dispatch = useDispatch();
-  const items: MenuItem[] = [];
+  const items: MenuItem[] = [
+    {
+      label: "Merge Block Up",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockUp(index));
+      },
+      icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+    {
+      label: "Merge Block Down",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockDown(index));
+      },
+      icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+    },
+  ];
 
   blockTypes.forEach((blockType) => {
     let icon = <div className="w-5 h-5" aria-hidden="true" />;
