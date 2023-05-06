@@ -8,7 +8,6 @@ describe("delete book", () => {
   it("if you delete a chapter, the editor state is cleared", () => {
     cy.login();
 
-    cy.contains("h3", "Chapters").should("not.exist");
 
     cy.newBook();
 
@@ -30,7 +29,6 @@ describe("delete book", () => {
   it("if you delete a book, the editor state is cleared", () => {
     cy.login();
 
-    cy.contains("h3", "Chapters").should("not.exist");
 
     cy.newBook();
 

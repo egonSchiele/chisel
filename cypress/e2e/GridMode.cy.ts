@@ -12,7 +12,7 @@ const text = "some important text";
 
     cy.get("a[data-selector='booklist-list-item-link']").click();
 
-    cy.contains("h3", "Chapters");
+    cy.contains("h3", "No chapters");
 
     cy.newChapter();
     cy.newChapter();

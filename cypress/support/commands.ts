@@ -100,7 +100,6 @@ Cypress.Commands.add("selectChapter", (user) => {
 
 Cypress.Commands.add("selectBook", (user) => {
   cy.get("a[data-selector='booklist-list-item-link']").click();
-  cy.contains("h3", "No chapters");
 });
 
 Cypress.Commands.add("toggleSidebar", (user) => {

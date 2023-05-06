@@ -14,6 +14,6 @@ describe("login", () => {
     cy.getCookie("token").should("exist");
 
     // UI should reflect this user being logged in
-    cy.contains("h3", "Books");
+    cy.contains("h3", "No books");
   });
 });

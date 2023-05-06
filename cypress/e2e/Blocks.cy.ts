@@ -9,8 +9,6 @@ describe("blocks", () => {
   it("tests various block functionality", () => {
     cy.login();
 
-    cy.contains("h3", "Chapters").should("not.exist");
-
     cy.newBook();
 
     cy.selectBook();

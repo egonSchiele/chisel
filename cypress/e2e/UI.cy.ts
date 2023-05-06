@@ -9,7 +9,7 @@ describe("UI", () => {
 
     cy.get("a[data-selector='booklist-list-item-link']").click();
 
-    cy.contains("h3", "Chapters");
+    cy.contains("h3", "No chapters");
 
     cy.newChapter();
 
@@ -46,15 +46,15 @@ describe("UI", () => {
     cy.get("body").type("{esc}");
     cy.contains("h3", "Suggestions").should("not.exist");
     cy.contains("h3", "Prompts").should("not.exist");
-    cy.contains("h3", "Chapters").should("not.exist");
-    cy.contains("h3", "Books").should("not.exist");
+    cy.contains("h3", "1 chapter").should("not.exist");
+    cy.contains("h3", "1 book").should("not.exist");
 
     // esc again shows ui
     cy.get("body").type("{esc}");
     cy.contains("h3", "Suggestions");
     cy.contains("h3", "Prompts");
-    cy.contains("h3", "Chapters");
-    cy.contains("h3", "Books");
+    cy.contains("h3", "1 chapter");
+    cy.contains("h3", "1 book");
 
     cy.get("body").type("{command+shift+p}");
     /*     cy.contains("input[data-selector='launcher-search-input']");

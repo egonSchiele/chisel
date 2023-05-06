@@ -28,25 +28,25 @@ describe("fullscreen", () => {
     cy.get("button[data-selector='maximize-button']").click();
     cy.contains("span", "Minimize");
     cy.contains("span", "Maximize").should("not.exist");
-    cy.contains("h3", "Chapters").should("not.exist");
+    cy.contains("h3", "1 chapter").should("not.exist");
 
     // go back
     cy.get("button[data-selector='minimize-button']").click();
     cy.contains("span", "Minimize").should("not.exist");
     cy.contains("span", "Maximize");
-    cy.contains("h3", "Chapters");
+    cy.contains("h3", "1 chapter");
 
     // go full screen
     cy.get("button[data-selector='maximize-button']").click();
     cy.contains("span", "Minimize");
     cy.contains("span", "Maximize").should("not.exist");
-    cy.contains("h3", "Chapters").should("not.exist");
+    cy.contains("h3", "1 chapter").should("not.exist");
 
     // go back
     cy.get("button[data-selector='close-sidebar-button']").click();
     cy.contains("span", "Minimize").should("not.exist");
     cy.contains("span", "Maximize");
-    cy.contains("h3", "Chapters");
+    cy.contains("h3", "1 chapter");
 
     cy.deleteChapter();
     cy.deleteBook();

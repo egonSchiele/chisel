@@ -6,8 +6,14 @@ import { useKeyboardScroll } from "./hooks";
 
 const DiffViewer = ({ originalText, newText, onClose }) => {
   const [raw, setRaw] = React.useState(false);
+  const diffDiv = React.useRef(null);
+  /*   useEffect(() => {
+    if (diffDiv.current) {
+      useKeyboardScroll(diffDiv);
+    }
+  }, [diffDiv.current]);
 
-  if (raw) {
+ */ if (raw) {
     return (
       <div className="">
         <Button onClick={onClose} selector="diff-view-close">
@@ -22,13 +28,6 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
       </div>
     );
   }
-
-  const diffDiv = React.useRef(null);
-  useEffect(() => {
-    if (diffDiv.current) {
-      useKeyboardScroll(diffDiv);
-    }
-  }, [diffDiv.current]);
 
   /*  return (
     <p>

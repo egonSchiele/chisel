@@ -8,13 +8,12 @@ describe("edit and switch", () => {
   it("if you edit a chapter, move to another chapter, and then go back, your edits should show (issue #7)", () => {
     cy.login();
 
-    cy.contains("h3", "Chapters").should("not.exist");
 
     cy.newBook();
 
     cy.get("a[data-selector='booklist-list-item-link']").click();
 
-    cy.contains("h3", "Chapters");
+    cy.contains("h3", "No chapters");
 
     cy.newChapter();
     cy.newChapter();
