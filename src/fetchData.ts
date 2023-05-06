@@ -167,3 +167,33 @@ export async function uploadBook(chapters) {
   return t.success(book);
 }
 
+export async function getEmbeddings(chapter) {
+  const res = await fetch(`/api/getEmbeddings/${chapter.bookid}/${chapter.chapterid}`)
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error getting embeddings: ${text}`);
+  }
+  const embeddings = await res.json();
+  return t.success(embeddings);
+}
+
+export async function trainOnBook(bookid) {
+  const res = await fetch(`/api/trainOnBook/${bookid}`)
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error training: ${text}`);
+  }
+  const json = await res.json();
+  return t.success(json.lastTrainedAt);
+}
+
+export async function askQuestion(bookid, question) {
+  const res = await postWithCsrf(`/api/askQuestion/${bookid}`, {question});
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error asking question: ${text}`);
+  }
+  const json = await res.json();
+  return t.success(json.answer);
+}
+

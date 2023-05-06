@@ -266,6 +266,11 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    setLastTrainedAt(state: t.State, action: PayloadAction<number>) {      
+      const book = getSelectedBook({ library: state });
+      book.lastTrainedAt = action.payload;
+      state.saved = false;
+    },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });

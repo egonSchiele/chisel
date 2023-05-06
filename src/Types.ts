@@ -130,6 +130,8 @@ export type Chapter = {
   created_at?: number;
   updated_at?: number;
   status?: ChapterStatus;
+  embeddings?: number[];
+  embeddingsLastCalculatedAt?: number;
 };
 
 export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done" ;
@@ -159,6 +161,7 @@ export type Book = {
   genre?: string;
   style?: string;
   created_at?: number;
+  lastTrainedAt?: number;
 };
 
 export type Character = {

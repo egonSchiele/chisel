@@ -504,7 +504,24 @@ export default function LibraryLauncher({
     });
   }
 
+  if (currentBook) {
+    launchItems.push({
+      label: "Train on book",
+      onClick: async () => {
+        const embed = await fd.trainOnBook(currentBook.bookid);
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
   if (currentChapter) {
+    launchItems.push({
+      label: "Get embeddings",
+      onClick: async () => {
+        const embed = await fd.getEmbeddings(currentChapter);
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+
     chapterStatuses.forEach((status) => {
       if (currentChapter.status !== status) {
         launchItems.push({

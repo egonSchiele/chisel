@@ -1,3 +1,4 @@
+import similarity from "compute-cosine-similarity";
 import rateLimit from "express-rate-limit";
 import express from "express";
 import compression from "compression";
@@ -40,6 +41,7 @@ import {
   deleteBooks,
   success,
   failure,
+  getChaptersForBook,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
@@ -101,7 +103,10 @@ const csrf = (req, res, next) => {
         c.csrfToken,
         req.body.csrfToken
       );
-      res.status(400).send("CSRF failed. Try refreshing your browser.").end();
+      res
+        .status(400)
+        .send("Could not butter your parsnips. Try refreshing your browser.")
+        .end();
     }
   } else {
     next();
@@ -642,6 +647,98 @@ app.get(
   }
 );
 
+app.get(
+  "/api/getEmbeddings/:bookid/:chapterid",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    const { chapter } = res.locals;
+    const user = await getUser(req);
+    const embeddings = await getEmbeddings(
+      user,
+      chapterToMarkdown(chapter, false)
+    );
+    res.status(200).json({ embeddings });
+  }
+);
+
+app.get(
+  "/api/trainOnBook/:bookid",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    const { book } = res.locals;
+    const chapters = await getChaptersForBook(book.bookid);
+    const user = await getUser(req);
+    const timestamp = Date.now();
+    let promises = chapters.map(async (chapter) => {
+      const embeddings = await getEmbeddings(
+        user,
+        chapterToMarkdown(chapter, false)
+      );
+      return { chapter, embeddings };
+    });
+    const allEmbeddings = await Promise.all(promises);
+    promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
+      if (embeddings.success) {
+        chapter.embeddings = embeddings.data;
+        chapter.embeddingsLastCalculatedAt = timestamp;
+        await saveChapter(chapter);
+      }
+    });
+    book.lastTrainedAt = timestamp;
+    await Promise.all([...promises, saveBook(book)]);
+
+    res.status(200).json({ lastTrainedAt: timestamp });
+  }
+);
+
+app.post(
+  "/api/askQuestion/:bookid",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    const { book } = res.locals;
+    const chapters = await getChaptersForBook(book.bookid);
+    const user = await getUser(req);
+    const { question } = req.body;
+    const questionEmbeddings = await getEmbeddings(user, question);
+
+    // Use cosine similarity to find the most similar chapter.
+    // We will use that as context for GPT when asking our question
+
+    let max = 0;
+    let mostSimilarChapter;
+    chapters.forEach((chapter) => {
+      if (chapter.embeddings) {
+        const similarityScore = similarity(
+          questionEmbeddings.data,
+          chapter.embeddings
+        );
+        if (similarityScore > max) {
+          max = similarityScore;
+          mostSimilarChapter = chapter;
+        }
+      }
+    });
+
+    const prompt = `Context: ${chapterToMarkdown(
+      mostSimilarChapter,
+      false
+    )}\n\nQuestion: ${question}\n\nAnswer:`;
+
+    const suggestions = await getSuggestions(user, prompt);
+
+    if (suggestions.success) {
+      const answer = suggestions.data.choices[0].text;
+      res.status(200).json({ answer });
+    } else {
+      res.status(400).json({ error: suggestions.error });
+    }
+  }
+);
+
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
@@ -689,14 +786,7 @@ async function getSuggestionsJSON(
   return failure(text);
 }
 
-async function getSuggestions(
-  user,
-  prompt,
-  max_tokens,
-  model,
-  num_suggestions,
-  _messages = null
-) {
+function checkUsage(user) {
   if (!user.permissions.openai_api) {
     return failure("no openai api permissions");
   }
@@ -708,6 +798,31 @@ async function getSuggestions(
     return failure("monthly guest token limit reached");
   } else if (month_total > settings.maxMonthlyTokens) {
     return failure("monthly token limit reached");
+  }
+  return success();
+}
+
+async function updateUsage(user, usage) {
+  user.usage.openai_api.tokens.month.prompt += usage.prompt_tokens;
+  user.usage.openai_api.tokens.month.completion += usage.completion_tokens;
+
+  user.usage.openai_api.tokens.total.prompt += usage.prompt_tokens;
+  user.usage.openai_api.tokens.total.completion += usage.completion_tokens;
+
+  await saveUser(user);
+}
+
+async function getSuggestions(
+  user,
+  prompt,
+  max_tokens = 500,
+  model = "gpt-3.5-turbo",
+  num_suggestions = 1,
+  _messages = null
+) {
+  const check = checkUsage(user);
+  if (!check.success) {
+    return check;
   }
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
@@ -748,13 +863,7 @@ async function getSuggestions(
   if (json.error) {
     return failure(json.error.message);
   }
-  user.usage.openai_api.tokens.month.prompt += json.usage.prompt_tokens;
-  user.usage.openai_api.tokens.month.completion += json.usage.completion_tokens;
-
-  user.usage.openai_api.tokens.total.prompt += json.usage.prompt_tokens;
-  user.usage.openai_api.tokens.total.completion += json.usage.completion_tokens;
-
-  await saveUser(user);
+  await updateUsage(user, json.usage);
 
   let choices;
   if (chatModels.includes(model)) {
@@ -765,4 +874,40 @@ async function getSuggestions(
     choices = json.choices.map((choice) => ({ text: choice.text }));
   }
   return success({ choices });
+}
+
+async function getEmbeddings(user, _text) {
+  const check = checkUsage(user);
+  if (!check.success) {
+    return check;
+  }
+
+  const input = _text.substring(0, settings.maxPromptLength);
+
+  const endpoint = "https://api.openai.com/v1/embeddings";
+  const reqBody = {
+    input,
+    model: "text-embedding-ada-002",
+  };
+
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${settings.openAiApiKey}`,
+    },
+    body: JSON.stringify(reqBody),
+  });
+  const json = await res.json();
+
+  if (json.error) {
+    return failure(json.error.message);
+  }
+  await updateUsage(user, json.usage);
+
+  if (json.data) {
+    const embeddings = json.data[0].embedding;
+    return success(embeddings);
+  }
+  return failure("no data for embeddings");
 }
