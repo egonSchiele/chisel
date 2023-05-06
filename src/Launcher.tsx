@@ -1,3 +1,6 @@
+/* import levenshtein from "js-levenshtein";
+import intersection from "lodash/intersection";
+ */ import sortBy from "lodash/sortBy";
 import { apStyleTitleCase } from "ap-style-title-case";
 import React, { Fragment, useState, useEffect } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
@@ -19,12 +22,32 @@ export default function Launcher({
 }) {
   const [query, setQuery] = useState("");
 
-  const filteredItems =
-    query === ""
-      ? items
-      : items.filter((item) =>
-          item.label.toLowerCase().includes(query.toLowerCase())
-        );
+  let filteredItems = items;
+  if (query !== "") {
+    filteredItems = items.map((item) => {
+      const a = item.label.toLowerCase().split(" ");
+      const b = query.toLowerCase().split(" ");
+      let matches = 0;
+      for (let i = 0; i < a.length; i++) {
+        for (let j = 0; j < b.length; j++) {
+          if (a[i].includes(b[j])) {
+            matches++;
+          }
+        }
+      }
+      if (matches > 0) {
+        return { ...item, matchPercentage: matches / a.length };
+      } else {
+        return null;
+      }
+    });
+    filteredItems = filteredItems.filter((item) => item !== null);
+
+    filteredItems = sortBy(filteredItems, ["matchPercentage"]).reverse();
+    /*     filteredItems = sortBy(filteredItems, (item) => {
+      return levenshtein(item.label.toLowerCase(), query.toLowerCase());
+    }); */
+  }
 
   return (
     <Transition.Root

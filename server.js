@@ -918,7 +918,7 @@ async function getEmbeddings(user, _text) {
     body: JSON.stringify(reqBody),
   });
   const json = await res.json();
-
+  console.log({ json });
   if (json.error) {
     return failure(json.error.message);
   }
