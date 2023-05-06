@@ -24,6 +24,7 @@ import {
   EyeIcon,
   MinusIcon,
   PencilIcon,
+  ScissorsIcon,
   SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -748,6 +749,18 @@ export default function Library({ mobile = false }) {
                       <Spinner className="w-5 h-5" />
                     </NavButton>
                   )}
+
+                  {state.editor.selectedText &&
+                    state.editor.selectedText.length > 0 && (
+                      <NavButton
+                        label="Extract Block"
+                        onClick={() => {
+                          dispatch(librarySlice.actions.extractBlock());
+                        }}
+                      >
+                        <ScissorsIcon className="h-5 w-5" aria-hidden="true" />
+                      </NavButton>
+                    )}
 
                   {state.viewMode === "readonly" && (
                     <span className="text-red-700 text-xs uppercase mr-xs">
