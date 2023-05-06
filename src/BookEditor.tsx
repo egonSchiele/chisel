@@ -85,7 +85,7 @@ function Chapter({ chapter, bookid }) {
     >
       <h3 className="text-xl font-semibold">{chapter.title}</h3>
       <pre className="text-gray-800 dark:text-gray-300 font-sans">
-        {getChapterText(chapter).slice(0, 500)}
+        {getChapterText(chapter).slice(0, 250)}
       </pre>
     </div>
   );
@@ -100,7 +100,7 @@ function Block({ block, chapterid, bookid, index }) {
     >
       {/* <h3 className="text-xl font-semibold">{chapter.title}</h3> */}
       <pre className="text-gray-800 dark:text-gray-300 font-sans">
-        {block.text}
+        {block.text.substring(0, 250)}
       </pre>
     </div>
   );
@@ -367,6 +367,7 @@ export default function BookEditor() {
           <span>Reference</span>
         </div>
         <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
+          {referenceBlocks.length === 0 && <p>None yet.</p>}
           {referenceBlocks.map(({ block, chapterid, index }, i) => (
             <Block
               key={i}
