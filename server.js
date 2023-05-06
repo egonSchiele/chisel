@@ -672,13 +672,20 @@ app.get(
     const chapters = await getChaptersForBook(book.bookid);
     const user = await getUser(req);
     const timestamp = Date.now();
-    let promises = chapters.map(async (chapter) => {
-      const embeddings = await getEmbeddings(
-        user,
-        chapterToMarkdown(chapter, false)
-      );
-      return { chapter, embeddings };
-    });
+    let promises = chapters
+      .filter((chapter) => {
+        return (
+          !chapter.embeddingsLastCalculatedAt ||
+          chapter.created_at > chapter.embeddingsLastCalculatedAt
+        );
+      })
+      .map(async (chapter) => {
+        const embeddings = await getEmbeddings(
+          user,
+          chapterToMarkdown(chapter, false)
+        );
+        return { chapter, embeddings };
+      });
     const allEmbeddings = await Promise.all(promises);
     promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
       if (embeddings.success) {

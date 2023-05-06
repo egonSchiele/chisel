@@ -269,6 +269,9 @@ export const librarySlice = createSlice({
     setLastTrainedAt(state: t.State, action: PayloadAction<number>) {      
       const book = getSelectedBook({ library: state });
       book.lastTrainedAt = action.payload;
+      book.chapters.forEach((chapter) => {
+        chapter.embeddingsLastCalculatedAt = action.payload;
+      })
       state.saved = false;
     },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
