@@ -27,6 +27,7 @@ export const useKeyboardScroll = (htmlRef, speed=400, callback=null) => {
     }
     if (newScroll !== curScroll) {
       div.scroll({ top: newScroll, behavior: "smooth" });
+      console.log(newScroll, "<<")
       if (callback) {
         callback(newScroll);
       }

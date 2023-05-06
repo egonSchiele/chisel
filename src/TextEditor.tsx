@@ -130,8 +130,6 @@ function TextEditor({
 
   useEffect(() => {
     if (!inputDiv.current) return;
-    // @ts-ignore
-    console.log("textindex", textindex, index);
     if (textindex === index.toString()) {
       // @ts-ignore
       inputDiv.current.scrollIntoView();

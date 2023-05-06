@@ -1,7 +1,8 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import * as JsDiff from "diff";
 import Button from "./components/Button";
 import { getFastHtmlDiff, getHtmlDiff } from "./diff";
+import { useKeyboardScroll } from "./hooks";
 
 const DiffViewer = ({ originalText, newText, onClose }) => {
   const [raw, setRaw] = React.useState(false);
@@ -21,6 +22,14 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
       </div>
     );
   }
+
+  const diffDiv = React.useRef(null);
+  useEffect(() => {
+    if (diffDiv.current) {
+      useKeyboardScroll(diffDiv);
+    }
+  }, [diffDiv.current]);
+
   /*  return (
     <p>
       {originalText.length}, {newText.length}
@@ -29,7 +38,7 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
   const { originalLines, newLines } = getFastHtmlDiff(originalText, newText);
 
   return (
-    <div className="h-screen overflow-scroll" id="diff-view">
+    <div className="h-screen overflow-scroll" id="diff-view" ref={diffDiv}>
       <Button onClick={onClose} selector="diff-view-close">
         Close
       </Button>

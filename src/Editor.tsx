@@ -37,12 +37,14 @@ export default function Editor() {
   const readonlyDiv = useRef(null);
   const editDiv = useRef(null);
   function scrollCallback(scrollTop) {
+    console.log("scrollCallback", scrollTop);
     dispatch(librarySlice.actions.setScrollTo(scrollTop));
   }
   useKeyboardScroll(readonlyDiv, 400, scrollCallback);
 
   useEffect(() => {
     if (scrollTo && editDiv.current) {
+      console.log("scrolling to", scrollTo);
       editDiv.current.scroll({ top: scrollTo, behavior: "smooth" });
       dispatch(librarySlice.actions.setScrollTo(null));
     }
