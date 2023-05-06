@@ -13,7 +13,7 @@ import TextArea from "./components/TextArea";
 import { Book, Character } from "./Types";
 import Button from "./components/Button";
 import Input from "./components/Input";
-import { getChapterText } from "./utils";
+import { getChapterText, isString } from "./utils";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { chapterToMarkdown } from "./serverUtils";
@@ -112,7 +112,7 @@ function formatDate(date: number) {
 
 function TrainingData({ book }: { book: Book }) {
   const [question, setQuestion] = React.useState("");
-  const [answer, setAnswer] = React.useState("");
+  const [answer, setAnswer] = React.useState(null);
   const dispatch = useDispatch();
   const trained = !!book.lastTrainedAt;
   const buttonLabel = trained ? "Re-Train" : "Train";
@@ -199,9 +199,18 @@ function TrainingData({ book }: { book: Book }) {
         </Button>
         <div className="mt-sm">
           <h2 className="text-xl font-semibold mt-md mb-xs">Answer</h2>
-          <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
-            <p>{answer}</p>
-          </div>
+          {answer && isString(answer) && <p>{answer}</p>}
+          {answer && answer.answer && (
+            <div className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
+              <p>{answer.answer}</p>
+              <Link
+                to={`/book/${book.bookid}/chapter/${answer.chapterid}/${answer.blockIndex}`}
+                className="mt-sm underline-offset-2 underline text-gray-400"
+              >
+                Go to Relevant text
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

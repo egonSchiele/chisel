@@ -194,6 +194,6 @@ export async function askQuestion(bookid, question) {
     return t.error(`Error asking question: ${text}`);
   }
   const json = await res.json();
-  return t.success(json.answer);
+  return t.success(json);
 }
 

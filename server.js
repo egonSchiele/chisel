@@ -723,7 +723,7 @@ app.post(
     let max = 0;
     let mostSimilarBlock;
     chapters.forEach((chapter) => {
-      chapter.text.forEach((block) => {
+      chapter.text.forEach((block, i) => {
         if (block.embeddings && block.embeddings.length > 0) {
           const similarityScore = similarity(
             questionEmbeddings.data,
@@ -731,7 +731,7 @@ app.post(
           );
           if (similarityScore > max) {
             max = similarityScore;
-            mostSimilarBlock = block;
+            mostSimilarBlock = { block, chapter, i };
           }
         }
       });
@@ -739,7 +739,7 @@ app.post(
 
     console.log({ max, mostSimilarBlock });
 
-    let prompt = `Context: ${mostSimilarBlock.text}`;
+    let prompt = `Context: ${mostSimilarBlock.block.text}`;
 
     prompt = prompt.substring(0, settings.maxPromptLength);
     prompt += `\n\nQuestion: ${question}\n\nAnswer:`;
@@ -747,7 +747,11 @@ app.post(
 
     if (suggestions.success) {
       const answer = suggestions.data.choices[0].text;
-      res.status(200).json({ answer });
+      res.status(200).json({
+        answer,
+        chapterid: mostSimilarBlock.chapter.chapterid,
+        blockIndex: mostSimilarBlock.i,
+      });
     } else {
       res.status(400).json({ error: suggestions.error });
     }
