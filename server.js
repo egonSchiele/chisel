@@ -739,9 +739,10 @@ app.post(
 
     console.log({ max, mostSimilarBlock });
 
-    const prompt = `Context: ${mostSimilarBlock.text}
-    \n\nQuestion: ${question}\n\nAnswer:`;
+    let prompt = `Context: ${mostSimilarBlock.text}`;
 
+    prompt = prompt.substring(0, settings.maxPromptLength);
+    prompt += `\n\nQuestion: ${question}\n\nAnswer:`;
     const suggestions = await getSuggestions(user, prompt);
 
     if (suggestions.success) {
