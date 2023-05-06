@@ -138,17 +138,19 @@ function TrainingData({ book }: { book: Book }) {
         </p>
       )}
       <ul className="text-md list-disc">
-        {staleChapters.map((chapter, i) => (
-          <li key={i}>
-            <Link
-              to={`/book/${book.bookid}/chapter/${chapter.chapterid}`}
-              className=""
-            >
-              {chapter.title} (last updated: {formatDate(chapter.created_at)},
-              last trained: {formatDate(chapter.embeddingsLastCalculatedAt)} )
-            </Link>
-          </li>
-        ))}
+        {trained &&
+          stale &&
+          staleChapters.map((chapter, i) => (
+            <li key={i}>
+              <Link
+                to={`/book/${book.bookid}/chapter/${chapter.chapterid}`}
+                className=""
+              >
+                {chapter.title} (last updated: {formatDate(chapter.created_at)},
+                last trained: {formatDate(chapter.embeddingsLastCalculatedAt)} )
+              </Link>
+            </li>
+          ))}
       </ul>
 
       <Button
