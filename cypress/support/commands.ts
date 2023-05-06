@@ -15,7 +15,7 @@ Cypress.Commands.add("login", (user) => {
   cy.getCookie("token").should("exist");
 
   // UI should reflect this user being logged in
-  cy.contains("h3", "Books");
+  cy.contains("h3", "No books");
 });
 
 Cypress.Commands.add("newBook", (user) => {
@@ -100,7 +100,7 @@ Cypress.Commands.add("selectChapter", (user) => {
 
 Cypress.Commands.add("selectBook", (user) => {
   cy.get("a[data-selector='booklist-list-item-link']").click();
-  cy.contains("h3", "Chapters");
+  cy.contains("h3", "No chapters");
 });
 
 Cypress.Commands.add("toggleSidebar", (user) => {
