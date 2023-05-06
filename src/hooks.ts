@@ -42,3 +42,13 @@ export const useKeyboardScroll = (htmlRef, speed=400, callback=null) => {
     };
   }, [handleKeyDown, htmlRef]);
 }
+
+export function useKeyDown(callback) {
+  useEffect(() => {
+    document.addEventListener("keydown", callback);
+
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [callback]);
+}

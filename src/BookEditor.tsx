@@ -364,7 +364,7 @@ export default function BookEditor() {
         </div>
 
         <div className="text-xl font-semibold mt-md mb-xs">
-          <span>Reference</span>
+          <span>Reference ({referenceBlocks.length})</span>
         </div>
         <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
           {referenceBlocks.length === 0 && <p>None yet.</p>}

@@ -14,7 +14,7 @@ import {
 import { postWithCsrf } from "./fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
-import { useKeyboardScroll } from "./hooks";
+import { useKeyDown, useKeyboardScroll } from "./hooks";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
 export default function Editor() {
@@ -49,6 +49,27 @@ export default function Editor() {
       dispatch(librarySlice.actions.setScrollTo(null));
     }
   }, [scrollTo, editDiv.current]);
+
+  useKeyDown((event) => {
+    if (event.ctrlKey && event.code === "KeyF") {
+      if (editDiv.current) {
+        event.preventDefault();
+        editDiv.current.scroll({
+          top: editDiv.current.scrollTop + 400,
+          behavior: "smooth",
+        });
+      }
+    }
+    if (event.ctrlKey && event.code === "KeyB") {
+      if (editDiv.current) {
+        event.preventDefault();
+        editDiv.current.scroll({
+          top: editDiv.current.scrollTop - 400,
+          behavior: "smooth",
+        });
+      }
+    }
+  });
 
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;

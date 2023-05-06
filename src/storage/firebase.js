@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { nanoid } from "nanoid";
 import { getFirestore } from "firebase-admin/firestore";
 import * as Diff from "diff";
@@ -42,6 +43,10 @@ export const saveBook = async (book) => {
       }
     } */
     book.created_at = Date.now();
+
+    if (book.chapterOrder) {
+      book.chapterOrder = _.uniq(book.chapterOrder);
+    }
 
     await docRef.set(book);
     console.log("Successfully synced book to Firestore");
@@ -147,6 +152,7 @@ export const getBooks = async (userid) => {
       book.chapterOrder = book.chapterTitles.map((c) => c.chapterid);
       delete book.chapterTitles;
     }
+    book.chapterOrder = _.uniq(book.chapterOrder);
     allBooks.push(book);
   });
   await Promise.all(promises);

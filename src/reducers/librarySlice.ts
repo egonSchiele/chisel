@@ -818,6 +818,7 @@ export const getSelectedBookChapters = (
   if (!book) return null;
 
   const { chapters } = book;
+  
   if (book.chapterOrder.length > 0) {
     const sortedChapters = [];
     book.chapterOrder.forEach((id) => {
