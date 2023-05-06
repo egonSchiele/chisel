@@ -207,7 +207,7 @@ function TrainingData({ book }: { book: Book }) {
                 to={`/book/${book.bookid}/chapter/${answer.chapterid}/${answer.blockIndex}`}
                 className="mt-sm underline-offset-2 underline text-gray-400"
               >
-                Go to Relevant text
+                Go to relevant text
               </Link>
             </div>
           )}
