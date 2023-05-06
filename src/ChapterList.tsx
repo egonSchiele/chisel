@@ -341,10 +341,16 @@ export default function ChapterList({
       onChange={handleUpload}
     />
   );
+  let chapterCountTitle = `${chapters.length} chapters`;
+  if (chapters.length === 1) {
+    chapterCountTitle = "1 chapter";
+  } else if (chapters.length === 0) {
+    chapterCountTitle = "No chapters";
+  }
   return (
     <>
       <List
-        title={editing ? "Editing" : "Chapters"}
+        title={editing ? "Editing" : chapterCountTitle}
         items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}

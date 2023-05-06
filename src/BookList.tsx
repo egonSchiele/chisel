@@ -192,11 +192,20 @@ export default function BookList({
       onChange={handleUpload}
     />
   );
+  // Account for compost heap book, which is always there
+  const booksLength = books.length - 1;
+
+  let bookCountTitle = `${booksLength} books`;
+  if (booksLength === 1) {
+    bookCountTitle = "1 book";
+  } else if (booksLength === 0) {
+    bookCountTitle = "No books";
+  }
 
   return (
     <>
       <List
-        title="Books"
+        title={bookCountTitle}
         items={[upload, ...items]}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
