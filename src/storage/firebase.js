@@ -359,13 +359,19 @@ export function makeNewBook(data = {}) {
   return book;
 }
 
+export function markdownBlock(text) {
+  return { type: "markdown", open: true, id: nanoid(), text, reference: false };
+}
+
 export function makeNewChapter(text, title, bookid, data = {}) {
+  const texts = text.split("---").map((t) => markdownBlock(t.trim()));
+
   const chapterid = nanoid();
   const chapter = {
     chapterid,
     title,
     bookid,
-    text: [{ type: "markdown", text, open: true }],
+    text: texts,
     pos: { x: 0, y: 0 },
     suggestions: [],
     favorite: false,

@@ -16,7 +16,7 @@ const countSyllables = (text: string) => {
 function CharacterInfo() {
   const editor = useSelector((state: RootState) => state.library.editor);
   const characters = useSelector(getCharacters);
-
+  if (!characters) return null;
   if (editor && editor.selectedText && editor.selectedText.contents) {
     const character = characters.find(
       (character) =>
@@ -50,8 +50,12 @@ export default function Info({ text }) {
         {word_count} <span className="text-gray-400">words</span>
       </p>
       <p>
-        {syllable_count} <span className="text-gray-400">syllables</span>
+        {Math.floor(word_count * (4 / 3))}{" "}
+        <span className="text-gray-400">tokens (estimate)</span>
       </p>
+      {/*  <p>
+        {syllable_count} <span className="text-gray-400">syllables</span>
+      </p> */}
       <CharacterInfo />
     </div>
   );
