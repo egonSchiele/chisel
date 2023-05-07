@@ -764,7 +764,7 @@ export default function Library({ mobile = false }) {
                     )}
 
                   {state.viewMode === "readonly" && (
-                    <span className="text-red-700 text-xs uppercase mr-xs">
+                    <span className="text-gray-300 dark:text-gray-500 text-xs uppercase mr-xs">
                       read only
                     </span>
                   )}

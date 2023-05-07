@@ -77,23 +77,27 @@
   .markdown h1 {
     @apply text-3xl;
     @apply font-bold;
-    @apply my-sm;
+    @apply mt-sm;
+    @apply mb-xs;
     
   }
   .markdown h2 {
     @apply text-2xl;
     @apply font-bold;
-    @apply my-sm;
+    @apply mt-sm;
+    @apply mb-xs;
     
   }
   .markdown h3 {
     @apply text-xl;
     @apply font-bold;
-    @apply my-sm;
+    @apply mt-sm;
+    @apply mb-xs;
   }
 
   .markdown ul, .markdown li {
     list-style-type: '– ' !important;
+    @apply mb-xs;
   }
 
   .markdown img {
@@ -102,7 +106,8 @@
   }
 
   .markdown a {
-    @apply underline;
+    @apply text-blue-700;
+    @apply dark:text-blue-300;
   }
 
   /* 
