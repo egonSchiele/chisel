@@ -148,7 +148,11 @@ export default function List({
             <h3 className="text-sm font-normal">{title}</h3>
           </div>
         )}
-        {rightMenuItem && <MenuItem {...rightMenuItem} />}
+        {rightMenuItem && (
+          <div className=" absolute mr-xs right-0">
+            <MenuItem {...rightMenuItem} />
+          </div>
+        )}
       </div>
       <ul className="pt-xs" data-title={title}>
         {items}

@@ -195,7 +195,7 @@ export default function Library() {
   }
 
   return (
-    <div className="h-screen">
+    <div className="h-screen-safe ">
       {state.error && (
         <div className="bg-red-700 p-2 text-white flex">
           <p className="flex-grow">{state.error}</p>
@@ -208,10 +208,10 @@ export default function Library() {
         </div>
       )}
 
-      <div className="flex h-full">
+      <div className="flex h-screen-safe">
         {!bookid && (
           <LibErrorBoundary component="book list">
-            <div className="h-full w-full relative">
+            <div className="h-screen-safe w-full relative pb-safe ">
               <BookList
                 books={state.books}
                 selectedBookId={state.selectedBookId}
