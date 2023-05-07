@@ -57,7 +57,7 @@ export default function ListItem({
   return (
     <div
       className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} ${
-        content && "border-b border-gray-300 dark:border-gray-700"
+        content && "border-b border-gray-200 dark:border-gray-700"
       }`}
     >
       <Link
@@ -74,14 +74,16 @@ export default function ListItem({
               {tag === "compost" && (
                 <BoltIcon className="w-5 h-5 flex-grow mr-xs" />
               )}{" "}
-              <span className="flex-grow w-full">{title}</span>
+              <span className="flex-grow w-full text-lg md:text-sm">
+                {title}
+              </span>
             </p>
           </div>
         )}
         {content && (
           <div className="w-full py-xs">
             <p
-              className="px-xs overflow-hidden text-ellipsis whitespace-nowrap font-bold"
+              className="px-xs overflow-hidden text-lg md:text-sm text-ellipsis whitespace-nowrap font-bold"
               data-selector={`${selector}-list-item`}
             >
               {title}

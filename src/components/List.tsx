@@ -128,10 +128,12 @@ export default function List({
       }}
       data-selector={`${selector}-list`}
     >
-      <div className="w-full flex pb-xs border-b border-listBorder dark:border-dmlistBorder relative">
+      <div className="w-full flex pb-sm md:pb-xs border-b border-listBorder dark:border-dmlistBorder relative">
         {level === 1 && (
           <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
-            <h3 className="text-sm uppercase font-semibold">{title}</h3>
+            <h3 className="text-md md:text-sm uppercase font-semibold">
+              {title}
+            </h3>
           </div>
         )}
 
