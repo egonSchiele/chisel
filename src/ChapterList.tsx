@@ -135,6 +135,7 @@ export default function ChapterList({
       } else if (chapter.status && chapter.status === "in-progress") {
         title = `🚧 ${title}`;
       }
+      const previewLength = mobile ? 100 : 50;
       return (
         <li
           key={chapter.chapterid}
@@ -148,7 +149,7 @@ export default function ChapterList({
             content={`${chapter.text
               .map((t) => t.text)
               .join(". ")
-              .substring(0, 50)}...`}
+              .substring(0, previewLength)}...`}
             selected={chapter.chapterid === selectedChapterId}
             onDelete={() => deleteChapter(chapter.chapterid)}
             onFavorite={() => {}}

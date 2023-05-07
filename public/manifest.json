@@ -1,0 +1,11 @@
+{ 
+  "name": "Chisel Editor", 
+  "short_name": "Chisel", 
+  "start_url": "https://chiseleditor.com", 
+  "display": "standalone", 
+  "icons": [{ 
+    "src": "images/logo.png", 
+    "sizes": "512x512", 
+    "type": "image/png" 
+  }] 
+}
