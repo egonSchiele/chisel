@@ -1,7 +1,8 @@
+import PlainClipboard from "./PlainClipboard";
 import { fillers } from "fillers";
 
 import React, { useState, useRef, useEffect } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +33,8 @@ import { languages } from "./languages";
 import BlockMenu from "./BlockMenu";
 import CodeMenu from "./CodeMenu";
 import Tag from "./components/Tag";
+
+Quill.register("modules/clipboard", PlainClipboard, true);
 
 const formats = [
   /*   "background",
