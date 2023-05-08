@@ -123,7 +123,7 @@ export default function ChapterList({
       _chapters = chapters.filter(
         (chapter) =>
           chapter.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          getChapterText(chapter)
+          getChapterText(chapter, true)
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
       );

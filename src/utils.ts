@@ -207,8 +207,13 @@ export function useTraceUpdate(props) {
   });
 }
 
-export function getChapterText(chapter) {
-  return chapter.text.map((t) => t.text).join("\n---\n");
+export function getChapterText(chapter, includeFolded=false) {
+
+  if (includeFolded) {
+    return chapter.text.map((t) => t.text).join("\n\n");
+  } else {
+    return chapter.text.filter((t) => t.open).map((t) => t.text).join("\n\n");
+  }
 }
 
 export function saveTextToHistory(chapter:t.Chapter):string {

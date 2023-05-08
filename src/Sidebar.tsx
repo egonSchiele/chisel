@@ -16,7 +16,12 @@ import Info from "./Info";
 import List from "./components/List";
 import NavButton from "./NavButton";
 import { RootState } from "./store";
-import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import {
+  getChapter,
+  getSelectedChapter,
+  librarySlice,
+} from "./reducers/librarySlice";
+import { getChapterText } from "./utils";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -136,7 +141,7 @@ export default function Sidebar({
   // TODO
   const infoText =
     state.editor.selectedText.length === 0
-      ? currentChapter.text[0].text
+      ? getChapterText(currentChapter)
       : state.editor.selectedText.contents;
   return (
     <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder  pb-12">
