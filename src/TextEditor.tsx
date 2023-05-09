@@ -187,6 +187,7 @@ function TextEditor({
 
   const handleKeyDown = (event) => {
     setEdited(true);
+
     if (event.altKey && event.shiftKey) {
       if (event.code === "ArrowDown" || event.code === "ArrowUp") {
         event.preventDefault();
@@ -194,7 +195,7 @@ function TextEditor({
       }
     } else if (event.shiftKey && event.code === "Tab") {
       event.preventDefault();
-      setOpen(!open);
+      setOpen(false);
     } else if (event.code === "ArrowDown") {
       if (quillRef && quillRef.current) {
         // @ts-ignore
@@ -246,7 +247,7 @@ function TextEditor({
     }
   };
 
-  const handleKeyDownWhenClosed = (event) => {
+  /* const handleKeyDownWhenClosed = (event) => {
     if (open) return;
     if (!isActive) return;
     if (event.key === "Tab") {
@@ -269,7 +270,7 @@ function TextEditor({
     return () => {
       document.removeEventListener("keydown", handleKeyDownWhenClosed);
     };
-  }, [handleKeyDownWhenClosed]);
+  }, [handleKeyDownWhenClosed]); */
 
   let textPreview = "(no text)";
   if (currentText.text) {
