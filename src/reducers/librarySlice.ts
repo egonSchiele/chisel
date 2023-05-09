@@ -546,11 +546,13 @@ export const librarySlice = createSlice({
     openBlock(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       chapter.text[action.payload].open = true;
+      chapter.text[action.payload].id = nanoid();
       state.saved = false;
     },
     closeBlock(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       chapter.text[action.payload].open = false;
+      chapter.text[action.payload].id = nanoid();
       state.saved = false;
     },
     newBlockBeforeCurrent(state: t.State) {

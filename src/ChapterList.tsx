@@ -116,19 +116,71 @@ export default function ChapterList({
   };
 
   const sublist = () => {
-    let _chapters;
-    if (searchTerm === "" || searchTerm.match(/^\s+$/)) {
-      _chapters = chapters;
+    if (searchTerm === "" || searchTerm.match(/^\s*$/)) {
+      return sublistAll();
     } else {
-      _chapters = chapters.filter(
-        (chapter) =>
-          chapter.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          getChapterText(chapter, true)
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-      );
+      return sublistSearch();
     }
-    return _chapters.map((chapter, index) => {
+  };
+
+  const sublistSearch = () => {
+    const texts = [];
+    const term = searchTerm.toLowerCase();
+    const previewLength = mobile ? 100 : 50;
+    chapters.forEach((chapter, i) => {
+      chapter.text.forEach((text, textindex) => {
+        const textText = text.text.toLowerCase();
+        const index = textText.indexOf(term);
+        if (index !== -1) {
+          const start = Math.max(0, index - previewLength / 2);
+          const end = Math.min(textText.length, index + previewLength / 2);
+          const preview = `...${textText.substring(
+            start,
+            index
+          )}*${textText.substring(
+            index,
+            index + term.length
+          )}*${textText.substring(index + term.length, end)}...`;
+          texts.push({ chapter, text, preview, textindex });
+        }
+      });
+    });
+
+    return texts.map(({ chapter, text, preview, textindex }) => {
+      let title = chapter.title || "(no title)";
+      title = `[${textindex}] ${title}`;
+      if (chapter.status && chapter.status === "done") {
+        title = `✅ ${title}`;
+      } else if (chapter.status && chapter.status === "in-progress") {
+        title = `🚧 ${title}`;
+      }
+
+      return (
+        <li
+          key={text.id}
+          className={
+            !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
+          }
+        >
+          <ListItem
+            link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}/${textindex}`}
+            title={title}
+            content={preview}
+            selected={false}
+            onDelete={null}
+            onFavorite={null}
+            onRename={null}
+            onMove={null}
+            onExport={null}
+            selector="searchlist"
+          />
+        </li>
+      );
+    });
+  };
+
+  const sublistAll = () => {
+    return chapters.map((chapter, index) => {
       let title = chapter.title || "(no title)";
       if (chapter.status && chapter.status === "done") {
         title = `✅ ${title}`;

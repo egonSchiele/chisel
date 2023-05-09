@@ -9,8 +9,8 @@ export default function ListItem({
   title,
   selected,
   onFavorite,
-  onDelete,
-  onRename,
+  onDelete = null,
+  onRename = null,
   onMove = null,
   onExport = null,
   content = "",
@@ -32,16 +32,19 @@ export default function ListItem({
   const selectedCss = selected
     ? "bg-listitemhover dark:bg-dmlistitemhover"
     : "";
-  const listMenuItems: t.MenuItem[] = [
-    {
+  const listMenuItems: t.MenuItem[] = [];
+  if (onDelete) {
+    listMenuItems.push({
       label: "Delete",
       onClick: onDelete,
-    },
-    {
+    });
+  }
+  if (onRename) {
+    listMenuItems.push({
       label: "Rename",
       onClick: onRename,
-    },
-  ];
+    });
+  }
   if (onMove) {
     listMenuItems.push({
       label: "Move",
@@ -54,6 +57,7 @@ export default function ListItem({
       onClick: onExport,
     });
   }
+
   return (
     <div
       className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} ${
@@ -94,7 +98,7 @@ export default function ListItem({
           </div>
         )}
       </Link>
-      {tag !== "compost" && (
+      {tag !== "compost" && listMenuItems.length > 0 && (
         <div className="flex flex-none cursor-pointer items-center mr-xs">
           <ListMenu
             items={listMenuItems}

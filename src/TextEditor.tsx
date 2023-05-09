@@ -109,12 +109,15 @@ function TextEditor({
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
 
   const dispatch = useDispatch();
-  const { open } = currentText;
 
   const quillRef = useRef();
   const inputDiv = useRef();
+  const { textindex } = useParams();
+  const highlight = textindex && textindex === index.toString();
+  const open = currentText.open || highlight;
 
   const [edited, setEdited] = useState(false);
+
   useEffect(() => {
     if (!quillRef.current) return;
     // @ts-ignore
@@ -128,8 +131,6 @@ function TextEditor({
       focus();
     }
   }, [activeTextIndex, open]);
-
-  const { textindex } = useParams();
 
   useEffect(() => {
     if (!inputDiv.current) return;
@@ -281,6 +282,10 @@ function TextEditor({
     }
   }
 
+  let borderColor = "border-gray-500";
+  if (isActive) borderColor = "border-gray-400";
+  if (highlight) borderColor = "border-green-400";
+
   return (
     <div className="">
       {/* h-full"> */}
@@ -290,7 +295,7 @@ function TextEditor({
       <div className="mb-sm h-full w-full" ref={inputDiv}>
         {open && (
           <div className="flex">
-            <div className="flex-none ">
+            <div className="flex-none">
               <div
                 className="h-5 cursor-pointer mr-xs"
                 onClick={() => {
@@ -326,9 +331,7 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow border-l w-full pl-sm pr-md ${
-                isActive ? "border-gray-400" : "border-gray-500"
-              }`}
+              className={`flex-grow border-l w-full pl-sm pr-md ${borderColor}`}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}
