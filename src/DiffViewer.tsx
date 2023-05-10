@@ -37,11 +37,15 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
   const { originalLines, newLines } = getFastHtmlDiff(originalText, newText);
 
   return (
-    <div className="h-screen overflow-scroll" id="diff-view" ref={diffDiv}>
+    <div
+      className="h-screen overflow-scroll w-full mx-auto"
+      id="diff-view"
+      ref={diffDiv}
+    >
       <Button onClick={onClose} selector="diff-view-close">
         Close
       </Button>
-      <Button onClick={() => setRaw(true)}>Raw</Button>
+      {/* <Button onClick={() => setRaw(true)}>Raw</Button> */}
       <Suspense
         fallback={
           <div>

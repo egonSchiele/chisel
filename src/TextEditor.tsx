@@ -342,25 +342,6 @@ function TextEditor({
               }}
               data-selector={`texteditor-${index}`}
             >
-              {hasVersions(currentText) && (
-                <div className="text-sm flex">
-                  <p className="h-xl">Diff against:</p>
-                  <Select
-                    title=""
-                    name="version"
-                    className="max-w-24 flex-none"
-                    value={null}
-                    onChange={() => {}}
-                  >
-                    {currentText.versions.map((version) => (
-                      <option key={version.id} value={version.id}>
-                        {version.title} -{" "}
-                        {new Date(version.createdAt).toLocaleString()}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              )}
               <ReactQuill
                 ref={quillRef}
                 placeholder=""

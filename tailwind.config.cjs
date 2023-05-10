@@ -96,6 +96,9 @@ module.exports = {
         history: "800px",
         historysmall: "760px",
       },
+      leading: {
+        xxl: "45px",
+      },
       height: {},
       /*   padding: {
         xs: "0.5rem",

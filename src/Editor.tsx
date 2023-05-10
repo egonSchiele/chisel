@@ -3,7 +3,12 @@ import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
 import TextEditor from "./TextEditor";
 import * as t from "./Types";
-import { getChapterText, getCsrfToken, useTraceUpdate } from "./utils";
+import {
+  getChapterText,
+  getCsrfToken,
+  hasVersions,
+  useTraceUpdate,
+} from "./utils";
 import { RootState } from "./store";
 import {
   getSelectedChapter,
@@ -17,6 +22,8 @@ import ContentEditable from "./components/ContentEditable";
 import { useKeyDown, useKeyboardScroll } from "./hooks";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
+import Select from "./components/Select";
+import DiffViewer from "./DiffViewer";
 export default function Editor() {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -136,13 +143,73 @@ export default function Editor() {
           }}
           selector="text-editor-title"
         />
-        {currentText.map((text, index) => (
-          <TextEditor
-            chapterid={currentChapterId}
-            index={index}
-            key={text.id || index}
-          />
-        ))}
+        {currentText.map((text, index) => {
+          let diffWithText = "";
+          if (text.diffWith) {
+            const diffWith = text.versions.find(
+              (version) => version.id === text.diffWith
+            );
+            if (diffWith) {
+              diffWithText = diffWith.text;
+            }
+          }
+
+          return (
+            <>
+              {hasVersions(text) && (
+                <div className="text-sm flex">
+                  <p className="mr-xs" style={{ lineHeight: "50px" }}>
+                    Diff against:
+                  </p>
+                  <Select
+                    title=""
+                    name="version"
+                    className="max-w-24 flex-none"
+                    value={text.diffWith}
+                    onChange={(event) => {
+                      dispatch(
+                        librarySlice.actions.setDiffWith({
+                          index,
+                          diffWith: event.target.value,
+                        })
+                      );
+                    }}
+                  >
+                    {text.versions.map((version) => (
+                      <option key={version.id} value={version.id}>
+                        {version.title} -{" "}
+                        {new Date(version.createdAt).toLocaleString()}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
+              {text.diffWith && (
+                <div className="flex h-screen overflow-auto w-full max-w-3xl mx-auto">
+                  <DiffViewer
+                    originalText={text.text}
+                    newText={diffWithText}
+                    onClose={() => {
+                      dispatch(
+                        librarySlice.actions.setDiffWith({
+                          index,
+                          diffWith: null,
+                        })
+                      );
+                    }}
+                  />
+                </div>
+              )}
+              {!text.diffWith && (
+                <TextEditor
+                  chapterid={currentChapterId}
+                  index={index}
+                  key={text.id || index}
+                />
+              )}
+            </>
+          );
+        })}
         {/* bottom padding */}
         <div className="h-24" />
       </div>
