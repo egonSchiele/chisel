@@ -10,6 +10,7 @@ import {
   EllipsisHorizontalIcon,
   HeartIcon,
   Square2StackIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { MenuItem, blockTypes } from "./Types";
 import ListMenu from "./ListMenu";
@@ -42,6 +43,18 @@ export default function VersionsMenu({ currentText, index }) {
       },
       icon,
     });
+  });
+
+  items.push({
+    label: "Delete all versions",
+    onClick: () => {
+      dispatch(
+        librarySlice.actions.deleteAllVersions({
+          index,
+        })
+      );
+    },
+    icon: <XMarkIcon className="w-5 h-5 text-gray-500" aria-hidden="true" />,
   });
 
   return (

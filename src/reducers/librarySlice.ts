@@ -616,6 +616,15 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    deleteAllVersions(state: t.State, action: PayloadAction<{index:number}>) {
+      const chapter = getSelectedChapter({ library: state });
+      const { index } = action.payload;
+      const block = chapter.text[index];
+      block.versions = [];
+      block.id = nanoid();
+
+      state.saved = false;
+    },
     setDiffWith(state: t.State, action: PayloadAction<{index:number; diffWith:string}>) {
       const chapter = getSelectedChapter({ library: state });
       const { index, diffWith } = action.payload;
