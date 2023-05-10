@@ -27,12 +27,13 @@ import {
   LightBulbIcon,
 } from "@heroicons/react/24/outline";
 
-import { useTraceUpdate } from "./utils";
+import { hasVersions, useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
 import { languages } from "./languages";
 import BlockMenu from "./BlockMenu";
 import CodeMenu from "./CodeMenu";
 import Tag from "./components/Tag";
+import VersionsMenu from "./VersionsMenu";
 
 Quill.register("modules/clipboard", PlainClipboard, true);
 
@@ -311,6 +312,9 @@ function TextEditor({
                 />
               </div>
               {<BlockMenu currentText={currentText} index={index} />}
+              {hasVersions(currentText) && (
+                <VersionsMenu currentText={currentText} index={index} />
+              )}
               {currentText.type === "code" && (
                 <CodeMenu currentText={currentText} index={index} />
               )}
@@ -338,9 +342,25 @@ function TextEditor({
               }}
               data-selector={`texteditor-${index}`}
             >
-              {/*  {currentText.syntaxHighlighting && (
-                <LanguageSelector chapterid={chapterid} index={index} />
-              )} */}
+              {hasVersions(currentText) && (
+                <div className="text-sm flex">
+                  <p className="h-xl">Diff against:</p>
+                  <Select
+                    title=""
+                    name="version"
+                    className="max-w-24 flex-none"
+                    value={null}
+                    onChange={() => {}}
+                  >
+                    {currentText.versions.map((version) => (
+                      <option key={version.id} value={version.id}>
+                        {version.title} -{" "}
+                        {new Date(version.createdAt).toLocaleString()}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
               <ReactQuill
                 ref={quillRef}
                 placeholder=""

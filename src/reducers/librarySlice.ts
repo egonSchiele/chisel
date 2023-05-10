@@ -562,6 +562,39 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    addVersion(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      const block = chapter.text[action.payload];
+      const chap = current(chapter)
+      console.log("addVersion", block, chap)
+      block.versions ||= [];
+      block.versions.push({
+        id: nanoid(),
+        text: block.text,
+        createdAt: Date.now(),
+      title: block.text.substring(0,10)
+    });
+      block.text = "";
+      block.id = nanoid();
+      
+      state.saved = false;
+    },
+    switchVersion(state: t.State, action: PayloadAction<{index:number; versionid:string}>) {
+      const chapter = getSelectedChapter({ library: state });
+      const { index, versionid } = action.payload;
+      const block = chapter.text[index];
+      block.versions.push({
+        id: nanoid(),
+        text: block.text,
+        createdAt: Date.now(),
+      title: block.text.substring(0,10)
+    });
+      block.text = block.versions.find((v) => v.id === versionid)?.text || "";
+      block.versions = block.versions.filter((v) => v.id !== versionid);
+      block.id = nanoid();
+
+      state.saved = false;
+    },
     newBlockAfterCurrent(state: t.State) {
       const newBlock = newBlockFromCurrent(state)
       const chapter = getSelectedChapter({ library: state });

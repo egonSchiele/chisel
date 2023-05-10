@@ -75,7 +75,15 @@ export type BaseBlock = {
   open?: boolean;
   id?: string;
   reference?: boolean;
+  versions?: Version[];
 };
+
+export type Version = {
+  id: string;
+  text: string;
+  createdAt?: number;
+  title: string;
+}
 
 export type PlainTextBlock = BaseBlock & {
   type: "plain";
@@ -96,7 +104,7 @@ export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
 }
 export function markdownBlock(text: string): MarkdownBlock {
-  return { type: "markdown", open: true, id: nanoid(), text, reference: false };
+  return { type: "markdown", open: true, id: nanoid(), text, reference: false, versions:[] };
 }
 
 export function codeBlock(text: string, language:string): CodeBlock {

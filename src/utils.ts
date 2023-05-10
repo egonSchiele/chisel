@@ -254,3 +254,7 @@ export function restoreBlockFromHistory(text:string):t.TextBlock {
 export function isTruthy(x) {
   return !!x;
 }
+
+export function hasVersions(block:t.TextBlock) {
+  return block.versions && block.versions.length > 0;
+}

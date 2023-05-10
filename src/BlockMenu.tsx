@@ -65,6 +65,13 @@ export default function BlockMenu({ currentText, index }) {
     icon,
   });
 
+  items.push({
+    label: "Add New Version",
+    onClick: () => {
+      dispatch(librarySlice.actions.addVersion(index));
+    },
+  });
+
   return (
     <ListMenu
       items={items}
