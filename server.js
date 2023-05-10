@@ -617,12 +617,14 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     prompt,
     req.body.max_tokens,
     req.body.model,
-    req.body.num_suggestions
+    req.body.num_suggestions,
+    [],
+    req.body.customKey
   );
   if (suggestions.success) {
     res.status(200).json(suggestions.data);
   } else {
-    res.status(400).json({ error: suggestions.error });
+    res.status(400).json({ error: suggestions.message });
   }
 });
 
@@ -837,11 +839,14 @@ async function getSuggestions(
   max_tokens = 500,
   model = "gpt-3.5-turbo",
   num_suggestions = 1,
-  _messages = null
+  _messages = null,
+  customKey
 ) {
-  const check = checkUsage(user);
-  if (!check.success) {
-    return check;
+  if (!customKey) {
+    const check = checkUsage(user);
+    if (!check.success) {
+      return check;
+    }
   }
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
@@ -865,13 +870,14 @@ async function getSuggestions(
   }
 
   console.log(JSON.stringify(reqBody));
+  const bearerKey = customKey || settings.openAiApiKey;
 
   // console.log({ prompt: JSON.parse(req.body) });
   const res = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${settings.openAiApiKey}`,
+      Authorization: `Bearer ${bearerKey}`,
     },
     body: JSON.stringify(reqBody),
   });
@@ -882,7 +888,10 @@ async function getSuggestions(
   if (json.error) {
     return failure(json.error.message);
   }
-  await updateUsage(user, json.usage);
+
+  if (!customKey) {
+    await updateUsage(user, json.usage);
+  }
 
   let choices;
   if (chatModels.includes(model)) {

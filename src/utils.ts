@@ -89,6 +89,7 @@ export const fetchSuggestionsWrapper = async (
     theme?: "default";
     version_control?: boolean;
     prompts?: t.Prompt[];
+    customKey?: string;
   },
   setLoading: {
     (value: SetStateAction<boolean>): void;
@@ -106,7 +107,7 @@ export const fetchSuggestionsWrapper = async (
   const _num_suggestions = parseInt(settings.num_suggestions, 10) || 1;
 
   const max_tokens_with_min = Math.min(_max_tokens, 3000);
-
+const _customKey = settings.customKey || null;
   setLoading(true);
   const result = await fd.fetchSuggestions(
     text,
@@ -114,7 +115,8 @@ export const fetchSuggestionsWrapper = async (
     _num_suggestions,
     max_tokens_with_min,
     prompt,
-    label
+    label,
+    _customKey
   );
   setLoading(false);
 

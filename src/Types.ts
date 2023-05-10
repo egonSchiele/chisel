@@ -201,6 +201,7 @@ export type UserSettings = {
   model: string;
   max_tokens: number;
   num_suggestions: number;
+  customKey?: string;
   theme: Theme;
   version_control: boolean;
   prompts: Prompt[];

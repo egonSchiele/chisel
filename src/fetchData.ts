@@ -37,15 +37,17 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
-  label: string
+  label: string,
+  _customKey?: string
 ) => {
   const prompt = _prompt.replaceAll("{{text}}", text);
-  
+  const customKey = _customKey || null;
   const body = JSON.stringify({
     prompt,
     model,
     max_tokens,
     num_suggestions,
+    customKey,
     csrfToken: getCsrfToken()
   });
 

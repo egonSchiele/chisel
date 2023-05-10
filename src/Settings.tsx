@@ -130,6 +130,12 @@ function Settings({ settings, setSettings, usage, onSave }) {
         value={settings.num_suggestions}
         onChange={(e) => handleChange("num_suggestions", e.target.value)}
       />
+      <Input
+        title="Your key (use with caution!)"
+        name="customKey"
+        value={settings.customKey}
+        onChange={(e) => handleChange("customKey", e.target.value)}
+      />
 
       {usage && (
         <div>

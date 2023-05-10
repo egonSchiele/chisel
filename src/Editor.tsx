@@ -157,7 +157,7 @@ export default function Editor() {
           return (
             <>
               {hasVersions(text) && (
-                <div className="text-sm flex items-center">
+                <div className="text-sm flex items-center mb-sm ml-md">
                   <p className="mr-xs uppercase text-gray-400 dark:text-gray-400">
                     Diff against:
                   </p>

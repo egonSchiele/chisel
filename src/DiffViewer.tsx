@@ -60,6 +60,7 @@ const DiffViewer = ({
           size={"small"}
           rounded={true}
           selector="diff-view-close"
+          className="ml-md"
         >
           Close
         </Button>
