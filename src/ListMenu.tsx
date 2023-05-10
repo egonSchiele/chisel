@@ -53,7 +53,7 @@ export default function ListMenu({
             {items.map((item, index) => (
               <div
                 key={index}
-                className={`px-sm py-xs rounded-md hover:bg-listitemhoverSecondary  dark:hover:bg-dmlistitemhoverSecondary flex `}
+                className={`px-sm py-xs rounded-md hover:bg-listitemhoverSecondary  dark:hover:bg-dmlistitemhoverSecondary flex cursor-pointer `}
                 onClick={item.onClick}
                 data-selector={`${selector}-list-item-button-${item.label}`}
               >

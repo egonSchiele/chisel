@@ -100,6 +100,9 @@ function TextEditor({
   const _pushTextToEditor = useSelector(
     (state: RootState) => state.library.editor._pushTextToEditor
   );
+  const _pushSelectionToEditor = useSelector(
+    (state: RootState) => state.library.editor._pushSelectionToEditor
+  );
 
   const activeTextIndex = useSelector(
     (state: RootState) => state.library.editor.activeTextIndex
@@ -132,6 +135,17 @@ function TextEditor({
       focus();
     }
   }, [activeTextIndex, open]);
+
+  useEffect(() => {
+    if (isActive && _pushSelectionToEditor && quillRef.current) {
+      if (_pushSelectionToEditor.index === -1) {
+        // @ts-ignore
+        const editor = quillRef.current.getEditor();
+        editor.setSelection(editor.getLength());
+      }
+      dispatch(librarySlice.actions.clearPushSelectionToEditor());
+    }
+  }, [activeTextIndex, _pushSelectionToEditor]);
 
   useEffect(() => {
     if (!inputDiv.current) return;
@@ -255,8 +269,8 @@ function TextEditor({
           ) {
             event.preventDefault();
             dispatch(librarySlice.actions.deleteBlock(index));
-          } else {
-            dispatch(librarySlice.actions.mergeBlockUp(index));
+            /* } else {
+            dispatch(librarySlice.actions.mergeBlockUp(index)); */
           }
         }
       }

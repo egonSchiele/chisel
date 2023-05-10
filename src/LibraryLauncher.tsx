@@ -573,6 +573,15 @@ export default function LibraryLauncher({
   }
   if (currentChapter) {
     launchItems.push({
+      label: "Close/Fold all blocks",
+      onClick: async () => {
+        currentChapter.text.forEach((text, i) => {
+          dispatch(librarySlice.actions.closeBlock(i));
+        });
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+    launchItems.push({
       label: "Get embeddings",
       onClick: async () => {
         const embed = await fd.getEmbeddings(currentChapter);

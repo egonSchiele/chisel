@@ -528,8 +528,13 @@ export const librarySlice = createSlice({
           state.editor.activeTextIndex = chapter.text.indexOf(prevOpenText);
         }
       }
-      state.saved = false;      
+      state.editor._pushSelectionToEditor = {index:-1, length:0, contents:""}
+      state.saved = false;
     },
+    clearPushSelectionToEditor(state: t.State) {
+      state.editor._pushSelectionToEditor = null;      
+    },
+
     setLanguage(state: t.State, action: PayloadAction<{index:number; language:string}>) {
       const chapter = getSelectedChapter({ library: state });
       const { index, language } = action.payload;

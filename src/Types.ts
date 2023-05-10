@@ -32,6 +32,7 @@ export type EditorState = {
   selectedText: SelectedText;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
+  _pushSelectionToEditor?: SelectedText;
 };
 
 export type PopupData = {
