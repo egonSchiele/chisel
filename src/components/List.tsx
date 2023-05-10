@@ -55,6 +55,7 @@ export default function List({
   swipeToClose = null,
   close = null,
   open = null,
+  onTitleClick = null,
 }: {
   title: string;
   items: any[];
@@ -67,6 +68,7 @@ export default function List({
   swipeToClose?: "left" | "right" | null;
   close?: () => void;
   open?: () => void;
+  onTitleClick?: () => void;
 }) {
   const [dragOver, setDragOver] = React.useState(false);
   const dispatch = useDispatch();
@@ -131,7 +133,10 @@ export default function List({
       <div className="w-full flex pb-sm md:pb-xs border-b border-listBorder dark:border-dmlistBorder relative">
         {level === 1 && (
           <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
-            <h3 className="text-md md:text-sm uppercase font-semibold">
+            <h3
+              className="text-md md:text-sm uppercase font-semibold"
+              onClick={onTitleClick}
+            >
               {title}
             </h3>
           </div>

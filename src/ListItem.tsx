@@ -8,7 +8,7 @@ export default function ListItem({
   link,
   title,
   selected,
-  onFavorite,
+  onFavorite = null,
   onDelete = null,
   onRename = null,
   onMove = null,
@@ -16,18 +16,20 @@ export default function ListItem({
   content = "",
   selector = "listitem",
   tag = null,
+  contentClassName = "",
 }: {
   link: string;
   title: string;
   selected: boolean;
-  onFavorite: () => void;
-  onDelete: () => void;
-  onRename: () => void;
+  onFavorite?: () => void;
+  onDelete?: () => void;
+  onRename?: () => void;
   onMove?: () => void;
   onExport?: () => void;
   content?: string;
   selector?: string;
   tag?: string;
+  contentClassName?: string;
 }) {
   const selectedCss = selected
     ? "bg-listitemhover dark:bg-dmlistitemhover"
@@ -92,7 +94,9 @@ export default function ListItem({
             >
               {title}
             </p>
-            <p className="px-xs text-gray-500 dark:text-gray-400 line-clamp-2 text-ellipsis">
+            <p
+              className={`px-xs text-gray-500 dark:text-gray-400 line-clamp-2 text-ellipsis ${contentClassName}`}
+            >
               {content}
             </p>
           </div>

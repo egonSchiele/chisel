@@ -1,7 +1,7 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowsUpDownIcon,
   EllipsisHorizontalIcon,
@@ -47,6 +47,7 @@ export default function ChapterList({
   canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
+  const [mode, setMode] = React.useState("chapters");
   const chapters = useSelector(getSelectedBookChapters) || [];
   const bookOptions = useSelector((state: RootState) =>
     sortBy(state.library.books, ["title"]).map((book) => ({
@@ -400,19 +401,82 @@ export default function ChapterList({
   } else if (chapters.length === 0) {
     chapterCountTitle = "No chapters";
   }
+  if (mode === "chapters") {
+    return (
+      <>
+        <List
+          title={editing ? "Editing" : chapterCountTitle}
+          items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
+          rightMenuItem={rightMenuItem}
+          leftMenuItem={leftMenuItem}
+          className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+          onDrop={dropHandler}
+          selector="chapterlist"
+          onTitleClick={() => setMode("references")}
+          /*         swipeToClose="left"
+        close={closeSidebar}
+ */
+        />
+      </>
+    );
+  }
+
+  const referenceBlocks = [];
+  chapters.forEach((chapter) => {
+    chapter.text.forEach((block, index) => {
+      if (block.reference) {
+        referenceBlocks.push({ block, index, chapter });
+      }
+    });
+  });
+
+  let referenceCountTitle = `${referenceBlocks.length} references`;
+  if (referenceBlocks.length === 1) {
+    referenceCountTitle = "1 reference";
+  } else if (referenceBlocks.length === 0) {
+    referenceCountTitle = "No references";
+  }
+
+  const { textindex } = useParams();
+  const referenceItems = referenceBlocks.map(({ block, index, chapter }, i) => {
+    let title = chapter.title || "(no title)";
+    if (chapter.status && chapter.status === "done") {
+      title = `✅ ${title}`;
+    } else if (chapter.status && chapter.status === "in-progress") {
+      title = `🚧 ${title}`;
+    }
+    const previewLength = 250;
+    return (
+      <li
+        key={i}
+        className={
+          !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
+        }
+      >
+        <ListItem
+          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}/${index}`}
+          title={title}
+          content={`${block.text.substring(0, previewLength)}...`}
+          contentClassName="line-clamp-4"
+          selected={
+            chapter.chapterid === selectedChapterId && index === textindex
+          }
+          selector="referencelist"
+        />
+      </li>
+    );
+  });
+
   return (
     <>
       <List
-        title={editing ? "Editing" : chapterCountTitle}
-        items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
+        title={referenceCountTitle}
+        items={referenceItems}
+        leftMenuItem={null}
         rightMenuItem={rightMenuItem}
-        leftMenuItem={leftMenuItem}
         className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
-        onDrop={dropHandler}
-        selector="chapterlist"
-        /*         swipeToClose="left"
-        close={closeSidebar}
- */
+        selector="referencelist"
+        onTitleClick={() => setMode("chapters")}
       />
     </>
   );
