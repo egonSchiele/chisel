@@ -85,12 +85,14 @@ function Settings({ settings, setSettings, usage, onSave }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    const _settings = { ...settings };
+    _settings.customKey = null;
     await fetch("/api/settings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ settings, csrfToken: getCsrfToken() }),
+      body: JSON.stringify({ settings: _settings, csrfToken: getCsrfToken() }),
     });
     onSave();
   };
