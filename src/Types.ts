@@ -77,6 +77,7 @@ export type BaseBlock = {
   reference?: boolean;
   versions?: Version[];
   diffWith?: string | null;
+  caption?: string;
 };
 
 export type Version = {

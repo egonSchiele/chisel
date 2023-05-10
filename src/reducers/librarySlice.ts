@@ -651,6 +651,15 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    addCaption(state: t.State, action: PayloadAction<{index:number; caption:string}>) {
+      const chapter = getSelectedChapter({ library: state });
+      const { index, caption } = action.payload;
+      const block = chapter.text[index];
+      block.caption = caption;
+      block.id = nanoid();
+
+      state.saved = false;
+    },
     newBlockAfterCurrent(state: t.State) {
       const newBlock = newBlockFromCurrent(state)
       const chapter = getSelectedChapter({ library: state });

@@ -436,6 +436,39 @@ export default function LibraryLauncher({
       },
       icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
     });
+    launchItems.push({
+      label: "Add Caption",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.showPopup({
+            title: "Add Caption",
+            inputValue: currentTextBlock.caption || "",
+            onSubmit: (newCaption) =>
+              dispatch(
+                librarySlice.actions.addCaption({
+                  index: state.editor.activeTextIndex,
+                  caption: newCaption,
+                })
+              ),
+          })
+        );
+      },
+      icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+    if (currentTextBlock.caption) {
+      launchItems.push({
+        label: "Remove Caption",
+        onClick: () => {
+          dispatch(
+            librarySlice.actions.addCaption({
+              index: state.editor.activeTextIndex,
+              caption: "",
+            })
+          );
+        },
+        icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    }
 
     if (currentTextBlock.reference) {
       launchItems.push({

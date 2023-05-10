@@ -292,6 +292,9 @@ function TextEditor({
   if (isActive) borderColor = "border-gray-400";
   if (highlight) borderColor = "border-green-400";
 
+  let textColor = "text-gray-300 dark:text-gray-500";
+  if (isActive) textColor = "text-gray-500 dark:text-gray-400";
+
   return (
     <div className="">
       {/* h-full"> */}
@@ -300,7 +303,14 @@ function TextEditor({
 
       <div className="mb-sm h-full w-full" ref={inputDiv}>
         {open && (
-          <div className="flex">
+          <div className="flex relative">
+            {currentText.caption && (
+              <div
+                className={`absolute text-sm mr-xs top-0 -left-16 w-16 ${textColor}`}
+              >
+                {currentText.caption}
+              </div>
+            )}
             <div className="flex-none">
               <div
                 className="h-5 cursor-pointer mr-xs"
@@ -370,10 +380,17 @@ function TextEditor({
         )}
         {!open && (
           <div
-            className={`flex ${
+            className={`flex relative ${
               index === activeTextIndex && "border border-gray-500"
             }`}
           >
+            {currentText.caption && (
+              <div
+                className={`absolute text-sm mr-xs top-0 -left-16 w-16 ${textColor}`}
+              >
+                {currentText.caption}
+              </div>
+            )}
             <div className="flex-none">
               <div
                 className="flex-none cursor-pointer mr-xs"

@@ -124,10 +124,10 @@ export default function Editor() {
 
   return (
     <div
-      className="flex h-screen overflow-auto w-full max-w-3xl mx-auto"
+      className="flex h-screen overflow-y-auto overflow-x-visible w-full max-w-4xl mx-auto"
       ref={editDiv}
     >
-      <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
+      <div className="mx-auto w-full max-w-3xl px-sm lg:px-md mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mt-sm md:mt-0"
