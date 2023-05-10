@@ -46,7 +46,7 @@ export default function VersionsMenu({ currentText, index }) {
   });
 
   items.push({
-    label: "Delete all versions",
+    label: "Delete other versions",
     onClick: () => {
       dispatch(
         librarySlice.actions.deleteAllVersions({

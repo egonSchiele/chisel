@@ -23,6 +23,9 @@ export default class PlainClipboard extends Clipboard {
     //console.log("pastedData", pastedData);
     clipboardEvent.preventDefault();
     const range = this.quill.getSelection();
+    if (range.length > 0) {
+      this.quill.deleteText(range.index, range.length, "user");
+    }
     this.quill.insertText(range.index, pastedData, "user");
     this.quill.setSelection(range.index + pastedData.length);
   }

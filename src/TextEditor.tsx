@@ -233,19 +233,30 @@ function TextEditor({
         }
       }
     } else if (event.code === "Backspace") {
-      if (quillRef && quillRef.current) {
-        if (
-          currentText &&
-          !currentText.versions &&
-          currentText.text.trim().length === 0
-        ) {
-          // @ts-ignore
-          const quill = quillRef.current.getEditor();
-          const range = quill.getSelection();
+      console.log(
+        "backspace",
+        quillRef,
+        currentText,
+        currentText.versions,
+        currentText.text.trim().length
+      );
 
-          if (range.index === 0) {
+      if (quillRef && quillRef.current) {
+        // @ts-ignore
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection();
+
+        console.log("backspace", range);
+        if (range.index === 0) {
+          if (
+            currentText &&
+            !hasVersions(currentText) &&
+            currentText.text.trim().length === 0
+          ) {
             event.preventDefault();
             dispatch(librarySlice.actions.deleteBlock(index));
+          } else {
+            dispatch(librarySlice.actions.mergeBlockUp(index));
           }
         }
       }
@@ -380,9 +391,9 @@ function TextEditor({
         )}
         {!open && (
           <div
-            className={`flex relative ${
-              index === activeTextIndex && "border border-gray-500"
-            }`}
+            className={`flex relative 
+              
+            `}
           >
             {currentText.caption && (
               <div

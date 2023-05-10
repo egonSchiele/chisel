@@ -124,10 +124,10 @@ export default function Editor() {
 
   return (
     <div
-      className="flex h-screen overflow-y-auto overflow-x-visible w-full max-w-4xl mx-auto"
+      className="flex h-screen overflow-y-auto overflow-x-visible w-full max-w-5xl mx-auto"
       ref={editDiv}
     >
-      <div className="mx-auto w-full max-w-3xl px-sm lg:px-md mb-sm h-full">
+      <div className="mx-auto w-full max-w-4xl px-sm lg:px-md mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mt-sm md:mt-0"
@@ -157,14 +157,14 @@ export default function Editor() {
           return (
             <>
               {hasVersions(text) && (
-                <div className="text-sm flex">
-                  <p className="mr-xs" style={{ lineHeight: "50px" }}>
+                <div className="text-sm flex items-center">
+                  <p className="mr-xs uppercase text-gray-400 dark:text-gray-400">
                     Diff against:
                   </p>
                   <Select
                     title=""
                     name="version"
-                    className="max-w-24 flex-none"
+                    className="max-w-24 flex-none !m-0"
                     value={text.diffWith}
                     onChange={(event) => {
                       dispatch(
@@ -183,10 +183,25 @@ export default function Editor() {
                       </option>
                     ))}
                   </Select>
+                  <Button
+                    size="small"
+                    rounded={true}
+                    className="ml-sm h-min"
+                    style="secondary"
+                    onClick={() => {
+                      dispatch(
+                        librarySlice.actions.deleteAllVersions({
+                          index,
+                        })
+                      );
+                    }}
+                  >
+                    Delete other versions
+                  </Button>
                 </div>
               )}
               {text.diffWith && (
-                <div className="flex overflow-auto w-full max-w-3xl mx-auto">
+                <div className="flex overflow-auto w-full max-w-4xl mx-auto">
                   <DiffViewer
                     originalText={text.text}
                     newText={diffWithText}

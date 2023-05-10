@@ -467,13 +467,15 @@ export default function Library({ mobile = false }) {
       replacement = state._temporaryFocusModeState;
     }
 
-    dispatch(
-      librarySlice.actions.addVersion({
-        index: editor.activeTextIndex,
-        text: replacement,
-        setDiffWith: true,
-      })
-    );
+    if (currentText[editor.activeTextIndex].text !== replacement) {
+      dispatch(
+        librarySlice.actions.addVersion({
+          index: editor.activeTextIndex,
+          text: replacement,
+          setDiffWith: true,
+        })
+      );
+    }
 
     // TODO not sure how multiple texts work w focus mode
     /* dispatch(

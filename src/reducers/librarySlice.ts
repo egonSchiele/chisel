@@ -675,7 +675,7 @@ export const librarySlice = createSlice({
       const cur = chapter.text[index];
       const prev = chapter.text[index - 1];
       prev.text += `\n${cur.text}`;
-      cur.text = "deleted";
+      cur.text = "";
       chapter.text.splice(index, 1);
       prev.id = nanoid();
 
@@ -690,6 +690,20 @@ export const librarySlice = createSlice({
       cur.text += `\n${next.text}`;
       chapter.text.splice(index + 1, 1);
       cur.id = nanoid();
+
+      state.saved = false;
+    },
+    mergeBlockSurrounding(state: t.State, action: PayloadAction<number|null>) {
+      const index = action.payload || state.editor.activeTextIndex;
+      const chapter = getSelectedChapter({ library: state });
+      if (index === chapter.text.length - 1) return;
+      const cur = chapter.text[index];
+      const next = chapter.text[index + 1];
+      const prev = chapter.text[index - 1];
+      prev.text += `\n${cur.text}\n${next.text}`;
+      cur.text = "";
+      chapter.text.splice(index, 2);
+      prev.id = nanoid();
 
       state.saved = false;
     },

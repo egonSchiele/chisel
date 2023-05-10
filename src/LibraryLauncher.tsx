@@ -27,6 +27,7 @@ import {
   WrenchIcon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
+  ArrowsUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store";
@@ -344,6 +345,18 @@ export default function LibraryLauncher({
         dispatch(librarySlice.actions.mergeBlockDown());
       },
       icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+  if (
+    state.editor.activeTextIndex !== 0 &&
+    state.editor.activeTextIndex !== currentText.length - 1
+  ) {
+    launchItems.push({
+      label: "Merge With Surrounding Blocks",
+      onClick: () => {
+        dispatch(librarySlice.actions.mergeBlockSurrounding());
+      },
+      icon: <ArrowsUpDownIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
 
