@@ -338,10 +338,29 @@ export const librarySlice = createSlice({
       state: t.State,
       action: PayloadAction<{ label: string; value: string }>
     ) {
+      const { label, value } = action.payload;
       state.suggestions.push({
-        type: action.payload.label,
-        contents: action.payload.value
+        type: label,
+        contents: value
       });
+
+      const chapter = getSelectedChapter({ library: state });
+      const index = state.editor.activeTextIndex;
+      console.log("addSuggestion", chapter, index)
+      if (chapter && index !== null && index !== undefined) {
+        const text = chapter.text[index];
+        text.versions ||= [];
+        const id = nanoid();
+        text.versions.push({
+          id,
+          text: value,
+          createdAt: Date.now(),
+          title: value.substring(0,10)
+        });
+        text.diffWith = id;
+        text.id = nanoid();
+      }
+
       state.saved = false;
     },
     deleteSuggestion(state: t.State, action: PayloadAction<number>) {
@@ -592,6 +611,7 @@ export const librarySlice = createSlice({
     });
       block.text = block.versions.find((v) => v.id === versionid)?.text || "";
       block.versions = block.versions.filter((v) => v.id !== versionid);
+      block.diffWith = null;
       block.id = nanoid();
 
       state.saved = false;

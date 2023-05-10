@@ -185,7 +185,7 @@ export default function Editor() {
                 </div>
               )}
               {text.diffWith && (
-                <div className="flex h-screen overflow-auto w-full max-w-3xl mx-auto">
+                <div className="flex overflow-auto w-full max-w-3xl mx-auto">
                   <DiffViewer
                     originalText={text.text}
                     newText={diffWithText}
@@ -194,6 +194,14 @@ export default function Editor() {
                         librarySlice.actions.setDiffWith({
                           index,
                           diffWith: null,
+                        })
+                      );
+                    }}
+                    onApply={() => {
+                      dispatch(
+                        librarySlice.actions.switchVersion({
+                          index,
+                          versionid: text.diffWith,
                         })
                       );
                     }}

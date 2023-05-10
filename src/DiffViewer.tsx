@@ -4,7 +4,12 @@ import Button from "./components/Button";
 import { getFastHtmlDiff, getHtmlDiff } from "./diff";
 import { useKeyboardScroll } from "./hooks";
 
-const DiffViewer = ({ originalText, newText, onClose }) => {
+const DiffViewer = ({
+  originalText,
+  newText,
+  onClose = null,
+  onApply = null,
+}) => {
   const [raw, setRaw] = React.useState(false);
   const diffDiv = React.useRef(null);
   /*   useEffect(() => {
@@ -16,9 +21,16 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
  */ if (raw) {
     return (
       <div className="">
-        <Button onClick={onClose} selector="diff-view-close">
-          Close
-        </Button>
+        {onClose && (
+          <Button onClick={onClose} selector="diff-view-close">
+            Close
+          </Button>
+        )}
+        {onApply && (
+          <Button onClick={onApply} selector="diff-view-apply">
+            Apply
+          </Button>
+        )}
         <Button onClick={() => setRaw(false)}>Formatted</Button>
         <div className="grid grid-cols-1 m-md font-mono">
           {JsDiff.diffChars(originalText, newText).map((part, i) => {
@@ -38,13 +50,20 @@ const DiffViewer = ({ originalText, newText, onClose }) => {
 
   return (
     <div
-      className="h-screen overflow-scroll w-full mx-auto"
+      className="overflow-scroll w-full mx-auto"
       id="diff-view"
       ref={diffDiv}
     >
-      <Button onClick={onClose} selector="diff-view-close">
-        Close
-      </Button>
+      {onClose && (
+        <Button onClick={onClose} selector="diff-view-close">
+          Close
+        </Button>
+      )}
+      {onApply && (
+        <Button onClick={onApply} selector="diff-view-apply" className="ml-xs">
+          Apply
+        </Button>
+      )}
       {/* <Button onClick={() => setRaw(true)}>Raw</Button> */}
       <Suspense
         fallback={
