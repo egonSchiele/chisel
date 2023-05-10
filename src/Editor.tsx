@@ -175,6 +175,7 @@ export default function Editor() {
                       );
                     }}
                   >
+                    <option value="">None</option>
                     {text.versions.map((version) => (
                       <option key={version.id} value={version.id}>
                         {version.title} -{" "}

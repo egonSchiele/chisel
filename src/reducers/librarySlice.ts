@@ -582,20 +582,35 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     
-    addVersion(state: t.State, action: PayloadAction<number>) {
+    addVersion(state: t.State, action: PayloadAction<{index:string;text?:string;setDiffWith?:boolean}>) {
       const chapter = getSelectedChapter({ library: state });
-      const block = chapter.text[action.payload];
+      const { index, text, setDiffWith } = action.payload;
+      const block = chapter.text[index];
       const chap = current(chapter)
-      console.log("addVersion", block, chap)
+      const id = nanoid();
       block.versions ||= [];
+
+      if (setDiffWith) {
       block.versions.push({
-        id: nanoid(),
-        text: block.text,
+        id,
+        text: text || "",
         createdAt: Date.now(),
-      title: block.text.substring(0,10)
-    });
-      block.text = "";
+        title: (text || "").substring(0,10)
+      });
+      
       block.id = nanoid();
+
+        block.diffWith = id;
+      } else {
+        block.versions.push({
+          id,
+          text: block.text,
+          createdAt: Date.now(),
+        title: block.text.substring(0,10)
+      });
+        block.text = text || "";
+        block.id = nanoid();
+      }
       
       state.saved = false;
     },
@@ -603,12 +618,14 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const { index, versionid } = action.payload;
       const block = chapter.text[index];
-      block.versions.push({
-        id: nanoid(),
-        text: block.text,
-        createdAt: Date.now(),
-      title: block.text.substring(0,10)
-    });
+      if (!block.text.match(/^\s*$/)) {
+        block.versions.push({
+          id: nanoid(),
+          text: block.text,
+          createdAt: Date.now(),
+          title: block.text.substring(0,10)
+       });
+      }
       block.text = block.versions.find((v) => v.id === versionid)?.text || "";
       block.versions = block.versions.filter((v) => v.id !== versionid);
       block.diffWith = null;

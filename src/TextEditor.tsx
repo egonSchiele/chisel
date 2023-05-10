@@ -234,7 +234,11 @@ function TextEditor({
       }
     } else if (event.code === "Backspace") {
       if (quillRef && quillRef.current) {
-        if (currentText && currentText.text.trim().length === 0) {
+        if (
+          currentText &&
+          !currentText.versions &&
+          currentText.text.trim().length === 0
+        ) {
           // @ts-ignore
           const quill = quillRef.current.getEditor();
           const range = quill.getSelection();

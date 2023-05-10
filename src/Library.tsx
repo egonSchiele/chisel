@@ -467,13 +467,21 @@ export default function Library({ mobile = false }) {
       replacement = state._temporaryFocusModeState;
     }
 
-    // TODO not sure how multiple texts work w focus mode
     dispatch(
+      librarySlice.actions.addVersion({
+        index: editor.activeTextIndex,
+        text: replacement,
+        setDiffWith: true,
+      })
+    );
+
+    // TODO not sure how multiple texts work w focus mode
+    /* dispatch(
       librarySlice.actions.pushTextToEditor({
         index: editor.activeTextIndex,
         text: replacement,
       })
-    );
+    ); */
   }
 
   function replace(full, start, end, replacement) {

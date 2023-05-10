@@ -55,12 +55,24 @@ const DiffViewer = ({
       ref={diffDiv}
     >
       {onClose && (
-        <Button onClick={onClose} selector="diff-view-close">
+        <Button
+          onClick={onClose}
+          size={"small"}
+          rounded={true}
+          selector="diff-view-close"
+        >
           Close
         </Button>
       )}
       {onApply && (
-        <Button onClick={onApply} selector="diff-view-apply" className="ml-xs">
+        <Button
+          onClick={onApply}
+          size={"small"}
+          rounded={true}
+          style="secondary"
+          selector="diff-view-apply"
+          className="ml-xs"
+        >
           Apply
         </Button>
       )}

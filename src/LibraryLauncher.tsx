@@ -425,6 +425,18 @@ export default function LibraryLauncher({
   }
 
   if (currentTextBlock) {
+    launchItems.push({
+      label: "Add New Version",
+      onClick: () => {
+        dispatch(
+          librarySlice.actions.addVersion({
+            index: state.editor.activeTextIndex,
+          })
+        );
+      },
+      icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+
     if (currentTextBlock.reference) {
       launchItems.push({
         label: "Unmark block as reference",
