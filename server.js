@@ -618,7 +618,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     req.body.max_tokens,
     req.body.model,
     req.body.num_suggestions,
-    [],
+    null,
     req.body.customKey
   );
   if (suggestions.success) {
