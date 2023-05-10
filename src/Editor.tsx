@@ -89,7 +89,7 @@ export default function Editor() {
         className="flex h-screen overflow-auto w-full max-w-3xl mx-auto  "
         id="readonly"
       >
-        <div className="mx-auto w-full px-sm lg:px-md mb-sm h-full">
+        <div className="mx-auto w-full px-sm  mb-sm h-full">
           <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
             {currentChapterTitle}
           </h1>
@@ -127,10 +127,10 @@ export default function Editor() {
       className="flex h-screen overflow-y-auto overflow-x-visible w-full max-w-5xl mx-auto"
       ref={editDiv}
     >
-      <div className="mx-auto w-full max-w-4xl px-sm lg:px-md mb-sm h-full">
+      <div className="mx-auto w-full max-w-4xl px-sm  mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}
-          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mt-sm md:mt-0"
+          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest ml-4 lg:ml-16 mt-sm md:mt-0"
           /* // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));

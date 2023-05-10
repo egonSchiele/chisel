@@ -328,15 +328,12 @@ function TextEditor({
 
       <div className="mb-sm h-full w-full" ref={inputDiv}>
         {open && (
-          <div className="flex relative">
-            {currentText.caption && (
-              <div
-                className={`absolute text-sm mr-xs top-0 -left-16 w-16 ${textColor}`}
-              >
-                {currentText.caption}
-              </div>
-            )}
-            <div className="flex-none">
+          <div className="flex">
+            <div className={`flex-none text-sm mr-xs w-4 lg:w-16 ${textColor}`}>
+              {currentText.caption}
+            </div>
+
+            <div className="flex-grow">
               <div
                 className="h-5 cursor-pointer mr-xs"
                 onClick={() => {
@@ -405,18 +402,16 @@ function TextEditor({
         )}
         {!open && (
           <div
-            className={`flex relative 
+            className={`flex  
               
             `}
           >
-            {currentText.caption && (
-              <div
-                className={`absolute text-sm mr-xs top-0 -left-16 w-16 ${textColor}`}
-              >
-                {currentText.caption}
-              </div>
-            )}
-            <div className="flex-none">
+            <div
+              className={` text-sm mr-xs flex-none w-4 lg:w-16 ${textColor}`}
+            >
+              {currentText.caption}
+            </div>
+            <div className="flex">
               <div
                 className="flex-none cursor-pointer mr-xs"
                 onClick={() => {
