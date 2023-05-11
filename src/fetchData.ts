@@ -33,6 +33,7 @@ export const fetchSettings = async () => {
 
 export const fetchSuggestions = async (
   text: string,
+  synopsis: string,
   model: string,
   num_suggestions: number,
   max_tokens: number,
@@ -40,7 +41,8 @@ export const fetchSuggestions = async (
   label: string,
   _customKey?: string
 ) => {
-  const prompt = _prompt.replaceAll("{{text}}", text);
+  let prompt = _prompt.replaceAll("{{text}}", text);
+   prompt = prompt.replaceAll("{{synopsis}}", synopsis);
   const customKey = _customKey || null;
   const body = JSON.stringify({
     prompt,

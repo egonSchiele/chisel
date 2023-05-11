@@ -10,6 +10,7 @@ import Spinner from "./components/Spinner";
 import { fetchSuggestionsWrapper } from "./utils";
 import { RootState } from "./store";
 import {
+  getSelectedBook,
   getSelectedChapter,
   getText,
   librarySlice,
@@ -25,6 +26,7 @@ export default function PromptsSidebar({
   onLoad: () => void;
 }) {
   const state = useSelector((state: RootState) => state.library.editor);
+  const currentBook = useSelector(getSelectedBook);
   const currentText = useSelector(getText(state.activeTextIndex));
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -74,6 +76,7 @@ export default function PromptsSidebar({
           prompt.text,
           prompt.label,
           getTextForSuggestions(),
+          currentBook.synopsis || "",
           dispatch
         )
       }

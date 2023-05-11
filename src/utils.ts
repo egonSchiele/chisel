@@ -100,6 +100,7 @@ export const fetchSuggestionsWrapper = async (
   prompt: string,
   label: string,
   text: string,
+  synopsis: string,
   dispatch: Dispatch<AnyAction>
 ) => {
   console.log("fetchSuggestionsWrapper", settings)
@@ -111,6 +112,7 @@ const _customKey = settings.customKey || null;
   setLoading(true);
   const result = await fd.fetchSuggestions(
     text,
+    synopsis,
     settings.model,
     _num_suggestions,
     max_tokens_with_min,
