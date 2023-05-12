@@ -110,6 +110,34 @@
     @apply dark:text-blue-300;
   }
 
+  .markdown table {
+    @apply my-sm;
+    @apply text-center;
+    @apply border-collapse;
+    @apply border-2;
+    @apply border-gray-300;
+    @apply dark:border-gray-800;
+  }
+
+  .markdown tr {
+    @apply border-2;
+    @apply border-gray-300;
+    @apply dark:border-gray-800;
+  }
+
+  .markdown thead {
+    @apply bg-gray-200;
+    @apply dark:bg-gray-700;
+  }
+
+  .markdown td, .markdown th {
+    @apply border-2;
+    @apply border-gray-300;
+    @apply dark:border-gray-800;
+    @apply px-sm;
+    @apply py-xs;
+  }
+
   /* 
     .h3 {
         @apply text-md;
