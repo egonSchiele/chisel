@@ -93,9 +93,11 @@ function LanguageSelector({ chapterid, index }) {
 function TextEditor({
   chapterid,
   index,
+  settings,
 }: {
   chapterid: string;
   index: number;
+  settings: t.UserSettings;
 }) {
   const _pushTextToEditor = useSelector(
     (state: RootState) => state.library.editor._pushTextToEditor
@@ -320,6 +322,10 @@ function TextEditor({
   let textColor = "text-gray-300 dark:text-gray-500";
   if (isActive) textColor = "text-gray-500 dark:text-gray-400";
 
+  let font = settings.design ? settings.design.font : "sans-serif";
+  font = font || "sans-serif";
+  let fontClass = font === "serif" ? "serif" : "sansSerif";
+  if (currentText.type === "code") fontClass = "font-mono";
   return (
     <div className="">
       {/* h-full"> */}
@@ -381,7 +387,7 @@ function TextEditor({
               <ReactQuill
                 ref={quillRef}
                 placeholder=""
-                className={`${currentText.type === "code" && "font-mono"}`}
+                className={`${fontClass}`}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}

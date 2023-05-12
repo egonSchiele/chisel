@@ -64,6 +64,15 @@ function Settings({ settings, setSettings, usage, onSave }) {
       })
     );
   };
+  const handleDesignChange = (key: string, value: string) => {
+    setSettings(
+      produce(settings, (draft) => {
+        draft.design ||= {};
+        // @ts-ignore
+        draft.design[key] = value;
+      })
+    );
+  };
 
   const deletePrompt = (index: number) => {
     setSettings(
@@ -152,14 +161,15 @@ function Settings({ settings, setSettings, usage, onSave }) {
           </p>
         </div>
       )}
-      {/*  <Select
-        title="Theme"
-        name="theme"
-        value={settings.theme}
-        onChange={(e) => handleChange("theme", e.target.value as t.Theme)}
+      <Select
+        title="Font"
+        name="font"
+        value={settings.design ? settings.design.font : "sans-serif"}
+        onChange={(e) => handleDesignChange("font", e.target.value)}
       >
-        <option value="default">default</option>
-      </Select> */}
+        <option value="sans-serif">sans-serif</option>
+        <option value="serif">serif</option>
+      </Select>
 
       {/*  <label>
         Version Control:

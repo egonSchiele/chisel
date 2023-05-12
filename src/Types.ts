@@ -205,7 +205,14 @@ export type UserSettings = {
   theme: Theme;
   version_control: boolean;
   prompts: Prompt[];
+  design?: DesignPreferences | null;
 };
+
+export type DesignPreferences = {
+  font: string;
+  fontSize: number;
+  lineHeight: number;
+}
 
 export type Prompt = {
   label: string;

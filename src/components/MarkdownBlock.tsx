@@ -13,14 +13,20 @@ const renderer = {
 };
 marked.use({ renderer });
 
-export default function MarkdownBlock({ text }: { text: string }) {
+export default function MarkdownBlock({
+  text,
+  className = "",
+}: {
+  text: string;
+  className?: string;
+}) {
   let html = marked.parse(text);
 
   html = DOMPurify.sanitize(html);
 
   return (
     <div
-      className="typography markdown"
+      className={`typography markdown ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

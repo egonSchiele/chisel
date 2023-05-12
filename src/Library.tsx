@@ -69,6 +69,7 @@ export default function Library({ mobile = false }) {
     theme: "default",
     version_control: false,
     prompts: [],
+    design: null,
   });
   const [usage, setUsage] = useState<t.Usage | null>(null);
 
@@ -876,7 +877,7 @@ export default function Library({ mobile = false }) {
           <div className="flex-grow h-full w-full bg-editor dark:bg-dmeditor mb-60">
             {currentChapter && (
               <LibErrorBoundary component="editor">
-                <Editor />
+                <Editor settings={settings} />
               </LibErrorBoundary>
             )}
           </div>

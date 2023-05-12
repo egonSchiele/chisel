@@ -24,7 +24,7 @@ import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
 import Select from "./components/Select";
 import DiffViewer from "./DiffViewer";
-export default function Editor() {
+export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
@@ -78,6 +78,10 @@ export default function Editor() {
     }
   });
 
+  let font = settings.design ? settings.design.font : "sans-serif";
+  font = font || "sans-serif";
+  const fontClass = font === "serif" ? "serif" : "sansSerif";
+
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full">Loading</div>;
   }
@@ -106,10 +110,19 @@ export default function Editor() {
                     />
                   );
                 } else if (text.type === "markdown") {
-                  return <MarkdownBlock text={text.text} key={index} />;
+                  return (
+                    <MarkdownBlock
+                      text={text.text}
+                      key={index}
+                      className={fontClass}
+                    />
+                  );
                 } else {
                   return (
-                    <pre key={index} className="w-full typography font-sans">
+                    <pre
+                      key={index}
+                      className={`w-full typography ${fontClass}`}
+                    >
                       {text.text}
                     </pre>
                   );
@@ -130,7 +143,7 @@ export default function Editor() {
       <div className="mx-auto w-full max-w-4xl px-sm  mb-sm h-full">
         <ContentEditable
           value={currentChapterTitle}
-          className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest ml-4 lg:ml-16 mt-sm md:mt-0"
+          className={`text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest ml-4 lg:ml-16 mt-sm md:mt-0 ${fontClass}`}
           /* // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));
@@ -229,6 +242,7 @@ export default function Editor() {
                   chapterid={currentChapterId}
                   index={index}
                   key={text.id || index}
+                  settings={settings}
                 />
               )}
             </>
