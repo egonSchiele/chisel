@@ -20,9 +20,16 @@ function Popup({
 }) {
   const [inputValueState, setInputValueState] = useState(inputValue);
   const dispatch = useDispatch();
+  const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     setInputValueState(inputValue);
   }, [inputValue]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [inputRef.current]);
 
   const close = () => dispatch(librarySlice.actions.hidePopup());
 
@@ -56,6 +63,7 @@ function Popup({
               name={title}
               value={inputValueState}
               onChange={(e) => setInputValueState(e.target.value)}
+              ref={inputRef}
             />
           )}
         </form>

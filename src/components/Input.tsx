@@ -1,21 +1,25 @@
 import React from "react";
 
-export default function Input({
-  name,
-  value,
-  onChange,
-  rounded = true,
-  title = null,
-  ref = null,
-  className = "",
-  inputClassName = "",
-  labelClassName = "",
-  placeholder = "",
-  onBlur = null,
-  onKeyDown = null,
-  selector = "",
-  icon = null,
-}) {
+import { forwardRef } from "react";
+
+const Input = forwardRef<any, any>(function Input(
+  {
+    name,
+    value,
+    onChange,
+    rounded = true,
+    title = null,
+    className = "",
+    inputClassName = "",
+    labelClassName = "",
+    placeholder = "",
+    onBlur = null,
+    onKeyDown = null,
+    selector = "",
+    icon = null,
+  },
+  ref
+) {
   const roundedCss = rounded ? "rounded-md" : "";
   return (
     <div className={className}>
@@ -49,4 +53,6 @@ export default function Input({
       </div>
     </div>
   );
-}
+});
+
+export default Input;

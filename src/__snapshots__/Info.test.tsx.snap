@@ -22,5 +22,21 @@ exports[`shows the info panel 1`] = `
       syllables
     </span>
   </p>
+  <p>
+    4
+     
+    <span
+      className="text-gray-400"
+    >
+      tokens (estimate)
+    </span>
+  </p>
+  <p>
+    1 min read
+     
+    <span
+      className="text-gray-400"
+    />
+  </p>
 </div>
 `;
