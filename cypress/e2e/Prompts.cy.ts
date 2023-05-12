@@ -41,12 +41,12 @@ describe("prompts", () => {
     cy.get(`div[data-selector='ai-suggestion-panel']`).should("exist");
     cy.get(`div[data-selector='ai-suggestion-panel']`).first().click();
 
-    cy.get(".ql-editor").last().contains("once upon a").invoke("text");
+    cy.get("#diff-view").contains("once upon a");//.invoke("text");
     /*       .then((t) => {
         expect(t.length).to.be.greaterThan(text.length);
       });
  */
-    cy.manuallySave();
+    cy.autoSave();
 
     // go back, the new suggestion should be there
     cy.visit("http://localhost:80/");
@@ -62,7 +62,7 @@ describe("prompts", () => {
     cy.get(`svg[data-selector='delete-ai-suggestion-panel']`).click();
 
     cy.get(`div[data-selector='ai-suggestion-panel']`).should("not.exist");
-    cy.manuallySave();
+    cy.autoSave();
     // go back, the new suggestion should not be there anymore
     cy.visit("http://localhost:80/");
 
