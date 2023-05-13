@@ -127,16 +127,16 @@ export function codeBlock(text: string, language:string): CodeBlock {
   return { type: "code", open: true, id: nanoid(), text, reference: false, language };
 }
 
-export function plainTextBlockFromData(text: string, open:boolean, reference:boolean, caption?:string): PlainTextBlock {
-  return { type: "plain", open, id: nanoid(), text, reference, caption };
+export function plainTextBlockFromData(text: string, open:boolean, reference:boolean, caption?:string, versions?:Version[], diffWith?:string|null): PlainTextBlock {
+  return { type: "plain", open, id: nanoid(), text, reference, caption, versions, diffWith };
 }
 
-export function markdownBlockFromData(text: string, open:boolean, reference:boolean, caption?:string): MarkdownBlock {
-  return { type: "markdown", open, id: nanoid(), text, reference, caption };
+export function markdownBlockFromData(text: string, open:boolean, reference:boolean, caption?:string, versions?:Version[], diffWith?:string|null): MarkdownBlock {
+  return { type: "markdown", open, id: nanoid(), text, reference, caption, versions, diffWith };
 }
 
-export function codeBlockFromData(text: string, open:boolean, reference:boolean, language:string, caption?:string): CodeBlock {
-  return { type: "code", open, id: nanoid(), text, reference, language, caption };
+export function codeBlockFromData(text: string, open:boolean, reference:boolean, language:string, caption?:string, versions?:Version[], diffWith?:string|null): CodeBlock {
+  return { type: "code", open, id: nanoid(), text, reference, language, caption, versions, diffWith };
 }
 
 export function embeddedTextBlockFromData(text: string, open:boolean, bookid: string, chapterid?: string, textindex?: number, caption?:string): EmbeddedTextBlock {

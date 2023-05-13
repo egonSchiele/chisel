@@ -246,13 +246,13 @@ export function restoreBlockFromHistory(text:string):t.TextBlock {
   const blockText = lines.slice(2).join("\n");
   const frontMatter = JSON.parse(jsonFrontMatter);
   if (frontMatter.type === "plain") {
-    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption);
+    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption, frontMatter.versions, frontMatter.diffWith);
   } else if (frontMatter.type === "code") {
-    return t.codeBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.language, frontMatter.caption);
+    return t.codeBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.language, frontMatter.caption, frontMatter.versions, frontMatter.diffWith);
   } else if (frontMatter.type === "embeddedText") {
     return t.embeddedTextBlockFromData(blockText, frontMatter.open, frontMatter.bookid, frontMatter.chapterid, frontMatter.textindex, frontMatter.caption);
   } else {
-    return t.markdownBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption);
+    return t.markdownBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption, frontMatter.versions, frontMatter.diffWith);
   }
   } catch (e) {
     return t.markdownBlock(text);
