@@ -9,6 +9,7 @@ import Button from "./components/Button";
 import ReadOnlyView from "./ReadOnlyView";
 import { Link } from "react-router-dom";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import BlockMenu from "./BlockMenu";
 
 export default function EmbeddedTextBlock({
   chapterid,
@@ -108,7 +109,7 @@ export default function EmbeddedTextBlock({
             >
               <ChevronDownIcon className={`w-5 h-5 text-gray-500`} />
             </div>
-            {/* {<BlockMenu text={text} index={index} />} */}
+            <BlockMenu currentText={text} index={index} />
           </div>
 
           <div className="flex-grow">

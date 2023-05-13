@@ -18,6 +18,7 @@ export type State = {
   popupOpen: boolean;
   popupData: PopupData | null;
   scrollTo?: number;
+  _cachedPanelState?: PanelState;
 };
 
 export type SelectedText = {

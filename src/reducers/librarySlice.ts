@@ -443,6 +443,8 @@ export const librarySlice = createSlice({
       );
     },
     closeAllPanels(state) {
+      const panels = current(state.panels);
+      state._cachedPanelState = {...panels};
       state.panels.bookList.open = false;
       state.panels.chapterList.open = false;
       state.panels.sidebar.open = false;
@@ -453,14 +455,19 @@ export const librarySlice = createSlice({
       localStorage.setItem("promptsOpen", "false");
     },
     openAllPanels(state) {
-      state.panels.bookList.open = true;
-      state.panels.chapterList.open = true;
-      state.panels.sidebar.open = true;
-      state.panels.prompts.open = true;
-      localStorage.setItem("bookListOpen", "true");
-      localStorage.setItem("chapterListOpen", "true");
-      localStorage.setItem("sidebarOpen", "true");
-      localStorage.setItem("promptsOpen", "true");
+      if (state._cachedPanelState) {
+        state.panels = {...state._cachedPanelState};
+      } else {
+        state.panels.bookList.open = true;
+        state.panels.chapterList.open = true;
+        state.panels.sidebar.open = true;
+        state.panels.prompts.open = true;
+      }
+      state._cachedPanelState = null;
+      localStorage.setItem("bookListOpen", state.panels.bookList.open);
+      localStorage.setItem("chapterListOpen", state.panels.chapterList.open);
+      localStorage.setItem("sidebarOpen", state.panels.sidebar.open);
+      localStorage.setItem("promptsOpen", state.panels.prompts.open);
     },
     openOnlyPanel(state, action: PayloadAction<string>) {
       
@@ -666,6 +673,7 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const { index, caption } = action.payload;
       const block = chapter.text[index];
+      console.log("addCaption", block);
       block.caption = caption;
       block.id = nanoid();
 
