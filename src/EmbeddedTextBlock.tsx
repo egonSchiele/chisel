@@ -8,6 +8,7 @@ import Launcher from "./Launcher";
 import Button from "./components/Button";
 import ReadOnlyView from "./ReadOnlyView";
 import { Link } from "react-router-dom";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function EmbeddedTextBlock({
   chapterid,
@@ -20,7 +21,16 @@ export default function EmbeddedTextBlock({
 }) {
   const state: t.State = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
-  const [open, setOpen] = React.useState(false);
+  const open = text.open;
+  const [launcherOpen, setLauncherOpen] = React.useState(false);
+
+  function setOpen(bool: boolean) {
+    if (bool) {
+      dispatch(librarySlice.actions.openBlock(index));
+    } else {
+      dispatch(librarySlice.actions.closeBlock(index));
+    }
+  }
 
   let chapter = null;
   let book = null;
@@ -55,32 +65,86 @@ export default function EmbeddedTextBlock({
   });
 
   return (
-    <div>
-      <div className="flex">
-        {chapter && <h3 className="mr-xs">{chapter.title}</h3>}
-        <Button
-          size="small"
-          style="secondary"
-          rounded={true}
-          onClick={() => setOpen(!open)}
-        >
-          {chapter ? "Change" : "Select"}
-        </Button>
-        {chapter && (
-          <Link
-            to={`/book/${book.bookid}/chapter/${chapter.chapterid}`}
-            className="ml-xs text-sm align-baseline uppercase"
+    <div className="mb-sm h-full w-full">
+      {!open && (
+        <div className="flex">
+          <div
+            className={`flex-none text-sm mr-xs w-4 lg:w-16 text-gray-300 dark:text-gray-500`}
           >
-            Visit
-          </Link>
-        )}
-      </div>
-      {chapter && (
-        <div className="bg-gray-800 p-sm rounded mt-sm">
-          <ReadOnlyView textBlocks={chapter.text} fontClass="sansSerif" />
+            {text.caption}
+          </div>
+
+          <div className="flex-none">
+            <div
+              className="h-5 cursor-pointer mr-xs"
+              onClick={() => {
+                setOpen(true);
+              }}
+              data-selector={`close-${index}`}
+            >
+              <ChevronRightIcon className={`w-5 h-5 text-gray-500`} />
+            </div>
+            {/* {<BlockMenu text={text} index={index} />} */}
+          </div>
+          {chapter && <h3 className="mr-xs text-gray-500">{chapter.title}</h3>}
         </div>
       )}
-      <Launcher items={items} open={open} close={() => setOpen(false)} />
+
+      {open && (
+        <div className="flex">
+          <div
+            className={`flex-none text-sm mr-xs w-4 lg:w-16 text-gray-300 dark:text-gray-500`}
+          >
+            {text.caption}
+          </div>
+
+          <div className="flex-none">
+            <div
+              className="h-5 cursor-pointer mr-xs"
+              onClick={() => {
+                setOpen(false);
+              }}
+              data-selector={`close-${index}`}
+            >
+              <ChevronDownIcon className={`w-5 h-5 text-gray-500`} />
+            </div>
+            {/* {<BlockMenu text={text} index={index} />} */}
+          </div>
+
+          <div className="flex-grow">
+            <div className="flex">
+              {chapter && <h3 className="mr-xs">{chapter.title}</h3>}
+              <Button
+                size="small"
+                style="secondary"
+                rounded={true}
+                onClick={() => setLauncherOpen(true)}
+              >
+                {chapter ? "Change" : "Select"}
+              </Button>
+              {/* {chapter && (
+                <Link
+                  to={`/book/${book.bookid}/chapter/${chapter.chapterid}`}
+                  className="ml-xs text-sm align-baseline uppercase"
+                >
+                  Visit
+                </Link>
+              )} */}
+            </div>
+
+            {chapter && (
+              <div className="bg-gray-800 p-sm rounded mt-sm">
+                <ReadOnlyView textBlocks={chapter.text} fontClass="sansSerif" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      <Launcher
+        items={items}
+        open={launcherOpen}
+        close={() => setLauncherOpen(false)}
+      />
     </div>
   );
   /*   return (
