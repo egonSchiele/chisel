@@ -44,19 +44,33 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   const readonlyDiv = useRef(null);
   const editDiv = useRef(null);
   function scrollCallback(scrollTop) {
-    console.log("scrollCallback", scrollTop);
+    //console.log("scrollCallback", scrollTop);
     dispatch(librarySlice.actions.setScrollTo(scrollTop));
   }
   useKeyboardScroll(readonlyDiv, 400, scrollCallback);
 
   useEffect(() => {
     if (scrollTo && editDiv.current) {
-      console.log("scrolling to", scrollTo);
-      editDiv.current.scroll({ top: scrollTo, behavior: "smooth" });
+      // console.log("scrolling to", scrollTo);
+      // console.log("scrollTop", editDiv.current.scrollTop);
+      // console.log("offsetHeight", editDiv.current.offsetHeight);
+      // console.log(editDiv.current);
+
+      editDiv.current.scroll({ top: scrollTo });
+
+      // console.log("scrollTop after", editDiv.current.scrollTop);
       dispatch(librarySlice.actions.setScrollTo(null));
     }
   }, [scrollTo, editDiv.current]);
 
+  /*   useEffect(() => {
+    if (editDiv.current) {
+      editDiv.current.addEventListener("scroll", (event) => {
+        console.log("scroll", editDiv.current.scrollTop);
+      });
+    }
+  }, [editDiv.current]);
+ */
   useKeyDown((event) => {
     if (event.ctrlKey && event.code === "KeyF") {
       if (editDiv.current) {
@@ -137,6 +151,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
 
   return (
     <div
+      id="editDiv"
       className="flex h-screen overflow-y-auto overflow-x-visible w-full max-w-5xl mx-auto"
       ref={editDiv}
     >

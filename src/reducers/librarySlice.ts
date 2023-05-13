@@ -791,6 +791,7 @@ export const librarySlice = createSlice({
         text.text = newText;
         state.editor._pushTextToEditor = newText;
         chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+        state.editor.activeTextIndex += 1
       } else if (index + length === text.text.length) {
         console.log("end-nowhitespace");
         // we selected the end of the text,
@@ -798,6 +799,7 @@ export const librarySlice = createSlice({
         text.text = newText;
         state.editor._pushTextToEditor = newText;
         chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
+        state.editor.activeTextIndex += 1
       } else {
         console.log("middle");
         // we selected the middle of the text,
@@ -811,6 +813,7 @@ export const librarySlice = createSlice({
         
         const endBlock = newBlockFromCurrent(state, endText)
         chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
+        state.editor.activeTextIndex += 1
       }
     },
     addCharacter(state: t.State, action: PayloadAction<string>) {

@@ -143,6 +143,7 @@ function TextEditor({
       if (_pushSelectionToEditor.index === -1) {
         // @ts-ignore
         const editor = quillRef.current.getEditor();
+
         editor.setSelection(editor.getLength());
       }
       dispatch(librarySlice.actions.clearPushSelectionToEditor());
@@ -244,6 +245,11 @@ function TextEditor({
         if (range) {
           if (range.length === 0 && range.index === 0 && index > 0) {
             event.preventDefault();
+            const div = document.getElementById("editDiv");
+            if (div) {
+              dispatch(librarySlice.actions.setScrollTo(div.scrollTop));
+            }
+
             dispatch(librarySlice.actions.gotoPreviousOpenBlock());
           }
         }
@@ -394,7 +400,7 @@ function TextEditor({
                 onFocus={() =>
                   dispatch(librarySlice.actions.setActiveTextIndex(index))
                 }
-                scrolling-container="html"
+                scrollingContainer="#editDiv"
                 modules={{
                   history: {
                     userOnly: true,
