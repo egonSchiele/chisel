@@ -75,9 +75,11 @@ export default function EmbeddedTextBlock({
           </Link>
         )}
       </div>
-      <div className="bg-gray-800 p-sm rounded mt-sm">
-        <ReadOnlyView textBlocks={chapter.text} fontClass="sansSerif" />
-      </div>
+      {chapter && (
+        <div className="bg-gray-800 p-sm rounded mt-sm">
+          <ReadOnlyView textBlocks={chapter.text} fontClass="sansSerif" />
+        </div>
+      )}
       <Launcher items={items} open={open} close={() => setOpen(false)} />
     </div>
   );
