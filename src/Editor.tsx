@@ -24,6 +24,8 @@ import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
 import Select from "./components/Select";
 import DiffViewer from "./DiffViewer";
+import EmbeddedTextBlock from "./EmbeddedTextBlock";
+import ReadOnlyView from "./ReadOnlyView";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -112,37 +114,12 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
             {currentChapterTitle}
           </h1>
           <div className="w-full">
-            {currentText
-              .filter((t) => t.open)
-              .map((text: t.TextBlock, index) => {
-                if (text.type === "code") {
-                  return (
-                    <CodeBlock
-                      text={text.text}
-                      language={text.language}
-                      key={index}
-                    />
-                  );
-                } else if (text.type === "markdown") {
-                  return (
-                    <MarkdownBlock
-                      text={text.text}
-                      key={index}
-                      className={fontClass}
-                    />
-                  );
-                } else {
-                  return (
-                    <pre
-                      key={index}
-                      className={`w-full typography ${fontClass}`}
-                    >
-                      {text.text}
-                    </pre>
-                  );
-                }
-              })}
+            <ReadOnlyView
+              textBlocks={currentText.filter((t) => t.open)}
+              fontClass={fontClass}
+            />
           </div>
+
           <div className="h-24" />
         </div>
       </div>
@@ -172,6 +149,15 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           selector="text-editor-title"
         />
         {currentText.map((text, index) => {
+          if (text.type === "embeddedText") {
+            return (
+              <EmbeddedTextBlock
+                chapterid={currentChapterId}
+                text={text}
+                index={index}
+              />
+            );
+          }
           let diffWithText = "";
           if (text.diffWith) {
             const diffWith = text.versions.find(

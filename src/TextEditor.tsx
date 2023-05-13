@@ -255,14 +255,6 @@ function TextEditor({
         }
       }
     } else if (event.code === "Backspace") {
-      console.log(
-        "backspace",
-        quillRef,
-        currentText,
-        currentText.versions,
-        currentText.text.trim().length
-      );
-
       if (quillRef && quillRef.current) {
         // @ts-ignore
         const quill = quillRef.current.getEditor();

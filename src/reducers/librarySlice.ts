@@ -3,6 +3,7 @@ import * as toolkitRaw from "@reduxjs/toolkit";
 import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
+  hasVersions,
   isString,
   localStorageOrDefault,
   parseText,
@@ -349,16 +350,18 @@ export const librarySlice = createSlice({
       console.log("addSuggestion", chapter, index)
       if (chapter && index !== null && index !== undefined) {
         const text = chapter.text[index];
-        text.versions ||= [];
-        const id = nanoid();
-        text.versions.push({
-          id,
-          text: value,
-          createdAt: Date.now(),
-          title: value.substring(0,10)
-        });
-        text.diffWith = id;
-        text.id = nanoid();
+        if (text.type !== "embeddedText") {
+          text.versions ||= [];
+          const id = nanoid();
+          text.versions.push({
+            id,
+            text: value,
+            createdAt: Date.now(),
+            title: value.substring(0,10)
+          });
+          text.diffWith = id;
+          text.id = nanoid();
+        }
       }
 
       state.saved = false;
@@ -623,6 +626,7 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const { index, versionid } = action.payload;
       const block = chapter.text[index];
+      if (block.type === "embeddedText") return;
       if (!block.text.match(/^\s*$/)) {
         block.versions.push({
           id: nanoid(),
@@ -642,6 +646,7 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const { index } = action.payload;
       const block = chapter.text[index];
+      if (block.type === "embeddedText") return;
       block.versions = [];
       block.id = nanoid();
 
@@ -651,6 +656,7 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const { index, diffWith } = action.payload;
       const block = chapter.text[index];
+      if (block.type === "embeddedText") return;
       block.diffWith = diffWith;
       block.id = nanoid();
 
@@ -836,7 +842,20 @@ export const librarySlice = createSlice({
       const book = getSelectedBook({ library: state });
       book.characters.splice(action.payload.index, 1);
       state.saved = false;
-    }
+    },
+    setEmbeddedChapter(state: t.State, action: PayloadAction<{index:number; bookid:string; chapterid:string}>) {
+      const chapter = getSelectedChapter({ library: state });
+      const { index, bookid, chapterid } = action.payload;
+      const block = chapter.text[index];
+      if (block && block.type === "embeddedText") {
+        block.bookid = bookid;
+        block.chapterid = chapterid;
+      }
+      
+      block.id = nanoid();
+      state.saved = false;
+    },
+
 
   },
   extraReducers: (builder) => {

@@ -221,17 +221,19 @@ export function getChapterText(chapter, includeFolded=false) {
 }
 
 export function saveTextToHistory(chapter:t.Chapter):string {
-  const texts = chapter.text.map((t) => {
-      if (t.type === "plain") {
-        const { type, open, reference } = t;
-          const jsonFrontMatter = JSON.stringify({type, open, reference});
-          return `${jsonFrontMatter}\n\n${t.text}`;
-      } else if (t.type === "code") {
-        const { type, open, reference, language } = t;
-        const jsonFrontMatter = JSON.stringify({type, open, reference, language});
-        return `${jsonFrontMatter}\n\n${t.text}`;
-      } else {
-        return t.text;
+  const texts = chapter.text.map((text:t.TextBlock) => {
+      if (text.type === "plain" || text.type === "markdown") {
+        const { type, open, reference, versions, diffWith, caption } = text;
+          const jsonFrontMatter = JSON.stringify({type, open, reference, versions, diffWith, caption});
+          return `${jsonFrontMatter}\n\n${text.text}`;
+      } else if (text.type === "code") {
+        const { type, open, reference, versions, diffWith, caption, language } = text;
+        const jsonFrontMatter = JSON.stringify({type, open, reference, versions, diffWith, caption, language});
+        return `${jsonFrontMatter}\n\n${text.text}`;
+      } else if (text.type === "embeddedText") {
+        const { type, open, bookid, chapterid, textindex, caption } = text;
+        const jsonFrontMatter = JSON.stringify({type, open, bookid, chapterid, textindex, caption});
+        return `${jsonFrontMatter}\n\n${text.text}`;      
       }
   })
   return texts.join("\n---\n");
@@ -244,11 +246,13 @@ export function restoreBlockFromHistory(text:string):t.TextBlock {
   const blockText = lines.slice(2).join("\n");
   const frontMatter = JSON.parse(jsonFrontMatter);
   if (frontMatter.type === "plain") {
-    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference);
+    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption);
   } else if (frontMatter.type === "code") {
-    return t.codeBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.language);
+    return t.codeBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.language, frontMatter.caption);
+  } else if (frontMatter.type === "embeddedText") {
+    return t.embeddedTextBlockFromData(blockText, frontMatter.open, frontMatter.bookid, frontMatter.chapterid, frontMatter.textindex, frontMatter.caption);
   } else {
-    return t.markdownBlockFromData(blockText, frontMatter.open, frontMatter.reference);
+    return t.markdownBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption);
   }
   } catch (e) {
     return t.markdownBlock(text);
@@ -260,5 +264,6 @@ export function isTruthy(x) {
 }
 
 export function hasVersions(block:t.TextBlock) {
+  if (block.type === "embeddedText") return false;
   return block.versions && block.versions.length > 0;
 }

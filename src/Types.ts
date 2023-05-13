@@ -100,8 +100,20 @@ export type CodeBlock = BaseBlock & {
   language?: string;
 }
 
-export const blockTypes = ["plain", "markdown", "code"];
-export type BlockType = "plain" | "markdown" | "code";
+export type EmbeddedTextBlock = {
+  type: "embeddedText";
+  text: string;
+  bookid: string;
+  reference: false;
+  chapterid?: string;
+  textindex?: number;
+  open?: boolean;
+  id?: string;  
+  caption?: string;
+};
+
+export const blockTypes = ["plain", "markdown", "code", "embeddedText"];
+export type BlockType = "plain" | "markdown" | "code" | "embeddedText";
 
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
@@ -114,19 +126,23 @@ export function codeBlock(text: string, language:string): CodeBlock {
   return { type: "code", open: true, id: nanoid(), text, reference: false, language };
 }
 
-export function plainTextBlockFromData(text: string, open:boolean, reference:boolean): PlainTextBlock {
-  return { type: "plain", open, id: nanoid(), text, reference };
+export function plainTextBlockFromData(text: string, open:boolean, reference:boolean, caption?:string): PlainTextBlock {
+  return { type: "plain", open, id: nanoid(), text, reference, caption };
 }
 
-export function markdownBlockFromData(text: string, open:boolean, reference:boolean): MarkdownBlock {
-  return { type: "markdown", open, id: nanoid(), text, reference };
+export function markdownBlockFromData(text: string, open:boolean, reference:boolean, caption?:string): MarkdownBlock {
+  return { type: "markdown", open, id: nanoid(), text, reference, caption };
 }
 
-export function codeBlockFromData(text: string, open:boolean, reference:boolean, language:string): CodeBlock {
-  return { type: "code", open, id: nanoid(), text, reference, language };
+export function codeBlockFromData(text: string, open:boolean, reference:boolean, language:string, caption?:string): CodeBlock {
+  return { type: "code", open, id: nanoid(), text, reference, language, caption };
 }
 
-export type TextBlock = PlainTextBlock | MarkdownBlock | CodeBlock;
+export function embeddedTextBlockFromData(text: string, open:boolean, bookid: string, chapterid?: string, textindex?: number, caption?:string): EmbeddedTextBlock {
+  return { type: "embeddedText", open, id: nanoid(), reference:false, text, bookid, chapterid, textindex, caption };
+}
+
+export type TextBlock = PlainTextBlock | MarkdownBlock | CodeBlock | EmbeddedTextBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 
