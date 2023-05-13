@@ -24,6 +24,7 @@ import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 import Input from "./components/Input";
 import { RootState } from "./store";
 import sortBy from "lodash/sortBy";
+import { nanoid } from "nanoid";
 
 // import Draggable from "react-draggable";
 
@@ -213,12 +214,27 @@ export default function ChapterList({
               title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
               window.location.pathname = `/api/exportChapter/${chapter.bookid}/${chapter.chapterid}/${title}.md`;
             }}
+            onDuplicate={() => {
+              duplicateChapter(chapter);
+            }}
             selector="chapterlist"
           />
         </li>
       );
     });
   };
+
+  async function duplicateChapter(chapter) {
+    const newChapter = { ...chapter, chapterid: nanoid() };
+    newChapter.title = `${newChapter.title} (copy)`;
+    await saveChapter(newChapter);
+    dispatch(
+      librarySlice.actions.addChapter({
+        chapter: newChapter,
+        bookid: chapter.bookid,
+      })
+    );
+  }
 
   async function renameChapter(chapter, newTitle) {
     const newChapter = { ...chapter, title: newTitle };

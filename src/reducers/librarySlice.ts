@@ -948,6 +948,7 @@ export const getSelectedBookChapters = (
       if (chapter) sortedChapters.push(chapter);
     });
     const sortedByCreated = sortBy(chapters, ["created_at"])
+    
     sortedByCreated.forEach((chapter) => {
       if (!sortedChapters.includes(chapter)) sortedChapters.push(chapter);
     });

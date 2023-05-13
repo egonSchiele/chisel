@@ -13,6 +13,7 @@ export default function ListItem({
   onRename = null,
   onMove = null,
   onExport = null,
+  onDuplicate = null,
   content = "",
   selector = "listitem",
   tag = null,
@@ -26,6 +27,7 @@ export default function ListItem({
   onRename?: () => void;
   onMove?: () => void;
   onExport?: () => void;
+  onDuplicate?: () => void;
   content?: string;
   selector?: string;
   tag?: string;
@@ -57,6 +59,13 @@ export default function ListItem({
     listMenuItems.push({
       label: "Export",
       onClick: onExport,
+    });
+  }
+
+  if (onDuplicate) {
+    listMenuItems.push({
+      label: "Duplicate",
+      onClick: onDuplicate,
     });
   }
 
