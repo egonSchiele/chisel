@@ -3,7 +3,11 @@ import * as t from "./Types";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
 export default function ReadOnlyView({ textBlocks, fontClass }) {
+  const state: t.State = useSelector((state: RootState) => state.library);
+
   return textBlocks.map((text: t.TextBlock, index) => {
     if (text.type === "code") {
       return (
@@ -14,14 +18,26 @@ export default function ReadOnlyView({ textBlocks, fontClass }) {
         <MarkdownBlock text={text.text} key={index} className={fontClass} />
       );
     } else if (text.type === "embeddedText") {
-      return (
-        <pre key={index} className={`w-full typography ${fontClass}`}>
-          Embedded
-          <Link to={`/book/${text.bookid}/chapter/${text.chapterid}`}>
-            {text.bookid}/{text.chapterid}
-          </Link>
-        </pre>
-      );
+      let chapter = null;
+      let book = null;
+      if (text.bookid) {
+        book = state.books.find((book) => book.bookid === text.bookid);
+        if (book) {
+          chapter = book.chapters.find(
+            (chapter) => chapter.chapterid === text.chapterid
+          );
+        }
+      }
+      if (chapter) {
+        return (
+          <ReadOnlyView
+            textBlocks={chapter.text.filter((t) => t.open)}
+            fontClass={fontClass}
+          />
+        );
+      } else {
+        return null;
+      }
     } else {
       return (
         <pre key={index} className={`w-full typography ${fontClass}`}>
