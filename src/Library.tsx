@@ -1,3 +1,4 @@
+import { Transition } from "@headlessui/react";
 import LibErrorBoundary from "./LibErrorBoundary";
 import React, { Reducer, useCallback, useEffect, useState } from "react";
 import * as t from "./Types";
@@ -552,7 +553,7 @@ export default function Library({ mobile = false }) {
       </LibErrorBoundary>
     );
   }
-
+  const promptsOpen = state.panels.prompts.open && currentChapter && !mobile;
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
@@ -889,22 +890,34 @@ export default function Library({ mobile = false }) {
           </div>
           {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
-        {state.panels.prompts.open && currentChapter && !mobile && (
-          <div className="w-36 xl:w-48 flex-none h-screen overflow-auto">
-            <LibErrorBoundary component="Prompts sidebar">
-              <PromptsSidebar
-                settings={settings}
-                closeSidebar={() =>
-                  dispatch(librarySlice.actions.closePrompts())
-                }
-                onLoad={() => {
-                  dispatch(librarySlice.actions.openSidebar());
-                  dispatch(librarySlice.actions.setActivePanel("suggestions"));
-                }}
-              />
-            </LibErrorBoundary>
-          </div>
-        )}
+        {
+          <LibErrorBoundary component="Prompts sidebar">
+            <Transition
+              show={!!promptsOpen}
+              enter="transition ease-in-out duration-300 transform"
+              enterFrom="opacity-0 translate-x-full"
+              enterTo="translate-x-0 opacity-100"
+              leave="transition ease-in-out duration-300 transform"
+              leaveFrom="translate-x-0 opacity-100"
+              leaveTo="opacity-0 translate-x-full"
+            >
+              <div className={`w-36 xl:w-48 flex-none h-screen overflow-auto`}>
+                <PromptsSidebar
+                  settings={settings}
+                  closeSidebar={() =>
+                    dispatch(librarySlice.actions.closePrompts())
+                  }
+                  onLoad={() => {
+                    dispatch(librarySlice.actions.openSidebar());
+                    dispatch(
+                      librarySlice.actions.setActivePanel("suggestions")
+                    );
+                  }}
+                />
+              </div>
+            </Transition>
+          </LibErrorBoundary>
+        }
 
         {state.panels.sidebar.open && currentChapter && !mobile && (
           <div className={`${sidebarWidth} flex-none h-screen overflow-auto`}>
