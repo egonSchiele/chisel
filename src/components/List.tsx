@@ -37,7 +37,7 @@ function MenuItem({
       }}
       data-label={label}
     >
-      <span className="sr-only">{label}</span>
+      <span className="sr-only ">{label}</span>
       {_icon}
     </div>
   );
@@ -111,7 +111,7 @@ export default function List({
 
   return (
     <div
-      className={`p-xs border-r border-listBorder dark:border-dmlistBorder h-screen overflow-y-auto overflow-x-hidden w-full ${className} ${
+      className={`p-xs h-screen overflow-y-auto overflow-x-hidden w-full ${className} ${
         dragOver && "dark:bg-gray-700"
       } `}
       onDragOver={(e) => {
@@ -134,7 +134,7 @@ export default function List({
         {level === 1 && (
           <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
             <h3
-              className="text-md md:text-sm uppercase font-semibold"
+              className="text-md md:text-sm uppercase font-semibold text-gray-700 dark:text-gray-300"
               onClick={onTitleClick}
             >
               {title}

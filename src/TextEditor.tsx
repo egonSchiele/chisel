@@ -313,8 +313,8 @@ function TextEditor({
     }
   }
 
-  let borderColor = "border-gray-500";
-  if (isActive) borderColor = "border-gray-400";
+  let borderColor = "border-gray-700";
+  if (isActive) borderColor = "border-gray-600";
   if (highlight) borderColor = "border-green-400";
 
   let textColor = "text-gray-300 dark:text-gray-500";

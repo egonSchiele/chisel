@@ -433,7 +433,15 @@ export default function Library({ mobile = false }) {
   }
 
   if (!state.booksLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen w-screen ">
+        <div className="bg-sidebar dark:bg-dmsidebar border-r border-gray-700 w-48 h-screen"></div>
+        <div className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-gray-700 w-48 h-screen" />
+        <div className="flex-grow h-screen mx-16 my-16 text-md uppercase">
+          Loading...
+        </div>
+      </div>
+    );
   }
 
   const sidebarWidth =
@@ -632,11 +640,11 @@ export default function Library({ mobile = false }) {
         )}
         {state.panels.bookList.open && !mobile && (
           <LibErrorBoundary component="book list">
-            <div
-              className={`flex-none h-full ${
+            <div className={`flex-none h-full w-48`}>
+              {/*  ${
                 state.panels.chapterList.open ? "w-48 xl:w-60" : "w-60"
               }`}
-            >
+            > */}
               <BookList
                 books={state.books}
                 selectedBookId={state.selectedBookId}
@@ -648,7 +656,7 @@ export default function Library({ mobile = false }) {
                   }
                 }}
                 newBook={newBook}
-                canCloseSidebar={chapterid !== undefined}
+                canCloseSidebar={false}
                 saveBook={saveBook}
               />
             </div>
@@ -656,7 +664,7 @@ export default function Library({ mobile = false }) {
         )}
         {state.panels.chapterList.open && state.selectedBookId && !mobile && (
           <LibErrorBoundary component="chapter list">
-            <div className="flex-none w-48 xl:w-60 h-full">
+            <div className="flex-none w-48 h-full">
               <ChapterList
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
@@ -674,9 +682,7 @@ export default function Library({ mobile = false }) {
                   dispatch(librarySlice.actions.closeChapterList())
                 }
                 newChapter={newChapter}
-                canCloseSidebar={
-                  chapterid !== undefined || isTruthy(state.selectedBookId)
-                }
+                canCloseSidebar={false}
               />
             </div>
           </LibErrorBoundary>

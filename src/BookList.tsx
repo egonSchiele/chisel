@@ -137,14 +137,6 @@ export default function BookList({
     }
   }
 
-  const rightMenuItem = canCloseSidebar && {
-    label: "Close",
-    icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
-    onClick: close,
-    className: buttonStyles,
-    animate: true,
-  };
-
   const newMenuItem = {
     label: "New",
     icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
@@ -165,7 +157,7 @@ export default function BookList({
     },
   ];
 
-  const dropdownMenu = {
+  const leftMenuItem = {
     label: "Menu",
     icon: (
       <ListMenu
@@ -180,7 +172,7 @@ export default function BookList({
     className: buttonStyles,
   };
 
-  let leftMenuItem = [newMenuItem, dropdownMenu];
+  let rightMenuItem = newMenuItem;
 
   const upload = (
     <input

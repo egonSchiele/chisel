@@ -301,21 +301,21 @@ export default function ChapterList({
 
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
-  let rightMenuItem = canCloseSidebar && {
+  /* let rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
     className: buttonStyles,
     animate: true,
-  };
+  }; */
 
-  rightMenuItem = mobile && {
+  /*  rightMenuItem = mobile && {
     label: "Back",
     icon: <p>Back</p>,
     onClick: () => navigate("/"),
     className: buttonStyles,
     animate: true,
-  };
+  }; */
 
   const newMenuItem = {
     label: "New",
@@ -349,7 +349,7 @@ export default function ChapterList({
     },
   ];
 
-  const dropdownMenu = {
+  const leftMenuItem = {
     label: "Menu",
     icon: (
       <ListMenu
@@ -363,19 +363,10 @@ export default function ChapterList({
     className: buttonStyles,
   };
 
-  let leftMenuItem = [newMenuItem, dropdownMenu];
-
-  leftMenuItem = leftMenuItem.map((item, idx) => {
-    let { className } = item;
-    if (idx !== leftMenuItem.length - 1) {
-      className = `${className} mr-xs`;
-    }
-
-    return { ...item, className };
-  });
+  let rightMenuItem: any = newMenuItem; //, dropdownMenu];
 
   if (editing) {
-    leftMenuItem = [
+    rightMenuItem = [
       {
         label: "Done",
         icon: <p>Done</p>,
@@ -425,7 +416,7 @@ export default function ChapterList({
           items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
           rightMenuItem={rightMenuItem}
           leftMenuItem={leftMenuItem}
-          className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+          className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-gray-700"
           onDrop={dropHandler}
           selector="chapterlist"
           onTitleClick={() => setMode("references")}
@@ -490,7 +481,7 @@ export default function ChapterList({
         items={referenceItems}
         leftMenuItem={null}
         rightMenuItem={rightMenuItem}
-        className="bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+        className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-500"
         selector="referencelist"
         onTitleClick={() => setMode("chapters")}
       />

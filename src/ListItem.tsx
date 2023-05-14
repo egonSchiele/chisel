@@ -33,9 +33,7 @@ export default function ListItem({
   tag?: string;
   contentClassName?: string;
 }) {
-  const selectedCss = selected
-    ? "bg-listitemhover dark:bg-dmlistitemhover"
-    : "";
+  const selectedCss = selected ? "border-l-4 border-gray-500" : "";
   const listMenuItems: t.MenuItem[] = [];
   if (onDelete) {
     listMenuItems.push({
@@ -71,9 +69,7 @@ export default function ListItem({
 
   return (
     <div
-      className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center rounded-md hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} ${
-        content && "border-b border-gray-200 dark:border-gray-700"
-      }`}
+      className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss}`}
     >
       <Link
         to={link}
@@ -104,7 +100,7 @@ export default function ListItem({
               {title}
             </p>
             <p
-              className={`px-xs text-gray-500 dark:text-gray-400 line-clamp-2 text-ellipsis ${contentClassName}`}
+              className={`px-xs text-gray-300 dark:text-gray-500 line-clamp-2 leading-4  text-ellipsis ${contentClassName}`}
             >
               {content}
             </p>
