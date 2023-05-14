@@ -20,6 +20,7 @@
     "css-loader": "^6.7.3",
     "cypress": "^12.9.0",
     "depcheck": "^1.4.3",
+    "electron": "^24.3.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "^2.27.5",
@@ -96,6 +97,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "estart": "electron  main.cjs",
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",
