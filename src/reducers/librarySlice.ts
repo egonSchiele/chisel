@@ -655,6 +655,7 @@ export const librarySlice = createSlice({
       const block = chapter.text[index];
       if (block.type === "embeddedText") return;
       block.versions = [];
+      block.diffWith = null;
       block.id = nanoid();
 
       state.saved = false;

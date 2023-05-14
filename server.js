@@ -812,8 +812,8 @@ function checkUsage(user) {
     return failure("no openai api permissions");
   }
   let month_total = 0;
-  month_total += user.usage.openai_api.tokens.month.prompt;
-  month_total += user.usage.openai_api.tokens.month.completion;
+  month_total += user.usage.openai_api.tokens.month.prompt || 0;
+  month_total += user.usage.openai_api.tokens.month.completion || 0;
 
   if (user.guest && month_total > settings.maxMonthlyGuestTokens) {
     return failure("monthly guest token limit reached");
@@ -824,11 +824,11 @@ function checkUsage(user) {
 }
 
 async function updateUsage(user, usage) {
-  user.usage.openai_api.tokens.month.prompt += usage.prompt_tokens;
-  user.usage.openai_api.tokens.month.completion += usage.completion_tokens;
+  user.usage.openai_api.tokens.month.prompt += usage.prompt_tokens || 0;
+  user.usage.openai_api.tokens.month.completion += usage.completion_tokens || 0;
 
-  user.usage.openai_api.tokens.total.prompt += usage.prompt_tokens;
-  user.usage.openai_api.tokens.total.completion += usage.completion_tokens;
+  user.usage.openai_api.tokens.total.prompt += usage.prompt_tokens || 0;
+  user.usage.openai_api.tokens.total.completion += usage.completion_tokens || 0;
 
   await saveUser(user);
 }
