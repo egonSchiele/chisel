@@ -129,7 +129,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   return (
     <div
       id="editDiv"
-      className="flex h-screen overflow-y-auto overflow-x-visible w-full max-w-5xl mx-auto"
+      className="flex h-screen overflow-y-auto overflow-x-visible w-full"
       ref={editDiv}
     >
       <div className="mx-auto w-full max-w-4xl px-sm  mb-sm h-full">
