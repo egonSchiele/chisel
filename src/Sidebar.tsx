@@ -46,7 +46,7 @@ function Navigation({
   fullscreen,
   exitFullscreen,
 }) {
-  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
+  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48";
   return (
     <div className={`${width} flex`}>
       <div className="flex-grow" />

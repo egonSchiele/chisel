@@ -157,8 +157,8 @@ export const librarySlice = createSlice({
       state.editor = initialEditorState(chapter);
       state.selectedChapterId = chapterId;
       state.suggestions = chapter.suggestions;
-      state.panels.bookList.open = false;
-      state.panels.chapterList.open = false;
+      //state.panels.bookList.open = false;
+      //state.panels.chapterList.open = false;
     },
     setNoChapter(state) {
       state.editor = initialEditorState(null);

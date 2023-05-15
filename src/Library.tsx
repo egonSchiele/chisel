@@ -47,6 +47,7 @@ import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
 import Popup from "./Popup";
 import LibraryLauncher from "./LibraryLauncher";
+import SlideTransition from "./components/SlideTransition";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -553,7 +554,23 @@ export default function Library({ mobile = false }) {
       </LibErrorBoundary>
     );
   }
-  const promptsOpen = state.panels.prompts.open && currentChapter && !mobile;
+  const promptsOpen = !!(
+    state.panels.prompts.open &&
+    currentChapter &&
+    !mobile
+  );
+  const sidebarOpen = !!(
+    state.panels.sidebar.open &&
+    currentChapter &&
+    !mobile
+  );
+  const chapterListOpen = !!(
+    state.panels.chapterList.open &&
+    state.selectedBookId &&
+    !mobile
+  );
+
+  const bookListOpen = !!(state.panels.bookList.open && !mobile);
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
@@ -628,7 +645,7 @@ export default function Library({ mobile = false }) {
           </div>
         </div>
       )}
-      <div className="flex h-full w-full">
+      <div className="relative h-full w-full">
         {state.popupOpen && state.popupData && (
           <LibErrorBoundary component="popup">
             <Popup
@@ -639,58 +656,13 @@ export default function Library({ mobile = false }) {
             />
           </LibErrorBoundary>
         )}
-        {state.panels.bookList.open && !mobile && (
-          <LibErrorBoundary component="book list">
-            <div className={`flex-none h-full w-48`}>
-              {/*  ${
-                state.panels.chapterList.open ? "w-48 xl:w-60" : "w-60"
-              }`}
-            > */}
-              <BookList
-                books={state.books}
-                selectedBookId={state.selectedBookId}
-                onDelete={(deletedBookid) => {
-                  dispatch(librarySlice.actions.deleteBook(deletedBookid));
-                  if (deletedBookid === bookid) {
-                    dispatch(librarySlice.actions.noBookSelected());
-                    navigate("/");
-                  }
-                }}
-                newBook={newBook}
-                canCloseSidebar={false}
-                saveBook={saveBook}
-              />
-            </div>
-          </LibErrorBoundary>
-        )}
-        {state.panels.chapterList.open && state.selectedBookId && !mobile && (
-          <LibErrorBoundary component="chapter list">
-            <div className="flex-none w-48 h-full">
-              <ChapterList
-                bookid={state.selectedBookId}
-                selectedChapterId={chapterid || ""}
-                onDelete={(deletedChapterid) => {
-                  dispatch(
-                    librarySlice.actions.deleteChapter(deletedChapterid)
-                  );
-                  if (deletedChapterid === chapterid) {
-                    dispatch(librarySlice.actions.noChapterSelected());
-                    navigate(`/book/${state.selectedBookId}`);
-                  }
-                }}
-                saveChapter={(chapter) => saveChapter(chapter, null)}
-                closeSidebar={() =>
-                  dispatch(librarySlice.actions.closeChapterList())
-                }
-                newChapter={newChapter}
-                canCloseSidebar={false}
-              />
-            </div>
-          </LibErrorBoundary>
-        )}
 
-        <div className="h-full w-full flex flex-col flex-grow bg-editor dark:bg-dmeditor">
-          <div className="flex-none h-fit m-xs flex">
+        {/*  nav */}
+        <div
+          className="h-8 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-800"
+          id="nav"
+        >
+          <div className=" m-xs flex">
             <div className="flex-none">
               {(!state.panels.bookList.open ||
                 !state.panels.chapterList.open) &&
@@ -705,6 +677,7 @@ export default function Library({ mobile = false }) {
                     selector="open-lists-button"
                   >
                     <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                    <p className="uppercase text-sm align-baseline">Open</p>
                   </NavButton>
                 )}
               {mobile && (
@@ -733,6 +706,7 @@ export default function Library({ mobile = false }) {
                     selector="open-lists-button"
                   >
                     <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                    <p className="uppercase text-sm align-baseline">Close</p>
                   </NavButton>
                 )}
             </div>
@@ -749,7 +723,7 @@ export default function Library({ mobile = false }) {
                 {state.saved && (
                   <NavButton label="Saved" onClick={() => {}}>
                     <CheckCircleIcon
-                      className="h-5 w-5 text-green-700 dark:text-green-300"
+                      className="h-5 w-5 text-blue-700 dark:text-blue-400"
                       aria-hidden="true"
                     />
                   </NavButton>
@@ -795,7 +769,7 @@ export default function Library({ mobile = false }) {
                   {state.saved && (
                     <NavButton label="Saved" onClick={() => {}}>
                       <CheckCircleIcon
-                        className="h-5 w-5 text-green-700 dark:text-green-300"
+                        className="h-5 w-5 text-blue-700 dark:text-blue-400"
                         aria-hidden="true"
                       />
                     </NavButton>
@@ -874,54 +848,104 @@ export default function Library({ mobile = false }) {
               </LibErrorBoundary>
             )}
           </div>
-          <div className="flex-grow h-full w-full">
+        </div>
+
+        <div
+          className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
+          id="editor"
+        >
+          <div className="h-full w-full">
             {bookid && !currentChapter && (
               <LibErrorBoundary component="front matter section">
                 <BookEditor />
               </LibErrorBoundary>
             )}
           </div>
-          <div className="flex-grow h-full w-full bg-editor dark:bg-dmeditor mb-60">
+          <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
             {currentChapter && (
               <LibErrorBoundary component="editor">
                 <Editor settings={settings} />
               </LibErrorBoundary>
             )}
           </div>
-          {/*  we run a risk of the book id being closed and not being able to be reopened */}
         </div>
-        {
-          <LibErrorBoundary component="Prompts sidebar">
-            <Transition
-              show={!!promptsOpen}
-              enter="transition ease-in-out duration-300 transform"
-              enterFrom="opacity-0 translate-x-full"
-              enterTo="translate-x-0 opacity-100"
-              leave="transition ease-in-out duration-300 transform"
-              leaveFrom="translate-x-0 opacity-100"
-              leaveTo="opacity-0 translate-x-full"
-            >
-              <div className={`w-36 xl:w-48 flex-none h-screen overflow-auto`}>
-                <PromptsSidebar
-                  settings={settings}
-                  closeSidebar={() =>
-                    dispatch(librarySlice.actions.closePrompts())
-                  }
-                  onLoad={() => {
-                    dispatch(librarySlice.actions.openSidebar());
-                    dispatch(
-                      librarySlice.actions.setActivePanel("suggestions")
-                    );
-                  }}
-                />
-              </div>
-            </Transition>
-          </LibErrorBoundary>
-        }
 
-        {state.panels.sidebar.open && currentChapter && !mobile && (
-          <div className={`${sidebarWidth} flex-none h-screen overflow-auto`}>
-            <LibErrorBoundary component="sidebar">
+        <LibErrorBoundary component="book list">
+          <SlideTransition show={bookListOpen} direction="left">
+            <div
+              className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
+              id="booklist"
+            >
+              <BookList
+                books={state.books}
+                selectedBookId={state.selectedBookId}
+                onDelete={(deletedBookid) => {
+                  dispatch(librarySlice.actions.deleteBook(deletedBookid));
+                  if (deletedBookid === bookid) {
+                    dispatch(librarySlice.actions.noBookSelected());
+                    navigate("/");
+                  }
+                }}
+                newBook={newBook}
+                canCloseSidebar={false}
+                saveBook={saveBook}
+              />
+            </div>
+          </SlideTransition>
+        </LibErrorBoundary>
+
+        <LibErrorBoundary component="chapter list">
+          <SlideTransition show={chapterListOpen} direction="left">
+            <div className="absolute top-0 left-48 w-48 h-full z-10 mt-8">
+              <ChapterList
+                bookid={state.selectedBookId}
+                selectedChapterId={chapterid || ""}
+                onDelete={(deletedChapterid) => {
+                  dispatch(
+                    librarySlice.actions.deleteChapter(deletedChapterid)
+                  );
+                  if (deletedChapterid === chapterid) {
+                    dispatch(librarySlice.actions.noChapterSelected());
+                    navigate(`/book/${state.selectedBookId}`);
+                  }
+                }}
+                saveChapter={(chapter) => saveChapter(chapter, null)}
+                closeSidebar={() =>
+                  dispatch(librarySlice.actions.closeChapterList())
+                }
+                newChapter={newChapter}
+                canCloseSidebar={false}
+              />
+            </div>
+          </SlideTransition>
+        </LibErrorBoundary>
+
+        <LibErrorBoundary component="Prompts sidebar">
+          <SlideTransition show={!!promptsOpen} direction="right">
+            <div
+              className={`w-48 absolute top-0 ${
+                sidebarOpen ? "right-48" : "right-0"
+              } h-screen overflow-auto  mt-8`}
+            >
+              <PromptsSidebar
+                settings={settings}
+                closeSidebar={() =>
+                  dispatch(librarySlice.actions.closePrompts())
+                }
+                onLoad={() => {
+                  dispatch(librarySlice.actions.openSidebar());
+                  dispatch(librarySlice.actions.setActivePanel("suggestions"));
+                }}
+              />
+            </div>
+          </SlideTransition>
+        </LibErrorBoundary>
+
+        <LibErrorBoundary component="sidebar">
+          <SlideTransition show={!!sidebarOpen} direction="right">
+            <div
+              className={`absolute top-0 right-0 h-screen overflow-auto  mt-8`}
+            >
               <Sidebar
                 settings={settings}
                 setSettings={setSettings}
@@ -951,9 +975,9 @@ export default function Library({ mobile = false }) {
                   await onTextEditorSave(state, true);
                 }}
               />
-            </LibErrorBoundary>
-          </div>
-        )}
+            </div>
+          </SlideTransition>
+        </LibErrorBoundary>
       </div>
     </div>
   );

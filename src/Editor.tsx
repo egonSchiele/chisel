@@ -132,7 +132,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       className="flex h-screen overflow-y-auto overflow-x-visible w-full"
       ref={editDiv}
     >
-      <div className="mx-auto w-full max-w-4xl px-sm  mb-sm h-full">
+      <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full ">
         <ContentEditable
           value={currentChapterTitle}
           className={`text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mx-auto text-center w-full mt-sm md:mt-0 ${fontClass}`}
