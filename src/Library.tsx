@@ -446,8 +446,7 @@ export default function Library({ mobile = false }) {
     );
   }
 
-  const sidebarWidth =
-    state.viewMode === "fullscreen" ? "w-96" : "w-48 xl:w-72";
+  const sidebarWidth = state.viewMode === "fullscreen" ? "w-96" : "w-48";
 
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
@@ -666,7 +665,8 @@ export default function Library({ mobile = false }) {
             <div className="flex-none">
               {(!state.panels.bookList.open ||
                 !state.panels.chapterList.open) &&
-                !mobile && (
+                !mobile &&
+                currentChapter && (
                   <NavButton
                     label="Open"
                     onClick={() => {
@@ -695,7 +695,8 @@ export default function Library({ mobile = false }) {
 
               {state.panels.bookList.open &&
                 state.panels.chapterList.open &&
-                !mobile && (
+                !mobile &&
+                currentChapter && (
                   <NavButton
                     label="Close"
                     onClick={() => {
@@ -896,7 +897,11 @@ export default function Library({ mobile = false }) {
 
         <LibErrorBoundary component="chapter list">
           <SlideTransition show={chapterListOpen} direction="left">
-            <div className="absolute top-0 left-48 w-48 h-full z-10 mt-8">
+            <div
+              className={`absolute top-0 ${
+                bookListOpen ? "left-48" : "left-0"
+              } w-48 h-full z-10 mt-8`}
+            >
               <ChapterList
                 bookid={state.selectedBookId}
                 selectedChapterId={chapterid || ""}
@@ -944,7 +949,7 @@ export default function Library({ mobile = false }) {
         <LibErrorBoundary component="sidebar">
           <SlideTransition show={!!sidebarOpen} direction="right">
             <div
-              className={`absolute top-0 right-0 h-screen overflow-auto  mt-8`}
+              className={`absolute top-0 right-0 h-screen overflow-auto w-48 mt-8`}
             >
               <Sidebar
                 settings={settings}

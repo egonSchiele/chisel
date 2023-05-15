@@ -171,7 +171,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           return (
             <>
               {hasVersions(text) && (
-                <div className="text-sm flex items-center mb-sm ml-md">
+                <div className="text-sm flex items-center mb-sm mt-md ml-24">
                   <p className="mr-xs uppercase text-gray-400 dark:text-gray-400">
                     Diff against:
                   </p>

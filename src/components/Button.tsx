@@ -25,7 +25,7 @@ export default function Button({
 
   if (style === "secondary") {
     colors =
-      "bg-red-700 hover:bg-buttonhover text-white hover:text-buttonhovertext dark:bg-red-700 dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary";
+      "bg-blue-700 hover:bg-buttonhover text-white hover:text-buttonhovertext dark:bg-blue-700 dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary";
   }
 
   const sizes = {
