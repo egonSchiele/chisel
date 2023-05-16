@@ -106,10 +106,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     return (
       <div
         ref={readonlyDiv}
-        className="flex h-screen overflow-auto w-full max-w-3xl mx-auto  "
+        className="flex h-screen overflow-auto w-full mx-auto  "
         id="readonly"
       >
-        <div className="mx-auto w-full px-sm  mb-sm h-full">
+        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full">
           <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
             {currentChapterTitle}
           </h1>

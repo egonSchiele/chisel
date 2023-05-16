@@ -676,8 +676,8 @@ export default function Library({ mobile = false }) {
                     className="p-0"
                     selector="open-lists-button"
                   >
-                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                    <p className="uppercase text-sm align-baseline">Open</p>
+                    <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+                    <p className="uppercase text-xs align-baseline">Open</p>
                   </NavButton>
                 )}
               {mobile && (
@@ -706,8 +706,8 @@ export default function Library({ mobile = false }) {
                     className="p-0"
                     selector="open-lists-button"
                   >
-                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                    <p className="uppercase text-sm align-baseline">Close</p>
+                    <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+                    <p className="uppercase text-xs align-baseline">Close</p>
                   </NavButton>
                 )}
             </div>
@@ -757,7 +757,7 @@ export default function Library({ mobile = false }) {
                     )}
 
                   {state.viewMode === "readonly" && (
-                    <span className="text-gray-300 dark:text-gray-500 text-xs uppercase mr-xs">
+                    <span className="text-gray-300 dark:text-gray-500 text-xs uppercase mr-xs inline-block align-middle h-6">
                       read only
                     </span>
                   )}
