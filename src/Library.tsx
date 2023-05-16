@@ -948,9 +948,7 @@ export default function Library({ mobile = false }) {
 
         <LibErrorBoundary component="sidebar">
           <SlideTransition show={!!sidebarOpen} direction="right">
-            <div
-              className={`absolute top-0 right-0 h-screen overflow-auto w-48 mt-8`}
-            >
+            <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
               <Sidebar
                 settings={settings}
                 setSettings={setSettings}

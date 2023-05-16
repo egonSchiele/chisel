@@ -111,9 +111,9 @@ export default function List({
 
   return (
     <div
-      className={`p-xs h-screen overflow-y-auto overflow-x-hidden w-full ${className} ${
+      className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} ${
         dragOver && "dark:bg-gray-700"
-      } `}
+      }  `}
       onDragOver={(e) => {
         e.stopPropagation();
         e.preventDefault();
