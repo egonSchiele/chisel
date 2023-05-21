@@ -29,7 +29,7 @@ import {
 } from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
-import NavButton from "./NavButton";
+import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,7 +43,7 @@ import {
 } from "./reducers/librarySlice";
 import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
-import Popup from "./Popup";
+import Popup from "./components/Popup";
 import LibraryLauncher from "./components/LibraryLauncher";
 import Button from "./components/Button";
 

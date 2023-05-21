@@ -4,7 +4,7 @@ import range from "lodash/range";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
 import { hedges } from "hedges";
-import NavButton from "./NavButton";
+import NavButton from "./components/NavButton";
 import { fillers } from "fillers";
 import cliches from "./lib/cliches";
 import List from "./components/List";

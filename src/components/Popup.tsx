@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Input from "./components/Input";
-import Button from "./components/Button";
+import Input from "./Input";
+import Button from "./Button";
 import { useDispatch } from "react-redux";
-import { librarySlice } from "./reducers/librarySlice";
-import * as t from "./Types";
-import { isString } from "./utils";
-import Select from "./components/Select";
+import { librarySlice } from "../reducers/librarySlice";
+import * as t from "../Types";
+import { isString } from "../utils";
+import Select from "./Select";
 function Popup({
   title,
   inputValue,

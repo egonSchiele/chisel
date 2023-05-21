@@ -8,7 +8,7 @@ import {
   HeartIcon,
 } from "@heroicons/react/24/outline";
 import { MenuItem, blockTypes } from "./Types";
-import ListMenu from "./ListMenu";
+import ListMenu from "./components/ListMenu";
 import { useDispatch } from "react-redux";
 import { librarySlice } from "./reducers/librarySlice";
 import { languages } from "./lib/languages";
