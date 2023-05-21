@@ -16,10 +16,10 @@ import {
   getSelectedChapterTitle,
   librarySlice,
 } from "./reducers/librarySlice";
-import { postWithCsrf } from "./fetchData";
+import { postWithCsrf } from "./lib/fetchData";
 import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
-import { useKeyDown, useKeyboardScroll } from "./hooks";
+import { useKeyDown, useKeyboardScroll } from "./lib/hooks";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
 import Select from "./components/Select";

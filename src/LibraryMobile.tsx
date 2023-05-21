@@ -7,7 +7,7 @@ import BookList from "./BookList";
 import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 import {
   getChapterText,
   getCsrfToken,
@@ -44,7 +44,7 @@ import {
 import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
 import Popup from "./Popup";
-import LibraryLauncher from "./LibraryLauncher";
+import LibraryLauncher from "./components/LibraryLauncher";
 import Button from "./components/Button";
 
 export default function Library() {

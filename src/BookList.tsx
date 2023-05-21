@@ -5,11 +5,11 @@ import { useDispatch } from "react-redux";
 import * as t from "./Types";
 import List from "./components/List";
 import Button from "./components/Button";
-import ListMenu from "./ListMenu";
-import ListItem from "./ListItem";
-import Popup from "./Popup";
+import ListMenu from "./components/ListMenu";
+import ListItem from "./components/ListItem";
+import Popup from "./components/Popup";
 import { getCsrfToken } from "./utils";
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 import { librarySlice } from "./reducers/librarySlice";
 import sortBy from "lodash/sortBy";
 

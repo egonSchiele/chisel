@@ -9,7 +9,7 @@ import Button from "./components/Button";
 import ReadOnlyView from "./ReadOnlyView";
 import { Link } from "react-router-dom";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import BlockMenu from "./BlockMenu";
+import BlockMenu from "./components/BlockMenu";
 
 export default function EmbeddedTextBlock({
   chapterid,

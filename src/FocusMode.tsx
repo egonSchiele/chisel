@@ -6,14 +6,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { hedges } from "hedges";
 import NavButton from "./NavButton";
 import { fillers } from "fillers";
-import cliches from "./cliches";
+import cliches from "./lib/cliches";
 import List from "./components/List";
 import { syllable } from "syllable";
 import Button from "./components/Button";
 import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
-import * as fd from "./fetchData";
-import { useKeyboardScroll } from "./hooks";
+import * as fd from "./lib/fetchData";
+import { useKeyboardScroll } from "./lib/hooks";
 
 type Annotation = {
   type: AnnotationType;

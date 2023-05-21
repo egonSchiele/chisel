@@ -3,8 +3,8 @@ import {
   getSelectedBook,
   getSelectedChapter,
   librarySlice,
-} from "./reducers/librarySlice";
-import * as fd from "./fetchData";
+} from "../reducers/librarySlice";
+import * as fd from "../lib/fetchData";
 import {
   DocumentArrowDownIcon,
   PlusIcon,
@@ -30,13 +30,13 @@ import {
   ArrowsUpDownIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "./store";
-import { fetchSuggestionsWrapper } from "./utils";
+import { AppDispatch, RootState } from "../store";
+import { fetchSuggestionsWrapper } from "../utils";
 import sortBy from "lodash/sortBy";
-import Launcher from "./Launcher";
-import { State, blockTypes, chapterStatuses } from "./Types";
+import Launcher from "../Launcher";
+import { State, blockTypes, chapterStatuses } from "../Types";
 import { useNavigate } from "react-router-dom";
-import { languages } from "./languages";
+import { languages } from "../lib/languages";
 
 export default function LibraryLauncher({
   onEditorSave,

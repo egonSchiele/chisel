@@ -11,7 +11,7 @@ import { MenuItem, blockTypes } from "./Types";
 import ListMenu from "./ListMenu";
 import { useDispatch } from "react-redux";
 import { librarySlice } from "./reducers/librarySlice";
-import { languages } from "./languages";
+import { languages } from "./lib/languages";
 import Tag from "./components/Tag";
 export default function CodeMenu({ currentText, index }) {
   const dispatch = useDispatch();

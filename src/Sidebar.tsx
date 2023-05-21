@@ -14,7 +14,7 @@ import Settings from "./Settings";
 import SuggestionPanel from "./SuggestionPanel";
 import Info from "./Info";
 import List from "./components/List";
-import NavButton from "./NavButton";
+import NavButton from "./components/NavButton";
 import { RootState } from "./store";
 import {
   getChapter,

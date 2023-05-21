@@ -12,11 +12,11 @@ import {
   Square2StackIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { MenuItem, blockTypes } from "./Types";
+import { MenuItem, blockTypes } from "../Types";
 import ListMenu from "./ListMenu";
 import { useDispatch } from "react-redux";
-import { librarySlice } from "./reducers/librarySlice";
-import { hasVersions } from "./utils";
+import { librarySlice } from "../reducers/librarySlice";
+import { hasVersions } from "../utils";
 export default function VersionsMenu({ currentText, index }) {
   const dispatch = useDispatch();
   const items: MenuItem[] = [];

@@ -11,10 +11,10 @@ import {
   EllipsisHorizontalIcon,
   HeartIcon,
 } from "@heroicons/react/24/outline";
-import { MenuItem, blockTypes } from "./Types";
+import { MenuItem, blockTypes } from "../Types";
 import ListMenu from "./ListMenu";
 import { useDispatch } from "react-redux";
-import { librarySlice } from "./reducers/librarySlice";
+import { librarySlice } from "../reducers/librarySlice";
 export default function BlockMenu({ currentText, index }) {
   const dispatch = useDispatch();
   const items: MenuItem[] = [

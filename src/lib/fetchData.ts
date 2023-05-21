@@ -1,5 +1,5 @@
-import * as t from "./Types";
-import { getCsrfToken } from "./utils";
+import * as t from "../Types";
+import { getCsrfToken } from "../utils";
 
 export const fetchBook = async (bookid: string): Promise<t.Result> => {
   if (!bookid) return t.error("No bookid");

@@ -1,8 +1,8 @@
 import React, { Suspense, useEffect } from "react";
 import * as JsDiff from "diff";
 import Button from "./components/Button";
-import { getFastHtmlDiff, getHtmlDiff } from "./diff";
-import { useKeyboardScroll } from "./hooks";
+import { getFastHtmlDiff, getHtmlDiff } from "./lib/diff";
+import { useKeyboardScroll } from "./lib/hooks";
 
 const DiffViewer = ({
   originalText,

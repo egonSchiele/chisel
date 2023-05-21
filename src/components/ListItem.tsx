@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { BoltIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import * as t from "./Types";
+import * as t from "../Types";
 import ListMenu from "./ListMenu";
 
 export default function ListItem({

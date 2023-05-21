@@ -8,7 +8,7 @@ import BookList from "./BookList";
 import { useNavigate, useParams } from "react-router-dom";
 import ChapterList from "./ChapterList";
 import Editor from "./Editor";
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 import {
   getChapterText,
   getCsrfToken,
@@ -31,7 +31,7 @@ import {
 } from "@heroicons/react/24/outline";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
-import NavButton from "./NavButton";
+import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
 import FocusMode from "./FocusMode";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,8 +45,8 @@ import {
 } from "./reducers/librarySlice";
 import DiffViewer from "./DiffViewer";
 import BookEditor from "./BookEditor";
-import Popup from "./Popup";
-import LibraryLauncher from "./LibraryLauncher";
+import Popup from "./components/Popup";
+import LibraryLauncher from "./components/LibraryLauncher";
 import SlideTransition from "./components/SlideTransition";
 
 export default function Library({ mobile = false }) {

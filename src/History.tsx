@@ -6,7 +6,7 @@ import Input from "./components/Input";
 import Select from "./components/Select";
 import * as t from "./Types";
 import Panel from "./components/Panel";
-import { getHtmlDiff } from "./diff";
+import { getHtmlDiff } from "./lib/diff";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 

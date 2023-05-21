@@ -1,4 +1,4 @@
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 import md5 from "md5";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, SetStateAction } from "react";
 
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 
 import { librarySlice } from "./reducers/librarySlice";
 import * as t from "./Types";

@@ -1,4 +1,4 @@
-import PlainClipboard from "./PlainClipboard";
+import PlainClipboard from "./components/PlainClipboard";
 import { fillers } from "fillers";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -29,11 +29,11 @@ import {
 
 import { hasVersions, useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
-import { languages } from "./languages";
-import BlockMenu from "./BlockMenu";
+import { languages } from "./lib/languages";
+import BlockMenu from "./components/BlockMenu";
 import CodeMenu from "./CodeMenu";
 import Tag from "./components/Tag";
-import VersionsMenu from "./VersionsMenu";
+import VersionsMenu from "./components/VersionsMenu";
 
 Quill.register("modules/clipboard", PlainClipboard, true);
 

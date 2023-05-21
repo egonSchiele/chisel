@@ -1,5 +1,5 @@
 import React from "react";
-import SyntaxHighlighter from "../languages";
+import SyntaxHighlighter from "../lib/languages";
 import zenburn from "react-syntax-highlighter/dist/esm/styles/hljs/zenburn";
 
 export default function CodeBlock({

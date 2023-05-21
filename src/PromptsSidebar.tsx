@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ButtonGroup from "./components/ButtonGroup";
 import Button from "./components/Button";
 import * as t from "./Types";
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 import List from "./components/List";
 import Spinner from "./components/Spinner";
 import { fetchSuggestionsWrapper } from "./utils";

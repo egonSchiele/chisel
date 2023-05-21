@@ -12,12 +12,12 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import * as fd from "./fetchData";
+import * as fd from "./lib/fetchData";
 import * as t from "./Types";
 import List from "./components/List";
 import Button from "./components/Button";
 import ListMenu from "./ListMenu";
-import ListItem from "./ListItem";
+import ListItem from "./components/ListItem";
 import Popup from "./Popup";
 import { getChapterText, getCsrfToken } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
