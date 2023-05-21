@@ -240,7 +240,7 @@ function CompostBook() {
   );
 }
 
-export default function BookEditor() {
+export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
@@ -279,8 +279,11 @@ export default function BookEditor() {
     return <CompostBook />;
   }
   return (
-    <div className="flex h-screen overflow-auto w-full">
-      <div className="mx-auto px-sm lg:px-md mt-0 h-full w-full">
+    <div
+      className={`flex h-screen overflow-auto w-fit ${className}`}
+      id="bookeditor"
+    >
+      <div className="mx-auto px-sm lg:px-md h-screen w-fit">
         <ContentEditable
           value={book.title}
           className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest"

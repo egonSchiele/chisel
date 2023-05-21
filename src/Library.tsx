@@ -858,17 +858,19 @@ export default function Library({ mobile = false }) {
           <div className="h-full w-full">
             {bookid && !currentChapter && (
               <LibErrorBoundary component="front matter section">
-                <BookEditor />
+                <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                  <BookEditor />
+                </div>
               </LibErrorBoundary>
             )}
           </div>
-          <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
-            {currentChapter && (
-              <LibErrorBoundary component="editor">
+          {currentChapter && (
+            <LibErrorBoundary component="editor">
+              <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
                 <Editor settings={settings} />
-              </LibErrorBoundary>
-            )}
-          </div>
+              </div>
+            </LibErrorBoundary>
+          )}
         </div>
 
         <LibErrorBoundary component="book list">
