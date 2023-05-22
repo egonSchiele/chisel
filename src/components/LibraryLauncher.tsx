@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   getSelectedBook,
   getSelectedChapter,
@@ -34,19 +34,17 @@ import { AppDispatch, RootState } from "../store";
 import { fetchSuggestionsWrapper } from "../utils";
 import sortBy from "lodash/sortBy";
 import Launcher from "../Launcher";
-import { State, blockTypes, chapterStatuses } from "../Types";
+import {
+  LibraryContextType,
+  State,
+  blockTypes,
+  chapterStatuses,
+} from "../Types";
 import { useNavigate } from "react-router-dom";
 import { languages } from "../lib/languages";
+import LibraryContext from "../LibraryContext";
 
-export default function LibraryLauncher({
-  onEditorSave,
-  newChapter,
-  newBook,
-  newCompostNote,
-  renameBook,
-  renameChapter,
-  onLauncherClose,
-}) {
+export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
   const state: State = useSelector((state: RootState) => state.library);
   const currentBook = useSelector(getSelectedBook);
 
@@ -63,6 +61,8 @@ export default function LibraryLauncher({
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { newBook, newCompostNote, newChapter, renameBook, renameChapter } =
+    useContext(LibraryContext) as LibraryContextType;
 
   function togglePanel(panel: string) {
     if (
@@ -622,6 +622,7 @@ export default function LibraryLauncher({
 
   return (
     <Launcher
+      //@ts-ignore
       items={launchItems}
       open={state.launcherOpen}
       close={onLauncherClose}

@@ -22,15 +22,15 @@ export default function ListItem({
   link: string;
   title: string;
   selected: boolean;
-  onFavorite?: () => void;
-  onDelete?: () => void;
-  onRename?: () => void;
-  onMove?: () => void;
-  onExport?: () => void;
-  onDuplicate?: () => void;
+  onFavorite?: (() => void) | null;
+  onDelete?: (() => void) | null;
+  onRename?: (() => void) | null;
+  onMove?: (() => void) | null;
+  onExport?: (() => void) | null;
+  onDuplicate?: (() => void) | null;
   content?: string;
   selector?: string;
-  tag?: string;
+  tag?: string | null;
   contentClassName?: string;
 }) {
   const selectedCss = selected ? "border-l-4 border-gray-500" : "";

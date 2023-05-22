@@ -147,7 +147,7 @@ export default function Library({ mobile = false }) {
   const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
 
   const fetchBooks = async () => {
-    dispatch(fetchBooksThunk());
+    dispatch(fetchBooksThunk(null));
   };
 
   const fetchSettings = async () => {
@@ -201,6 +201,7 @@ export default function Library({ mobile = false }) {
   }
 
   async function saveToHistory(state: t.State) {
+    if (!currentChapter) return;
     await makeApiCall(fd.saveToHistory, [
       currentChapter.chapterid,
       saveTextToHistory(currentChapter),
@@ -219,7 +220,11 @@ export default function Library({ mobile = false }) {
     return result;
   }
 
-  async function newChapter(title = "New Chapter", text = "", _bookid = null) {
+  async function newChapter(
+    title = "New Chapter",
+    text = "",
+    _bookid: string | null = null
+  ) {
     const theBookid = _bookid || bookid;
     const result = await makeApiCall(fd.newChapter, [theBookid, title, text]);
     if (result.tag === "success") {
@@ -230,6 +235,7 @@ export default function Library({ mobile = false }) {
   }
 
   async function newCompostNote() {
+    if (compostBookId === null) return;
     const title = new Date().toDateString();
     await newChapter(title, "", compostBookId);
   }
@@ -246,7 +252,7 @@ export default function Library({ mobile = false }) {
 
   async function saveChapter(
     _chapter: t.Chapter,
-    suggestions: t.Suggestion[] | null
+    suggestions: t.Suggestion[] | null = null
   ) {
     let chapter: t.Chapter = { ..._chapter };
     if (suggestions !== null) {
@@ -300,6 +306,14 @@ export default function Library({ mobile = false }) {
     await saveChapter(newChapter, null);
   }
 
+  async function deleteChapter(deletedChapterid: string) {
+    dispatch(librarySlice.actions.deleteChapter(deletedChapterid));
+    if (deletedChapterid === chapterid) {
+      dispatch(librarySlice.actions.noChapterSelected());
+      navigate(`/book/${state.selectedBookId}`);
+    }
+  }
+
   async function saveBook(book: t.Book) {
     if (!book) {
       console.log("no book");
@@ -337,7 +351,7 @@ export default function Library({ mobile = false }) {
     }
   }
 
-  const libraryUtils = {
+  const libraryUtils: t.LibraryContextType = {
     newChapter,
     newBook,
     newCompostNote,
@@ -348,6 +362,7 @@ export default function Library({ mobile = false }) {
     setLoading,
     settings,
     usage,
+    deleteChapter,
   };
 
   if (!state.booksLoaded) {
@@ -478,11 +493,6 @@ export default function Library({ mobile = false }) {
         {state.launcherOpen && (
           <LibraryLauncher
             onEditorSave={onEditorSave}
-            newChapter={newChapter}
-            newBook={newBook}
-            newCompostNote={newCompostNote}
-            renameBook={renameBook}
-            renameChapter={renameChapter}
             onLauncherClose={onLauncherClose}
           />
         )}
@@ -527,11 +537,6 @@ export default function Library({ mobile = false }) {
           <LibErrorBoundary component="launcher">
             <LibraryLauncher
               onEditorSave={onEditorSave}
-              newChapter={newChapter}
-              newBook={newBook}
-              newCompostNote={newCompostNote}
-              renameBook={renameBook}
-              renameChapter={renameChapter}
               onLauncherClose={onLauncherClose}
             />
           </LibErrorBoundary>
@@ -601,25 +606,7 @@ export default function Library({ mobile = false }) {
                   bookListOpen ? "left-48" : "left-0"
                 } w-48 h-full z-10 mt-8`}
               >
-                <ChapterList
-                  bookid={state.selectedBookId}
-                  selectedChapterId={chapterid || ""}
-                  onDelete={(deletedChapterid) => {
-                    dispatch(
-                      librarySlice.actions.deleteChapter(deletedChapterid)
-                    );
-                    if (deletedChapterid === chapterid) {
-                      dispatch(librarySlice.actions.noChapterSelected());
-                      navigate(`/book/${state.selectedBookId}`);
-                    }
-                  }}
-                  saveChapter={(chapter) => saveChapter(chapter, null)}
-                  closeSidebar={() =>
-                    dispatch(librarySlice.actions.closeChapterList())
-                  }
-                  newChapter={newChapter}
-                  canCloseSidebar={false}
-                />
+                <ChapterList selectedChapterId={chapterid || ""} />
               </div>
             </SlideTransition>
           </LibErrorBoundary>

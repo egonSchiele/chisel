@@ -40,10 +40,16 @@ export type PopupData = {
   title: string;
   inputValue: string;
   options?: SelectOption[];
-  onSubmit: (value:string) => void;
-}
+  onSubmit: (value: string) => void;
+};
 
-export type ViewMode = "default" | "focus" | "fullscreen" | "grid" | "diff" | "readonly";
+export type ViewMode =
+  | "default"
+  | "focus"
+  | "fullscreen"
+  | "grid"
+  | "diff"
+  | "readonly";
 
 export type Panel = {
   open: boolean;
@@ -53,8 +59,6 @@ export type Panel = {
 export type PanelState = {
   [key: string]: Panel;
 };
-
-
 
 export type InfoPanelState = {
   syllables: number;
@@ -87,19 +91,19 @@ export type Version = {
   text: string;
   createdAt?: number;
   title: string;
-}
+};
 
 export type PlainTextBlock = BaseBlock & {
   type: "plain";
-}
+};
 export type MarkdownBlock = BaseBlock & {
   type: "markdown";
-}
+};
 
 export type CodeBlock = BaseBlock & {
   type: "code";
   language?: string;
-}
+};
 
 export type EmbeddedTextBlock = {
   type: "embeddedText";
@@ -109,7 +113,7 @@ export type EmbeddedTextBlock = {
   chapterid?: string;
   textindex?: number;
   open?: boolean;
-  id?: string;  
+  id?: string;
   caption?: string;
 };
 
@@ -120,30 +124,115 @@ export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
 }
 export function markdownBlock(text: string): MarkdownBlock {
-  return { type: "markdown", open: true, id: nanoid(), text, reference: false, versions:[] };
+  return {
+    type: "markdown",
+    open: true,
+    id: nanoid(),
+    text,
+    reference: false,
+    versions: [],
+  };
 }
 
-export function codeBlock(text: string, language:string): CodeBlock {
-  return { type: "code", open: true, id: nanoid(), text, reference: false, language };
+export function codeBlock(text: string, language: string): CodeBlock {
+  return {
+    type: "code",
+    open: true,
+    id: nanoid(),
+    text,
+    reference: false,
+    language,
+  };
 }
 
-export function plainTextBlockFromData(text: string, open:boolean, reference:boolean, caption?:string, versions?:Version[], diffWith?:string|null): PlainTextBlock {
-  return { type: "plain", open, id: nanoid(), text, reference, caption, versions, diffWith };
+export function plainTextBlockFromData(
+  text: string,
+  open: boolean,
+  reference: boolean,
+  caption?: string,
+  versions?: Version[],
+  diffWith?: string | null
+): PlainTextBlock {
+  return {
+    type: "plain",
+    open,
+    id: nanoid(),
+    text,
+    reference,
+    caption,
+    versions,
+    diffWith,
+  };
 }
 
-export function markdownBlockFromData(text: string, open:boolean, reference:boolean, caption?:string, versions?:Version[], diffWith?:string|null): MarkdownBlock {
-  return { type: "markdown", open, id: nanoid(), text, reference, caption, versions, diffWith };
+export function markdownBlockFromData(
+  text: string,
+  open: boolean,
+  reference: boolean,
+  caption?: string,
+  versions?: Version[],
+  diffWith?: string | null
+): MarkdownBlock {
+  return {
+    type: "markdown",
+    open,
+    id: nanoid(),
+    text,
+    reference,
+    caption,
+    versions,
+    diffWith,
+  };
 }
 
-export function codeBlockFromData(text: string, open:boolean, reference:boolean, language:string, caption?:string, versions?:Version[], diffWith?:string|null): CodeBlock {
-  return { type: "code", open, id: nanoid(), text, reference, language, caption, versions, diffWith };
+export function codeBlockFromData(
+  text: string,
+  open: boolean,
+  reference: boolean,
+  language: string,
+  caption?: string,
+  versions?: Version[],
+  diffWith?: string | null
+): CodeBlock {
+  return {
+    type: "code",
+    open,
+    id: nanoid(),
+    text,
+    reference,
+    language,
+    caption,
+    versions,
+    diffWith,
+  };
 }
 
-export function embeddedTextBlockFromData(text: string, open:boolean, bookid: string, chapterid?: string, textindex?: number, caption?:string): EmbeddedTextBlock {
-  return { type: "embeddedText", open, id: nanoid(), reference:false, text, bookid, chapterid, textindex, caption };
+export function embeddedTextBlockFromData(
+  text: string,
+  open: boolean,
+  bookid: string,
+  chapterid?: string,
+  textindex?: number,
+  caption?: string
+): EmbeddedTextBlock {
+  return {
+    type: "embeddedText",
+    open,
+    id: nanoid(),
+    reference: false,
+    text,
+    bookid,
+    chapterid,
+    textindex,
+    caption,
+  };
 }
 
-export type TextBlock = PlainTextBlock | MarkdownBlock | CodeBlock | EmbeddedTextBlock;
+export type TextBlock =
+  | PlainTextBlock
+  | MarkdownBlock
+  | CodeBlock
+  | EmbeddedTextBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 
@@ -162,7 +251,7 @@ export type Chapter = {
   embeddingsLastCalculatedAt?: number;
 };
 
-export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done" ;
+export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done";
 export const chapterStatuses = ["not-started", "in-progress", "paused", "done"];
 
 export type Column = {
@@ -178,8 +267,7 @@ export type Book = {
   author: string;
   chapterOrder: ChapterId[];
   chapters: Chapter[];
-  design: {
-  };
+  design: {};
   columnHeadings: string[];
   rowHeadings: string[];
   favorite: boolean;
@@ -196,14 +284,14 @@ export type Character = {
   name: string;
   description: string;
   imageUrl: string;
-}
+};
 
-export function newCharacter(data={}): Character {
+export function newCharacter(data = {}): Character {
   return {
     name: "",
     description: "",
     imageUrl: "",
-    ...data
+    ...data,
   };
 }
 
@@ -229,7 +317,7 @@ export type DesignPreferences = {
   font: string;
   fontSize: number;
   lineHeight: number;
-}
+};
 
 export type Prompt = {
   label: string;
@@ -285,7 +373,7 @@ export type Result = Error | Success;
 export const error = (message: string): Error => ({ tag: "error", message });
 export const success = (payload: any = null): Success => ({
   tag: "success",
-  payload
+  payload,
 });
 
 export type MenuItem = {
@@ -304,6 +392,20 @@ export type ReducerAction = {
 export type SelectOption = {
   label: string;
   value: string;
-}
+};
 
 type ActivePanel = "info" | "suggestions" | "settings" | "history";
+
+export type LibraryContextType = {
+  newChapter: (title?: any, text?: any, bookid?: any) => Promise<void>;
+  newBook: () => Promise<void>;
+  newCompostNote: () => Promise<void>;
+  renameBook: (bookid: string, newTitle: string) => Promise<void>;
+  renameChapter: (chapterid: string, newTitle: string) => Promise<void>;
+  saveBook: (book: Book) => Promise<void>;
+  saveChapter: (_chapter: Chapter, suggestions?: Suggestion[]) => Promise<void>;
+  setLoading: (loading: boolean) => void;
+  settings: UserSettings;
+  usage: Usage | null;
+  deleteChapter: (deletedChapterid: string) => Promise<void>;
+};

@@ -9,6 +9,11 @@ const DiffViewer = ({
   newText,
   onClose = null,
   onApply = null,
+}: {
+  originalText: string;
+  newText: string;
+  onClose?: null | (() => void);
+  onApply?: null | (() => void);
 }) => {
   const [raw, setRaw] = React.useState(false);
   const diffDiv = React.useRef(null);

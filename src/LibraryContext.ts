@@ -1,4 +1,4 @@
 import { createContext } from "react";
-
-const LibraryContext = createContext({});
+import * as t from "./Types";
+const LibraryContext = createContext<t.LibraryContextType | null>(null);
 export default LibraryContext;

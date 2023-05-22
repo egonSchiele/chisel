@@ -1,6 +1,6 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowsUpDownIcon,
@@ -25,27 +25,16 @@ import Input from "./components/Input";
 import { RootState } from "./store";
 import sortBy from "lodash/sortBy";
 import { nanoid } from "nanoid";
+import LibraryContext from "./LibraryContext";
 
 // import Draggable from "react-draggable";
 
 export default function ChapterList({
-  bookid,
   selectedChapterId,
-  onDelete,
-  saveChapter,
-  closeSidebar,
-  newChapter,
   mobile = false,
-  canCloseSidebar = true,
 }: {
-  bookid: string;
   selectedChapterId: string;
-  onDelete: any;
-  saveChapter: (chapter: t.Chapter) => Promise<void>;
-  closeSidebar: () => void;
-  newChapter: (title?: string, text?: string) => void;
   mobile?: boolean;
-  canCloseSidebar?: boolean;
 }) {
   const dispatch = useDispatch();
   const [mode, setMode] = React.useState("chapters");
@@ -56,12 +45,19 @@ export default function ChapterList({
       value: book.bookid,
     }))
   );
+  const bookid = useSelector(
+    (state: RootState) => state.library.selectedBookId
+  );
   const [editing, setEditing] = React.useState(false);
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
+  const { deleteChapter, saveChapter, newChapter } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
+
   const uploadFileRef = React.useRef<HTMLInputElement>(null);
-  async function deleteChapter(chapterid: string) {
+  async function _deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading);
     const res = await fetch(`/api/deleteChapter`, {
       method: "POST",
@@ -75,7 +71,7 @@ export default function ChapterList({
       console.log(res.statusText);
       return;
     }
-    onDelete(chapterid);
+    deleteChapter(chapterid);
   }
 
   const dropHandler = (ev) => {
@@ -126,7 +122,12 @@ export default function ChapterList({
   };
 
   const sublistSearch = () => {
-    const texts = [];
+    const texts: {
+      chapter: t.Chapter;
+      text: t.TextBlock;
+      preview: string;
+      textindex: number;
+    }[] = [];
     const term = searchTerm.toLowerCase();
     const previewLength = mobile ? 100 : 50;
     chapters.forEach((chapter, i) => {
@@ -148,37 +149,49 @@ export default function ChapterList({
       });
     });
 
-    return texts.map(({ chapter, text, preview, textindex }) => {
-      let title = chapter.title || "(no title)";
-      title = `[${textindex}] ${title}`;
-      if (chapter.status && chapter.status === "done") {
-        title = `✅ ${title}`;
-      } else if (chapter.status && chapter.status === "in-progress") {
-        title = `🚧 ${title}`;
-      }
+    return texts.map(
+      ({
+        chapter,
+        text,
+        preview,
+        textindex,
+      }: {
+        chapter: t.Chapter;
+        text: t.TextBlock;
+        preview: string;
+        textindex: number;
+      }) => {
+        let title = chapter.title || "(no title)";
+        title = `[${textindex}] ${title}`;
+        if (chapter.status && chapter.status === "done") {
+          title = `✅ ${title}`;
+        } else if (chapter.status && chapter.status === "in-progress") {
+          title = `🚧 ${title}`;
+        }
 
-      return (
-        <li
-          key={text.id}
-          className={
-            !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
-          }
-        >
-          <ListItem
-            link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}/${textindex}`}
-            title={title}
-            content={preview}
-            selected={false}
-            onDelete={null}
-            onFavorite={null}
-            onRename={null}
-            onMove={null}
-            onExport={null}
-            selector="searchlist"
-          />
-        </li>
-      );
-    });
+        return (
+          <li
+            key={text.id}
+            className={
+              !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
+            }
+          >
+            <ListItem
+              link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}/${textindex}`}
+              title={title}
+              content={preview}
+              selected={false}
+              onDelete={null}
+              onFavorite={null}
+              onRename={null}
+              onMove={null}
+              onExport={null}
+              selector="searchlist"
+            />
+          </li>
+        );
+      }
+    );
   };
 
   const sublistAll = () => {
@@ -205,7 +218,7 @@ export default function ChapterList({
               .join(". ")
               .substring(0, previewLength)}...`}
             selected={chapter.chapterid === selectedChapterId}
-            onDelete={() => deleteChapter(chapter.chapterid)}
+            onDelete={() => _deleteChapter(chapter.chapterid)}
             onFavorite={() => {}}
             onRename={() => startRenameChapter(chapter)}
             onMove={() => startMoveChapter(chapter)}
@@ -337,7 +350,7 @@ export default function ChapterList({
       label: "Import",
       icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        uploadFileRef.current.click();
+        if (uploadFileRef.current) uploadFileRef.current.click();
       },
       className: buttonStyles,
     },
@@ -428,7 +441,11 @@ export default function ChapterList({
     );
   }
 
-  const referenceBlocks = [];
+  const referenceBlocks: {
+    block: t.TextBlock;
+    index: number;
+    chapter: t.Chapter;
+  }[] = [];
   chapters.forEach((chapter) => {
     chapter.text.forEach((block, index) => {
       if (block.reference) {
@@ -466,7 +483,8 @@ export default function ChapterList({
           content={`${block.text.substring(0, previewLength)}...`}
           contentClassName="line-clamp-4"
           selected={
-            chapter.chapterid === selectedChapterId && index === textindex
+            chapter.chapterid === selectedChapterId &&
+            String(index) === textindex
           }
           selector="referencelist"
         />

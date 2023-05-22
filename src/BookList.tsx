@@ -10,6 +10,7 @@ import ListMenu from "./components/ListMenu";
 import * as fd from "./lib/fetchData";
 import { librarySlice } from "./reducers/librarySlice";
 import { RootState } from "./store";
+import { LibraryContextType } from "./Types";
 
 async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
@@ -39,7 +40,9 @@ export default function BookList() {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { newBook, saveBook } = useContext(LibraryContext) as any;
+  const { newBook, saveBook } = useContext(
+    LibraryContext
+  ) as LibraryContextType;
 
   function onDelete(deletedBookid) {
     dispatch(librarySlice.actions.deleteBook(deletedBookid));
@@ -71,7 +74,7 @@ export default function BookList() {
     ["title"]
   );
 
-  function bookListItem(book, tag = null) {
+  function bookListItem(book, tag: string | null = null) {
     return (
       <ListItem
         link={`/book/${book.bookid}`}
@@ -116,7 +119,7 @@ export default function BookList() {
 
   async function handleUpload(x) {
     const files = x.target.files;
-    const chapters = [];
+    const chapters: { title: string; text: string }[] = [];
 
     const promises = [...files].map(async (file, i) => {
       const text = await file.text();
@@ -150,7 +153,7 @@ export default function BookList() {
       label: "Import Book",
       icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        uploadFileRef.current.click();
+        if (uploadFileRef.current) uploadFileRef.current.click();
       },
       className: buttonStyles,
     },
