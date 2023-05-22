@@ -1,18 +1,14 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BoltIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useDispatch } from "react-redux";
-import * as t from "./Types";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import sortBy from "lodash/sortBy";
+import React, { useContext } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import LibraryContext from "./LibraryContext";
 import List from "./components/List";
-import Button from "./components/Button";
-import ListMenu from "./components/ListMenu";
 import ListItem from "./components/ListItem";
-import Popup from "./components/Popup";
-import { getCsrfToken } from "./utils";
+import ListMenu from "./components/ListMenu";
 import * as fd from "./lib/fetchData";
 import { librarySlice } from "./reducers/librarySlice";
-import sortBy from "lodash/sortBy";
-import { useSelector } from "react-redux";
 import { RootState } from "./store";
 
 async function deleteBook(bookid: string, onDelete) {
@@ -36,19 +32,14 @@ const buttonStyles =
   "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
-export default function BookList({
-  saveBook,
-  newBook,
-}: {
-  saveBook: (book: t.Book) => void;
-  newBook: () => void;
-}) {
+export default function BookList() {
   const books = useSelector((state: RootState) => state.library.books);
   const selectedBookId = useSelector(
     (state: RootState) => state.library.selectedBookId
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { newBook, saveBook } = useContext(LibraryContext) as any;
 
   function onDelete(deletedBookid) {
     dispatch(librarySlice.actions.deleteBook(deletedBookid));

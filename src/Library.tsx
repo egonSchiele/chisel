@@ -1,15 +1,4 @@
-import {
-  CheckCircleIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EllipsisHorizontalCircleIcon,
-  EyeIcon,
-  MinusIcon,
-  PencilIcon,
-  ScissorsIcon,
-  SparklesIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,18 +8,18 @@ import ChapterList from "./ChapterList";
 import DiffViewer from "./DiffViewer";
 import Editor from "./Editor";
 import FocusMode from "./FocusMode";
-import Launcher from "./Launcher";
 import LibErrorBoundary from "./LibErrorBoundary";
+import LibraryContext from "./LibraryContext";
+import Nav from "./Nav";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
 import * as t from "./Types";
 import LibraryLauncher from "./components/LibraryLauncher";
-import NavButton from "./components/NavButton";
 import Popup from "./components/Popup";
 import SlideTransition from "./components/SlideTransition";
-import Spinner from "./components/Spinner";
 import "./globals.css";
 import * as fd from "./lib/fetchData";
+import { useKeyDown } from "./lib/hooks";
 import {
   defaultSettings,
   fetchBooksThunk,
@@ -41,8 +30,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-import { getCsrfToken, saveTextToHistory, useInterval } from "./utils";
-import { useKeyDown } from "./lib/hooks";
+import { saveTextToHistory, useInterval } from "./utils";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -349,6 +337,19 @@ export default function Library({ mobile = false }) {
     }
   }
 
+  const libraryUtils = {
+    newChapter,
+    newBook,
+    newCompostNote,
+    renameBook,
+    renameChapter,
+    saveBook,
+    saveChapter,
+    setLoading,
+    settings,
+    usage,
+  };
+
   if (!state.booksLoaded) {
     return (
       <div className="flex h-screen w-screen ">
@@ -521,362 +522,168 @@ export default function Library({ mobile = false }) {
 
   return (
     <div className="h-screen w-full">
-      {state.launcherOpen && (
-        <LibErrorBoundary component="launcher">
-          <LibraryLauncher
-            onEditorSave={onEditorSave}
-            newChapter={newChapter}
-            newBook={newBook}
-            newCompostNote={newCompostNote}
-            renameBook={renameBook}
-            renameChapter={renameChapter}
-            onLauncherClose={onLauncherClose}
-          />
-        </LibErrorBoundary>
-      )}
-      {state.error && (
-        <div className="bg-red-700 p-2 text-white flex">
-          <p className="flex-grow">{state.error}</p>
-          <div
-            className="cursor-pointer flex-none"
-            onClick={() => dispatch(librarySlice.actions.clearError())}
-          >
-            <XMarkIcon className="w-5 h-5 my-auto" />
-          </div>
-        </div>
-      )}
-      <div className="relative h-full w-full">
-        {state.popupOpen && state.popupData && (
-          <LibErrorBoundary component="popup">
-            <Popup
-              title={state.popupData.title}
-              inputValue={state.popupData.inputValue}
-              options={state.popupData.options}
-              onSubmit={state.popupData.onSubmit}
+      <LibraryContext.Provider value={libraryUtils}>
+        {state.launcherOpen && (
+          <LibErrorBoundary component="launcher">
+            <LibraryLauncher
+              onEditorSave={onEditorSave}
+              newChapter={newChapter}
+              newBook={newBook}
+              newCompostNote={newCompostNote}
+              renameBook={renameBook}
+              renameChapter={renameChapter}
+              onLauncherClose={onLauncherClose}
             />
           </LibErrorBoundary>
         )}
-
-        {/*  nav */}
-        <div
-          className="h-8 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-800"
-          id="nav"
-        >
-          <div className=" m-xs flex">
-            <div className="flex-none">
-              {(!state.panels.bookList.open ||
-                !state.panels.chapterList.open) &&
-                !mobile &&
-                currentChapter && (
-                  <NavButton
-                    label="Open"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.openBookList());
-                      dispatch(librarySlice.actions.openChapterList());
-                    }}
-                    className="p-0"
-                    selector="open-lists-button"
-                  >
-                    <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
-                    <p className="uppercase text-xs align-baseline">Open</p>
-                  </NavButton>
-                )}
-
-              {state.panels.bookList.open &&
-                state.panels.chapterList.open &&
-                !mobile &&
-                currentChapter && (
-                  <NavButton
-                    label="Close"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.closeBookList());
-                      dispatch(librarySlice.actions.closeChapterList());
-                    }}
-                    className="p-0"
-                    selector="close-lists-button"
-                  >
-                    <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-                    <p className="uppercase text-xs align-baseline">Close</p>
-                  </NavButton>
-                )}
-
-              {mobile && (
-                <NavButton
-                  label="Open"
-                  onClick={() => {
-                    navigate(`/book/${state.selectedBookId}`);
-                  }}
-                  className="p-0"
-                  selector="open-lists-button"
-                >
-                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                </NavButton>
-              )}
+        {state.error && (
+          <div className="bg-red-700 p-2 text-white flex">
+            <p className="flex-grow">{state.error}</p>
+            <div
+              className="cursor-pointer flex-none"
+              onClick={() => dispatch(librarySlice.actions.clearError())}
+            >
+              <XMarkIcon className="w-5 h-5 my-auto" />
             </div>
-
-            <div className="flex-grow" />
-
-            {/* book editor nav */}
-            {bookid && !chapterid && (
-              <div className="mr-sm mt-xs">
-                {!state.saved && (
-                  <NavButton label="Unsaved" onClick={() => {}}>
-                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                  </NavButton>
-                )}
-
-                {state.saved && (
-                  <NavButton label="Saved" onClick={() => {}}>
-                    <CheckCircleIcon
-                      className="h-5 w-5 text-blue-700 dark:text-blue-400"
-                      aria-hidden="true"
-                    />
-                  </NavButton>
-                )}
-              </div>
-            )}
-
-            {/* right side nav */}
-            {chapterid && (
-              <LibErrorBoundary component="navigation">
-                <div className="flex-none">
-                  {state.loading && (
-                    <NavButton
-                      label="Loading"
-                      onClick={() => {}}
-                      className="p-0"
-                    >
-                      <Spinner className="w-5 h-5" />
-                    </NavButton>
-                  )}
-
-                  {state.editor.selectedText &&
-                    state.editor.selectedText.length > 0 && (
-                      <NavButton
-                        label="Extract Block"
-                        onClick={() => {
-                          dispatch(librarySlice.actions.extractBlock());
-                        }}
-                      >
-                        <ScissorsIcon className="h-5 w-5" aria-hidden="true" />
-                      </NavButton>
-                    )}
-
-                  {state.viewMode === "readonly" && (
-                    <span className="text-gray-300 dark:text-gray-500 text-xs uppercase mr-xs inline-block align-middle h-6">
-                      read only
-                    </span>
-                  )}
-                  {!state.saved && (
-                    <NavButton label="Unsaved" onClick={() => {}}>
-                      <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                    </NavButton>
-                  )}
-
-                  {state.saved && (
-                    <NavButton label="Saved" onClick={() => {}}>
-                      <CheckCircleIcon
-                        className="h-5 w-5 text-blue-700 dark:text-blue-400"
-                        aria-hidden="true"
-                      />
-                    </NavButton>
-                  )}
-
-                  {state.viewMode !== "readonly" && (
-                    <NavButton
-                      label="Read only"
-                      onClick={() =>
-                        dispatch(librarySlice.actions.setViewMode("readonly"))
-                      }
-                      selector="readonly-open"
-                    >
-                      <PencilIcon className="h-5 w-5" aria-hidden="true" />
-                    </NavButton>
-                  )}
-                  {state.viewMode === "readonly" && (
-                    <NavButton
-                      label="Exit read only"
-                      onClick={() =>
-                        dispatch(librarySlice.actions.setViewMode("default"))
-                      }
-                      selector="readonly-close"
-                    >
-                      <PencilIcon
-                        className="h-5 w-5 text-red-700"
-                        aria-hidden="true"
-                      />
-                    </NavButton>
-                  )}
-
-                  {!mobile && (
-                    <>
-                      <NavButton
-                        label="Focus Mode"
-                        onClick={() =>
-                          dispatch(librarySlice.actions.setViewMode("focus"))
-                        }
-                      >
-                        <EyeIcon className="h-5 w-5" aria-hidden="true" />
-                      </NavButton>
-
-                      <NavButton
-                        label="Prompts"
-                        onClick={() => {
-                          dispatch(librarySlice.actions.togglePrompts());
-                          if (!state.panels.prompts.open) {
-                            dispatch(librarySlice.actions.closeBookList());
-                            dispatch(librarySlice.actions.closeChapterList());
-                          }
-                        }}
-                        selector="prompts-button"
-                      >
-                        <SparklesIcon className="h-5 w-5" aria-hidden="true" />
-                      </NavButton>
-
-                      <NavButton
-                        label="Sidebar"
-                        onClick={() => {
-                          dispatch(librarySlice.actions.toggleSidebar());
-                          if (!state.panels.sidebar.open) {
-                            dispatch(librarySlice.actions.closeBookList());
-                            dispatch(librarySlice.actions.closeChapterList());
-                          }
-                        }}
-                        selector="sidebar-button"
-                      >
-                        <EllipsisHorizontalCircleIcon
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </NavButton>
-                    </>
-                  )}
-                </div>
-              </LibErrorBoundary>
-            )}
           </div>
-        </div>
-
-        <div
-          className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
-          id="editor"
-        >
-          <div className="h-full w-full">
-            {bookid && !currentChapter && (
-              <LibErrorBoundary component="front matter section">
-                <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                  <BookEditor />
-                </div>
-              </LibErrorBoundary>
-            )}
-          </div>
-          {currentChapter && (
-            <LibErrorBoundary component="editor">
-              <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                <Editor settings={settings} />
-              </div>
+        )}
+        <div className="relative h-full w-full">
+          {state.popupOpen && state.popupData && (
+            <LibErrorBoundary component="popup">
+              <Popup
+                title={state.popupData.title}
+                inputValue={state.popupData.inputValue}
+                options={state.popupData.options}
+                onSubmit={state.popupData.onSubmit}
+              />
             </LibErrorBoundary>
           )}
-        </div>
 
-        <LibErrorBoundary component="book list">
-          <SlideTransition show={bookListOpen} direction="left">
-            <div
-              className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
-              id="booklist"
-            >
-              <BookList newBook={newBook} saveBook={saveBook} />
+          {/*  nav */}
+          <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
+          <div
+            className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
+            id="editor"
+          >
+            <div className="h-full w-full">
+              {bookid && !currentChapter && (
+                <LibErrorBoundary component="front matter section">
+                  <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                    <BookEditor />
+                  </div>
+                </LibErrorBoundary>
+              )}
             </div>
-          </SlideTransition>
-        </LibErrorBoundary>
+            {currentChapter && (
+              <LibErrorBoundary component="editor">
+                <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                  <Editor settings={settings} />
+                </div>
+              </LibErrorBoundary>
+            )}
+          </div>
 
-        <LibErrorBoundary component="chapter list">
-          <SlideTransition show={chapterListOpen} direction="left">
-            <div
-              className={`absolute top-0 ${
-                bookListOpen ? "left-48" : "left-0"
-              } w-48 h-full z-10 mt-8`}
-            >
-              <ChapterList
-                bookid={state.selectedBookId}
-                selectedChapterId={chapterid || ""}
-                onDelete={(deletedChapterid) => {
-                  dispatch(
-                    librarySlice.actions.deleteChapter(deletedChapterid)
-                  );
-                  if (deletedChapterid === chapterid) {
-                    dispatch(librarySlice.actions.noChapterSelected());
-                    navigate(`/book/${state.selectedBookId}`);
+          <LibErrorBoundary component="book list">
+            <SlideTransition show={bookListOpen} direction="left">
+              <div
+                className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
+                id="booklist"
+              >
+                <BookList />
+              </div>
+            </SlideTransition>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="chapter list">
+            <SlideTransition show={chapterListOpen} direction="left">
+              <div
+                className={`absolute top-0 ${
+                  bookListOpen ? "left-48" : "left-0"
+                } w-48 h-full z-10 mt-8`}
+              >
+                <ChapterList
+                  bookid={state.selectedBookId}
+                  selectedChapterId={chapterid || ""}
+                  onDelete={(deletedChapterid) => {
+                    dispatch(
+                      librarySlice.actions.deleteChapter(deletedChapterid)
+                    );
+                    if (deletedChapterid === chapterid) {
+                      dispatch(librarySlice.actions.noChapterSelected());
+                      navigate(`/book/${state.selectedBookId}`);
+                    }
+                  }}
+                  saveChapter={(chapter) => saveChapter(chapter, null)}
+                  closeSidebar={() =>
+                    dispatch(librarySlice.actions.closeChapterList())
                   }
-                }}
-                saveChapter={(chapter) => saveChapter(chapter, null)}
-                closeSidebar={() =>
-                  dispatch(librarySlice.actions.closeChapterList())
-                }
-                newChapter={newChapter}
-                canCloseSidebar={false}
-              />
-            </div>
-          </SlideTransition>
-        </LibErrorBoundary>
+                  newChapter={newChapter}
+                  canCloseSidebar={false}
+                />
+              </div>
+            </SlideTransition>
+          </LibErrorBoundary>
 
-        <LibErrorBoundary component="Prompts sidebar">
-          <SlideTransition show={!!promptsOpen} direction="right">
-            <div
-              className={`w-48 absolute top-0 ${
-                sidebarOpen ? "right-48" : "right-0"
-              } h-screen overflow-auto  mt-8`}
-            >
-              <PromptsSidebar
-                settings={settings}
-                closeSidebar={() =>
-                  dispatch(librarySlice.actions.closePrompts())
-                }
-                onLoad={() => {
-                  dispatch(librarySlice.actions.openSidebar());
-                  dispatch(librarySlice.actions.setActivePanel("suggestions"));
-                }}
-              />
-            </div>
-          </SlideTransition>
-        </LibErrorBoundary>
+          <LibErrorBoundary component="Prompts sidebar">
+            <SlideTransition show={!!promptsOpen} direction="right">
+              <div
+                className={`w-48 absolute top-0 ${
+                  sidebarOpen ? "right-48" : "right-0"
+                } h-screen overflow-auto  mt-8`}
+              >
+                <PromptsSidebar
+                  settings={settings}
+                  closeSidebar={() =>
+                    dispatch(librarySlice.actions.closePrompts())
+                  }
+                  onLoad={() => {
+                    dispatch(librarySlice.actions.openSidebar());
+                    dispatch(
+                      librarySlice.actions.setActivePanel("suggestions")
+                    );
+                  }}
+                />
+              </div>
+            </SlideTransition>
+          </LibErrorBoundary>
 
-        <LibErrorBoundary component="sidebar">
-          <SlideTransition show={!!sidebarOpen} direction="right">
-            <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
-              <Sidebar
-                settings={settings}
-                setSettings={setSettings}
-                usage={usage}
-                activePanel={state.panels.sidebar.activePanel}
-                setActivePanel={(panel) =>
-                  dispatch(librarySlice.actions.setActivePanel(panel))
-                }
-                maximize={state.viewMode === "fullscreen"}
-                onSuggestionClick={addToContents}
-                onSuggestionDelete={(index) => {
-                  dispatch(librarySlice.actions.deleteSuggestion(index));
-                }}
-                onSettingsSave={() => {}}
-                onHistoryClick={async (e, newText) => {
-                  await onTextEditorSave(state);
-                  dispatch(
-                    librarySlice.actions.restoreFromHistory({
-                      text: newText,
-                      metaKey: e.metaKey,
-                    })
-                  );
-                  dispatch(librarySlice.actions.setViewMode("default"));
-                }}
-                triggerHistoryRerender={triggerHistoryRerender}
-                addToHistory={async () => {
-                  await onTextEditorSave(state, true);
-                }}
-              />
-            </div>
-          </SlideTransition>
-        </LibErrorBoundary>
-      </div>
+          <LibErrorBoundary component="sidebar">
+            <SlideTransition show={!!sidebarOpen} direction="right">
+              <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
+                <Sidebar
+                  settings={settings}
+                  setSettings={setSettings}
+                  usage={usage}
+                  activePanel={state.panels.sidebar.activePanel}
+                  setActivePanel={(panel) =>
+                    dispatch(librarySlice.actions.setActivePanel(panel))
+                  }
+                  maximize={state.viewMode === "fullscreen"}
+                  onSuggestionClick={addToContents}
+                  onSuggestionDelete={(index) => {
+                    dispatch(librarySlice.actions.deleteSuggestion(index));
+                  }}
+                  onSettingsSave={() => {}}
+                  onHistoryClick={async (e, newText) => {
+                    await onTextEditorSave(state);
+                    dispatch(
+                      librarySlice.actions.restoreFromHistory({
+                        text: newText,
+                        metaKey: e.metaKey,
+                      })
+                    );
+                    dispatch(librarySlice.actions.setViewMode("default"));
+                  }}
+                  triggerHistoryRerender={triggerHistoryRerender}
+                  addToHistory={async () => {
+                    await onTextEditorSave(state, true);
+                  }}
+                />
+              </div>
+            </SlideTransition>
+          </LibErrorBoundary>
+        </div>
+      </LibraryContext.Provider>
     </div>
   );
 }
