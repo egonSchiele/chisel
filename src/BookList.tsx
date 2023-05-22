@@ -12,6 +12,8 @@ import { getCsrfToken } from "./utils";
 import * as fd from "./lib/fetchData";
 import { librarySlice } from "./reducers/librarySlice";
 import sortBy from "lodash/sortBy";
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
 
 async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
@@ -35,21 +37,27 @@ const buttonStyles =
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList({
-  books,
-  selectedBookId,
-  onDelete,
   saveBook,
   newBook,
-  canCloseSidebar = true,
 }: {
-  books: t.Book[];
-  selectedBookId: string;
-  onDelete: (bookid: string) => void;
   saveBook: (book: t.Book) => void;
   newBook: () => void;
-  canCloseSidebar?: boolean;
 }) {
+  const books = useSelector((state: RootState) => state.library.books);
+  const selectedBookId = useSelector(
+    (state: RootState) => state.library.selectedBookId
+  );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  function onDelete(deletedBookid) {
+    dispatch(librarySlice.actions.deleteBook(deletedBookid));
+    if (deletedBookid === selectedBookId) {
+      dispatch(librarySlice.actions.noBookSelected());
+      navigate("/");
+    }
+  }
+
   const uploadFileRef = React.useRef<HTMLInputElement>(null);
   function startRenameBook(book) {
     dispatch(

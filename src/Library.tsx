@@ -1,22 +1,3 @@
-import { Transition } from "@headlessui/react";
-import LibErrorBoundary from "./LibErrorBoundary";
-import React, { Reducer, useCallback, useEffect, useState } from "react";
-import * as t from "./Types";
-import "./globals.css";
-
-import BookList from "./BookList";
-import { useNavigate, useParams } from "react-router-dom";
-import ChapterList from "./ChapterList";
-import Editor from "./Editor";
-import * as fd from "./lib/fetchData";
-import {
-  getChapterText,
-  getCsrfToken,
-  isTruthy,
-  saveTextToHistory,
-  useInterval,
-} from "./utils";
-import Launcher from "./Launcher";
 import {
   CheckCircleIcon,
   ChevronLeftIcon,
@@ -29,52 +10,51 @@ import {
   SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import BookEditor from "./BookEditor";
+import BookList from "./BookList";
+import ChapterList from "./ChapterList";
+import DiffViewer from "./DiffViewer";
+import Editor from "./Editor";
+import FocusMode from "./FocusMode";
+import Launcher from "./Launcher";
+import LibErrorBoundary from "./LibErrorBoundary";
 import PromptsSidebar from "./PromptsSidebar";
 import Sidebar from "./Sidebar";
+import * as t from "./Types";
+import LibraryLauncher from "./components/LibraryLauncher";
 import NavButton from "./components/NavButton";
+import Popup from "./components/Popup";
+import SlideTransition from "./components/SlideTransition";
 import Spinner from "./components/Spinner";
-import FocusMode from "./FocusMode";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "./store";
+import "./globals.css";
+import * as fd from "./lib/fetchData";
 import {
+  defaultSettings,
   fetchBooksThunk,
   getChapter,
+  getCompostBookId,
   getSelectedBook,
   getSelectedChapter,
   librarySlice,
 } from "./reducers/librarySlice";
-import DiffViewer from "./DiffViewer";
-import BookEditor from "./BookEditor";
-import Popup from "./components/Popup";
-import LibraryLauncher from "./components/LibraryLauncher";
-import SlideTransition from "./components/SlideTransition";
+import { AppDispatch, RootState } from "./store";
+import { getCsrfToken, saveTextToHistory, useInterval } from "./utils";
+import { useKeyDown } from "./lib/hooks";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
-  const selectedBook = useSelector(getSelectedBook);
-
   const currentChapter = getSelectedChapter({ library: state });
-  const compostBookId = useSelector((state: RootState) => {
-    const compostBook = state.library.books.find(
-      (b: t.Book) => b.tag === "compost"
-    );
-    if (compostBook) {
-      return compostBook.bookid;
-    }
-    return null;
-  });
-  const dispatch = useDispatch<AppDispatch>();
-  const [settings, setSettings] = useState<t.UserSettings>({
-    model: "",
-    max_tokens: 0,
-    num_suggestions: 0,
-    theme: "default",
-    version_control: false,
-    prompts: [],
-    design: null,
-  });
-  const [usage, setUsage] = useState<t.Usage | null>(null);
+  const compostBookId = useSelector(getCompostBookId);
+  const editor = useSelector((state: RootState) => state.library.editor);
+  const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const currentText = currentChapter?.text || [];
 
+  const dispatch = useDispatch<AppDispatch>();
+  const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
+  const [usage, setUsage] = useState<t.Usage | null>(null);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
   const { bookid, chapterid } = useParams();
@@ -87,7 +67,29 @@ export default function Library({ mobile = false }) {
     dispatch(librarySlice.actions.setNoChapter());
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
 
-  const handleKeyDown = async (event) => {
+  useEffect(() => {
+    if (bookid) {
+      dispatch(librarySlice.actions.setBook(bookid));
+    }
+  }, [bookid]);
+
+  // if the chapter id is null set the book list open to true
+  // so that we do not end up with an empty screen.
+  useEffect(() => {
+    if (!chapterid) {
+      dispatch(librarySlice.actions.openBookList());
+    }
+  }, [chapterid]);
+
+  // Force the chapter list open if a chapter has not been selected but a
+  // book has.
+  useEffect(() => {
+    if (!chapterid && state.selectedBookId) {
+      dispatch(librarySlice.actions.openChapterList());
+    }
+  }, [state.selectedBookId, chapterid]);
+
+  useKeyDown(async (event) => {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
       event.preventDefault();
       onTextEditorSave(state, true);
@@ -152,55 +154,6 @@ export default function Library({ mobile = false }) {
         dispatch(librarySlice.actions.setViewMode("focus"));
       }
     }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
-  useEffect(() => {
-    if (bookid) {
-      dispatch(librarySlice.actions.setBook(bookid));
-    }
-  }, [bookid]);
-
-  // if the chapter id is null set the book list open to true
-  // so that we do not end up with an empty screen.
-  useEffect(() => {
-    if (!chapterid) {
-      dispatch(librarySlice.actions.openBookList());
-    }
-  }, [chapterid]);
-
-  // Force the chapter list open if a chapter has not been selected but a
-  // book has.
-  useEffect(() => {
-    if (!chapterid && state.selectedBookId) {
-      dispatch(librarySlice.actions.openChapterList());
-    }
-  }, [state.selectedBookId, chapterid]);
-
-  const panels = useSelector((state: RootState) => state.library.panels);
-  const books = useSelector((state: RootState) => state.library.books);
-  const editor = useSelector((state: RootState) => state.library.editor);
-  const viewMode = useSelector((state: RootState) => state.library.viewMode);
-  const currentText = useSelector((state: RootState) => {
-    const chapter = getSelectedChapter(state);
-    return chapter ? chapter.text : [];
-  });
-
-  const currentChapterTitle = useSelector((state: RootState) => {
-    const chapter = getSelectedChapter(state);
-    return chapter ? chapter.title : "";
-  });
-
-  const currentBookTitle = useSelector((state: RootState) => {
-    const book = getSelectedBook(state);
-    return book ? book.title : "";
   });
 
   const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
@@ -228,11 +181,6 @@ export default function Library({ mobile = false }) {
   }, []);
 
   const navigate = useNavigate();
-
-  function onSuggestionLoad() {
-    dispatch(librarySlice.actions.openSidebar());
-    dispatch(librarySlice.actions.setActivePanel("suggestions"));
-  }
 
   const onLauncherClose = useCallback(
     () => dispatch(librarySlice.actions.toggleLauncher()),
@@ -265,35 +213,32 @@ export default function Library({ mobile = false }) {
   }
 
   async function saveToHistory(state: t.State) {
-    const body = JSON.stringify({
-      chapterid: currentChapter.chapterid,
-      text: saveTextToHistory(currentChapter),
-      csrfToken: getCsrfToken(),
-    });
+    await makeApiCall(fd.saveToHistory, [
+      currentChapter.chapterid,
+      saveTextToHistory(currentChapter),
+    ]);
+  }
 
-    const result = await fetch("/api/saveToHistory", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body,
-    });
+  async function makeApiCall(func, args) {
+    dispatch(librarySlice.actions.loading());
+    const result = await func(...args);
+    dispatch(librarySlice.actions.loaded());
+    if (result.tag === "error") {
+      dispatch(librarySlice.actions.setError(result.message));
+    } else {
+      dispatch(librarySlice.actions.clearError());
+    }
+    return result;
   }
 
   async function newChapter(title = "New Chapter", text = "", _bookid = null) {
     const theBookid = _bookid || bookid;
-    dispatch(librarySlice.actions.loading());
-    const result = await fd.newChapter(theBookid, title, text);
-    dispatch(librarySlice.actions.loaded());
-    if (result.tag === "error") {
-      dispatch(librarySlice.actions.setError(result.message));
-      return;
+    const result = await makeApiCall(fd.newChapter, [theBookid, title, text]);
+    if (result.tag === "success") {
+      const chapter = result.payload;
+      dispatch(librarySlice.actions.addChapter({ chapter, bookid: theBookid }));
+      navigate(`/book/${theBookid}/chapter/${chapter.chapterid}`, {});
     }
-    const chapter = result.payload;
-    dispatch(librarySlice.actions.addChapter({ chapter, bookid: theBookid }));
-
-    navigate(`/book/${theBookid}/chapter/${chapter.chapterid}`, {});
   }
 
   async function newCompostNote() {
@@ -319,24 +264,12 @@ export default function Library({ mobile = false }) {
     if (suggestions !== null) {
       chapter.suggestions = suggestions;
     }
-    const body = JSON.stringify({ chapter, csrfToken: getCsrfToken() });
-    const result = await fetch("/api/saveChapter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
 
-    if (!result.ok || result.status !== 200) {
-      const text = await result.text();
+    const result = await makeApiCall(fd.saveChapter, [chapter]);
 
-      dispatch(librarySlice.actions.setError(text));
-    } else {
-      const data = await result.json();
+    if (result.tag === "success") {
+      const data = result.payload;
       chapter.created_at = data.created_at;
-
-      dispatch(librarySlice.actions.clearError());
       dispatch(librarySlice.actions.setSaved(true));
       // Since we depend on a cache version of the selected book when picking a chapter
       // we must also set the chapter on said cache whenever save occurs.
@@ -360,12 +293,7 @@ export default function Library({ mobile = false }) {
         console.log("No book to save");
         return;
       }
-      try {
-        await saveBook(book);
-      } catch (e) {
-        console.log("Error saving book", e);
-        dispatch(librarySlice.actions.setError(e.message));
-      }
+      await saveBook(book);
     };
     func();
   }, 5000);
@@ -393,30 +321,17 @@ export default function Library({ mobile = false }) {
     let bookNoChapters = { ...book };
 
     bookNoChapters.chapters = [];
-    const body = JSON.stringify({
-      book: bookNoChapters,
-      csrfToken: getCsrfToken(),
-    });
-    const result = await fetch("/api/saveBook", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-    if (!result.ok || result.status !== 200) {
-      const text = await result.text();
 
-      dispatch(librarySlice.actions.setError(text));
-    } else {
-      const data = await result.json();
+    const result = await makeApiCall(fd.saveBook, [bookNoChapters]);
+
+    if (result.tag === "success") {
+      const data = result.payload;
 
       // We are going to update the book but not update its chapters.
       // This is because save chapter and save book both happen in the same cycle.
       // saveChapter updates the chapter in the redux store.
       // If we include the chapters here, it will overwrite the updates from saveChapter.
       bookNoChapters.created_at = data.created_at;
-      dispatch(librarySlice.actions.clearError());
       dispatch(librarySlice.actions.setSaved(true));
       dispatch(librarySlice.actions.updateBook(bookNoChapters));
     }
@@ -437,16 +352,15 @@ export default function Library({ mobile = false }) {
   if (!state.booksLoaded) {
     return (
       <div className="flex h-screen w-screen ">
-        <div className="bg-sidebar dark:bg-dmsidebar border-r border-gray-700 w-48 h-screen"></div>
+        {/*         <div className="bg-sidebar dark:bg-dmsidebar border-r border-gray-700 w-48 h-screen"></div>
         <div className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-gray-700 w-48 h-screen" />
+ */}{" "}
         <div className="flex-grow h-screen mx-16 my-16 text-md uppercase">
           Loading...
         </div>
       </div>
     );
   }
-
-  const sidebarWidth = state.viewMode === "fullscreen" ? "w-96" : "w-48";
 
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
@@ -535,19 +449,6 @@ export default function Library({ mobile = false }) {
             onChange={(text) => {
               dispatch(librarySlice.actions.setTemporaryFocusModeState(text));
             }}
-          />
-          <Launcher
-            items={[
-              {
-                label: "Exit Focus Mode",
-                onClick: () => {
-                  focusModeClose();
-                },
-                icon: <EyeIcon className="h-4 w-4" aria-hidden="true" />,
-              },
-            ]}
-            open={state.launcherOpen}
-            close={onLauncherClose}
           />
         </div>
       </LibErrorBoundary>
@@ -680,18 +581,6 @@ export default function Library({ mobile = false }) {
                     <p className="uppercase text-xs align-baseline">Open</p>
                   </NavButton>
                 )}
-              {mobile && (
-                <NavButton
-                  label="Open"
-                  onClick={() => {
-                    navigate(`/book/${state.selectedBookId}`);
-                  }}
-                  className="p-0"
-                  selector="open-lists-button"
-                >
-                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                </NavButton>
-              )}
 
               {state.panels.bookList.open &&
                 state.panels.chapterList.open &&
@@ -710,9 +599,24 @@ export default function Library({ mobile = false }) {
                     <p className="uppercase text-xs align-baseline">Close</p>
                   </NavButton>
                 )}
+
+              {mobile && (
+                <NavButton
+                  label="Open"
+                  onClick={() => {
+                    navigate(`/book/${state.selectedBookId}`);
+                  }}
+                  className="p-0"
+                  selector="open-lists-button"
+                >
+                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
             </div>
 
             <div className="flex-grow" />
+
+            {/* book editor nav */}
             {bookid && !chapterid && (
               <div className="mr-sm mt-xs">
                 {!state.saved && (
@@ -731,6 +635,8 @@ export default function Library({ mobile = false }) {
                 )}
               </div>
             )}
+
+            {/* right side nav */}
             {chapterid && (
               <LibErrorBoundary component="navigation">
                 <div className="flex-none">
@@ -879,20 +785,7 @@ export default function Library({ mobile = false }) {
               className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
               id="booklist"
             >
-              <BookList
-                books={state.books}
-                selectedBookId={state.selectedBookId}
-                onDelete={(deletedBookid) => {
-                  dispatch(librarySlice.actions.deleteBook(deletedBookid));
-                  if (deletedBookid === bookid) {
-                    dispatch(librarySlice.actions.noBookSelected());
-                    navigate("/");
-                  }
-                }}
-                newBook={newBook}
-                canCloseSidebar={false}
-                saveBook={saveBook}
-              />
+              <BookList newBook={newBook} saveBook={saveBook} />
             </div>
           </SlideTransition>
         </LibErrorBoundary>

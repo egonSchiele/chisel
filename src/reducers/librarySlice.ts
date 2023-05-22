@@ -941,6 +941,18 @@ export const getSelectedChapterTextLength = (
   return chapter.text.length;
 };
 
+export const getCompostBookId = (
+  state: RootState
+): string | null => {
+  const compostBook = state.library.books.find(
+    (b: t.Book) => b.tag === "compost"
+  );
+  if (compostBook) {
+    return compostBook.bookid;
+  }
+  return null;  
+};
+
 export const getText = (index: number) => (state: RootState): t.TextBlock | null => {
   const chapter = getSelectedChapter(state);
   if (!chapter) return null;
@@ -1010,4 +1022,14 @@ export function newBlockFromCurrent(state:t.State, defaultText=""):t.TextBlock|n
     return t.codeBlock(defaultText, text.language);
   }
   return null;
+}
+
+export const defaultSettings:t.UserSettings = {
+  model: "",
+  max_tokens: 0,
+  num_suggestions: 0,
+  theme: "default",
+  version_control: false,
+  prompts: [],
+  design: null,
 }

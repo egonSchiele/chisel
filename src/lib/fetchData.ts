@@ -42,23 +42,15 @@ export const fetchSuggestions = async (
   _customKey?: string
 ) => {
   let prompt = _prompt.replaceAll("{{text}}", text);
-   prompt = prompt.replaceAll("{{synopsis}}", synopsis);
+  prompt = prompt.replaceAll("{{synopsis}}", synopsis);
   const customKey = _customKey || null;
-  const body = JSON.stringify({
+
+  const res = await postWithCsrf(`/api/suggestions`, {
     prompt,
     model,
     max_tokens,
     num_suggestions,
     customKey,
-    csrfToken: getCsrfToken()
-  });
-
-  const res = await fetch("/api/suggestions", {
-    method: "POST",
-    body,
-    headers: {
-      "Content-Type": "application/json"
-    }
   });
 
   if (!res.ok) {
@@ -86,19 +78,8 @@ export const newChapter = async (
   title: string,
   text: string
 ) => {
-  const body = JSON.stringify({
-    bookid,
-    title,
-    text,
-    csrfToken: getCsrfToken()
-  });
-  const res = await fetch("/api/newChapter", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body
-  });
+  const res = await postWithCsrf(`/api/newChapter`, { bookid, title, text });
+
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error creating new chapter: ${text}`);
@@ -123,7 +104,7 @@ export async function favoriteBook(bookid: string) {
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error favoriting book: ${text}`);
-    }
+  }
   return t.success();
 }
 
@@ -154,15 +135,15 @@ export async function postWithCsrf(url: string, body: any) {
   const res = await fetch(url, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ ...body, csrfToken: getCsrfToken() })
+    body: JSON.stringify({ ...body, csrfToken: getCsrfToken() }),
   });
   return res;
 }
 
 export async function uploadBook(chapters) {
-  const res = await postWithCsrf(`/api/uploadBook`, {chapters});
+  const res = await postWithCsrf(`/api/uploadBook`, { chapters });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error uploading book: ${text}`);
@@ -172,7 +153,9 @@ export async function uploadBook(chapters) {
 }
 
 export async function getEmbeddings(chapter) {
-  const res = await fetch(`/api/getEmbeddings/${chapter.bookid}/${chapter.chapterid}`)
+  const res = await fetch(
+    `/api/getEmbeddings/${chapter.bookid}/${chapter.chapterid}`
+  );
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error getting embeddings: ${text}`);
@@ -182,7 +165,7 @@ export async function getEmbeddings(chapter) {
 }
 
 export async function trainOnBook(bookid) {
-  const res = await fetch(`/api/trainOnBook/${bookid}`)
+  const res = await fetch(`/api/trainOnBook/${bookid}`);
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error training: ${text}`);
@@ -192,7 +175,7 @@ export async function trainOnBook(bookid) {
 }
 
 export async function askQuestion(bookid, question) {
-  const res = await postWithCsrf(`/api/askQuestion/${bookid}`, {question});
+  const res = await postWithCsrf(`/api/askQuestion/${bookid}`, { question });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error asking question: ${text}`);
@@ -201,3 +184,31 @@ export async function askQuestion(bookid, question) {
   return t.success(json);
 }
 
+export async function saveToHistory(chapterid: string, text: string) {
+  const res = await postWithCsrf(`/api/saveToHistory`, { chapterid, text });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error saving to history: ${text}`);
+  }
+  return t.success();
+}
+
+export async function saveChapter(chapter: t.Chapter) {
+  const res = await postWithCsrf(`/api/saveChapter`, { chapter });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error saving chapter: ${text}`);
+  }
+  const data = await res.json();
+  return t.success(data);
+}
+
+export async function saveBook(book: t.Book) {
+  const res = await postWithCsrf(`/api/saveBook`, { book });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error saving book: ${text}`);
+  }
+  const data = await res.json();
+  return t.success(data);
+}
