@@ -99,7 +99,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   const fontClass = font === "serif" ? "serif" : "sansSerif";
 
   if (!currentChapterTitle) {
-    return <div className="flex w-full h-full">Loading</div>;
+    return <div className="flex w-full h-full">Lalskdjloadasdasding</div>;
   }
 
   if (viewMode === "readonly") {

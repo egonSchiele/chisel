@@ -1,4 +1,4 @@
-import {apStyleTitleCase} from 'ap-style-title-case';
+import { apStyleTitleCase } from "ap-style-title-case";
 import * as toolkitRaw from "@reduxjs/toolkit";
 import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
@@ -8,14 +8,14 @@ import {
   localStorageOrDefault,
   parseText,
   restoreBlockFromHistory,
-  strSplice
+  strSplice,
 } from "../utils";
 
 import { RootState } from "../store";
 import { current } from "immer";
 
 import sortBy from "lodash/sortBy";
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
 
@@ -30,7 +30,7 @@ const defaults = {
   title: "",
   text: [t.markdownBlock("a simple default text")],
   chapterid: "",
-  suggestions: []
+  suggestions: [],
 };
 
 const initialEditorState = (
@@ -40,7 +40,7 @@ const initialEditorState = (
   return {
     contents: {},
     activeTextIndex: 0,
-    selectedText: { index: 0, length: 0, contents: "" }
+    selectedText: { index: 0, length: 0, contents: "" },
   };
 };
 
@@ -54,18 +54,18 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     infoPanel: { syllables: 0 },
     panels: {
       bookList: {
-        open: localStorageOrDefault("bookListOpen", true)
+        open: localStorageOrDefault("bookListOpen", true),
       },
       chapterList: {
-        open: localStorageOrDefault("chapterListOpen", true)
+        open: localStorageOrDefault("chapterListOpen", true),
       },
       sidebar: {
         open: localStorageOrDefault("sidebarOpen", false),
-        activePanel: localStorageOrDefault("activePanel", "suggestions")
+        activePanel: localStorageOrDefault("activePanel", "suggestions"),
       },
       prompts: {
-        open: localStorageOrDefault("promptsOpen", false)
-      }
+        open: localStorageOrDefault("promptsOpen", false),
+      },
     },
     suggestions: chapter.suggestions,
     saved: true,
@@ -75,22 +75,23 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     viewMode: "default",
     launcherOpen: false,
     popupOpen: false,
-    popupData: null
+    popupData: null,
   };
 };
 
-export const fetchBooksThunk: AsyncThunk<void, null, RootState> = createAsyncThunk(
-  "library/fetchBooks",
-  async (_payload, { dispatch, signal }) => {
-    const res = await fetch(`/api/books`, {
-      credentials: "include",
-      signal
-    });
+export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
+  createAsyncThunk(
+    "library/fetchBooks",
+    async (_payload, { dispatch, signal }) => {
+      const res = await fetch(`/api/books`, {
+        credentials: "include",
+        signal,
+      });
 
-    const { books } = await res.json();
-    dispatch(librarySlice.actions.setBooks(books));
-  }
-);
+      const { books } = await res.json();
+      dispatch(librarySlice.actions.setBooks(books));
+    }
+  );
 
 export const librarySlice = createSlice({
   name: "library",
@@ -98,11 +99,11 @@ export const librarySlice = createSlice({
   reducers: {
     setBooks(state: t.State, action: PayloadAction<t.Book[]>) {
       const books = action.payload;
-      books.forEach((book) => {        
+      books.forEach((book) => {
         book.chapters.forEach((chapter) => {
           if (isString(chapter.text)) {
             chapter.text = parseText(chapter.text as unknown as string);
-          } 
+          }
         });
       });
       state.books = action.payload;
@@ -123,7 +124,7 @@ export const librarySlice = createSlice({
     updateBook(state: t.State, action: PayloadAction<t.Book>) {
       const book = action.payload;
       if (!book) return;
-      
+
       state.books = state.books.map((b) => {
         if (b.bookid === book.bookid) {
           // This is because save chapter and save book both happen in the same cycle.
@@ -131,10 +132,10 @@ export const librarySlice = createSlice({
           // saveChapter updates the chapter in the redux store.
           // If we include the chapters here, it will overwrite the updates from saveChapter.
 
-          return {...book, chapters: b.chapters}
+          return { ...book, chapters: b.chapters };
         }
         return b;
-      })
+      });
     },
     deleteChapter(state: t.State, action: PayloadAction<string>) {
       const chapterid = action.payload;
@@ -143,8 +144,11 @@ export const librarySlice = createSlice({
         (chapter) => chapter.chapterid !== chapterid
       );
     },
-    addChapter(state: t.State, action: PayloadAction<{chapter: t.Chapter; bookid: string}>) {
-      const {chapter, bookid} = action.payload;
+    addChapter(
+      state: t.State,
+      action: PayloadAction<{ chapter: t.Chapter; bookid: string }>
+    ) {
+      const { chapter, bookid } = action.payload;
       const book = state.books.find((book) => book.bookid === bookid);
       if (!book) return;
       book.chapters.push(chapter);
@@ -208,12 +212,11 @@ export const librarySlice = createSlice({
       if (metaKey) {
         chapter.text[activeTextIndex].text = text;
       } else {
-        const blocks = text.split("\n---\n");        
+        const blocks = text.split("\n---\n");
         const newBlocks = blocks.map((blockText) => {
           return restoreBlockFromHistory(blockText);
-          
-        })
-        
+        });
+
         chapter.text = newBlocks;
       }
       state.editor._pushTextToEditor = text;
@@ -227,8 +230,8 @@ export const librarySlice = createSlice({
     },
     setAPStyleTitle(state: t.State) {
       const chapter = getSelectedChapter({ library: state });
-      chapter.title = apStyleTitleCase(chapter.title)
-      
+      chapter.title = apStyleTitleCase(chapter.title);
+
       state.saved = false;
     },
     setBookTitle(state: t.State, action) {
@@ -255,8 +258,12 @@ export const librarySlice = createSlice({
     moveChapter(state: t.State, action: PayloadAction<string>) {
       const chapter = getSelectedChapter({ library: state });
       const book = getSelectedBook({ library: state });
-      book.chapterOrder = book.chapterOrder.filter((id) => id !== chapter.chapterid);
-      book.chapters = book.chapters.filter((c) => c.chapterid !== chapter.chapterid);
+      book.chapterOrder = book.chapterOrder.filter(
+        (id) => id !== chapter.chapterid
+      );
+      book.chapters = book.chapters.filter(
+        (c) => c.chapterid !== chapter.chapterid
+      );
 
       const newBookId = action.payload;
       chapter.bookid = newBookId;
@@ -269,42 +276,44 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    setLastTrainedAt(state: t.State, action: PayloadAction<number>) {      
+    setLastTrainedAt(state: t.State, action: PayloadAction<number>) {
       const book = getSelectedBook({ library: state });
       book.lastTrainedAt = action.payload;
       book.chapters.forEach((chapter) => {
         chapter.embeddingsLastCalculatedAt = action.payload;
-      })
+      });
       state.saved = false;
     },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapter) return;
-      
+
       let bookidChanged = false;
       book.chapters = book.chapters.map((c) => {
         if (c.chapterid === chapter.chapterid) {
           if (c.bookid !== chapter.bookid) {
             bookidChanged = true;
           }
-      
+
           return chapter;
         }
-      
+
         return c;
-      })
+      });
       if (bookidChanged) {
-        book.chapterOrder = book.chapterOrder.filter((id) => id !== chapter.chapterid);
-        book.chapters = book.chapters.filter((c) => c.chapterid !== chapter.chapterid);
+        book.chapterOrder = book.chapterOrder.filter(
+          (id) => id !== chapter.chapterid
+        );
+        book.chapters = book.chapters.filter(
+          (c) => c.chapterid !== chapter.chapterid
+        );
         const newBook = state.books.find((b) => b.bookid === chapter.bookid);
         if (newBook) {
           newBook.chapterOrder.unshift(chapter.chapterid);
           newBook.chapters.unshift(chapter);
         }
       }
-      
-
     },
     addToContents(state: t.State, action: PayloadAction<string>) {
       const toAdd = action.payload;
@@ -335,7 +344,7 @@ export const librarySlice = createSlice({
       state.editor.selectedText = { index: 0, length: 0, contents: "" };
     },
     clearCachedSelectedText(state) {
-      state.editor._cachedSelectedText = null;    
+      state.editor._cachedSelectedText = null;
     },
     addSuggestion(
       state: t.State,
@@ -344,12 +353,12 @@ export const librarySlice = createSlice({
       const { label, value } = action.payload;
       state.suggestions.push({
         type: label,
-        contents: value
+        contents: value,
       });
 
       const chapter = getSelectedChapter({ library: state });
       const index = state.editor.activeTextIndex;
-      console.log("addSuggestion", chapter, index)
+      console.log("addSuggestion", chapter, index);
       if (chapter && index !== null && index !== undefined) {
         const text = chapter.text[index];
         if (text.type !== "embeddedText") {
@@ -359,7 +368,7 @@ export const librarySlice = createSlice({
             id,
             text: value,
             createdAt: Date.now(),
-            title: value.substring(0,10)
+            title: value.substring(0, 10),
           });
           text.diffWith = id;
           text.id = nanoid();
@@ -446,7 +455,7 @@ export const librarySlice = createSlice({
     },
     closeAllPanels(state) {
       const panels = current(state.panels);
-      state._cachedPanelState = {...panels};
+      state._cachedPanelState = { ...panels };
       state.panels.bookList.open = false;
       state.panels.chapterList.open = false;
       state.panels.sidebar.open = false;
@@ -458,7 +467,7 @@ export const librarySlice = createSlice({
     },
     openAllPanels(state) {
       if (state._cachedPanelState) {
-        state.panels = {...state._cachedPanelState};
+        state.panels = { ...state._cachedPanelState };
       } else {
         state.panels.bookList.open = true;
         state.panels.chapterList.open = true;
@@ -472,7 +481,6 @@ export const librarySlice = createSlice({
       localStorage.setItem("promptsOpen", state.panels.prompts.open);
     },
     openOnlyPanel(state, action: PayloadAction<string>) {
-      
       const bookListOpen = action.payload === "bookList";
       const chapterListOpen = action.payload === "chapterList";
       const sidebarOpen = action.payload === "sidebar";
@@ -510,11 +518,13 @@ export const librarySlice = createSlice({
       state.selectedChapterId = null;
     },
     setActiveTextIndex(state: t.State, action: PayloadAction<number>) {
-      
       state.editor.activeTextIndex = action.payload;
     },
     gotoNextOpenBlock(state: t.State) {
-      if (state.editor.activeTextIndex === null || state.editor.activeTextIndex === undefined) {
+      if (
+        state.editor.activeTextIndex === null ||
+        state.editor.activeTextIndex === undefined
+      ) {
         state.editor.activeTextIndex = 0;
       } else {
         const index = state.editor.activeTextIndex;
@@ -525,29 +535,39 @@ export const librarySlice = createSlice({
           state.editor.activeTextIndex = chapter.text.indexOf(nextOpenText);
         }
       }
-      state.saved = false;      
+      state.saved = false;
     },
     gotoPreviousOpenBlock(state: t.State) {
-      if (state.editor.activeTextIndex === null || state.editor.activeTextIndex === undefined) {
+      if (
+        state.editor.activeTextIndex === null ||
+        state.editor.activeTextIndex === undefined
+      ) {
         state.editor.activeTextIndex = 0;
       } else {
         const index = state.editor.activeTextIndex;
         const chapter = getSelectedChapter({ library: state });
         const prevTexts = chapter.text.slice(0, index);
         const prevOpenText = prevTexts.reverse().find((text) => text.open);
-        
+
         if (prevOpenText) {
           state.editor.activeTextIndex = chapter.text.indexOf(prevOpenText);
         }
       }
-      state.editor._pushSelectionToEditor = {index:-1, length:0, contents:""}
+      state.editor._pushSelectionToEditor = {
+        index: -1,
+        length: 0,
+        contents: "",
+      };
       state.saved = false;
     },
     clearPushSelectionToEditor(state: t.State) {
-      state.editor._pushSelectionToEditor = null;      
+      state.editor._pushSelectionToEditor = null;
     },
 
-    setLanguage(state: t.State, action: PayloadAction<{index:number; language:string}>) {
+    setLanguage(
+      state: t.State,
+      action: PayloadAction<{ index: number; language: string }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, language } = action.payload;
 
@@ -573,7 +593,10 @@ export const librarySlice = createSlice({
       chapter.text[action.payload].reference = false;
       state.saved = false;
     },
-    setBlockType(state: t.State, action: PayloadAction<{index: number; type: t.BlockType}>) {
+    setBlockType(
+      state: t.State,
+      action: PayloadAction<{ index: number; type: t.BlockType }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, type } = action.payload;
       chapter.text[index].type = type;
@@ -592,30 +615,37 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     newBlockBeforeCurrent(state: t.State) {
-      const newBlock = newBlockFromCurrent(state)
+      const newBlock = newBlockFromCurrent(state);
       const chapter = getSelectedChapter({ library: state });
       chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
 
       state.saved = false;
     },
-    
-    addVersion(state: t.State, action: PayloadAction<{index:string;text?:string;setDiffWith?:boolean}>) {
+
+    addVersion(
+      state: t.State,
+      action: PayloadAction<{
+        index: string;
+        text?: string;
+        setDiffWith?: boolean;
+      }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, text, setDiffWith } = action.payload;
       const block = chapter.text[index];
-      const chap = current(chapter)
+      const chap = current(chapter);
       const id = nanoid();
       block.versions ||= [];
 
       if (setDiffWith) {
-      block.versions.push({
-        id,
-        text: text || "",
-        createdAt: Date.now(),
-        title: (text || "").substring(0,10)
-      });
-      
-      block.id = nanoid();
+        block.versions.push({
+          id,
+          text: text || "",
+          createdAt: Date.now(),
+          title: (text || "").substring(0, 10),
+        });
+
+        block.id = nanoid();
 
         block.diffWith = id;
       } else {
@@ -623,15 +653,18 @@ export const librarySlice = createSlice({
           id,
           text: block.text,
           createdAt: Date.now(),
-        title: block.text.substring(0,10)
-      });
+          title: block.text.substring(0, 10),
+        });
         block.text = text || "";
         block.id = nanoid();
       }
-      
+
       state.saved = false;
     },
-    switchVersion(state: t.State, action: PayloadAction<{index:number; versionid:string}>) {
+    switchVersion(
+      state: t.State,
+      action: PayloadAction<{ index: number; versionid: string }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, versionid } = action.payload;
       const block = chapter.text[index];
@@ -641,8 +674,8 @@ export const librarySlice = createSlice({
           id: nanoid(),
           text: block.text,
           createdAt: Date.now(),
-          title: block.text.substring(0,10)
-       });
+          title: block.text.substring(0, 10),
+        });
       }
       block.text = block.versions.find((v) => v.id === versionid)?.text || "";
       block.versions = block.versions.filter((v) => v.id !== versionid);
@@ -651,7 +684,10 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    deleteAllVersions(state: t.State, action: PayloadAction<{index:number}>) {
+    deleteAllVersions(
+      state: t.State,
+      action: PayloadAction<{ index: number }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index } = action.payload;
       const block = chapter.text[index];
@@ -662,7 +698,10 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    setDiffWith(state: t.State, action: PayloadAction<{index:number; diffWith:string}>) {
+    setDiffWith(
+      state: t.State,
+      action: PayloadAction<{ index: number; diffWith: string }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, diffWith } = action.payload;
       const block = chapter.text[index];
@@ -672,7 +711,10 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    addCaption(state: t.State, action: PayloadAction<{index:number; caption:string}>) {
+    addCaption(
+      state: t.State,
+      action: PayloadAction<{ index: number; caption: string }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, caption } = action.payload;
       const block = chapter.text[index];
@@ -683,14 +725,14 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     newBlockAfterCurrent(state: t.State) {
-      const newBlock = newBlockFromCurrent(state)
+      const newBlock = newBlockFromCurrent(state);
       const chapter = getSelectedChapter({ library: state });
       chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
-      state.editor.activeTextIndex += 1
+      state.editor.activeTextIndex += 1;
 
       state.saved = false;
     },
-    mergeBlockUp(state: t.State, action: PayloadAction<number|null>) {
+    mergeBlockUp(state: t.State, action: PayloadAction<number | null>) {
       const index = action.payload || state.editor.activeTextIndex;
       if (index === 0) return;
       const chapter = getSelectedChapter({ library: state });
@@ -703,7 +745,7 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    mergeBlockDown(state: t.State, action: PayloadAction<number|null>) {
+    mergeBlockDown(state: t.State, action: PayloadAction<number | null>) {
       const index = action.payload || state.editor.activeTextIndex;
       const chapter = getSelectedChapter({ library: state });
       if (index === chapter.text.length - 1) return;
@@ -715,7 +757,10 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    mergeBlockSurrounding(state: t.State, action: PayloadAction<number|null>) {
+    mergeBlockSurrounding(
+      state: t.State,
+      action: PayloadAction<number | null>
+    ) {
       const index = action.payload || state.editor.activeTextIndex;
       const chapter = getSelectedChapter({ library: state });
       if (index === chapter.text.length - 1) return;
@@ -743,7 +788,11 @@ export const librarySlice = createSlice({
     },
     extractBlock(state: t.State) {
       let { index, length, contents } = state.editor.selectedText;
-      if (length === 0 && state.editor._cachedSelectedText && state.editor._cachedSelectedText.length > 0) {
+      if (
+        length === 0 &&
+        state.editor._cachedSelectedText &&
+        state.editor._cachedSelectedText.length > 0
+      ) {
         index = state.editor._cachedSelectedText.index;
         length = state.editor._cachedSelectedText.length;
         contents = state.editor._cachedSelectedText.contents;
@@ -751,22 +800,22 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       const text = chapter.text[state.editor.activeTextIndex];
 
-/*        console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
- */       if (length === 0) {
+      /*        console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
+       */ if (length === 0) {
         if (index === 0) {
           // newBlockBeforeCurrent
-          const newBlock = newBlockFromCurrent(state)
+          const newBlock = newBlockFromCurrent(state);
           chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
-     const cur = current(chapter.text)
- //   console.log("cur", cur)
-   //        state.saved = false;
+          const cur = current(chapter.text);
+          //   console.log("cur", cur)
+          //        state.saved = false;
           return;
         } else if (index === text.text.length - 1) {
           // newBlockAfterCurrent
-          const newBlock = newBlockFromCurrent(state)
-          
+          const newBlock = newBlockFromCurrent(state);
+
           chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
-          state.editor.activeTextIndex += 1
+          state.editor.activeTextIndex += 1;
           state.saved = false;
           return;
         } else {
@@ -775,7 +824,7 @@ export const librarySlice = createSlice({
       }
       const newText = strSplice(text.text, index, length).trim();
       const newBlock = newBlockFromCurrent(state, contents.trim());
-      
+
       // all the text before the selection
       const startText = text.text.slice(0, index).trim();
       // all the text after the selection
@@ -808,7 +857,7 @@ export const librarySlice = createSlice({
         text.text = newText;
         state.editor._pushTextToEditor = newText;
         chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
-        state.editor.activeTextIndex += 1
+        state.editor.activeTextIndex += 1;
       } else if (index + length === text.text.length) {
         console.log("end-nowhitespace");
         // we selected the end of the text,
@@ -816,7 +865,7 @@ export const librarySlice = createSlice({
         text.text = newText;
         state.editor._pushTextToEditor = newText;
         chapter.text.splice(state.editor.activeTextIndex + 1, 0, newBlock);
-        state.editor.activeTextIndex += 1
+        state.editor.activeTextIndex += 1;
       } else {
         console.log("middle");
         // we selected the middle of the text,
@@ -827,34 +876,44 @@ export const librarySlice = createSlice({
 
         text.text = startText;
         state.editor._pushTextToEditor = startText;
-        
-        const endBlock = newBlockFromCurrent(state, endText)
+
+        const endBlock = newBlockFromCurrent(state, endText);
         chapter.text.splice(state.editor.activeTextIndex + 2, 0, endBlock);
-        state.editor.activeTextIndex += 1
+        state.editor.activeTextIndex += 1;
       }
     },
     addCharacter(state: t.State, action: PayloadAction<string>) {
       const book = getSelectedBook({ library: state });
-      
+
       if (book.characters) {
         book.characters.push(t.newCharacter());
       } else {
         book.characters = [t.newCharacter()];
       }
-      
+
       state.saved = false;
     },
-    editCharacter(state: t.State, action: PayloadAction<{index: number; character: t.Character}>) {
+    editCharacter(
+      state: t.State,
+      action: PayloadAction<{ index: number; character: t.Character }>
+    ) {
       const book = getSelectedBook({ library: state });
       book.characters[action.payload.index] = action.payload.character;
       state.saved = false;
     },
-    deleteCharacter(state: t.State, action: PayloadAction<{index: number}>) {
+    deleteCharacter(state: t.State, action: PayloadAction<{ index: number }>) {
       const book = getSelectedBook({ library: state });
       book.characters.splice(action.payload.index, 1);
       state.saved = false;
     },
-    setEmbeddedChapter(state: t.State, action: PayloadAction<{index:number; bookid:string; chapterid:string}>) {
+    setEmbeddedChapter(
+      state: t.State,
+      action: PayloadAction<{
+        index: number;
+        bookid: string;
+        chapterid: string;
+      }>
+    ) {
       const chapter = getSelectedChapter({ library: state });
       const { index, bookid, chapterid } = action.payload;
       const block = chapter.text[index];
@@ -862,12 +921,10 @@ export const librarySlice = createSlice({
         block.bookid = bookid;
         block.chapterid = chapterid;
       }
-      
+
       block.id = nanoid();
       state.saved = false;
     },
-
-
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBooksThunk.pending, (state) => {
@@ -884,7 +941,7 @@ export const librarySlice = createSlice({
       state.booksLoaded = true;
       state.error = "Books not found";
     });
-  }
+  },
 });
 
 export const getChapterTitles = (bookid) => (state: RootState) => {
@@ -941,38 +998,40 @@ export const getSelectedChapterTextLength = (
   return chapter.text.length;
 };
 
-export const getCompostBookId = (
-  state: RootState
-): string | null => {
+export const getCompostBookId = (state: RootState): string | null => {
   const compostBook = state.library.books.find(
     (b: t.Book) => b.tag === "compost"
   );
   if (compostBook) {
     return compostBook.bookid;
   }
-  return null;  
+  return null;
 };
 
-export const getText = (index: number) => (state: RootState): t.TextBlock | null => {
-  const chapter = getSelectedChapter(state);
-  if (!chapter) return null;
+export const getText =
+  (index: number) =>
+  (state: RootState): t.TextBlock | null => {
+    const chapter = getSelectedChapter(state);
+    if (!chapter) return null;
 
-  return chapter.text[index];
-};
+    return chapter.text[index];
+  };
 
-export const getChapter = (chapterid: t.ChapterId) => (state: RootState): t.Chapter | null => {
-  if (!state.library.booksLoaded) return null;
-  let chapterToReturn = null;
-  state.library.books.forEach((book) => {
-    book.chapters.forEach((chapter) => {
-      if (chapter.chapterid === chapterid) {
-        chapterToReturn = chapter;
-      }
+export const getChapter =
+  (chapterid: t.ChapterId) =>
+  (state: RootState): t.Chapter | null => {
+    if (!state.library.booksLoaded) return null;
+    let chapterToReturn = null;
+    state.library.books.forEach((book) => {
+      book.chapters.forEach((chapter) => {
+        if (chapter.chapterid === chapterid) {
+          chapterToReturn = chapter;
+        }
+      });
     });
-  });
 
-  return chapterToReturn;
-};
+    return chapterToReturn;
+  };
 
 export const getSelectedBookChapters = (
   state: RootState
@@ -982,15 +1041,15 @@ export const getSelectedBookChapters = (
   if (!book) return null;
 
   const { chapters } = book;
-  
+
   if (book.chapterOrder.length > 0) {
     const sortedChapters = [];
     book.chapterOrder.forEach((id) => {
       const chapter = chapters.find((chapter) => chapter.chapterid === id);
       if (chapter) sortedChapters.push(chapter);
     });
-    const sortedByCreated = sortBy(chapters, ["created_at"])
-    
+    const sortedByCreated = sortBy(chapters, ["created_at"]);
+
     sortedByCreated.forEach((chapter) => {
       if (!sortedChapters.includes(chapter)) sortedChapters.push(chapter);
     });
@@ -999,19 +1058,24 @@ export const getSelectedBookChapters = (
   return chapters;
 };
 
-export const getCharacters = (
-  state: RootState
-): t.Character[] | null => {
+export const getCharacters = (state: RootState): t.Character[] | null => {
   const book = getSelectedBook(state);
 
   if (!book) return null;
   return book.characters;
-}
+};
 
-export function newBlockFromCurrent(state:t.State, defaultText=""):t.TextBlock|null {
+export function newBlockFromCurrent(
+  state: t.State,
+  defaultText = ""
+): t.TextBlock | null {
   const chapter = getSelectedChapter({ library: state });
   if (!chapter) return null;
-  if (state.editor.activeTextIndex === null || state.editor.activeTextIndex === undefined) return null;
+  if (
+    state.editor.activeTextIndex === null ||
+    state.editor.activeTextIndex === undefined
+  )
+    return null;
 
   const text = chapter.text[state.editor.activeTextIndex];
   if (text.type === "plain") {
@@ -1024,7 +1088,7 @@ export function newBlockFromCurrent(state:t.State, defaultText=""):t.TextBlock|n
   return null;
 }
 
-export const defaultSettings:t.UserSettings = {
+export const defaultSettings: t.UserSettings = {
   model: "",
   max_tokens: 0,
   num_suggestions: 0,
@@ -1032,4 +1096,4 @@ export const defaultSettings:t.UserSettings = {
   version_control: false,
   prompts: [],
   design: null,
-}
+};

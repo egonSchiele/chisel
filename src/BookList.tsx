@@ -35,6 +35,7 @@ const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList() {
   const books = useSelector((state: RootState) => state.library.books);
+  const loaded = useSelector((state: RootState) => state.library.booksLoaded);
   const selectedBookId = useSelector(
     (state: RootState) => state.library.selectedBookId
   );
@@ -66,6 +67,14 @@ export default function BookList() {
   async function renameBook(book, newTitle) {
     const newBook = { ...book, title: newTitle };
     saveBook(newBook);
+  }
+
+  if (!loaded) {
+    return (
+      <div
+        className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
+      ></div>
+    );
   }
 
   const compostBook = books.find((book) => book.tag === "compost");

@@ -28,9 +28,18 @@ export default function Nav({
   chapterid?: string;
 }) {
   const state: t.State = useSelector((state: RootState) => state.library);
+  const loaded = state.booksLoaded;
   const currentChapter = getSelectedChapter({ library: state });
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  if (!loaded) {
+    return (
+      <div
+        className="h-8 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-800 animate-pulse"
+        id="nav"
+      ></div>
+    );
+  }
   return (
     <div
       className="h-8 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-800"

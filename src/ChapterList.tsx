@@ -48,6 +48,7 @@ export default function ChapterList({
   const bookid = useSelector(
     (state: RootState) => state.library.selectedBookId
   );
+  const loaded = useSelector((state: RootState) => state.library.booksLoaded);
   const [editing, setEditing] = React.useState(false);
 
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -57,6 +58,15 @@ export default function ChapterList({
   ) as t.LibraryContextType;
 
   const uploadFileRef = React.useRef<HTMLInputElement>(null);
+
+  if (!loaded) {
+    return (
+      <div
+        className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
+      ></div>
+    );
+  }
+
   async function _deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading);
     const res = await fetch(`/api/deleteChapter`, {

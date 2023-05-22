@@ -20,6 +20,10 @@ import SlideTransition from "./components/SlideTransition";
 import "./globals.css";
 import * as fd from "./lib/fetchData";
 import { useKeyDown } from "./lib/hooks";
+import LoadingPlaceholder, {
+  EditorPlaceholder,
+  PanelPlaceholder,
+} from "./LoadingPlaceholder";
 import {
   defaultSettings,
   fetchBooksThunk,
@@ -147,7 +151,7 @@ export default function Library({ mobile = false }) {
   const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
 
   const fetchBooks = async () => {
-    dispatch(fetchBooksThunk(null));
+    dispatch(fetchBooksThunk());
   };
 
   const fetchSettings = async () => {
@@ -366,19 +370,6 @@ export default function Library({ mobile = false }) {
     deleteChapter,
   };
 
-  if (!state.booksLoaded) {
-    return (
-      <div className="flex h-screen w-screen ">
-        {/*         <div className="bg-sidebar dark:bg-dmsidebar border-r border-gray-700 w-48 h-screen"></div>
-        <div className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-gray-700 w-48 h-screen" />
- */}{" "}
-        <div className="flex-grow h-screen mx-16 my-16 text-md uppercase">
-          Loading...
-        </div>
-      </div>
-    );
-  }
-
   function focusModeClose() {
     dispatch(librarySlice.actions.setViewMode("default"));
 
@@ -562,88 +553,116 @@ export default function Library({ mobile = false }) {
             <div className="h-full w-full">
               {bookid && !currentChapter && (
                 <LibErrorBoundary component="front matter section">
-                  <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                    <BookEditor />
-                  </div>
+                  <EditorPlaceholder loaded={state.booksLoaded}>
+                    <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                      <BookEditor />
+                    </div>
+                  </EditorPlaceholder>
                 </LibErrorBoundary>
               )}
             </div>
             {currentChapter && (
               <LibErrorBoundary component="editor">
-                <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                  <Editor settings={settings} />
-                </div>
+                <EditorPlaceholder loaded={state.booksLoaded}>
+                  <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                    <Editor settings={settings} />
+                  </div>
+                </EditorPlaceholder>
               </LibErrorBoundary>
             )}
           </div>
 
           <LibErrorBoundary component="book list">
-            <SlideTransition show={bookListOpen} direction="left">
-              <div
-                className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
-                id="booklist"
-              >
-                <BookList />
-              </div>
-            </SlideTransition>
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.bookList.open}
+              className="top-0 left-0"
+            >
+              <SlideTransition show={bookListOpen} direction="left">
+                <div
+                  className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
+                  id="booklist"
+                >
+                  <BookList />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
           </LibErrorBoundary>
 
           <LibErrorBoundary component="chapter list">
-            <SlideTransition show={chapterListOpen} direction="left">
-              <div
-                className={`absolute top-0 ${
-                  bookListOpen ? "left-48" : "left-0"
-                } w-48 h-full z-10 mt-8`}
-              >
-                <ChapterList selectedChapterId={chapterid || ""} />
-              </div>
-            </SlideTransition>
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.chapterList.open}
+              className={`top-0 ${bookListOpen ? "left-48" : "left-0"} `}
+            >
+              <SlideTransition show={chapterListOpen} direction="left">
+                <div
+                  className={`absolute top-0 ${
+                    bookListOpen ? "left-48" : "left-0"
+                  } w-48 h-full z-10 mt-8`}
+                >
+                  <ChapterList selectedChapterId={chapterid || ""} />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
           </LibErrorBoundary>
 
           <LibErrorBoundary component="Prompts sidebar">
-            <SlideTransition show={!!promptsOpen} direction="right">
-              <div
-                className={`w-48 absolute top-0 ${
-                  sidebarOpen ? "right-48" : "right-0"
-                } h-screen overflow-auto  mt-8`}
-              >
-                <PromptsSidebar
-                  closeSidebar={() =>
-                    dispatch(librarySlice.actions.closePrompts())
-                  }
-                  onLoad={() => {
-                    dispatch(librarySlice.actions.openSidebar());
-                    dispatch(
-                      librarySlice.actions.setActivePanel("suggestions")
-                    );
-                  }}
-                />
-              </div>
-            </SlideTransition>
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.prompts.open}
+              className={` top-0 ${sidebarOpen ? "right-48" : "right-0"}`}
+            >
+              <SlideTransition show={promptsOpen} direction="right">
+                <div
+                  className={`w-48 absolute top-0 ${
+                    sidebarOpen ? "right-48" : "right-0"
+                  } h-screen overflow-auto  mt-8`}
+                >
+                  <PromptsSidebar
+                    closeSidebar={() =>
+                      dispatch(librarySlice.actions.closePrompts())
+                    }
+                    onLoad={() => {
+                      dispatch(librarySlice.actions.openSidebar());
+                      dispatch(
+                        librarySlice.actions.setActivePanel("suggestions")
+                      );
+                    }}
+                  />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
           </LibErrorBoundary>
 
           <LibErrorBoundary component="sidebar">
-            <SlideTransition show={!!sidebarOpen} direction="right">
-              <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
-                <Sidebar
-                  onSuggestionClick={addToContents}
-                  onHistoryClick={async (e, newText) => {
-                    await onTextEditorSave(state);
-                    dispatch(
-                      librarySlice.actions.restoreFromHistory({
-                        text: newText,
-                        metaKey: e.metaKey,
-                      })
-                    );
-                    dispatch(librarySlice.actions.setViewMode("default"));
-                  }}
-                  addToHistory={async () => {
-                    await onTextEditorSave(state, true);
-                  }}
-                  triggerHistoryRerender={triggerHistoryRerender}
-                />
-              </div>
-            </SlideTransition>
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.sidebar.open}
+              className="top-0 right-0"
+            >
+              <SlideTransition show={sidebarOpen} direction="right">
+                <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
+                  <Sidebar
+                    onSuggestionClick={addToContents}
+                    onHistoryClick={async (e, newText) => {
+                      await onTextEditorSave(state);
+                      dispatch(
+                        librarySlice.actions.restoreFromHistory({
+                          text: newText,
+                          metaKey: e.metaKey,
+                        })
+                      );
+                      dispatch(librarySlice.actions.setViewMode("default"));
+                    }}
+                    addToHistory={async () => {
+                      await onTextEditorSave(state, true);
+                    }}
+                    triggerHistoryRerender={triggerHistoryRerender}
+                  />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
           </LibErrorBoundary>
         </div>
       </LibraryContext.Provider>
