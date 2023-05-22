@@ -138,13 +138,18 @@ export default function Sidebar({
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
+
+  if (!currentChapter) {
+    return null;
+  }
+
   // TODO
   const infoText =
     state.editor.selectedText.length === 0
       ? getChapterText(currentChapter)
       : state.editor.selectedText.contents;
   return (
-    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder dark:[color-scheme:dark]  pb-12">
+    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder dark:[color-scheme:dark] pb-12">
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}

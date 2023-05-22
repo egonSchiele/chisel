@@ -54,7 +54,7 @@ describe("settings", () => {
 
     // save!
     cy.get("button[data-selector='sidebar-save-button']").click();
-
+    cy.wait(2000)
     // now the new prompt should be there
     cy.visit("http://localhost:80/");
 
@@ -102,9 +102,7 @@ describe("settings", () => {
       "have.value",
       "Expand",
     );
-
-    cy.get("body").type("{esc}"); // close the history panel
-    cy.get("body").type("{esc}"); // open chapter + book lists
+    //cy.openLists();
 
     cy.deleteChapter();
     cy.deleteBook();

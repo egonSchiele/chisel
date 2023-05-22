@@ -115,7 +115,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
   }
 
   return (
-    <form className="grid grid-cols-1 gap-y-sm">
+    <form className="grid grid-cols-1 gap-y-sm pb-12">
       <Select
         title="Model"
         name="model"

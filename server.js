@@ -416,6 +416,7 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
 
 app.post("/api/settings", requireLogin, async (req, res) => {
   const { settings } = req.body;
+  console.log("saving settings", settings);
   if (!settings) {
     console.log("no settings");
     res.status(404).end();

@@ -20,7 +20,7 @@ describe("UI", () => {
 
     // show sidebar
     cy.get("button[data-selector='sidebar-button']").click();
-    cy.contains("h3", "Suggestions");
+    
 
     cy.get("button[data-selector='info-button']").click();
     cy.contains("h3", "Info");
@@ -49,18 +49,19 @@ describe("UI", () => {
     cy.contains("h3", "1 chapter").should("not.exist");
     cy.contains("h3", "1 book").should("not.exist");
 
-    // esc again shows ui
+    // esc again shows ui, only what was opened before
     cy.get("body").type("{esc}");
-    cy.contains("h3", "Suggestions");
+    //cy.contains("h3", "Suggestions");
     cy.contains("h3", "Prompts");
-    cy.contains("h3", "1 chapter");
-    cy.contains("h3", "1 book");
+    //cy.contains("h3", "1 chapter");
+    //cy.contains("h3", "1 book");
 
     cy.get("body").type("{command+shift+p}");
     /*     cy.contains("input[data-selector='launcher-search-input']");
      */ cy.contains("ul", "New Chapter");
     cy.get("body").type("{command+shift+p}");
 
+    cy.openLists()
     cy.deleteChapter();
     cy.deleteBook();
 

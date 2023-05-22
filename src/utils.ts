@@ -211,8 +211,8 @@ export function useTraceUpdate(props) {
   });
 }
 
-export function getChapterText(chapter, includeFolded=false) {
-
+export function getChapterText(chapter:t.Chapter|null, includeFolded=false) {
+  if (!chapter) return "";
   if (includeFolded) {
     return chapter.text.map((t) => t.text).join("\n\n");
   } else {

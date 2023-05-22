@@ -49,8 +49,7 @@ describe("history", () => {
     // restoring history doesn't add to history
     cy.get(historyPanel).should("have.length", 2);
 
-    cy.get("body").type("{esc}"); // close the history panel
-    cy.get("body").type("{esc}"); // open chapter + book lists
+    cy.openLists();
     cy.deleteChapter();
     cy.deleteBook();
 

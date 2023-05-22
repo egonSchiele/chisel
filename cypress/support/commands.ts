@@ -137,7 +137,10 @@ Cypress.Commands.add("autoSave", (user) => {
 Cypress.Commands.add("launcher", (cmd, element="body") => {
   cy.get(element).type("{cmd+shift+p}");
   cy.get("input[data-selector='launcher-search-input']").type(`${cmd}{enter}`);
+});
 
+Cypress.Commands.add("openLists", (cmd, element="body") => {
+  cy.get("button[data-selector='open-lists-button']").click();
 });
 
 // ***********************************************

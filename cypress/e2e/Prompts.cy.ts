@@ -11,6 +11,8 @@ const promptText = "This is a new prompt!";
 
 describe("prompts", () => {
   it("should fetch ai text for a prompt", () => {
+    cy.viewport(1980, 1080);
+
     cy.login();
 
     cy.newBook();
@@ -65,14 +67,11 @@ describe("prompts", () => {
     cy.autoSave();
     // go back, the new suggestion should not be there anymore
     cy.visit("http://localhost:80/");
-
+    
     cy.selectBook();
     cy.selectChapter();
 
     cy.get(`div[data-selector='ai-suggestion-panel']`).should("not.exist");
-
-    cy.get("body").type("{esc}"); // close the history panel
-    cy.get("body").type("{esc}"); // open chapter + book lists
 
     cy.deleteChapter();
     cy.deleteBook();

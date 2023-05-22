@@ -704,7 +704,7 @@ export default function Library({ mobile = false }) {
                       dispatch(librarySlice.actions.closeChapterList());
                     }}
                     className="p-0"
-                    selector="open-lists-button"
+                    selector="close-lists-button"
                   >
                     <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
                     <p className="uppercase text-xs align-baseline">Close</p>

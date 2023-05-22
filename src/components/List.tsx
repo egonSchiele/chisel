@@ -161,7 +161,7 @@ export default function List({
           </div>
         )}
       </div>
-      <ul className="pt-xs" data-title={title}>
+      <ul className="pt-xs pb-lg" data-title={title}>
         {items}
       </ul>
     </div>

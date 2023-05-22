@@ -7,6 +7,7 @@ const text2 = "fourth\nfifth\nsixth";
 
 describe("blocks", () => {
   it("tests various block functionality", () => {
+    cy.viewport(1980, 1080);
     cy.login();
 
     cy.newBook();
