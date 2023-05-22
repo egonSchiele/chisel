@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
@@ -22,6 +22,8 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { getChapterText } from "./utils";
+import LibraryContext from "./LibraryContext";
+import { LibraryContextType } from "./Types";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -122,17 +124,9 @@ function Navigation({
 }
 
 export default function Sidebar({
-  settings,
-  setSettings,
-  usage,
-  activePanel,
-  setActivePanel,
   onSuggestionClick,
-  onSuggestionDelete,
-  onSettingsSave,
   onHistoryClick,
   triggerHistoryRerender,
-  maximize,
   addToHistory,
 }) {
   const state = useSelector((state: RootState) => state.library);
@@ -142,6 +136,24 @@ export default function Sidebar({
   if (!currentChapter) {
     return null;
   }
+  const activePanel = useSelector(
+    (state: RootState) => state.library.panels.sidebar.activePanel
+  );
+
+  const maximize = useSelector(
+    (state: RootState) => state.library.viewMode === "fullscreen"
+  );
+  const { settings, setSettings, usage } = useContext(
+    LibraryContext
+  ) as LibraryContextType;
+
+  function setActivePanel(panel) {
+    dispatch(librarySlice.actions.setActivePanel(panel));
+  }
+
+  const onSuggestionDelete = (index) => {
+    dispatch(librarySlice.actions.deleteSuggestion(index));
+  };
 
   // TODO
   const infoText =
@@ -209,7 +221,7 @@ export default function Sidebar({
                 settings={settings}
                 usage={usage}
                 setSettings={setSettings}
-                onSave={onSettingsSave}
+                onSave={() => {}}
               />,
             ]}
           />

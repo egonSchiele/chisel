@@ -361,6 +361,7 @@ export default function Library({ mobile = false }) {
     saveChapter,
     setLoading,
     settings,
+    setSettings,
     usage,
     deleteChapter,
   };
@@ -498,19 +499,7 @@ export default function Library({ mobile = false }) {
         )}
 
         <Sidebar
-          settings={settings}
-          setSettings={setSettings}
-          usage={usage}
-          activePanel={state.panels.sidebar.activePanel}
-          setActivePanel={(panel) =>
-            dispatch(librarySlice.actions.setActivePanel(panel))
-          }
-          maximize={state.viewMode === "fullscreen"}
           onSuggestionClick={addToContents}
-          onSuggestionDelete={(index) => {
-            dispatch(librarySlice.actions.deleteSuggestion(index));
-          }}
-          onSettingsSave={() => {}}
           onHistoryClick={async (e, newText) => {
             await onTextEditorSave(state);
             dispatch(
@@ -619,7 +608,6 @@ export default function Library({ mobile = false }) {
                 } h-screen overflow-auto  mt-8`}
               >
                 <PromptsSidebar
-                  settings={settings}
                   closeSidebar={() =>
                     dispatch(librarySlice.actions.closePrompts())
                   }
@@ -638,19 +626,7 @@ export default function Library({ mobile = false }) {
             <SlideTransition show={!!sidebarOpen} direction="right">
               <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
                 <Sidebar
-                  settings={settings}
-                  setSettings={setSettings}
-                  usage={usage}
-                  activePanel={state.panels.sidebar.activePanel}
-                  setActivePanel={(panel) =>
-                    dispatch(librarySlice.actions.setActivePanel(panel))
-                  }
-                  maximize={state.viewMode === "fullscreen"}
                   onSuggestionClick={addToContents}
-                  onSuggestionDelete={(index) => {
-                    dispatch(librarySlice.actions.deleteSuggestion(index));
-                  }}
-                  onSettingsSave={() => {}}
                   onHistoryClick={async (e, newText) => {
                     await onTextEditorSave(state);
                     dispatch(
@@ -661,10 +637,10 @@ export default function Library({ mobile = false }) {
                     );
                     dispatch(librarySlice.actions.setViewMode("default"));
                   }}
-                  triggerHistoryRerender={triggerHistoryRerender}
                   addToHistory={async () => {
                     await onTextEditorSave(state, true);
                   }}
+                  triggerHistoryRerender={triggerHistoryRerender}
                 />
               </div>
             </SlideTransition>

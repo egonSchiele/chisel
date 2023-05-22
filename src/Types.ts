@@ -406,6 +406,7 @@ export type LibraryContextType = {
   saveChapter: (_chapter: Chapter, suggestions?: Suggestion[]) => Promise<void>;
   setLoading: (loading: boolean) => void;
   settings: UserSettings;
+  setSettings: (settings: UserSettings) => void;
   usage: Usage | null;
   deleteChapter: (deletedChapterid: string) => Promise<void>;
 };

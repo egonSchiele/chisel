@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonGroup from "./components/ButtonGroup";
@@ -15,13 +15,12 @@ import {
   getText,
   librarySlice,
 } from "./reducers/librarySlice";
+import LibraryContext from "./LibraryContext";
 
 export default function PromptsSidebar({
-  settings,
   closeSidebar,
   onLoad,
 }: {
-  settings: t.UserSettings;
   closeSidebar: () => void;
   onLoad: () => void;
 }) {
@@ -30,7 +29,7 @@ export default function PromptsSidebar({
   const currentText = useSelector(getText(state.activeTextIndex));
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-
+  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
   const fetchSynonyms = async () => {
     const word = state._cachedSelectedText
       ? state._cachedSelectedText.contents
@@ -54,6 +53,7 @@ export default function PromptsSidebar({
   };
 
   function getTextForSuggestions() {
+    if (!currentText) return "";
     let { text } = currentText;
     if (
       state._cachedSelectedText &&
@@ -76,7 +76,7 @@ export default function PromptsSidebar({
           prompt.text,
           prompt.label,
           getTextForSuggestions(),
-          currentBook.synopsis || "",
+          currentBook?.synopsis || "",
           dispatch
         )
       }
