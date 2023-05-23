@@ -451,13 +451,15 @@ export default function Library({ mobile = false }) {
     return (
       <LibErrorBoundary component="focus mode">
         <div>
-          <FocusMode
-            text={text}
-            onClose={focusModeClose}
-            onChange={(text) => {
-              dispatch(librarySlice.actions.setTemporaryFocusModeState(text));
-            }}
-          />
+          <LibraryContext.Provider value={libraryUtils}>
+            <FocusMode
+              text={text}
+              onClose={focusModeClose}
+              onChange={(text) => {
+                dispatch(librarySlice.actions.setTemporaryFocusModeState(text));
+              }}
+            />
+          </LibraryContext.Provider>
         </div>
       </LibErrorBoundary>
     );
@@ -482,30 +484,32 @@ export default function Library({ mobile = false }) {
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
-        {state.launcherOpen && (
-          <LibraryLauncher
-            onEditorSave={onEditorSave}
-            onLauncherClose={onLauncherClose}
-          />
-        )}
+        <LibraryContext.Provider value={libraryUtils}>
+          {state.launcherOpen && (
+            <LibraryLauncher
+              onEditorSave={onEditorSave}
+              onLauncherClose={onLauncherClose}
+            />
+          )}
 
-        <Sidebar
-          onSuggestionClick={addToContents}
-          onHistoryClick={async (e, newText) => {
-            await onTextEditorSave(state);
-            dispatch(
-              librarySlice.actions.restoreFromHistory({
-                text: newText,
-                metaKey: e.metaKey,
-              })
-            );
-            dispatch(librarySlice.actions.setViewMode("default"));
-          }}
-          addToHistory={async () => {
-            await onTextEditorSave(state, true);
-          }}
-          triggerHistoryRerender={triggerHistoryRerender}
-        />
+          <Sidebar
+            onSuggestionClick={addToContents}
+            onHistoryClick={async (e, newText) => {
+              await onTextEditorSave(state);
+              dispatch(
+                librarySlice.actions.restoreFromHistory({
+                  text: newText,
+                  metaKey: e.metaKey,
+                })
+              );
+              dispatch(librarySlice.actions.setViewMode("default"));
+            }}
+            addToHistory={async () => {
+              await onTextEditorSave(state, true);
+            }}
+            triggerHistoryRerender={triggerHistoryRerender}
+          />
+        </LibraryContext.Provider>
       </div>
     );
   }

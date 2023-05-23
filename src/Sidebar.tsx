@@ -133,9 +133,6 @@ export default function Sidebar({
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
 
-  if (!currentChapter) {
-    return null;
-  }
   const activePanel = useSelector(
     (state: RootState) => state.library.panels.sidebar.activePanel
   );
@@ -154,6 +151,10 @@ export default function Sidebar({
   const onSuggestionDelete = (index) => {
     dispatch(librarySlice.actions.deleteSuggestion(index));
   };
+
+  if (!currentChapter) {
+    return null;
+  }
 
   // TODO
   const infoText =

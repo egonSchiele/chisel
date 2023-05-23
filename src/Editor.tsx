@@ -149,12 +149,14 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           selector="text-editor-title"
         />
         {currentText.map((text, index) => {
+          const key = text.id || index;
           if (text.type === "embeddedText") {
             return (
               <EmbeddedTextBlock
                 chapterid={currentChapterId}
                 text={text}
                 index={index}
+                key={key}
               />
             );
           }
@@ -169,9 +171,12 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           }
 
           return (
-            <>
+            <div key={key}>
               {hasVersions(text) && (
-                <div className="text-sm flex items-center mb-sm mt-md ml-24">
+                <div
+                  className="text-sm flex items-center mb-sm mt-md ml-24"
+                  key={text.id || index}
+                >
                   <p className="mr-xs uppercase text-gray-400 dark:text-gray-400">
                     Diff against:
                   </p>
@@ -215,7 +220,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                 </div>
               )}
               {text.diffWith && (
-                <div className="flex overflow-auto w-full max-w-4xl mx-auto">
+                <div
+                  className="flex overflow-auto w-full max-w-4xl mx-auto"
+                  key={text.id || index}
+                >
                   <DiffViewer
                     originalText={text.text}
                     newText={diffWithText}
@@ -246,7 +254,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                   settings={settings}
                 />
               )}
-            </>
+            </div>
           );
         })}
         {/* bottom padding */}

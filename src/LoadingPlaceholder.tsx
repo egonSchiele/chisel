@@ -5,11 +5,14 @@ export default function LoadingPlaceholder({ loaded, placeholder, children }) {
 
 export function PanelPlaceholder({ loaded, show, children, className = "" }) {
   if (!show) return null;
-  const placeholder = (
+  /*   const placeholder = (
     <div
       className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-48 bg-gray-300 border-gray-400 dark:bg-gray-700 border dark:border-gray-900 animate-pulse absolute ${className}`}
     ></div>
   );
+
+ */
+  const placeholder = <div></div>;
   return (
     <LoadingPlaceholder
       loaded={loaded}
