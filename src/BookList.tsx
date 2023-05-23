@@ -119,11 +119,11 @@ export default function BookList() {
   }
 
   function close() {
-    dispatch(librarySlice.actions.closeBookList());
+    dispatch(librarySlice.actions.closeFileNavigator());
   }
 
   function open() {
-    dispatch(librarySlice.actions.openBookList());
+    dispatch(librarySlice.actions.openFileNavigator());
   }
 
   async function handleUpload(x) {
@@ -149,7 +149,7 @@ export default function BookList() {
   }
 
   const newMenuItem = {
-    label: "New",
+    label: "New Book",
     icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: () => newBook(),
     className: buttonStyles,

@@ -25,7 +25,7 @@ Cypress.Commands.add("newBook", (user) => {
   }).as("postNewBook");
 
   // Click the New button to add a new book
-  cy.get("div[data-label=New]").click();
+  cy.get("div[data-label='New Book']").click();
 
   cy.wait(2000);
 
@@ -36,10 +36,14 @@ Cypress.Commands.add("newBook", (user) => {
 
 Cypress.Commands.add("newChapter", (user) => {
   cy.get("div[data-selector='chapterlist-list']").within(() => {
-    cy.get("div[data-label=New]").click();
+    cy.get("div[data-label='New Chapter']").click();
   });
 
   cy.wait(2000);
+
+  cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
+    force: true,
+  });
 
   cy.get("p[data-selector='chapterlist-list-item']").contains("New chapter");
 });
@@ -96,13 +100,31 @@ Cypress.Commands.add("deleteFirstChapter", (user) => {
 
 Cypress.Commands.add("selectChapter", (user) => {
   cy.get("a[data-selector='chapterlist-list-item-link']").click();
+
+  cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
+    force: true,
+  });
+});
+
+Cypress.Commands.add("selectFirstChapter", (user) => {
+  cy.get("a[data-selector='chapterlist-list-item-link']").first().click();
+  cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
+    force: true,
+  });
+});
+
+Cypress.Commands.add("selectLastChapter", (user) => {
+  cy.get("a[data-selector='chapterlist-list-item-link']").last().click();
+  cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
+    force: true,
+  });
 });
 
 Cypress.Commands.add("selectBook", (user) => {
   cy.get("a[data-selector='booklist-list-item-link']").click();
 });
 
-Cypress.Commands.add("toggleSidebar", (user) => {
+Cypress.Commands.add("toggleRightSidebar", (user) => {
   cy.get("button[data-selector='sidebar-button']").click();
 });
 
@@ -134,13 +156,15 @@ Cypress.Commands.add("autoSave", (user) => {
   cy.wait(6000);
 });
 
-Cypress.Commands.add("launcher", (cmd, element="body") => {
+Cypress.Commands.add("launcher", (cmd, element = "body") => {
   cy.get(element).type("{cmd+shift+p}");
   cy.get("input[data-selector='launcher-search-input']").type(`${cmd}{enter}`);
 });
 
-Cypress.Commands.add("openLists", (cmd, element="body") => {
-  cy.get("button[data-selector='open-lists-button']").click();
+Cypress.Commands.add("openLists", (cmd, element = "body") => {
+  cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
+    force: true,
+  });
 });
 
 // ***********************************************

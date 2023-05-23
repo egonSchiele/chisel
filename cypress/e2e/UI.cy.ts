@@ -13,14 +13,13 @@ describe("UI", () => {
 
     cy.newChapter();
 
-    cy.get("a[data-selector='chapterlist-list-item-link']").click();
+    cy.selectChapter();
 
     // various UI elements show up
     cy.contains("span", "Saved");
 
     // show sidebar
     cy.get("button[data-selector='sidebar-button']").click();
-    
 
     cy.get("button[data-selector='info-button']").click();
     cy.contains("h3", "Info");
@@ -61,7 +60,7 @@ describe("UI", () => {
      */ cy.contains("ul", "New Chapter");
     cy.get("body").type("{command+shift+p}");
 
-    cy.openLists()
+    cy.openLists();
     cy.deleteChapter();
     cy.deleteBook();
 

@@ -8,7 +8,6 @@ describe("edit and switch", () => {
   it("if you edit a chapter, move to another chapter, and then go back, your edits should show (issue #7)", () => {
     cy.login();
 
-
     cy.newBook();
 
     cy.get("a[data-selector='booklist-list-item-link']").click();
@@ -18,7 +17,7 @@ describe("edit and switch", () => {
     cy.newChapter();
     cy.newChapter();
 
-    cy.get("a[data-selector='chapterlist-list-item-link']").first().click();
+    cy.selectFirstChapter();
 
     cy.get("div[data-selector='text-editor-title']").type(`${title}{enter}`);
     cy.get(".ql-editor").last().type(`${text}{enter}`);
@@ -26,10 +25,10 @@ describe("edit and switch", () => {
     cy.autoSave();
 
     // go to the other chapter
-    cy.get("a[data-selector='chapterlist-list-item-link']").last().click();
+    cy.selectLastChapter();
 
     // go back
-    cy.get("a[data-selector='chapterlist-list-item-link']").first().click();
+    cy.selectFirstChapter();
 
     // your edits should show
     cy.contains("div[data-selector='text-editor-title']", title);

@@ -54,15 +54,12 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     infoPanel: { syllables: 0 },
     panels: {
       leftSidebar: {
-        open: localStorageOrDefault("leftSidebar", true),
+        open: localStorageOrDefault("leftSidebarOpen", true),
         activePanel: "filenavigator",
       },
-      sidebar: {
-        open: localStorageOrDefault("sidebarOpen", false),
+      rightSidebar: {
+        open: localStorageOrDefault("rightSidebarOpen", false),
         activePanel: localStorageOrDefault("activePanel", "suggestions"),
-      },
-      prompts: {
-        open: localStorageOrDefault("promptsOpen", false),
       },
     },
     suggestions: chapter.suggestions,
@@ -160,7 +157,7 @@ export const librarySlice = createSlice({
       state.editor = initialEditorState(chapter);
       state.selectedChapterId = chapterId;
       state.suggestions = chapter.suggestions;
-      //state.panels.bookList.open = false;
+      //state.panels.leftSidebar.open = false;
       //state.panels.chapterList.open = false;
     },
     setNoChapter(state) {
@@ -408,124 +405,143 @@ export const librarySlice = createSlice({
     setScrollTo(state: t.State, action: PayloadAction<number>) {
       state.scrollTo = action.payload;
     },
-    openBookList(state) {
-      state.panels.bookList.open = true;
-      localStorage.setItem("bookListOpen", "true");
+    openFileNavigator(state: t.State) {
+      state.panels.leftSidebar.open = true;
+      state.panels.leftSidebar.activePanel = "filenavigator";
+      localStorage.setItem("leftSidebarOpen", "true");
     },
-    closeBookList(state) {
-      state.panels.bookList.open = false;
-      localStorage.setItem("bookListOpen", "false");
+    closeFileNavigator(state: t.State) {
+      state.panels.leftSidebar.open = false;
+      localStorage.setItem("leftSidebarOpen", "false");
     },
-    openChapterList(state) {
-      state.panels.chapterList.open = true;
-      localStorage.setItem("chapterListOpen", "true");
+    openLeftSidebar(state: t.State) {
+      state.panels.leftSidebar.open = true;
+      localStorage.setItem("leftSidebarOpen", "true");
     },
-    closeChapterList(state) {
-      state.panels.chapterList.open = false;
-      localStorage.setItem("chapterListOpen", "false");
+    closeLeftSidebar(state: t.State) {
+      state.panels.leftSidebar.open = false;
+      localStorage.setItem("leftSidebarOpen", "false");
     },
-    openSidebar(state) {
-      state.panels.sidebar.open = true;
-      localStorage.setItem("sidebarOpen", "true");
+    openRightSidebar(state: t.State) {
+      state.panels.rightSidebar.open = true;
+      localStorage.setItem("rightSidebarOpen", "true");
     },
-    closeSidebar(state) {
-      state.panels.sidebar.open = false;
-      localStorage.setItem("sidebarOpen", "false");
+    closeRightSidebar(state: t.State) {
+      state.panels.rightSidebar.open = false;
+      localStorage.setItem("rightSidebarOpen", "false");
     },
-    closePrompts(state) {
+    /*   closePrompts(state:t.State) {
       state.panels.prompts.open = false;
       localStorage.setItem("promptsOpen", "false");
-    },
-    toggleBookList(state) {
-      state.panels.bookList.open = !state.panels.bookList.open;
+    }, */
+    toggleFileNavigator(state: t.State) {
+      if (
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "filenavigator"
+      ) {
+        state.panels.leftSidebar.open = false;
+      } else {
+        state.panels.leftSidebar.open = true;
+        state.panels.leftSidebar.activePanel = "filenavigator";
+      }
+
       localStorage.setItem(
-        "bookListOpen",
-        state.panels.bookList.open ? "true" : "false"
+        "leftSidebarOpen",
+        state.panels.leftSidebar.open ? "true" : "false"
       );
     },
-    toggleChapterList(state) {
-      state.panels.chapterList.open = !state.panels.chapterList.open;
+    togglePrompts(state: t.State) {
+      if (
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "prompts"
+      ) {
+        state.panels.leftSidebar.open = false;
+      } else {
+        state.panels.leftSidebar.open = true;
+        state.panels.leftSidebar.activePanel = "prompts";
+      }
+
       localStorage.setItem(
-        "chapterListOpen",
-        state.panels.chapterList.open ? "true" : "false"
+        "leftSidebarOpen",
+        state.panels.leftSidebar.open ? "true" : "false"
       );
     },
-    toggleSidebar(state) {
-      state.panels.sidebar.open = !state.panels.sidebar.open;
+
+    toggleRightSidebar(state: t.State) {
+      state.panels.rightSidebar.open = !state.panels.rightSidebar.open;
       localStorage.setItem(
-        "sidebarOpen",
-        state.panels.sidebar.open ? "true" : "false"
+        "rightSidebarOpen",
+        state.panels.rightSidebar.open ? "true" : "false"
       );
     },
-    togglePrompts(state) {
+    /*     togglePrompts(state:t.State) {
       state.panels.prompts.open = !state.panels.prompts.open;
       localStorage.setItem(
         "promptsOpen",
         state.panels.prompts.open ? "true" : "false"
       );
-    },
-    closeAllPanels(state) {
+    }, */
+    closeAllPanels(state: t.State) {
       const panels = current(state.panels);
       state._cachedPanelState = { ...panels };
-      state.panels.bookList.open = false;
-      state.panels.chapterList.open = false;
-      state.panels.sidebar.open = false;
-      state.panels.prompts.open = false;
-      localStorage.setItem("bookListOpen", "false");
-      localStorage.setItem("chapterListOpen", "false");
-      localStorage.setItem("sidebarOpen", "false");
-      localStorage.setItem("promptsOpen", "false");
+      state.panels.leftSidebar.open = false;
+      state.panels.rightSidebar.open = false;
+      localStorage.setItem("leftSidebarOpen", "false");
+      localStorage.setItem("rightSidebarOpen", "false");
     },
-    openAllPanels(state) {
+    openAllPanels(state: t.State) {
       if (state._cachedPanelState) {
         state.panels = { ...state._cachedPanelState };
       } else {
-        state.panels.bookList.open = true;
-        state.panels.chapterList.open = true;
-        state.panels.sidebar.open = true;
-        state.panels.prompts.open = true;
+        state.panels.leftSidebar.open = true;
+        state.panels.rightSidebar.open = true;
       }
       state._cachedPanelState = null;
-      localStorage.setItem("bookListOpen", state.panels.bookList.open);
-      localStorage.setItem("chapterListOpen", state.panels.chapterList.open);
-      localStorage.setItem("sidebarOpen", state.panels.sidebar.open);
-      localStorage.setItem("promptsOpen", state.panels.prompts.open);
+      localStorage.setItem(
+        "leftSidebarOpen",
+        String(state.panels.leftSidebar.open)
+      );
+      localStorage.setItem(
+        "rightSidebarOpen",
+        String(state.panels.rightSidebar.open)
+      );
     },
     openOnlyPanel(state, action: PayloadAction<string>) {
-      const bookListOpen = action.payload === "bookList";
+      // TODO
+      /*  const bookListOpen = action.payload === "bookList";
       const chapterListOpen = action.payload === "chapterList";
       const sidebarOpen = action.payload === "sidebar";
       const promptsOpen = action.payload === "prompts";
 
-      state.panels.bookList.open = bookListOpen;
+      state.panels.leftSidebar.open = bookListOpen;
       state.panels.chapterList.open = chapterListOpen;
       state.panels.sidebar.open = sidebarOpen;
       state.panels.prompts.open = promptsOpen;
 
-      localStorage.setItem("bookListOpen", bookListOpen.toString());
+      localStorage.setItem("leftSidebarOpen", bookListOpen.toString());
       localStorage.setItem("chapterListOpen", chapterListOpen.toString());
       localStorage.setItem("sidebarOpen", sidebarOpen.toString());
-      localStorage.setItem("promptsOpen", promptsOpen.toString());
+      localStorage.setItem("promptsOpen", promptsOpen.toString()); */
     },
     setActivePanel(state: t.State, action: PayloadAction<t.ActivePanel>) {
-      state.panels.sidebar.activePanel = action.payload;
+      state.panels.rightSidebar.activePanel = action.payload;
       localStorage.setItem("activePanel", action.payload);
     },
-    toggleLauncher(state) {
+    toggleLauncher(state: t.State) {
       state.launcherOpen = !state.launcherOpen;
     },
-    hidePopup(state) {
+    hidePopup(state: t.State) {
       state.popupOpen = false;
     },
     showPopup(state, action: PayloadAction<t.PopupData>) {
       state.popupOpen = true;
       state.popupData = action.payload;
     },
-    noBookSelected(state) {
+    noBookSelected(state: t.State) {
       state.selectedBookId = null;
       state.selectedChapterId = null;
     },
-    noChapterSelected(state) {
+    noChapterSelected(state: t.State) {
       state.selectedChapterId = null;
     },
     setActiveTextIndex(state: t.State, action: PayloadAction<number>) {

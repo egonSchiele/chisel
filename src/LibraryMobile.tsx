@@ -46,6 +46,7 @@ import BookEditor from "./BookEditor";
 import Popup from "./components/Popup";
 import LibraryLauncher from "./components/LibraryLauncher";
 import Button from "./components/Button";
+import LibraryContext from "./LibraryContext";
 
 export default function Library() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -78,6 +79,7 @@ export default function Library() {
   }, [bookid]);
 
   const fetchBooks = async () => {
+    // @ts-ignore
     dispatch(fetchBooksThunk());
   };
 
@@ -87,10 +89,14 @@ export default function Library() {
 
   const navigate = useNavigate();
 
-  async function newChapter(title = "New Chapter", text = "", _bookid = null) {
+  async function newChapter(
+    title = "New Chapter",
+    text = "",
+    _bookid: string | null = null
+  ) {
     const theBookid = _bookid || bookid;
     dispatch(librarySlice.actions.loading());
-    const result = await fd.newChapter(theBookid, title, text);
+    const result = await fd.newChapter(theBookid as string, title, text);
     dispatch(librarySlice.actions.loaded());
     if (result.tag === "error") {
       dispatch(librarySlice.actions.setError(result.message));
@@ -191,82 +197,61 @@ export default function Library() {
   }
 
   if (!state.booksLoaded) {
-    return <div>Loading...</div>;
+    return <div className="h-screen w-screen bg-gray-800 animate-pulse"></div>;
   }
+
+  const libraryUtils: t.LibraryContextType = {
+    newChapter,
+    newBook,
+    newCompostNote,
+    saveBook,
+    // @ts-ignore
+    saveChapter,
+  };
 
   return (
     <div className="h-screen">
-      {state.error && (
-        <div className="bg-red-700 p-2 text-white flex">
-          <p className="flex-grow">{state.error}</p>
-          <div
-            className="cursor-pointer flex-none"
-            onClick={() => dispatch(librarySlice.actions.clearError())}
-          >
-            <XMarkIcon className="w-5 h-5 my-auto" />
+      <LibraryContext.Provider value={libraryUtils}>
+        {state.error && (
+          <div className="bg-red-700 p-2 text-white flex">
+            <p className="flex-grow">{state.error}</p>
+            <div
+              className="cursor-pointer flex-none"
+              onClick={() => dispatch(librarySlice.actions.clearError())}
+            >
+              <XMarkIcon className="w-5 h-5 my-auto" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="flex h-screen">
-        {!bookid && (
-          <LibErrorBoundary component="book list">
-            <div className="h-screen w-full relative pb-safe ">
-              <BookList
-                books={state.books}
-                selectedBookId={state.selectedBookId}
-                onDelete={(deletedBookid) => {
-                  dispatch(librarySlice.actions.deleteBook(deletedBookid));
-                  if (deletedBookid === bookid) {
-                    dispatch(librarySlice.actions.noBookSelected());
-                    navigate("/");
-                  }
-                }}
-                newBook={newBook}
-                canCloseSidebar={false}
-                saveBook={saveBook}
-              />
-              {compostBookId && (
-                <Button
-                  onClick={() => newCompostNote()}
-                  className="absolute bottom-md right-md"
-                  style="secondary"
-                  size="large"
-                  rounded={true}
-                >
-                  New note
-                </Button>
-              )}
-            </div>
-          </LibErrorBoundary>
-        )}
-        {bookid && !chapterid && (
-          <LibErrorBoundary component="chapter list">
-            <div className="w-full h-full">
-              <ChapterList
-                bookid={state.selectedBookId}
-                selectedChapterId={chapterid || ""}
-                onDelete={(deletedChapterid) => {
-                  dispatch(
-                    librarySlice.actions.deleteChapter(deletedChapterid)
-                  );
-                  if (deletedChapterid === chapterid) {
-                    dispatch(librarySlice.actions.noChapterSelected());
-                    navigate(`/book/${state.selectedBookId}`);
-                  }
-                }}
-                saveChapter={(chapter) => saveChapter(chapter, null)}
-                closeSidebar={() =>
-                  dispatch(librarySlice.actions.closeChapterList())
-                }
-                newChapter={newChapter}
-                canCloseSidebar={false}
-                mobile={true}
-              />
-            </div>
-          </LibErrorBoundary>
-        )}
-      </div>
+        <div className="flex h-screen">
+          {!bookid && (
+            <LibErrorBoundary component="book list">
+              <div className="h-screen w-full relative pb-safe ">
+                <BookList />
+                {compostBookId && (
+                  <Button
+                    onClick={() => newCompostNote()}
+                    className="absolute bottom-md right-md"
+                    style="secondary"
+                    size="large"
+                    rounded={true}
+                  >
+                    New note
+                  </Button>
+                )}
+              </div>
+            </LibErrorBoundary>
+          )}
+          {bookid && !chapterid && (
+            <LibErrorBoundary component="chapter list">
+              <div className="w-full h-full">
+                <ChapterList selectedChapterId={chapterid || ""} />
+              </div>
+            </LibErrorBoundary>
+          )}
+        </div>
+      </LibraryContext.Provider>
     </div>
   );
 }

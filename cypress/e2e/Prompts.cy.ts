@@ -23,7 +23,7 @@ describe("prompts", () => {
 
     cy.selectChapter();
 
-    cy.toggleSidebar();
+    cy.toggleRightSidebar();
 
     cy.showSuggestions();
     cy.get(`div[data-selector='ai-suggestion-panel']`).should("not.exist");
@@ -33,7 +33,7 @@ describe("prompts", () => {
     cy.togglePrompts();
     cy.intercept({
       method: "POST",
-      url: "/api/suggestions"
+      url: "/api/suggestions",
     }).as("postSuggestions");
 
     cy.get("li[data-selector='prompt-Expand-button']").click();
@@ -43,7 +43,7 @@ describe("prompts", () => {
     cy.get(`div[data-selector='ai-suggestion-panel']`).should("exist");
     cy.get(`div[data-selector='ai-suggestion-panel']`).first().click();
 
-    cy.get("#diff-view").contains("once upon a");//.invoke("text");
+    cy.get("#diff-view").contains("once upon a"); //.invoke("text");
     /*       .then((t) => {
         expect(t.length).to.be.greaterThan(text.length);
       });
@@ -67,7 +67,7 @@ describe("prompts", () => {
     cy.autoSave();
     // go back, the new suggestion should not be there anymore
     cy.visit("http://localhost:80/");
-    
+
     cy.selectBook();
     cy.selectChapter();
 

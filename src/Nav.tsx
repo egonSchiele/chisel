@@ -2,12 +2,14 @@ import {
   CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  DocumentDuplicateIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
   MinusIcon,
   PencilIcon,
   ScissorsIcon,
   SparklesIcon,
+  TableCellsIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,52 +37,86 @@ export default function Nav({
   if (!loaded) {
     return (
       <div
-        className="h-8 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-800 animate-pulse"
+        className="h-9 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-700 animate-pulse"
         id="nav"
       ></div>
     );
   }
   return (
     <div
-      className="h-8 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-800"
+      className="h-9 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-700 align-middle"
       id="nav"
     >
-      <div className=" m-xs flex">
-        <div className="flex-none">
-          {(!state.panels.bookList.open || !state.panels.chapterList.open) &&
-            !mobile &&
-            currentChapter && (
-              <NavButton
-                label="Open"
+      <div className="h-full flex align-middle">
+        <div className="h-full flex-none align-middle">
+          {!mobile && currentChapter && (
+            <>
+              <button
                 onClick={() => {
-                  dispatch(librarySlice.actions.openBookList());
-                  dispatch(librarySlice.actions.openChapterList());
+                  dispatch(librarySlice.actions.openFileNavigator());
+                }}
+                className="hidden"
+                data-selector="open-file-navigator-for-cypress"
+              ></button>
+              <NavButton
+                label="File Navigator"
+                onClick={() => {
+                  dispatch(librarySlice.actions.toggleFileNavigator());
                 }}
                 className="p-0"
                 selector="open-lists-button"
+                selected={
+                  state.panels.leftSidebar.open &&
+                  state.panels.leftSidebar.activePanel === "filenavigator"
+                }
               >
-                <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
-                <p className="uppercase text-xs align-baseline">Open</p>
+                <DocumentDuplicateIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
-            )}
-
-          {state.panels.bookList.open &&
-            state.panels.chapterList.open &&
-            !mobile &&
-            currentChapter && (
               <NavButton
-                label="Close"
+                label="Prompts"
                 onClick={() => {
-                  dispatch(librarySlice.actions.closeBookList());
-                  dispatch(librarySlice.actions.closeChapterList());
+                  dispatch(librarySlice.actions.togglePrompts());
                 }}
                 className="p-0"
-                selector="close-lists-button"
+                selector="prompts-button"
+                selected={
+                  state.panels.leftSidebar.open &&
+                  state.panels.leftSidebar.activePanel === "prompts"
+                }
               >
-                <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-                <p className="uppercase text-xs align-baseline">Close</p>
+                <SparklesIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
-            )}
+              {/*  <NavButton
+                label="Blocks"
+                onClick={() => {
+                  dispatch(librarySlice.actions.toggleFileNavigator());
+                }}
+                className="p-0"
+                selector="blocks-button"
+                selected={
+                  state.panels.leftSidebar.open &&
+                  state.panels.leftSidebar.activePanel === "blocks"
+                }
+              >
+                <TableCellsIcon className="h-5 w-5" aria-hidden="true" />
+              </NavButton> */}
+            </>
+          )}
+
+          {/*           {state.panels.leftSidebar.open && !mobile && currentChapter && (
+            <NavButton
+              label="Close"
+              onClick={() => {
+                dispatch(librarySlice.actions.closeFileNavigator());
+                dispatch(librarySlice.actions.closeFileNavigator());
+              }}
+              className="p-0"
+              selector="close-lists-button"
+            >
+              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+              <p className="uppercase text-xs align-baseline">Close</p>
+            </NavButton>
+          )} */}
 
           {mobile && (
             <NavButton
@@ -100,7 +136,7 @@ export default function Nav({
 
         {/* book editor nav */}
         {bookid && !chapterid && (
-          <div className="mr-sm mt-xs">
+          <div className="mr-xs">
             {!state.saved && (
               <NavButton label="Unsaved" onClick={() => {}}>
                 <MinusIcon className="h-5 w-5" aria-hidden="true" />
@@ -141,7 +177,7 @@ export default function Nav({
                 )}
 
               {state.viewMode === "readonly" && (
-                <span className="text-gray-300 dark:text-gray-500 text-xs uppercase mr-xs inline-block align-middle h-6">
+                <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
                   read only
                 </span>
               )}
@@ -197,28 +233,23 @@ export default function Nav({
                     <EyeIcon className="h-5 w-5" aria-hidden="true" />
                   </NavButton>
 
-                  <NavButton
+                  {/*   <NavButton
                     label="Prompts"
                     onClick={() => {
                       dispatch(librarySlice.actions.togglePrompts());
                       if (!state.panels.prompts.open) {
-                        dispatch(librarySlice.actions.closeBookList());
-                        dispatch(librarySlice.actions.closeChapterList());
+                        dispatch(librarySlice.actions.closeFileNavigator());
                       }
                     }}
                     selector="prompts-button"
                   >
                     <SparklesIcon className="h-5 w-5" aria-hidden="true" />
-                  </NavButton>
+                  </NavButton> */}
 
                   <NavButton
                     label="Sidebar"
                     onClick={() => {
-                      dispatch(librarySlice.actions.toggleSidebar());
-                      if (!state.panels.sidebar.open) {
-                        dispatch(librarySlice.actions.closeBookList());
-                        dispatch(librarySlice.actions.closeChapterList());
-                      }
+                      dispatch(librarySlice.actions.toggleRightSidebar());
                     }}
                     selector="sidebar-button"
                   >

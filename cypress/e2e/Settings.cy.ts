@@ -21,14 +21,14 @@ describe("settings", () => {
 
     cy.selectChapter();
 
-    cy.toggleSidebar();
+    cy.toggleRightSidebar();
     cy.showSettings();
 
     cy.get("input[data-selector='prompt-Expand-label']").type(
-      `{selectAll}{backspace}${promptLabel}`,
+      `{selectAll}{backspace}${promptLabel}`
     );
     cy.get(`textarea[data-selector='prompt-${promptLabel}-text']`).type(
-      `{selectAll}{backspace}${promptText}`,
+      `{selectAll}{backspace}${promptText}`
     );
 
     // we didn't save, so the prompt shouldn't be there
@@ -39,22 +39,22 @@ describe("settings", () => {
 
     cy.get("input[data-selector='prompt-Expand-label']").should(
       "have.value",
-      "Expand",
+      "Expand"
     );
     cy.get(`input[data-selector='prompt-${promptLabel}-label']`).should(
-      "not.exist",
+      "not.exist"
     );
 
     cy.get("input[data-selector='prompt-Expand-label']").type(
-      `{selectAll}{backspace}${promptLabel}`,
+      `{selectAll}{backspace}${promptLabel}`
     );
     cy.get(`textarea[data-selector='prompt-${promptLabel}-text']`).type(
-      `{selectAll}{backspace}${promptText}`,
+      `{selectAll}{backspace}${promptText}`
     );
 
     // save!
     cy.get("button[data-selector='sidebar-save-button']").click();
-    cy.wait(2000)
+    cy.wait(2000);
     // now the new prompt should be there
     cy.visit("http://localhost:80/");
 
@@ -63,26 +63,26 @@ describe("settings", () => {
 
     cy.get(`input[data-selector='prompt-${promptLabel}-label']`).should(
       "have.value",
-      promptLabel,
+      promptLabel
     );
 
     // delete it
     cy.get(
-      `button[data-selector='prompt-${promptLabel}-delete-button']`,
+      `button[data-selector='prompt-${promptLabel}-delete-button']`
     ).click();
 
     cy.get(`input[data-selector='prompt-${promptLabel}-label']`).should(
-      "not.exist",
+      "not.exist"
     );
 
     // add the expand prompt back
     cy.get("button[data-selector='sidebar-new-prompt-button']").click();
 
     cy.get("input[data-selector='prompt-NewPrompt-label']").type(
-      "{selectAll}{backspace}Expand",
+      "{selectAll}{backspace}Expand"
     );
     cy.get("textarea[data-selector='prompt-Expand-text']").type(
-      "Write another paragraph for this text:",
+      "Write another paragraph for this text:"
     );
 
     // save!
@@ -95,12 +95,12 @@ describe("settings", () => {
     cy.selectChapter();
 
     cy.get(`input[data-selector='prompt-${promptLabel}-label']`).should(
-      "not.exist",
+      "not.exist"
     );
 
     cy.get("input[data-selector='prompt-Expand-label']").should(
       "have.value",
-      "Expand",
+      "Expand"
     );
     //cy.openLists();
 

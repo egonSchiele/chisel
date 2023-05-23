@@ -56,8 +56,10 @@ export type Panel = {
   activePanel?: ActivePanel | LeftActivePanel;
 };
 
+export type PanelName = "leftSidebar" | "rightSidebar";
+
 export type PanelState = {
-  [key: string]: Panel;
+  [key in PanelName]: Panel;
 };
 
 export type InfoPanelState = {
@@ -380,7 +382,7 @@ export type MenuItem = {
   label: string;
   tooltip?: string;
   icon?: any;
-  onClick: () => void;
+  onClick: () => any;
   className?: string;
 };
 

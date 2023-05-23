@@ -8,7 +8,6 @@ describe("editor", () => {
   it("lets you edit and save text", () => {
     cy.login();
 
-
     cy.newBook();
 
     cy.selectBook();
@@ -26,8 +25,9 @@ describe("editor", () => {
     cy.autoSave();
 
     cy.visit("http://localhost:80/");
-    cy.get("a[data-selector='booklist-list-item-link']").click();
-    cy.get("a[data-selector='chapterlist-list-item-link']").click();
+    cy.selectBook();
+
+    cy.selectChapter();
 
     cy.contains("div[data-selector='text-editor-title']", title);
 
@@ -39,4 +39,3 @@ describe("editor", () => {
     // finally, delete the book so we're back to a clean slate
   });
 });
-

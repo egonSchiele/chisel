@@ -54,6 +54,7 @@ export default function Library({ mobile = false }) {
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
       dispatch(librarySlice.actions.setChapter(chapterid));
+      dispatch(librarySlice.actions.closeLeftSidebar());
       return;
     }
     dispatch(librarySlice.actions.setNoChapter());
@@ -69,7 +70,7 @@ export default function Library({ mobile = false }) {
   // so that we do not end up with an empty screen.
   useEffect(() => {
     if (!chapterid) {
-      dispatch(librarySlice.actions.openBookList());
+      dispatch(librarySlice.actions.openFileNavigator());
     }
   }, [chapterid]);
 
@@ -77,7 +78,7 @@ export default function Library({ mobile = false }) {
   // book has.
   useEffect(() => {
     if (!chapterid && state.selectedBookId) {
-      dispatch(librarySlice.actions.openChapterList());
+      dispatch(librarySlice.actions.openFileNavigator());
     }
   }, [state.selectedBookId, chapterid]);
 
@@ -100,10 +101,8 @@ export default function Library({ mobile = false }) {
       } else if (state.viewMode !== "default") {
         dispatch(librarySlice.actions.setViewMode("default"));
       } else if (
-        state.panels.sidebar.open ||
-        state.panels.prompts.open ||
-        state.panels.bookList.open ||
-        state.panels.chapterList.open
+        state.panels.leftSidebar.open ||
+        state.panels.rightSidebar.open
       ) {
         dispatch(librarySlice.actions.closeAllPanels());
       } else {
@@ -151,6 +150,7 @@ export default function Library({ mobile = false }) {
   const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
 
   const fetchBooks = async () => {
+    // @ts-ignore
     dispatch(fetchBooksThunk());
   };
 
@@ -464,23 +464,20 @@ export default function Library({ mobile = false }) {
       </LibErrorBoundary>
     );
   }
-  const promptsOpen = !!(
-    state.panels.prompts.open &&
+  const fileNavigatorOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "filenavigator";
+
+  const promptsOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "prompts";
+
+  const rightSidebarOpen = !!(
+    state.panels.rightSidebar.open &&
     currentChapter &&
-    !mobile
-  );
-  const sidebarOpen = !!(
-    state.panels.sidebar.open &&
-    currentChapter &&
-    !mobile
-  );
-  const chapterListOpen = !!(
-    state.panels.chapterList.open &&
-    state.selectedBookId &&
     !mobile
   );
 
-  const bookListOpen = !!(state.panels.bookList.open && !mobile);
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
@@ -579,12 +576,12 @@ export default function Library({ mobile = false }) {
           <LibErrorBoundary component="book list">
             <PanelPlaceholder
               loaded={state.booksLoaded}
-              show={state.panels.bookList.open}
+              show={state.panels.leftSidebar.open}
               className="top-0 left-0"
             >
-              <SlideTransition show={bookListOpen} direction="left">
+              <SlideTransition show={fileNavigatorOpen} direction="left">
                 <div
-                  className={`absolute top-0 left-0 h-full w-48 z-10 mt-8`}
+                  className={`absolute top-0 left-0 h-full w-48 z-10 mt-9`}
                   id="booklist"
                 >
                   <BookList />
@@ -596,15 +593,11 @@ export default function Library({ mobile = false }) {
           <LibErrorBoundary component="chapter list">
             <PanelPlaceholder
               loaded={state.booksLoaded}
-              show={state.panels.chapterList.open}
-              className={`top-0 ${bookListOpen ? "left-48" : "left-0"} `}
+              show={state.panels.leftSidebar.open}
+              className={`top-0 left-48`}
             >
-              <SlideTransition show={chapterListOpen} direction="left">
-                <div
-                  className={`absolute top-0 ${
-                    bookListOpen ? "left-48" : "left-0"
-                  } w-48 h-full z-10 mt-8`}
-                >
+              <SlideTransition show={fileNavigatorOpen} direction="left">
+                <div className={`absolute top-0 left-48 w-48 h-full z-10 mt-9`}>
                   <ChapterList selectedChapterId={chapterid || ""} />
                 </div>
               </SlideTransition>
@@ -614,21 +607,19 @@ export default function Library({ mobile = false }) {
           <LibErrorBoundary component="Prompts sidebar">
             <PanelPlaceholder
               loaded={state.booksLoaded}
-              show={state.panels.prompts.open}
-              className={` top-0 ${sidebarOpen ? "right-48" : "right-0"}`}
+              show={state.panels.leftSidebar.open}
+              className={` top-0 left-0`}
             >
-              <SlideTransition show={promptsOpen} direction="right">
+              <SlideTransition show={promptsOpen} direction="left">
                 <div
-                  className={`w-48 absolute top-0 ${
-                    sidebarOpen ? "right-48" : "right-0"
-                  } h-screen overflow-auto  mt-8`}
+                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto  mt-9`}
                 >
                   <PromptsSidebar
                     closeSidebar={() =>
                       dispatch(librarySlice.actions.closePrompts())
                     }
                     onLoad={() => {
-                      dispatch(librarySlice.actions.openSidebar());
+                      dispatch(librarySlice.actions.openRightSidebar());
                       dispatch(
                         librarySlice.actions.setActivePanel("suggestions")
                       );
@@ -642,11 +633,11 @@ export default function Library({ mobile = false }) {
           <LibErrorBoundary component="sidebar">
             <PanelPlaceholder
               loaded={state.booksLoaded}
-              show={state.panels.sidebar.open}
+              show={state.panels.rightSidebar.open}
               className="top-0 right-0"
             >
-              <SlideTransition show={sidebarOpen} direction="right">
-                <div className={`absolute top-0 right-0 h-screen w-48 mt-8`}>
+              <SlideTransition show={rightSidebarOpen} direction="right">
+                <div className={`absolute top-0 right-0 h-screen w-48 mt-9`}>
                   <Sidebar
                     onSuggestionClick={addToContents}
                     onHistoryClick={async (e, newText) => {

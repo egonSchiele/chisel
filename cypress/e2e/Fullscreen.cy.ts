@@ -18,9 +18,9 @@ describe("fullscreen", () => {
 
     cy.selectChapter();
 
-    cy.toggleSidebar();
+    cy.toggleRightSidebar();
     // also show book and chapter lists
-    cy.get("button[data-selector='open-lists-button']").click();
+    //cy.get("button[data-selector='open-lists-button']").click();
 
     cy.contains("span", "Minimize").should("not.exist");
 

@@ -36,6 +36,7 @@ import sortBy from "lodash/sortBy";
 import Launcher from "../Launcher";
 import {
   LibraryContextType,
+  MenuItem,
   State,
   blockTypes,
   chapterStatuses,
@@ -64,17 +65,17 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
   const { newBook, newCompostNote, newChapter, renameBook, renameChapter } =
     useContext(LibraryContext) as LibraryContextType;
 
-  function togglePanel(panel: string) {
+  /*   function togglePanel(panel: string) {
     if (
       state.panels.sidebar.open &&
-      state.panels.sidebar.activePanel === panel
+      state.panels.rightSidebar.activePanel === panel
     ) {
       dispatch(librarySlice.actions.closeSidebar());
     } else {
-      dispatch(librarySlice.actions.openSidebar());
+      dispatch(librarySlice.actions.openRightSidebar());
       dispatch(librarySlice.actions.setActivePanel(panel));
     }
-  }
+  } */
 
   function getTextForSuggestions() {
     let { text } = currentText[state.editor.activeTextIndex];
@@ -88,7 +89,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     return text;
   }
 
-  const launchItems = [
+  const launchItems: MenuItem[] = [
     {
       label: "Save",
       onClick: () => {
@@ -121,7 +122,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
         navigate(`/grid/${bookid}`);
       },
     }, */
-    {
+    /*  {
       label: state.panels.bookList.open ? "Close Book List" : "Open Book List",
       icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
@@ -147,7 +148,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     {
       label:
         state.panels.sidebar.open &&
-        state.panels.sidebar.activePanel === "history"
+        state.panels.rightSidebar.activePanel === "history"
           ? "Close History"
           : "Open History",
       icon: <ClockIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
@@ -157,7 +158,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     },
     {
       label:
-        state.panels.sidebar.open && state.panels.sidebar.activePanel === "info"
+        state.panels.sidebar.open && state.panels.rightSidebar.activePanel === "info"
           ? "Close Info"
           : "Open Info",
       icon: <InformationCircleIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
@@ -168,7 +169,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     {
       label:
         state.panels.sidebar.open &&
-        state.panels.sidebar.activePanel === "suggestions"
+        state.panels.rightSidebar.activePanel === "suggestions"
           ? "Close Suggestions"
           : "Open Suggestions",
       icon: <ClipboardIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
@@ -179,7 +180,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     {
       label:
         state.panels.sidebar.open &&
-        state.panels.sidebar.activePanel === "settings"
+        state.panels.rightSidebar.activePanel === "settings"
           ? "Close Settings"
           : "Open Settings",
       icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
@@ -214,7 +215,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       onClick: () => {
         dispatch(librarySlice.actions.openOnlyPanel("sidebar"));
       },
-    },
+    }, */
   ];
 
   if (state.books) {
@@ -263,7 +264,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     });
   }); */
 
-  if (state.panels.sidebar.open) {
+  /*   if (state.panels.sidebar.open) {
     launchItems.push({
       label: "Close Sidebar",
       onClick: () => {
@@ -275,11 +276,11 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     launchItems.push({
       label: "Open Sidebar",
       onClick: () => {
-        dispatch(librarySlice.actions.openSidebar());
+        dispatch(librarySlice.actions.openRightSidebar());
       },
       icon: <ViewColumnsIcon className="h-4 w-4" aria-hidden="true" />,
     });
-  }
+  } */
 
   if (state.viewMode === "fullscreen") {
     launchItems.push({

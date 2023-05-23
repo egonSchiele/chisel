@@ -50,9 +50,8 @@ function Navigation({
 }) {
   const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48";
   return (
-    <div className={`${width} flex`}>
-      <div className="flex-grow" />
-      <div className="">
+    <div className={`${width} flex h-8`}>
+      <div className="w-full items-center">
         <NavButton
           label="Info"
           onClick={() => onClick("info")}
@@ -84,8 +83,6 @@ function Navigation({
         >
           <Cog6ToothIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
         </NavButton>
-      </div>
-      <div className="flex-grow items-end">
         {maximize && (
           <NavButton
             label="Minimize"
@@ -111,13 +108,15 @@ function Navigation({
           </NavButton>
         )}
 
-        <NavButton
-          label="Close"
-          onClick={maximize ? exitFullscreen : closeSidebar}
-          selector="close-sidebar-button"
-        >
-          <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
-        </NavButton>
+        {maximize && (
+          <NavButton
+            label="Close"
+            onClick={exitFullscreen}
+            selector="close-sidebar-button"
+          >
+            <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
+          </NavButton>
+        )}
       </div>
     </div>
   );
@@ -134,7 +133,7 @@ export default function Sidebar({
   const currentChapter = useSelector(getSelectedChapter);
 
   const activePanel = useSelector(
-    (state: RootState) => state.library.panels.sidebar.activePanel
+    (state: RootState) => state.library.panels.rightSidebar.activePanel
   );
 
   const maximize = useSelector(

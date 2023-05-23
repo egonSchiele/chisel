@@ -20,7 +20,7 @@ describe("history", () => {
 
     cy.selectChapter();
 
-    cy.toggleSidebar();
+    cy.toggleRightSidebar();
     cy.showHistory();
 
     // no history yet
@@ -49,7 +49,7 @@ describe("history", () => {
     // restoring history doesn't add to history
     cy.get(historyPanel).should("have.length", 2);
 
-    cy.openLists();
+    //cy.openLists();
     cy.deleteChapter();
     cy.deleteBook();
 
