@@ -53,7 +53,7 @@ export type ViewMode =
 
 export type Panel = {
   open: boolean;
-  activePanel?: string;
+  activePanel?: ActivePanel | LeftActivePanel;
 };
 
 export type PanelState = {
@@ -394,7 +394,8 @@ export type SelectOption = {
   value: string;
 };
 
-type ActivePanel = "info" | "suggestions" | "settings" | "history";
+export type ActivePanel = "info" | "suggestions" | "settings" | "history";
+export type LeftActivePanel = "filenavigator" | "prompts" | "blocks";
 
 export type LibraryContextType = {
   newChapter: (title?: any, text?: any, bookid?: any) => Promise<void>;
