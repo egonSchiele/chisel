@@ -49,10 +49,7 @@ export default function List({
   className = "",
   leftMenuItem = null,
   rightMenuItem = null,
-  level = 1,
-  onDrop = (e) => {},
   selector = "list",
-  swipeToClose = null,
   close = null,
   open = null,
   onTitleClick = null,
@@ -62,85 +59,28 @@ export default function List({
   className?: string;
   leftMenuItem?: t.MenuItem[] | t.MenuItem | null;
   rightMenuItem?: t.MenuItem | null;
-  level?: number;
-  onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
   selector?: string;
-  swipeToClose?: "left" | "right" | null;
-  close?: () => void;
-  open?: () => void;
-  onTitleClick?: () => void;
+  close?: (() => void) | null;
+  open?: (() => void) | null;
+  onTitleClick?: (() => void) | null;
 }) {
-  const [dragOver, setDragOver] = React.useState(false);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    let touchstartX = 0;
-    let touchendX = 0;
-
-    function checkDirection() {
-      if (touchendX < touchstartX) {
-        if (swipeToClose === "left" && close) {
-          close();
-        }
-      }
-      if (touchendX > touchstartX) {
-        if (swipeToClose === "right" && close) {
-          close();
-        } else if (swipeToClose === "left" && open) {
-          open();
-        }
-      }
-    }
-
-    function handleStart(e) {
-      touchstartX = e.changedTouches[0].screenX;
-    }
-
-    function handleEnd(e) {
-      touchendX = e.changedTouches[0].screenX;
-      checkDirection();
-    }
-
-    document.addEventListener("touchstart", handleStart);
-
-    document.addEventListener("touchend", handleEnd);
-    return () => {
-      document.removeEventListener("touchstart", handleStart);
-      document.removeEventListener("touchend", handleEnd);
-    };
-  }, []);
-
   return (
     <div
-      className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} ${
-        dragOver && "dark:bg-gray-700"
-      }  `}
-      onDragOver={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setDragOver(true);
-      }}
-      onDragLeave={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setDragOver(false);
-      }}
-      onDrop={(e) => {
-        setDragOver(false);
-        onDrop(e);
-      }}
+      className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} `}
       data-selector={`${selector}-list`}
     >
       <div className="w-full flex pb-sm md:pb-xs border-b border-listBorder dark:border-dmlistBorder relative">
-        {level === 1 && (
+        {
           <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
             <h3
               className="text-md md:text-sm uppercase font-semibold text-gray-700 dark:text-gray-300"
+              // @ts-ignore
               onClick={onTitleClick}
             >
               {title}
             </h3>
           </div>
-        )}
+        }
 
         {leftMenuItem &&
           Array.isArray(leftMenuItem) &&
@@ -150,11 +90,7 @@ export default function List({
         {leftMenuItem && !Array.isArray(leftMenuItem) && (
           <MenuItem {...leftMenuItem} />
         )}
-        {level === 2 && (
-          <div className="flex-grow">
-            <h3 className="text-sm font-normal">{title}</h3>
-          </div>
-        )}
+
         {rightMenuItem && (
           <div className=" absolute mr-xs right-0">
             <MenuItem {...rightMenuItem} />

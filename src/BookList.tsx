@@ -84,20 +84,25 @@ export default function BookList() {
   );
 
   function bookListItem(book, tag: string | null = null) {
+    const menuItems = [
+      { label: "Delete", onClick: () => deleteBook(book.bookid, onDelete) },
+      { label: "Rename", onClick: () => startRenameBook(book) },
+      {
+        label: "Export",
+        onClick: () => {
+          let title = book.title || "untitled";
+          title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
+          window.location.pathname = `/api/exportBook/${book.bookid}/${title}.zip`;
+        },
+      },
+    ];
     return (
       <ListItem
         link={`/book/${book.bookid}`}
         title={book.title}
         selected={book.bookid === selectedBookId}
-        onDelete={() => deleteBook(book.bookid, onDelete)}
-        onFavorite={() => favoriteBook(book.bookid)}
-        onRename={() => startRenameBook(book)}
-        onExport={() => {
-          let title = book.title || "untitled";
-          title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
-          window.location.pathname = `/api/exportBook/${book.bookid}/${title}.zip`;
-        }}
         selector={tag ? `booklist-${tag}` : "booklist"}
+        menuItems={menuItems}
         tag={tag}
       />
     );

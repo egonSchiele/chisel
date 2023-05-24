@@ -8,12 +8,7 @@ export default function ListItem({
   link,
   title,
   selected,
-  onFavorite = null,
-  onDelete = null,
-  onRename = null,
-  onMove = null,
-  onExport = null,
-  onDuplicate = null,
+  menuItems = [],
   content = "",
   selector = "listitem",
   tag = null,
@@ -22,50 +17,13 @@ export default function ListItem({
   link: string;
   title: string;
   selected: boolean;
-  onFavorite?: (() => void) | null;
-  onDelete?: (() => void) | null;
-  onRename?: (() => void) | null;
-  onMove?: (() => void) | null;
-  onExport?: (() => void) | null;
-  onDuplicate?: (() => void) | null;
+  menuItems?: t.MenuItem[];
   content?: string;
   selector?: string;
   tag?: string | null;
   contentClassName?: string;
 }) {
   const selectedCss = selected ? "border-l-4 border-gray-500" : "";
-  const listMenuItems: t.MenuItem[] = [];
-  if (onDelete) {
-    listMenuItems.push({
-      label: "Delete",
-      onClick: onDelete,
-    });
-  }
-  if (onRename) {
-    listMenuItems.push({
-      label: "Rename",
-      onClick: onRename,
-    });
-  }
-  if (onMove) {
-    listMenuItems.push({
-      label: "Move",
-      onClick: onMove,
-    });
-  }
-  if (onExport) {
-    listMenuItems.push({
-      label: "Export",
-      onClick: onExport,
-    });
-  }
-
-  if (onDuplicate) {
-    listMenuItems.push({
-      label: "Duplicate",
-      onClick: onDuplicate,
-    });
-  }
 
   return (
     <div
@@ -107,10 +65,10 @@ export default function ListItem({
           </div>
         )}
       </Link>
-      {tag !== "compost" && listMenuItems.length > 0 && (
+      {tag !== "compost" && menuItems.length > 0 && (
         <div className="flex flex-none cursor-pointer items-center mr-xs">
           <ListMenu
-            items={listMenuItems}
+            items={menuItems}
             selector={selector}
             className="-translate-x-3/4"
           />

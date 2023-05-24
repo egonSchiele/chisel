@@ -84,27 +84,6 @@ export default function ChapterList({
     deleteChapter(chapterid);
   }
 
-  const dropHandler = (ev) => {
-    ev.preventDefault();
-    if (ev.dataTransfer.items) {
-      // Use DataTransferItemList interface to access the file(s)
-      [...ev.dataTransfer.items].forEach(async (item, i) => {
-        // If dropped items aren't files, reject them
-        if (item.kind === "file") {
-          const file = item.getAsFile();
-          const text = await file.text();
-          await newChapter(file.name, text);
-        }
-      });
-    } else {
-      // Use DataTransfer interface to access the file(s)
-      [...ev.dataTransfer.files].forEach(async (file, i) => {
-        const text = await file.text();
-        await newChapter(file.name, text);
-      });
-    }
-  };
-
   function handleUpload(x) {
     const files = x.target.files;
     [...files].forEach(async (file, i) => {
@@ -191,11 +170,6 @@ export default function ChapterList({
               title={title}
               content={preview}
               selected={false}
-              onDelete={null}
-              onFavorite={null}
-              onRename={null}
-              onMove={null}
-              onExport={null}
               selector="searchlist"
             />
           </li>
@@ -213,6 +187,36 @@ export default function ChapterList({
         title = `🚧 ${title}`;
       }
       const previewLength = mobile ? 100 : 50;
+
+      const menuItems: t.MenuItem[] = [
+        {
+          label: "Delete",
+          onClick: () => _deleteChapter(chapter.chapterid),
+        },
+        {
+          label: "Rename",
+          onClick: () => startRenameChapter(chapter),
+        },
+        {
+          label: "Move",
+          onClick: () => startMoveChapter(chapter),
+        },
+        {
+          label: "Export",
+          onClick: () => {
+            let title = chapter.title || "untitled";
+            title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
+            window.location.pathname = `/api/exportChapter/${chapter.bookid}/${chapter.chapterid}/${title}.md`;
+          },
+        },
+        {
+          label: "Duplicate",
+          onClick: () => {
+            duplicateChapter(chapter);
+          },
+        },
+      ];
+
       return (
         <li
           key={chapter.chapterid}
@@ -228,19 +232,8 @@ export default function ChapterList({
               .join(". ")
               .substring(0, previewLength)}...`}
             selected={chapter.chapterid === selectedChapterId}
-            onDelete={() => _deleteChapter(chapter.chapterid)}
-            onFavorite={() => {}}
-            onRename={() => startRenameChapter(chapter)}
-            onMove={() => startMoveChapter(chapter)}
-            onExport={() => {
-              let title = chapter.title || "untitled";
-              title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
-              window.location.pathname = `/api/exportChapter/${chapter.bookid}/${chapter.chapterid}/${title}.md`;
-            }}
-            onDuplicate={() => {
-              duplicateChapter(chapter);
-            }}
             selector="chapterlist"
+            menuItems={menuItems}
           />
         </li>
       );
@@ -440,7 +433,6 @@ export default function ChapterList({
           rightMenuItem={rightMenuItem}
           leftMenuItem={leftMenuItem}
           className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-gray-700"
-          onDrop={dropHandler}
           selector="chapterlist"
           onTitleClick={() => setMode("references")}
           /*         swipeToClose="left"
