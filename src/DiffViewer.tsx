@@ -9,11 +9,13 @@ const DiffViewer = ({
   newText,
   onClose = null,
   onApply = null,
+  className = "",
 }: {
   originalText: string;
   newText: string;
   onClose?: null | (() => void);
   onApply?: null | (() => void);
+  className?: string;
 }) => {
   const [raw, setRaw] = React.useState(false);
   const diffDiv = React.useRef(null);
@@ -90,11 +92,13 @@ const DiffViewer = ({
           </div>
         }
       >
-        <div className="grid grid-cols-2 gap-4 m-md font-mono">
-          <div className="p-sm bg-gray-100 dark:bg-gray-700 rounded-md">
+        <div
+          className={`grid grid-cols-2 gap-4 m-md mt-xs font-mono ${className}`}
+        >
+          <div className="p-sm border border-gray-300 dark:border-gray-700 rounded-md">
             {originalLines}
           </div>
-          <div className="p-sm bg-gray-100 dark:bg-gray-700 rounded-md">
+          <div className="p-sm border border-gray-300 dark:border-gray-700 rounded-md">
             {newLines}
           </div>
         </div>

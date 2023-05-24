@@ -21,7 +21,7 @@ export default function Button({
   selector?: string;
 }) {
   let colors =
-    "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext";
+    "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext border border-gray-300 dark:border-gray-700";
 
   if (style === "secondary") {
     colors =

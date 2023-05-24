@@ -174,59 +174,62 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
             <div key={key}>
               {hasVersions(text) && (
                 <div
-                  className="text-sm flex items-center mb-sm mt-md ml-24"
+                  className="text-sm flex items-center mb-sm mt-md mx-[72px] p-xs bg-gray-700 rounded w-full"
                   key={text.id || index}
                 >
-                  <p className="mr-xs uppercase text-gray-400 dark:text-gray-400">
-                    Diff against:
-                  </p>
-                  <Select
-                    title=""
-                    name="version"
-                    className="max-w-24 flex-none !m-0"
-                    value={text.diffWith}
-                    onChange={(event) => {
-                      dispatch(
-                        librarySlice.actions.setDiffWith({
-                          index,
-                          diffWith: event.target.value,
-                        })
-                      );
-                    }}
-                  >
-                    <option value="">None</option>
-                    {text.versions.map((version) => (
-                      <option key={version.id} value={version.id}>
-                        {version.title} -{" "}
-                        {new Date(version.createdAt).toLocaleString()}
-                      </option>
-                    ))}
-                  </Select>
-                  <Button
-                    size="small"
-                    rounded={true}
-                    className="ml-sm h-min"
-                    style="secondary"
-                    onClick={() => {
-                      dispatch(
-                        librarySlice.actions.deleteAllVersions({
-                          index,
-                        })
-                      );
-                    }}
-                  >
-                    Delete other versions
-                  </Button>
+                  <div className="w-full flex justify-center items-baseline">
+                    <p className="mr-xs uppercase text-gray-400 dark:text-gray-200 text-xs">
+                      Diff against:
+                    </p>
+                    <Select
+                      title=""
+                      name="version"
+                      className="max-w-24 flex-none !m-0 dark:bg-gray-800"
+                      value={text.diffWith}
+                      onChange={(event) => {
+                        dispatch(
+                          librarySlice.actions.setDiffWith({
+                            index,
+                            diffWith: event.target.value,
+                          })
+                        );
+                      }}
+                    >
+                      <option value="">None</option>
+                      {text.versions.map((version) => (
+                        <option key={version.id} value={version.id}>
+                          {version.title} -{" "}
+                          {new Date(version.createdAt).toLocaleString()}
+                        </option>
+                      ))}
+                    </Select>
+                    <Button
+                      size="small"
+                      rounded={true}
+                      className="ml-sm h-min"
+                      style="secondary"
+                      onClick={() => {
+                        dispatch(
+                          librarySlice.actions.deleteAllVersions({
+                            index,
+                          })
+                        );
+                      }}
+                    >
+                      Delete other versions
+                    </Button>
+                  </div>
                 </div>
               )}
               {text.diffWith && (
                 <div
-                  className="flex overflow-auto w-full max-w-4xl mx-auto"
+                  className="flex overflow-auto w-full mx-[72px]"
                   key={text.id || index}
                 >
                   <DiffViewer
                     originalText={text.text}
                     newText={diffWithText}
+                    className="mx-0"
                     onClose={() => {
                       dispatch(
                         librarySlice.actions.setDiffWith({

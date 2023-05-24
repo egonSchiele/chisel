@@ -200,6 +200,7 @@ export default function Library() {
     return <div className="h-screen w-screen bg-gray-800 animate-pulse"></div>;
   }
 
+  // @ts-ignore
   const libraryUtils: t.LibraryContextType = {
     newChapter,
     newBook,

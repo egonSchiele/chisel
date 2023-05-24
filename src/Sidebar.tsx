@@ -161,7 +161,7 @@ export default function Sidebar({
       ? getChapterText(currentChapter)
       : state.editor.selectedText.contents;
   return (
-    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-listBorder dark:border-dmlistBorder dark:[color-scheme:dark] pb-12">
+    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-gray-700 dark:[color-scheme:dark] pb-12">
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}
