@@ -16,6 +16,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import LibraryContext from "./LibraryContext";
+import ListItem from "./components/ListItem";
 
 export default function PromptsSidebar({
   closeSidebar,
@@ -66,35 +67,37 @@ export default function PromptsSidebar({
   }
 
   const prompts = settings.prompts.map((prompt, i) => (
-    <li
-      key={i}
-      onClick={() =>
-        fetchSuggestionsWrapper(
-          settings,
-          setLoading,
-          onLoad,
-          prompt.text,
-          prompt.label,
-          getTextForSuggestions(),
-          currentBook?.synopsis || "",
-          dispatch
-        )
-      }
-      className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
-      data-selector={`prompt-${prompt.label}-button`}
-    >
-      <p className="px-xs">{prompt.label}</p>
+    <li key={i}>
+      <ListItem
+        title={prompt.label}
+        selected={false}
+        onClick={() =>
+          fetchSuggestionsWrapper(
+            settings,
+            setLoading,
+            onLoad,
+            prompt.text,
+            prompt.label,
+            getTextForSuggestions(),
+            currentBook?.synopsis || "",
+            dispatch
+          )
+        }
+        selector={`prompt-${prompt.label}-button`}
+        /*       className="py-xs text-black dark:text-slate-300 text-sm xl:text-md rounded-md cursor-pointer hover:bg-listitemhoverSecondary dark:hover:bg-dmlistitemhoverSecondary"
+         */
+      />
     </li>
   ));
 
   const buttonStyles =
     "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
-  const rightMenuItem = {
+  const rightMenuItem = null; /* {
     label: "Close",
     icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
     onClick: closeSidebar,
     className: buttonStyles,
-  };
+  }; */
 
   const leftMenuItem = loading
     ? {
@@ -116,20 +119,12 @@ export default function PromptsSidebar({
   ];
 
   return (
-    <div className="h-full">
-      <List
-        title="Prompts"
-        items={prompts}
-        className="h-auto border-r border-gray-700 bg-sidebarSecondary dark:bg-dmsidebarSecondary"
-        rightMenuItem={rightMenuItem}
-        leftMenuItem={leftMenuItem}
-      />
-      {/*  <List
-        title="Actions"
-        items={actions}
-        className="border-l border-r-0 h-auto"
-        leftMenuItem={leftMenuItem}
-      /> */}
-    </div>
+    <List
+      title="Prompts"
+      items={prompts}
+      className="border-r border-gray-700 bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+      rightMenuItem={rightMenuItem}
+      leftMenuItem={leftMenuItem}
+    />
   );
 }

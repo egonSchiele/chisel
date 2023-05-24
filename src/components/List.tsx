@@ -25,7 +25,7 @@ function MenuItem({
     : "hover:dark:text-white";
   return (
     <div
-      className={`relative rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 cursor-pointer ring-0 ${animCss} ${className}`}
+      className={`relative h-5 w-5 rounded-md inline-flex items-center text-black dark:text-gray-400  hover:bg-gray-50 cursor-pointer ring-0 ${animCss} ${className}`}
       onClick={async () => {
         if (showSpinner) {
           setIcon(<Spinner className="w-5 h-5" />);
@@ -66,21 +66,19 @@ export default function List({
 }) {
   return (
     <div
-      className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} `}
-      data-selector={`${selector}-list`}
+      className={`px-xs py-sm h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} `}
+      data-selector={`${selector}-list blue`}
     >
-      <div className="w-full flex pb-sm md:pb-xs border-b border-listBorder dark:border-dmlistBorder relative">
-        {
-          <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
-            <h3
-              className="text-md md:text-sm uppercase font-semibold text-gray-700 dark:text-gray-300"
-              // @ts-ignore
-              onClick={onTitleClick}
-            >
-              {title}
-            </h3>
-          </div>
-        }
+      <div className="w-full h-5 flex pb-md border-b border-listBorder dark:border-gray-600 relative">
+        <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
+          <h3
+            className="text-md md:text-sm uppercase font-semibold text-gray-700 dark:text-gray-300"
+            // @ts-ignore
+            onClick={onTitleClick}
+          >
+            {title}
+          </h3>
+        </div>
 
         {leftMenuItem &&
           Array.isArray(leftMenuItem) &&
@@ -97,7 +95,7 @@ export default function List({
           </div>
         )}
       </div>
-      <ul className="pt-xs pb-lg" data-title={title}>
+      <ul className="pt-xs pb-lg px-xs" data-title={title}>
         {items}
       </ul>
     </div>

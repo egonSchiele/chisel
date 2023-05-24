@@ -32,6 +32,21 @@
     
   }
 
+  .red {
+    @apply border;
+    @apply border-red-500;
+  }
+
+  .green {
+    @apply border;
+    @apply border-green-500;
+  }
+
+  .blue {
+    @apply border;
+    @apply border-blue-500;
+  }
+
   .quill {
     @apply text-editortext;
     @apply dark:text-dmeditortext;

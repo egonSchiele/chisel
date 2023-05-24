@@ -1,37 +1,46 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { MouseEventHandler } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { BoltIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import * as t from "../Types";
 import ListMenu from "./ListMenu";
 
 export default function ListItem({
-  link,
   title,
   selected,
+  link = null,
   menuItems = [],
-  content = "",
   selector = "listitem",
   tag = null,
+  content = "",
   contentClassName = "",
+  onClick = null,
 }: {
-  link: string;
   title: string;
   selected: boolean;
+  link: string | null;
   menuItems?: t.MenuItem[];
-  content?: string;
   selector?: string;
   tag?: string | null;
+  content?: string;
   contentClassName?: string;
+  onClick?: MouseEventHandler<HTMLDivElement> | undefined | null;
 }) {
+  const navigate = useNavigate();
+  let _onClick = onClick;
+  if (link) {
+    _onClick = () => {
+      navigate(link);
+    };
+  }
+  _onClick = _onClick || (() => {});
   const selectedCss = selected ? "border-l-4 border-gray-500" : "";
-
   return (
     <div
       className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss}`}
     >
-      <Link
-        to={link}
-        className="flex flex-grow items-center overflow-hidden py-xs mr-xs"
+      <div
+        onClick={_onClick}
+        className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer`}
         data-selector={`${selector}-list-item-link`}
       >
         {!content && (
@@ -64,7 +73,7 @@ export default function ListItem({
             </p>
           </div>
         )}
-      </Link>
+      </div>
       {tag !== "compost" && menuItems.length > 0 && (
         <div className="flex flex-none cursor-pointer items-center mr-xs">
           <ListMenu
