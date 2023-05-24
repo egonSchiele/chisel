@@ -99,7 +99,7 @@ Cypress.Commands.add("deleteFirstChapter", (user) => {
 });
 
 Cypress.Commands.add("selectChapter", (user) => {
-  cy.get("a[data-selector='chapterlist-list-item-link']").click();
+  cy.get("div[data-selector='chapterlist-list-item-link']").click();
 
   cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
     force: true,
@@ -107,21 +107,21 @@ Cypress.Commands.add("selectChapter", (user) => {
 });
 
 Cypress.Commands.add("selectFirstChapter", (user) => {
-  cy.get("a[data-selector='chapterlist-list-item-link']").first().click();
+  cy.get("div[data-selector='chapterlist-list-item-link']").first().click();
   cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
     force: true,
   });
 });
 
 Cypress.Commands.add("selectLastChapter", (user) => {
-  cy.get("a[data-selector='chapterlist-list-item-link']").last().click();
+  cy.get("div[data-selector='chapterlist-list-item-link']").last().click();
   cy.get("button[data-selector='open-file-navigator-for-cypress']").click({
     force: true,
   });
 });
 
 Cypress.Commands.add("selectBook", (user) => {
-  cy.get("a[data-selector='booklist-list-item-link']").click();
+  cy.get("div[data-selector='booklist-list-item-link']").click();
 });
 
 Cypress.Commands.add("toggleRightSidebar", (user) => {

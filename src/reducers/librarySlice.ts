@@ -466,6 +466,22 @@ export const librarySlice = createSlice({
         state.panels.leftSidebar.open ? "true" : "false"
       );
     },
+    toggleBlocks(state: t.State) {
+      if (
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "blocks"
+      ) {
+        state.panels.leftSidebar.open = false;
+      } else {
+        state.panels.leftSidebar.open = true;
+        state.panels.leftSidebar.activePanel = "blocks";
+      }
+
+      localStorage.setItem(
+        "leftSidebarOpen",
+        state.panels.leftSidebar.open ? "true" : "false"
+      );
+    },
 
     toggleRightSidebar(state: t.State) {
       state.panels.rightSidebar.open = !state.panels.rightSidebar.open;

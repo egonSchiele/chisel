@@ -35,6 +35,7 @@ import {
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import { saveTextToHistory, useInterval } from "./utils";
+import BlocksSidebar from "./BlocksSidebar";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -472,6 +473,10 @@ export default function Library({ mobile = false }) {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "prompts";
 
+  const blocksOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "blocks";
+
   const rightSidebarOpen = !!(
     state.panels.rightSidebar.open &&
     currentChapter &&
@@ -625,6 +630,22 @@ export default function Library({ mobile = false }) {
                       );
                     }}
                   />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="Blocks sidebar">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.leftSidebar.open}
+              className={` top-0 left-0`}
+            >
+              <SlideTransition show={blocksOpen} direction="left">
+                <div
+                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                >
+                  <BlocksSidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

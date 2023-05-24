@@ -67,7 +67,7 @@ export default function List({
   return (
     <div
       className={`px-xs py-sm h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} `}
-      data-selector={`${selector}-list blue`}
+      data-selector={`${selector}-list`}
     >
       <div className="w-full h-5 flex pb-md border-b border-listBorder dark:border-gray-600 relative">
         <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">

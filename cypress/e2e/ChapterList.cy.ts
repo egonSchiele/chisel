@@ -5,10 +5,9 @@ describe("chapters", () => {
   it("lets you add, rename, and delete a chapter", () => {
     cy.login();
 
-
     cy.newBook();
 
-    cy.get("a[data-selector='booklist-list-item-link']").click();
+    cy.selectBook();
 
     cy.contains("h3", "No chapters");
 

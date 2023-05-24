@@ -47,6 +47,16 @@
     @apply border-blue-500;
   }
 
+  .settings_label {
+    @apply block;
+    @apply text-sm;
+    @apply font-light;
+    @apply leading-6;
+    @apply text-text;
+    @apply dark:text-dmtext;
+    @apply uppercase;
+  }
+
   .quill {
     @apply text-editortext;
     @apply dark:text-dmeditortext;

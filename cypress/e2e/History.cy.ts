@@ -12,7 +12,7 @@ describe("history", () => {
 
     cy.newBook();
 
-    cy.get("a[data-selector='booklist-list-item-link']").click();
+    cy.selectBook();
 
     cy.contains("h3", "No chapters");
 

@@ -24,10 +24,7 @@ const Input = forwardRef<any, any>(function Input(
   return (
     <div className={className}>
       {title && (
-        <label
-          htmlFor={name}
-          className={`block text-sm font-light leading-6 text-text dark:text-dmtext uppercase ${labelClassName}`}
-        >
+        <label htmlFor={name} className={`settings_label ${labelClassName}`}>
           {title}
         </label>
       )}

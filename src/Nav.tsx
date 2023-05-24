@@ -86,10 +86,10 @@ export default function Nav({
               >
                 <SparklesIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
-              {/*  <NavButton
+              <NavButton
                 label="Blocks"
                 onClick={() => {
-                  dispatch(librarySlice.actions.toggleFileNavigator());
+                  dispatch(librarySlice.actions.toggleBlocks());
                 }}
                 className="p-0"
                 selector="blocks-button"
@@ -99,7 +99,7 @@ export default function Nav({
                 }
               >
                 <TableCellsIcon className="h-5 w-5" aria-hidden="true" />
-              </NavButton> */}
+              </NavButton>
             </>
           )}
 

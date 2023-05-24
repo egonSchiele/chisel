@@ -17,7 +17,7 @@ export default function ListItem({
 }: {
   title: string;
   selected: boolean;
-  link: string | null;
+  link?: string | null;
   menuItems?: t.MenuItem[];
   selector?: string;
   tag?: string | null;

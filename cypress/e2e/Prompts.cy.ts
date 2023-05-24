@@ -36,7 +36,7 @@ describe("prompts", () => {
       url: "/api/suggestions",
     }).as("postSuggestions");
 
-    cy.get("li[data-selector='prompt-Expand-button']").click();
+    cy.get("li[data-selector='prompt-Expand-button-list-item']").click();
 
     cy.wait("@postSuggestions", { timeout: 15000 });
 
