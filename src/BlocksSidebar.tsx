@@ -1,5 +1,5 @@
 import { Bars3Icon, InformationCircleIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { getText } from "./reducers/librarySlice";
 import { RootState } from "./store";
@@ -13,7 +13,9 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function BlockSidebar() {
+export default function BlockSidebar({ tabIndex = 0 }: { tabIndex?: number }) {
+  const [selectedIndex, setSelectedIndex] = useState(tabIndex);
+
   const state = useSelector((state: RootState) => state.library.editor);
   const index = state.activeTextIndex;
   const currentText = useSelector(getText(index));
@@ -30,7 +32,7 @@ export default function BlockSidebar() {
   }
   return (
     <div className="w-full px-0">
-      <Tab.Group>
+      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
         <Tab.List className="flex border-r border-gray-700">
           <Tab className={getClassNames}>
             <InformationCircleIcon className="w-5 h-5 mx-auto text-gray-200" />

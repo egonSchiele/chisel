@@ -26,13 +26,12 @@ export default function OutlineSidebar() {
     if (!label) {
       label = text.text;
     }
-    label = label.substring(0, 20);
+    label = label.substring(0, 40);
+    const selectedCss =
+      i === index ? "bg-gray-700 dark:text-gray-200" : "dark:text-gray-300";
     return (
-      <Button
+      <li
         key={i}
-        rounded={true}
-        style="secondary"
-        size="medium"
         onClick={() => {
           navigate(
             `/book/${currentBook!.bookid}/chapter/${
@@ -40,11 +39,13 @@ export default function OutlineSidebar() {
             }/${i}`
           );
         }}
-        className="w-full text-left flex mb-xs"
+        className={`w-full flex text-sm mb-xs cursor-pointer p-xs border-b border-gray-700  hover:bg-gray-600 ${selectedCss}`}
       >
         {/* <Bars3Icon className="h-4 w-4 flex-none mr-xs" aria-hidden="true" />{" "} */}
-        <p className="flex-grow">{label}</p>
-      </Button>
+        <p className="flex-grow line-clamp-1">
+          {i + 1}. {label}
+        </p>
+      </li>
     );
   });
 
@@ -54,7 +55,7 @@ export default function OutlineSidebar() {
       items={items}
       leftMenuItem={null}
       rightMenuItem={null}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-700"
+      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-700 w-96"
       selector="outlineList"
     />
   );
