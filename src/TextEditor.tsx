@@ -154,7 +154,8 @@ function TextEditor({
     if (!inputDiv.current) return;
     if (textindex === index.toString()) {
       // @ts-ignore
-      inputDiv.current.scrollIntoView();
+      inputDiv.current.scrollIntoViewIfNeeded(false);
+      window.scrollTo(0, 0);
     }
   }, [inputDiv, textindex]);
 
@@ -330,7 +331,7 @@ function TextEditor({
       <div className="ql-editor hidden">hi</div>
       <div className="ql-toolbar ql-snow hidden">hi</div>
 
-      <div className="mb-sm h-full w-full" ref={inputDiv}>
+      <div className="mb-sm h-full w-full scroll-mt-lg" ref={inputDiv}>
         {open && (
           <div className="flex">
             <div className={`flex-none text-sm mr-xs w-4 lg:w-16 ${textColor}`}>
