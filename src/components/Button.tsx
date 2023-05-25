@@ -12,7 +12,7 @@ export default function Button({
   selector = "",
 }: {
   size?: ButtonSize;
-  children: string;
+  children: any;
   onClick?: any;
   className?: string;
   disabled?: boolean;
@@ -25,7 +25,7 @@ export default function Button({
 
   if (style === "secondary") {
     colors =
-      "bg-blue-700 hover:bg-buttonhover text-white hover:text-buttonhovertext dark:bg-blue-700 dark:hover:bg-dmbuttonhoversecondary dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary";
+      "bg-blue-700 hover:bg-buttonhover text-white hover:text-buttonhovertext dark:bg-blue-700 dark:hover:bg-blue-500 dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary";
   }
 
   const sizes = {
