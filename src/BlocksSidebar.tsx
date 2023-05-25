@@ -1,40 +1,13 @@
-import { RadioGroup } from "@headlessui/react";
-import React, { useContext, useState } from "react";
-import {
-  ArrowDownLeftIcon,
-  Bars3Icon,
-  CheckIcon,
-  InformationCircleIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { useDispatch, useSelector } from "react-redux";
-import ButtonGroup from "./components/ButtonGroup";
-import Button from "./components/Button";
-import * as t from "./Types";
-import * as fd from "./lib/fetchData";
-import List from "./components/List";
-import Spinner from "./components/Spinner";
-import { fetchSuggestionsWrapper } from "./utils";
+import { Bars3Icon, InformationCircleIcon } from "@heroicons/react/24/outline";
+import React from "react";
+import { useSelector } from "react-redux";
+import { getText } from "./reducers/librarySlice";
 import { RootState } from "./store";
-import {
-  getSelectedBook,
-  getSelectedChapter,
-  getText,
-  librarySlice,
-} from "./reducers/librarySlice";
-import LibraryContext from "./LibraryContext";
-import ListItem from "./components/ListItem";
-import Switch from "./components/Switch";
 
-import { languages } from "./lib/languages";
-import Select from "./components/Select";
-import Input from "./components/Input";
-
-import BlockInfoSidebar from "./BlockInfoSidebar";
-import { Tab } from "@headlessui/react";
-import { useState } from "react";
 import { Tab } from "@headlessui/react";
 import BlockActionsSidebar from "./BlockActionsSidebar";
+import BlockInfoSidebar from "./BlockInfoSidebar";
+import OutlineSidebar from "./OutlineSidebar";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -71,7 +44,7 @@ export default function BlockSidebar() {
             <BlockInfoSidebar />
           </Tab.Panel>
           <Tab.Panel>
-            <BlockActionsSidebar />
+            <OutlineSidebar />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

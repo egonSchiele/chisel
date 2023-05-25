@@ -1,35 +1,22 @@
-import { RadioGroup } from "@headlessui/react";
-import React, { useContext, useState } from "react";
 import {
   ArrowsUpDownIcon,
   Bars3Icon,
   BarsArrowDownIcon,
   BarsArrowUpIcon,
-  CheckIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/outline";
+import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ButtonGroup from "./components/ButtonGroup";
-import Button from "./components/Button";
+import LibraryContext from "./LibraryContext";
 import * as t from "./Types";
-import * as fd from "./lib/fetchData";
+import Button from "./components/Button";
 import List from "./components/List";
-import Spinner from "./components/Spinner";
-import { fetchSuggestionsWrapper } from "./utils";
-import { RootState } from "./store";
 import {
   getSelectedBook,
   getSelectedChapter,
   getText,
   librarySlice,
 } from "./reducers/librarySlice";
-import LibraryContext from "./LibraryContext";
-import ListItem from "./components/ListItem";
-import Switch from "./components/Switch";
-
-import { languages } from "./lib/languages";
-import Select from "./components/Select";
-import Input from "./components/Input";
+import { RootState } from "./store";
 
 export default function BlockActionsSidebar({}: {}) {
   const state = useSelector((state: RootState) => state.library.editor);
@@ -120,13 +107,11 @@ export default function BlockActionsSidebar({}: {}) {
   });
 
   return (
-    <List
-      title="Block Actions"
-      items={listItems}
-      leftMenuItem={null}
-      rightMenuItem={null}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-700"
-      selector="blockActionsList"
-    />
+    <div className="grid grid-cols-1">
+      <label className="settings_label mt-sm">Actions</label>
+      {listItems.map((item, i) => (
+        <li key={i}>{item}</li>
+      ))}
+    </div>
   );
 }

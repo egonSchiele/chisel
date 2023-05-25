@@ -1,28 +1,23 @@
 import { RadioGroup } from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/24/outline";
 import React, { useContext, useState } from "react";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import ButtonGroup from "./components/ButtonGroup";
-import Button from "./components/Button";
+import LibraryContext from "./LibraryContext";
 import * as t from "./Types";
-import * as fd from "./lib/fetchData";
+import Button from "./components/Button";
 import List from "./components/List";
-import Spinner from "./components/Spinner";
-import { fetchSuggestionsWrapper } from "./utils";
-import { RootState } from "./store";
+import Switch from "./components/Switch";
 import {
   getSelectedBook,
-  getSelectedChapter,
   getText,
   librarySlice,
 } from "./reducers/librarySlice";
-import LibraryContext from "./LibraryContext";
-import ListItem from "./components/ListItem";
-import Switch from "./components/Switch";
+import { RootState } from "./store";
 
-import { languages } from "./lib/languages";
-import Select from "./components/Select";
 import Input from "./components/Input";
+import Select from "./components/Select";
+import { languages } from "./lib/languages";
+import BlockActionsSidebar from "./BlockActionsSidebar";
 
 function BlockVersions({
   versions,
@@ -268,14 +263,9 @@ export default function BlockInfoSidebar({}: {}) {
       />
     </li>
   );
-
   listItems.push(
-    <li key="versions">
-      <BlockVersions
-        // @ts-ignore
-        versions={currentText.versions}
-        setVersions={(newVersions) => {}}
-      />
+    <li key="actions">
+      <BlockActionsSidebar />
     </li>
   );
 
