@@ -1,4 +1,4 @@
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -553,6 +553,17 @@ export default function Library({ mobile = false }) {
             </div>
           </div>
         )}
+        {window.scrollY > 5 && (
+          <div
+            className="fixed bottom-0 right-0 mr-4 mb-4 cursor-pointer bg-blue-700 text-gray-200 z-50 p-sm rounded-md"
+            onClick={() => {
+              window.scrollTo(0, 0);
+            }}
+          >
+            <ArrowUpIcon className="w-8 h-8" />
+          </div>
+        )}
+
         <div className="relative h-full w-full">
           {state.popupOpen && state.popupData && (
             <LibErrorBoundary component="popup">
