@@ -81,6 +81,7 @@ export type Pos = {
 export type BaseBlock = {
   text: string;
   open?: boolean;
+  hideInExport?: boolean;
   id?: string;
   reference?: boolean;
   versions?: Version[];
@@ -115,6 +116,7 @@ export type EmbeddedTextBlock = {
   chapterid?: string;
   textindex?: number;
   open?: boolean;
+  hideInExport?: boolean;
   id?: string;
   caption?: string;
 };

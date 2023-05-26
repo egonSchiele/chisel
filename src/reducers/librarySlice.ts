@@ -594,6 +594,13 @@ export const librarySlice = createSlice({
       text.reference = !text.reference;
       state.saved = false;
     },
+    toggleHideInExport(state: t.State, action: PayloadAction<number>) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const text = chapter.text[action.payload];
+      text.hideInExport = !text.hideInExport;
+      state.saved = false;
+    },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;

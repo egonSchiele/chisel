@@ -115,7 +115,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           </h1>
           <div className="w-full">
             <ReadOnlyView
-              textBlocks={currentText.filter((t) => t.open)}
+              textBlocks={currentText.filter((t) => !t.hideInExport)}
               fontClass={fontClass}
             />
           </div>

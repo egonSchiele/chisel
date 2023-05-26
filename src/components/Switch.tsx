@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import { Switch as HeadlessSwitch } from "@headlessui/react";
 
-export default function Switch({ label, enabled, setEnabled, className = "" }) {
+export default function Switch({
+  label,
+  enabled,
+  setEnabled,
+  className = "",
+  divClassName = "",
+}) {
   return (
-    <div className="">
+    <div className={divClassName}>
       <label className="settings_label my-xs">{label}</label>
       <HeadlessSwitch
         checked={enabled}

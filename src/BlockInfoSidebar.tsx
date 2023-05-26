@@ -175,8 +175,9 @@ function BlockPreview({ currentText }: { currentText: t.TextBlock }) {
 function BlockInfo({ currentText }: { currentText: t.TextBlock }) {
   return <InfoSection text={currentText.text} />;
 }
-const line = (
-  <li key="line">
+let lineCount = 0;
+const line = () => (
+  <li key={`line${lineCount++}`}>
     <div className="my-sm w-full bg-gray-800 text-gray-500">
       <hr className="border-gray-500" />
     </div>
@@ -205,7 +206,7 @@ export default function BlockInfoSidebar({}: {}) {
     listItems.push(
       <li key="close">
         <Button
-          style="secondary"
+          style="primary"
           size="medium"
           rounded={true}
           onClick={() =>
@@ -221,7 +222,7 @@ export default function BlockInfoSidebar({}: {}) {
     listItems.push(
       <li key="open">
         <Button
-          style="secondary"
+          style="primary"
           size="medium"
           rounded={true}
           onClick={() =>
@@ -234,7 +235,7 @@ export default function BlockInfoSidebar({}: {}) {
       </li>
     );
   }
-  listItems.push(line);
+  listItems.push(line());
   listItems.push(
     <li key="type">
       <BlockType
@@ -278,7 +279,22 @@ export default function BlockInfoSidebar({}: {}) {
         setEnabled={() =>
           dispatch(librarySlice.actions.toggleReference(state.activeTextIndex))
         }
-        className="mt-sm"
+        divClassName="mt-sm"
+      />
+    </li>
+  );
+
+  listItems.push(
+    <li key="hideInExport">
+      <Switch
+        label="Hide in Export"
+        enabled={currentText.hideInExport}
+        setEnabled={() =>
+          dispatch(
+            librarySlice.actions.toggleHideInExport(state.activeTextIndex)
+          )
+        }
+        divClassName="mt-sm"
       />
     </li>
   );
@@ -299,7 +315,7 @@ export default function BlockInfoSidebar({}: {}) {
       />
     </li>
   );
-  listItems.push(line);
+  listItems.push(line());
 
   listItems.push(
     <li key="actions">
