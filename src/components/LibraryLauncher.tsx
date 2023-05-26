@@ -65,17 +65,17 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
   const { newBook, newCompostNote, newChapter, renameBook, renameChapter } =
     useContext(LibraryContext) as LibraryContextType;
 
-  /*   function togglePanel(panel: string) {
+  function toggleRightPanel(panel: string) {
     if (
-      state.panels.sidebar.open &&
+      state.panels.rightSidebar.open &&
       state.panels.rightSidebar.activePanel === panel
     ) {
-      dispatch(librarySlice.actions.closeSidebar());
+      dispatch(librarySlice.actions.closeRightSidebar());
     } else {
       dispatch(librarySlice.actions.openRightSidebar());
       dispatch(librarySlice.actions.setActivePanel(panel));
     }
-  } */
+  }
 
   function getTextForSuggestions() {
     let { text } = currentText[state.editor.activeTextIndex];
@@ -102,7 +102,6 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       label: "New Chapter",
       onClick: newChapter,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
-      tooltip: "Alt+n",
     },
     {
       label: "New Book",
@@ -122,73 +121,101 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
         navigate(`/grid/${bookid}`);
       },
     }, */
-    /*  {
-      label: state.panels.bookList.open ? "Close Book List" : "Open Book List",
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "filenavigator"
+          ? "Close File Navigator"
+          : "Open File Navigator",
       icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        dispatch(librarySlice.actions.toggleBookList());
+        dispatch(librarySlice.actions.toggleFileNavigator());
       },
     },
+
     {
-      label: state.panels.chapterList.open
-        ? "Close Chapter List"
-        : "Open Chapter List",
-      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
-      onClick: () => {
-        dispatch(librarySlice.actions.toggleChapterList());
-      },
-    },
-    {
-      label: state.panels.prompts.open ? "Close Prompts" : "Open Prompts",
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "prompts"
+          ? "Close Prompts"
+          : "Open Prompts",
       icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
         dispatch(librarySlice.actions.togglePrompts());
       },
+      tooltip: "Command+p",
+    },
+
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "blocks"
+          ? "Close Blocks"
+          : "Open Blocks",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleBlocks());
+      },
+      tooltip: "Command+b",
     },
     {
       label:
-        state.panels.sidebar.open &&
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "outline"
+          ? "Close Outline"
+          : "Open Outline",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleOutline());
+      },
+      tooltip: "Command+Shift+o",
+    },
+
+    {
+      label:
+        state.panels.rightSidebar.open &&
         state.panels.rightSidebar.activePanel === "history"
           ? "Close History"
           : "Open History",
       icon: <ClockIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        togglePanel("history");
+        toggleRightPanel("history");
       },
     },
     {
       label:
-        state.panels.sidebar.open && state.panels.rightSidebar.activePanel === "info"
+        state.panels.rightSidebar.open &&
+        state.panels.rightSidebar.activePanel === "info"
           ? "Close Info"
           : "Open Info",
       icon: <InformationCircleIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        togglePanel("info");
+        toggleRightPanel("info");
       },
     },
     {
       label:
-        state.panels.sidebar.open &&
+        state.panels.rightSidebar.open &&
         state.panels.rightSidebar.activePanel === "suggestions"
           ? "Close Suggestions"
           : "Open Suggestions",
       icon: <ClipboardIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        togglePanel("suggestions");
+        toggleRightPanel("suggestions");
       },
     },
     {
       label:
-        state.panels.sidebar.open &&
+        state.panels.rightSidebar.open &&
         state.panels.rightSidebar.activePanel === "settings"
           ? "Close Settings"
           : "Open Settings",
       icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {
-        togglePanel("settings");
+        toggleRightPanel("settings");
       },
     },
-    {
+    /* {
       label: "Show Book List Only",
       icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {

@@ -397,7 +397,11 @@ export type SelectOption = {
 };
 
 export type ActivePanel = "info" | "suggestions" | "settings" | "history";
-export type LeftActivePanel = "filenavigator" | "prompts" | "blocks";
+export type LeftActivePanel =
+  | "filenavigator"
+  | "prompts"
+  | "blocks"
+  | "outline";
 
 export type LibraryContextType = {
   newChapter: (title?: any, text?: any, bookid?: any) => Promise<void>;

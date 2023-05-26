@@ -18,10 +18,10 @@ export default function SlideTransition({ show, direction, children }) {
       leave="transition-opacity duration-150"
       leaveFrom="opacity-100"
       leaveTo="opacity-0" */
-      enter="transition ease-in-out duration-300 transform"
+      enter="transition ease-in-out duration-150 transform"
       enterFrom={enterFrom}
       enterTo={enterTo}
-      leave="transition ease-in-out duration-300 transform"
+      leave="transition ease-in-out duration-150 transform"
       leaveFrom={enterTo}
       leaveTo={enterFrom}
     >

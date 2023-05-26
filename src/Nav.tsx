@@ -1,4 +1,5 @@
 import {
+  Bars3Icon,
   CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -86,6 +87,7 @@ export default function Nav({
               >
                 <SparklesIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
+
               <NavButton
                 label="Blocks"
                 onClick={() => {
@@ -99,6 +101,21 @@ export default function Nav({
                 }
               >
                 <TableCellsIcon className="h-5 w-5" aria-hidden="true" />
+              </NavButton>
+
+              <NavButton
+                label="Outline"
+                onClick={() => {
+                  dispatch(librarySlice.actions.toggleOutline());
+                }}
+                className="p-0"
+                selector="outline-button"
+                selected={
+                  state.panels.leftSidebar.open &&
+                  state.panels.leftSidebar.activePanel === "outline"
+                }
+              >
+                <Bars3Icon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
             </>
           )}

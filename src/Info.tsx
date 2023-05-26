@@ -1,3 +1,4 @@
+import InfoSection from "./components/InfoSection";
 import React from "react";
 import { useSelector } from "react-redux";
 import { syllable } from "syllable";
@@ -49,22 +50,9 @@ function Line({ text, subtext }) {
   );
 }
 export default function Info({ text }) {
-  const word_count = text.trim().split(/\s+/).length;
-  const syllable_count = countSyllables(text.trim());
   return (
     <div className="text-sm xl:text-md">
-      <Line text={word_count} subtext="words" />
-      <Line text={syllable_count} subtext="syllables" />
-      <Line
-        text={Math.floor(word_count * (4 / 3))}
-        subtext="tokens (estimate)"
-      />
-
-      <Line text={readingTime(text).text} subtext="" />
-
-      {/*  <p>
-        {syllable_count} <span className="text-gray-400">syllables</span>
-      </p> */}
+      <InfoSection text={text} />
       <CharacterInfo />
     </div>
   );

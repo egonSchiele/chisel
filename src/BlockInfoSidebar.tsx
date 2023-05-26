@@ -1,3 +1,4 @@
+import InfoSection from "./components/InfoSection";
 import { RadioGroup } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import React, { useContext, useState } from "react";
@@ -155,6 +156,33 @@ function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
   );
 }
 
+function BlockPreview({ currentText }: { currentText: t.TextBlock }) {
+  let text = currentText.text;
+  if (currentText.caption) {
+    text = currentText.caption;
+  }
+  text = text.substring(0, 100);
+  return (
+    <div
+      className={`my-sm p-xs bg-gray-800 ${
+        currentText.open ? "text-gray-300" : "text-gray-500"
+      }`}
+    >
+      <div className="text-xs line-clamp-2">{text}</div>
+    </div>
+  );
+}
+function BlockInfo({ currentText }: { currentText: t.TextBlock }) {
+  return <InfoSection text={currentText.text} />;
+}
+const line = (
+  <li key="line">
+    <div className="my-sm w-full bg-gray-800 text-gray-500">
+      <hr className="border-gray-500" />
+    </div>
+  </li>
+);
+
 export default function BlockInfoSidebar({}: {}) {
   const state = useSelector((state: RootState) => state.library.editor);
   const currentBook = useSelector(getSelectedBook);
@@ -165,7 +193,14 @@ export default function BlockInfoSidebar({}: {}) {
 
   if (!currentText) return null;
 
-  const listItems: any[] = [];
+  const listItems: any[] = [
+    <li key="preview">
+      <BlockPreview currentText={currentText} />
+    </li>,
+    <li key="info">
+      <BlockInfo currentText={currentText} />
+    </li>,
+  ];
   if (currentText.open) {
     listItems.push(
       <li key="close">
@@ -199,6 +234,7 @@ export default function BlockInfoSidebar({}: {}) {
       </li>
     );
   }
+  listItems.push(line);
   listItems.push(
     <li key="type">
       <BlockType
@@ -263,6 +299,8 @@ export default function BlockInfoSidebar({}: {}) {
       />
     </li>
   );
+  listItems.push(line);
+
   listItems.push(
     <li key="actions">
       <BlockActionsSidebar />

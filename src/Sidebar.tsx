@@ -176,7 +176,7 @@ export default function Sidebar({
         />
         {activePanel === "info" && (
           <List
-            title="Info"
+            title="Chapter Info"
             key="info"
             items={[<Info key="info" text={infoText} />]}
           />

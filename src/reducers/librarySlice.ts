@@ -55,7 +55,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     panels: {
       leftSidebar: {
         open: localStorageOrDefault("leftSidebarOpen", true),
-        activePanel: "filenavigator",
+        activePanel: "outline",
       },
       rightSidebar: {
         open: localStorageOrDefault("rightSidebarOpen", false),
@@ -435,52 +435,16 @@ export const librarySlice = createSlice({
       localStorage.setItem("promptsOpen", "false");
     }, */
     toggleFileNavigator(state: t.State) {
-      if (
-        state.panels.leftSidebar.open &&
-        state.panels.leftSidebar.activePanel === "filenavigator"
-      ) {
-        state.panels.leftSidebar.open = false;
-      } else {
-        state.panels.leftSidebar.open = true;
-        state.panels.leftSidebar.activePanel = "filenavigator";
-      }
-
-      localStorage.setItem(
-        "leftSidebarOpen",
-        state.panels.leftSidebar.open ? "true" : "false"
-      );
+      toggleBase(state, "filenavigator");
     },
     togglePrompts(state: t.State) {
-      if (
-        state.panels.leftSidebar.open &&
-        state.panels.leftSidebar.activePanel === "prompts"
-      ) {
-        state.panels.leftSidebar.open = false;
-      } else {
-        state.panels.leftSidebar.open = true;
-        state.panels.leftSidebar.activePanel = "prompts";
-      }
-
-      localStorage.setItem(
-        "leftSidebarOpen",
-        state.panels.leftSidebar.open ? "true" : "false"
-      );
+      toggleBase(state, "prompts");
     },
     toggleBlocks(state: t.State) {
-      if (
-        state.panels.leftSidebar.open &&
-        state.panels.leftSidebar.activePanel === "blocks"
-      ) {
-        state.panels.leftSidebar.open = false;
-      } else {
-        state.panels.leftSidebar.open = true;
-        state.panels.leftSidebar.activePanel = "blocks";
-      }
-
-      localStorage.setItem(
-        "leftSidebarOpen",
-        state.panels.leftSidebar.open ? "true" : "false"
-      );
+      toggleBase(state, "blocks");
+    },
+    toggleOutline(state: t.State) {
+      toggleBase(state, "outline");
     },
 
     toggleRightSidebar(state: t.State) {
@@ -1173,3 +1137,20 @@ export const defaultSettings: t.UserSettings = {
   prompts: [],
   design: null,
 };
+
+function toggleBase(state: t.State, panel: t.LeftActivePanel) {
+  if (
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === panel
+  ) {
+    state.panels.leftSidebar.open = false;
+  } else {
+    state.panels.leftSidebar.open = true;
+    state.panels.leftSidebar.activePanel = panel;
+  }
+
+  localStorage.setItem(
+    "leftSidebarOpen",
+    state.panels.leftSidebar.open ? "true" : "false"
+  );
+}

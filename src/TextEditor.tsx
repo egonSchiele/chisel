@@ -120,7 +120,7 @@ function TextEditor({
   const inputDiv = useRef();
   const { textindex } = useParams();
   const highlight = textindex && textindex === index.toString();
-  const open = currentText.open || highlight;
+  const open = currentText.open; // || highlight;
 
   const [edited, setEdited] = useState(false);
 
@@ -156,6 +156,7 @@ function TextEditor({
       // @ts-ignore
       inputDiv.current.scrollIntoViewIfNeeded(false);
       window.scrollTo(0, 0);
+      dispatch(librarySlice.actions.setActiveTextIndex(parseInt(textindex)));
     }
   }, [inputDiv, textindex]);
 
@@ -315,8 +316,8 @@ function TextEditor({
   }
 
   let borderColor = "border-gray-700";
-  if (isActive) borderColor = "border-gray-600";
-  if (highlight) borderColor = "border-green-400";
+  if (isActive) borderColor = "border-gray-500";
+  //if (highlight) borderColor = "border-green-400";
 
   let textColor = "text-gray-300 dark:text-gray-500";
   if (isActive) textColor = "text-gray-500 dark:text-gray-400";

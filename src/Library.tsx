@@ -36,6 +36,7 @@ import {
 import { AppDispatch, RootState } from "./store";
 import { saveTextToHistory, useInterval } from "./utils";
 import BlocksSidebar from "./BlocksSidebar";
+import OutlineSidebar from "./OutlineSidebar";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -56,6 +57,7 @@ export default function Library({ mobile = false }) {
     if (chapterid && state.booksLoaded) {
       dispatch(librarySlice.actions.setChapter(chapterid));
       dispatch(librarySlice.actions.closeLeftSidebar());
+      dispatch(librarySlice.actions.toggleOutline());
       return;
     }
     dispatch(librarySlice.actions.setNoChapter());
@@ -145,6 +147,15 @@ export default function Library({ mobile = false }) {
       } else {
         dispatch(librarySlice.actions.setViewMode("focus"));
       }
+    } else if (event.metaKey && event.key === "b") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.toggleBlocks());
+    } else if (event.metaKey && event.key === "p") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.togglePrompts());
+    } else if (event.shiftKey && event.metaKey && event.key === "o") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.toggleOutline());
     }
   });
 
@@ -477,6 +488,10 @@ export default function Library({ mobile = false }) {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "blocks";
 
+  const outlineOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "outline";
+
   const rightSidebarOpen = !!(
     state.panels.rightSidebar.open &&
     currentChapter &&
@@ -643,9 +658,25 @@ export default function Library({ mobile = false }) {
             >
               <SlideTransition show={blocksOpen} direction="left">
                 <div
-                  className={`w-72 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
                 >
                   <BlocksSidebar />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="Outline sidebar">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.leftSidebar.open}
+              className={` top-0 left-0`}
+            >
+              <SlideTransition show={outlineOpen} direction="left">
+                <div
+                  className={`w-72 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                >
+                  <OutlineSidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>
