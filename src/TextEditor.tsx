@@ -24,6 +24,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   Cog6ToothIcon,
+  EyeSlashIcon,
   LightBulbIcon,
 } from "@heroicons/react/24/outline";
 
@@ -361,6 +362,9 @@ function TextEditor({
                 <CodeMenu currentText={currentText} index={index} />
               )}
               {currentText.reference && <Tag letter="R" />}
+              {currentText.hideInExport && (
+                <EyeSlashIcon className="w-5 h-5 text-gray-500" />
+              )}
               {/* {currentText.type === "markdown" && <Tag letter="M" />}
               {currentText.type === "plain" && <Tag letter="P" />} */}
               {/* <div
@@ -417,7 +421,7 @@ function TextEditor({
             >
               {currentText.caption}
             </div>
-            <div className="flex">
+            <div className="grid grid-cols-1">
               <div
                 className="flex-none cursor-pointer mr-xs"
                 onClick={() => {
@@ -429,11 +433,21 @@ function TextEditor({
               </div>
 
               {currentText.reference && <Tag letter="R" />}
+              {currentText.hideInExport && (
+                <EyeSlashIcon className="mt-xs w-5 h-5 text-gray-500" />
+              )}
               {/*   {currentText.type === "code" && (
                 <CodeMenu currentText={currentText} index={index} />
               )} */}
             </div>
-            <div className="flex-grow border-l border-gray-500 pl-sm">
+            <div
+              className={`flex-grow ${
+                isActive ? "border" : "border-l"
+              } border-gray-500 pl-sm`}
+              onClick={() => {
+                dispatch(librarySlice.actions.setActiveTextIndex(index));
+              }}
+            >
               <p
                 className="text-gray-500"
                 data-selector={`text-preview-${index}`}
