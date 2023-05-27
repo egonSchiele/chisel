@@ -100,10 +100,10 @@ export default function Library({ mobile = false }) {
         dispatch(librarySlice.actions.hidePopup());
       } else if (state.launcherOpen) {
         dispatch(librarySlice.actions.toggleLauncher());
-      } else if (state.viewMode === "focus") {
+        /* } else if (state.viewMode === "focus") {
         focusModeClose();
       } else if (state.viewMode !== "default") {
-        dispatch(librarySlice.actions.setViewMode("default"));
+        dispatch(librarySlice.actions.setViewMode("default")); */
       } else if (
         state.panels.leftSidebar.open ||
         state.panels.rightSidebar.open
@@ -383,58 +383,6 @@ export default function Library({ mobile = false }) {
     deleteChapter,
   };
 
-  function focusModeClose() {
-    dispatch(librarySlice.actions.setViewMode("default"));
-
-    let selected = state.editor.selectedText;
-    if (
-      state.editor.selectedText.contents === "" &&
-      state.editor._cachedSelectedText
-    ) {
-      if (state.editor._cachedSelectedText.contents !== "") {
-        selected = state.editor._cachedSelectedText;
-      } else {
-        selected = { index: 0, length: 0, contents: "" };
-      }
-    }
-
-    let replacement;
-    if (selected.length > 0) {
-      replacement = replace(
-        currentText[editor.activeTextIndex].text,
-        selected.index,
-        selected.index + selected.length,
-        state._temporaryFocusModeState
-      );
-    } else {
-      // no selection, just replace the whole thing,
-      // Because we went into focus mode with no selection
-      replacement = state._temporaryFocusModeState;
-    }
-
-    if (currentText[editor.activeTextIndex].text !== replacement) {
-      dispatch(
-        librarySlice.actions.addVersion({
-          index: editor.activeTextIndex,
-          text: replacement,
-          setDiffWith: true,
-        })
-      );
-    }
-
-    // TODO not sure how multiple texts work w focus mode
-    /* dispatch(
-      librarySlice.actions.pushTextToEditor({
-        index: editor.activeTextIndex,
-        text: replacement,
-      })
-    ); */
-  }
-
-  function replace(full, start, end, replacement) {
-    return full.substring(0, start) + replacement + full.substring(end);
-  }
-
   if (
     state.viewMode === "diff" &&
     currentText &&
@@ -453,30 +401,6 @@ export default function Library({ mobile = false }) {
     );
   }
 
-  /*   if (state.viewMode === "focus" && currentChapter) {
-    let text = state.editor.selectedText.contents;
-    if (!text && state.editor._cachedSelectedText) {
-      text = state.editor._cachedSelectedText.contents;
-    }
-    if (!text && currentChapter && currentChapter.text) {
-      text = currentText[editor.activeTextIndex].text;
-    }
-    return (
-      <LibErrorBoundary component="focus mode">
-        <div>
-          <LibraryContext.Provider value={libraryUtils}>
-            <FocusMode
-              text={text}
-              onClose={focusModeClose}
-              onChange={(text) => {
-                dispatch(librarySlice.actions.setTemporaryFocusModeState(text));
-              }}
-            />
-          </LibraryContext.Provider>
-        </div>
-      </LibErrorBoundary>
-    );
-  } */
   const fileNavigatorOpen =
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "filenavigator";

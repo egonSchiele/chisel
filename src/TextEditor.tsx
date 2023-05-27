@@ -214,6 +214,7 @@ function TextEditor({
     const text = quill.getText();
     console.log("highlightForFocusMode");
     quill.removeFormat(0, text.length);
+    quill.setText(text.trim());
     const formatData = highlightErrors(text);
     console.log("applying", formatData.length, "formats");
     formatData.forEach(({ range, format }) => {
