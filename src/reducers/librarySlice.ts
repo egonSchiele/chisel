@@ -67,7 +67,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     error: "",
     loading: true,
     booksLoaded: false,
-    viewMode: "focus",
+    viewMode: "default",
     launcherOpen: false,
     popupOpen: false,
     popupData: null,

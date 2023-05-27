@@ -127,16 +127,21 @@ export default function SynonymsSidebar() {
       </li>
     );
   });
+  if (defs.length > 0) {
+    items.push(
+      <>
+        <label className="settings_label">Definition</label>
 
-  items.push(
-    <>
-      <label className="settings_label">Definition</label>
+        <ul key="definitions" className="list-decimal px-sm mb-sm">
+          {defs}
+        </ul>
+      </>
+    );
+  }
 
-      <ul key="definitions" className="list-decimal px-sm mb-sm">
-        {defs}
-      </ul>
-    </>
-  );
+  if (synonyms.length > 0) {
+    items.push(<label className="settings_label mt-sm">Synonyms</label>);
+  }
 
   synonyms.forEach((synonym) => {
     items.push(
