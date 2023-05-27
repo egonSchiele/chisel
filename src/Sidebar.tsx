@@ -155,11 +155,6 @@ export default function Sidebar({
     return null;
   }
 
-  // TODO
-  const infoText =
-    state.editor.selectedText.length === 0
-      ? getChapterText(currentChapter)
-      : state.editor.selectedText.contents;
   return (
     <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-gray-700 dark:[color-scheme:dark] pb-12">
       <div className="pt-xs">
@@ -175,11 +170,7 @@ export default function Sidebar({
           }
         />
         {activePanel === "info" && (
-          <List
-            title="Chapter Info"
-            key="info"
-            items={[<Info key="info" text={infoText} />]}
-          />
+          <List title="Chapter Info" key="info" items={[<Info key="info" />]} />
         )}
         {activePanel === "suggestions" && (
           <List

@@ -1,3 +1,4 @@
+import wordnet from "wordnet";
 import zip from "lodash";
 import similarity from "compute-cosine-similarity";
 import rateLimit from "express-rate-limit";
@@ -46,6 +47,12 @@ import {
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
+
+console.log("Initializing wordnet");
+await wordnet.init("wordnet");
+//const list = await wordnet.list();
+
+//console.log(JSON.stringify(definitions, null, 2));
 
 dotenv.config();
 
@@ -707,6 +714,26 @@ app.get(
     await Promise.all([...promises, saveBook(book)]);
 
     res.status(200).json({ lastTrainedAt: timestamp });
+  }
+);
+
+app.get(
+  "/api/define/:word",
+  requireLogin,
+
+  async (req, res) => {
+    try {
+      const definitions = await wordnet.lookup(req.params.word);
+      definitions.forEach((definition) => {
+        if (definition.meta && definition.meta.pointers) {
+          delete definition.meta.pointers;
+        }
+      });
+      res.status(200).json(definitions);
+    } catch (error) {
+      console.error("Error defining word:", error);
+      res.status(400).json({ error });
+    }
   }
 );
 

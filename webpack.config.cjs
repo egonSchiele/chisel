@@ -29,6 +29,7 @@ const htmlPages = pages.map((page) => {
 });
 
 module.exports = {
+  experiments: { topLevelAwait: true },
   mode: "development",
   entry: {
     //server: "./server.js",

@@ -24,16 +24,25 @@ export type State = {
 export type SelectedText = {
   index: number;
   length: number;
-  contents: string;
+  contents?: string;
 };
 
 export type EditorState = {
   contents: any;
   activeTextIndex: number;
   selectedText: SelectedText;
+  focusModeChecks?: FormatData[] | null;
   _cachedSelectedText?: SelectedText;
   _pushTextToEditor?: string;
   _pushSelectionToEditor?: SelectedText;
+  _triggerFocusModeRerender?: number;
+};
+
+export type FormatData = {
+  name: string;
+  range: { index: number; length: number };
+  format: { class: string };
+  content: string;
 };
 
 export type PopupData = {

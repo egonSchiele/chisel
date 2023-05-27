@@ -19,6 +19,7 @@ export default function NavButton({
       className={`relative my-auto inline-flex items-center h-full px-xs py-1 rounded-none hover:bg-gray-50 ring-0 dark:hover:bg-dmsidebar ${animCss} ${className} ${selectedCss}`}
       onClick={onClick}
       data-selector={selector}
+      title={label}
     >
       <span className="sr-only">{label}</span>
       {children}

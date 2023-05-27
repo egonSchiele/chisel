@@ -99,6 +99,28 @@
     
   }
 
+  .fillers, .hedges, .cliches, .jargon {
+    @apply bg-blue-800;
+    @apply text-gray-100;
+    @apply p-1;
+    @apply rounded-md;
+    @apply h-min;
+  }
+
+  .longline {
+    /* @apply border-dotted; */
+    @apply border-b-2;
+    @apply border-rose-800;
+  }
+
+  .selectedText {
+    @apply bg-blue-400;
+    @apply text-gray-100;
+    @apply p-1;
+    @apply rounded-md;
+    @apply h-min;
+  }
+
   .heading {
     @apply text-3xl;
     @apply font-light;

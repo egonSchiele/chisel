@@ -103,12 +103,12 @@ export const fetchSuggestionsWrapper = async (
   synopsis: string,
   dispatch: Dispatch<AnyAction>
 ) => {
-  console.log("fetchSuggestionsWrapper", settings)
+  console.log("fetchSuggestionsWrapper", settings);
   const _max_tokens = parseInt(settings.max_tokens, 10) || 1;
   const _num_suggestions = parseInt(settings.num_suggestions, 10) || 1;
 
   const max_tokens_with_min = Math.min(_max_tokens, 3000);
-const _customKey = settings.customKey || null;
+  const _customKey = settings.customKey || null;
   setLoading(true);
   const result = await fd.fetchSuggestions(
     text,
@@ -145,7 +145,10 @@ export function split(text: string) {
 }
 
 export function normalize(word: string) {
-  return word.toLowerCase().replace(/[^a-z ]/g, "");
+  return word
+    .toLowerCase()
+    .replace(/[^a-z ]/g, "")
+    .trim();
 }
 
 export function findSubarray(array: any[], subarray: any[]) {
@@ -211,49 +214,107 @@ export function useTraceUpdate(props) {
   });
 }
 
-export function getChapterText(chapter:t.Chapter|null, includeFolded=false) {
+export function getChapterText(
+  chapter: t.Chapter | null,
+  includeHidden = false
+) {
   if (!chapter) return "";
-  if (includeFolded) {
+  if (includeHidden) {
     return chapter.text.map((t) => t.text).join("\n\n");
   } else {
-    return chapter.text.filter((t) => t.open).map((t) => t.text).join("\n\n");
+    return chapter.text
+      .filter((t) => !t.hideInExport)
+      .map((t) => t.text)
+      .join("\n\n");
   }
 }
 
-export function saveTextToHistory(chapter:t.Chapter):string {
-  const texts = chapter.text.map((text:t.TextBlock) => {
-      if (text.type === "plain" || text.type === "markdown") {
-        const { type, open, reference, versions, diffWith, caption } = text;
-          const jsonFrontMatter = JSON.stringify({type, open, reference, versions, diffWith, caption});
-          return `${jsonFrontMatter}\n\n${text.text}`;
-      } else if (text.type === "code") {
-        const { type, open, reference, versions, diffWith, caption, language } = text;
-        const jsonFrontMatter = JSON.stringify({type, open, reference, versions, diffWith, caption, language});
-        return `${jsonFrontMatter}\n\n${text.text}`;
-      } else if (text.type === "embeddedText") {
-        const { type, open, bookid, chapterid, textindex, caption } = text;
-        const jsonFrontMatter = JSON.stringify({type, open, bookid, chapterid, textindex, caption});
-        return `${jsonFrontMatter}\n\n${text.text}`;      
-      }
-  })
+export function saveTextToHistory(chapter: t.Chapter): string {
+  const texts = chapter.text.map((text: t.TextBlock) => {
+    if (text.type === "plain" || text.type === "markdown") {
+      const { type, open, reference, versions, diffWith, caption } = text;
+      const jsonFrontMatter = JSON.stringify({
+        type,
+        open,
+        reference,
+        versions,
+        diffWith,
+        caption,
+      });
+      return `${jsonFrontMatter}\n\n${text.text}`;
+    } else if (text.type === "code") {
+      const { type, open, reference, versions, diffWith, caption, language } =
+        text;
+      const jsonFrontMatter = JSON.stringify({
+        type,
+        open,
+        reference,
+        versions,
+        diffWith,
+        caption,
+        language,
+      });
+      return `${jsonFrontMatter}\n\n${text.text}`;
+    } else if (text.type === "embeddedText") {
+      const { type, open, bookid, chapterid, textindex, caption } = text;
+      const jsonFrontMatter = JSON.stringify({
+        type,
+        open,
+        bookid,
+        chapterid,
+        textindex,
+        caption,
+      });
+      return `${jsonFrontMatter}\n\n${text.text}`;
+    }
+  });
   return texts.join("\n---\n");
 }
 
-export function restoreBlockFromHistory(text:string):t.TextBlock {
+export function restoreBlockFromHistory(text: string): t.TextBlock {
   try {
-  const lines = text.split("\n");
-  const jsonFrontMatter = lines[0];
-  const blockText = lines.slice(2).join("\n");
-  const frontMatter = JSON.parse(jsonFrontMatter);
-  if (frontMatter.type === "plain") {
-    return t.plainTextBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption, frontMatter.versions, frontMatter.diffWith);
-  } else if (frontMatter.type === "code") {
-    return t.codeBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.language, frontMatter.caption, frontMatter.versions, frontMatter.diffWith);
-  } else if (frontMatter.type === "embeddedText") {
-    return t.embeddedTextBlockFromData(blockText, frontMatter.open, frontMatter.bookid, frontMatter.chapterid, frontMatter.textindex, frontMatter.caption);
-  } else {
-    return t.markdownBlockFromData(blockText, frontMatter.open, frontMatter.reference, frontMatter.caption, frontMatter.versions, frontMatter.diffWith);
-  }
+    const lines = text.split("\n");
+    const jsonFrontMatter = lines[0];
+    const blockText = lines.slice(2).join("\n");
+    const frontMatter = JSON.parse(jsonFrontMatter);
+    if (frontMatter.type === "plain") {
+      return t.plainTextBlockFromData(
+        blockText,
+        frontMatter.open,
+        frontMatter.reference,
+        frontMatter.caption,
+        frontMatter.versions,
+        frontMatter.diffWith
+      );
+    } else if (frontMatter.type === "code") {
+      return t.codeBlockFromData(
+        blockText,
+        frontMatter.open,
+        frontMatter.reference,
+        frontMatter.language,
+        frontMatter.caption,
+        frontMatter.versions,
+        frontMatter.diffWith
+      );
+    } else if (frontMatter.type === "embeddedText") {
+      return t.embeddedTextBlockFromData(
+        blockText,
+        frontMatter.open,
+        frontMatter.bookid,
+        frontMatter.chapterid,
+        frontMatter.textindex,
+        frontMatter.caption
+      );
+    } else {
+      return t.markdownBlockFromData(
+        blockText,
+        frontMatter.open,
+        frontMatter.reference,
+        frontMatter.caption,
+        frontMatter.versions,
+        frontMatter.diffWith
+      );
+    }
   } catch (e) {
     return t.markdownBlock(text);
   }
@@ -263,7 +324,11 @@ export function isTruthy(x) {
   return !!x;
 }
 
-export function hasVersions(block:t.TextBlock) {
+export function hasVersions(block: t.TextBlock) {
   if (block.type === "embeddedText") return false;
   return block.versions && block.versions.length > 0;
+}
+
+export function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

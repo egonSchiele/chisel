@@ -12,8 +12,11 @@ export default function ListItem({
   selector = "listitem",
   tag = null,
   content = "",
+  className = "",
   contentClassName = "",
   onClick = null,
+  onMouseEnter = () => {},
+  onMouseLeave = () => {},
 }: {
   title: string;
   selected: boolean;
@@ -22,8 +25,11 @@ export default function ListItem({
   selector?: string;
   tag?: string | null;
   content?: string;
+  className?: string;
   contentClassName?: string;
   onClick?: MouseEventHandler<HTMLDivElement> | undefined | null;
+  onMouseEnter?: MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: MouseEventHandler<HTMLDivElement>;
 }) {
   const navigate = useNavigate();
   let _onClick = onClick;
@@ -36,10 +42,12 @@ export default function ListItem({
   const selectedCss = selected ? "border-l-4 border-gray-500" : "";
   return (
     <div
-      className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss}`}
+      className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} `}
     >
       <div
         onClick={_onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer`}
         data-selector={`${selector}-list-item-link`}
       >
@@ -52,7 +60,9 @@ export default function ListItem({
               {tag === "compost" && (
                 <BoltIcon className="w-5 h-5 flex-grow mr-xs" />
               )}{" "}
-              <span className="flex-grow w-full text-lg md:text-sm">
+              <span
+                className={`flex-grow w-full text-lg md:text-sm ${className}`}
+              >
                 {title}
               </span>
             </p>
@@ -61,7 +71,7 @@ export default function ListItem({
         {content && (
           <div className="w-full py-xs">
             <p
-              className="px-xs overflow-hidden text-lg md:text-sm text-ellipsis whitespace-nowrap font-bold"
+              className={`px-xs overflow-hidden text-lg md:text-sm text-ellipsis whitespace-nowrap font-bold ${className}`}
               data-selector={`${selector}-list-item`}
             >
               {title}

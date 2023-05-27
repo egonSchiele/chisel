@@ -6,7 +6,7 @@ export default function Button({
   onClick = () => {},
   className = "",
   disabled = false,
-  rounded = false,
+  rounded = true,
   size = "medium",
   style = "primary",
   selector = "",

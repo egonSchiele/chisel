@@ -19,13 +19,13 @@ function Line({ text, subtext }) {
     </p>
   );
 }
-export default function InfoSection({ text }) {
+export default function InfoSection({ text, showSyllables = false }) {
   const word_count = text.trim().split(/\s+/).length;
-  const syllable_count = countSyllables(text.trim());
+  const syllable_count = showSyllables ? countSyllables(text.trim()) : 0;
   return (
     <div className="text-sm xl:text-md">
       <Line text={word_count} subtext="words" />
-      <Line text={syllable_count} subtext="syllables" />
+      {showSyllables && <Line text={syllable_count} subtext="syllables" />}
       <Line
         text={Math.floor(word_count * (4 / 3))}
         subtext="tokens (estimate)"

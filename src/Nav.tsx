@@ -181,7 +181,7 @@ export default function Nav({
                 </NavButton>
               )}
 
-              {state.editor.selectedText &&
+              {/*               {state.editor.selectedText &&
                 state.editor.selectedText.length > 0 && (
                   <NavButton
                     label="Extract Block"
@@ -191,11 +191,16 @@ export default function Nav({
                   >
                     <ScissorsIcon className="h-5 w-5" aria-hidden="true" />
                   </NavButton>
-                )}
+                )} */}
 
               {state.viewMode === "readonly" && (
                 <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
                   read only
+                </span>
+              )}
+              {state.viewMode === "focus" && (
+                <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
+                  focus mode
                 </span>
               )}
               {!state.saved && (
@@ -233,7 +238,7 @@ export default function Nav({
                   selector="readonly-close"
                 >
                   <PencilIcon
-                    className="h-5 w-5 text-red-700"
+                    className="h-5 w-5 text-blue-700 dark:text-blue-400"
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -244,10 +249,16 @@ export default function Nav({
                   <NavButton
                     label="Focus Mode"
                     onClick={() =>
-                      dispatch(librarySlice.actions.setViewMode("focus"))
+                      dispatch(librarySlice.actions.toggleViewMode("focus"))
                     }
                   >
-                    <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                    <EyeIcon
+                      className={`h-5 w-5 ${
+                        state.viewMode === "focus" &&
+                        "text-blue-700 dark:text-blue-400"
+                      }`}
+                      aria-hidden="true"
+                    />
                   </NavButton>
 
                   {/*   <NavButton

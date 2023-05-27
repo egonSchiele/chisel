@@ -37,6 +37,7 @@ import { AppDispatch, RootState } from "./store";
 import { saveTextToHistory, useInterval } from "./utils";
 import BlocksSidebar from "./BlocksSidebar";
 import OutlineSidebar from "./OutlineSidebar";
+import FocusSidebar from "./FocusSidebar";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -452,7 +453,7 @@ export default function Library({ mobile = false }) {
     );
   }
 
-  if (state.viewMode === "focus" && currentChapter) {
+  /*   if (state.viewMode === "focus" && currentChapter) {
     let text = state.editor.selectedText.contents;
     if (!text && state.editor._cachedSelectedText) {
       text = state.editor._cachedSelectedText.contents;
@@ -475,7 +476,7 @@ export default function Library({ mobile = false }) {
         </div>
       </LibErrorBoundary>
     );
-  }
+  } */
   const fileNavigatorOpen =
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "filenavigator";
@@ -494,6 +495,7 @@ export default function Library({ mobile = false }) {
 
   const rightSidebarOpen = !!(
     state.panels.rightSidebar.open &&
+    state.viewMode !== "focus" &&
     currentChapter &&
     !mobile
   );
@@ -718,6 +720,23 @@ export default function Library({ mobile = false }) {
                     }}
                     triggerHistoryRerender={triggerHistoryRerender}
                   />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="focus sidebar">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.viewMode === "focus"}
+              className="top-0 right-0"
+            >
+              <SlideTransition
+                show={state.viewMode === "focus"}
+                direction="right"
+              >
+                <div className={`absolute top-0 right-0 h-screen w-72 mt-9`}>
+                  <FocusSidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

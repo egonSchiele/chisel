@@ -1,10 +1,12 @@
 import InfoSection from "./components/InfoSection";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { syllable } from "syllable";
 import { RootState } from "./store";
-import { getCharacters } from "./reducers/librarySlice";
+import { getCharacters, getSelectedChapter } from "./reducers/librarySlice";
 import readingTime from "reading-time/lib/reading-time";
+import { getChapterText, useLocalStorage } from "./utils";
+import Switch from "./components/Switch";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -49,10 +51,25 @@ function Line({ text, subtext }) {
     </p>
   );
 }
-export default function Info({ text }) {
+export default function Info() {
+  const state = useSelector((state: RootState) => state.library);
+  const dispatch = useDispatch();
+  const currentChapter = useSelector(getSelectedChapter);
+  const [showHidden, setShowHidden] = useLocalStorage("Info/showHidden", false);
+  if (!currentChapter) return null;
+  let infoText = getChapterText(currentChapter, showHidden);
+  if (state.editor.selectedText.length > 0) {
+    infoText = state.editor.selectedText.contents;
+  }
+
   return (
     <div className="text-sm xl:text-md">
-      <InfoSection text={text} />
+      <InfoSection text={infoText} />
+      <Switch
+        label="Show hidden in export?"
+        enabled={showHidden}
+        setEnabled={setShowHidden}
+      />
       <CharacterInfo />
     </div>
   );

@@ -131,6 +131,18 @@ export async function fetchSynonyms(word: string) {
   return t.success(synonyms);
 }
 
+export async function fetchDefinition(word: string) {
+  if (!word) return t.error("No word");
+
+  const res = await fetch(`/api/define/${word}`);
+  if (!res.ok) {
+    return t.error(`error fetching definition: ${res.statusText}`);
+  }
+  const response = await res.json();
+
+  return t.success(response);
+}
+
 export async function postWithCsrf(url: string, body: any) {
   const res = await fetch(url, {
     method: "POST",

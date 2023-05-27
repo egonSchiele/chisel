@@ -68,6 +68,12 @@ function BlockCaption({
             type="text"
             value={_caption}
             onChange={(e) => _setCaption(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                setCaption(_caption);
+              }
+            }}
           />
           <Button
             style="secondary"

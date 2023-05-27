@@ -9,6 +9,7 @@ import {
   getSelectedBook,
   getSelectedChapter,
   getText,
+  librarySlice,
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
 
@@ -27,8 +28,10 @@ export default function OutlineSidebar() {
       label = text.text;
     }
     label = label.substring(0, 40);
-    const selectedCss =
-      i === index ? "bg-gray-700 dark:text-gray-200" : "dark:text-gray-300";
+    let selectedCss = text.open ? "dark:text-gray-300" : "dark:text-gray-500";
+    if (i === index) {
+      selectedCss = "bg-gray-700 dark:text-gray-200";
+    }
     return (
       <li
         key={i}
@@ -48,6 +51,33 @@ export default function OutlineSidebar() {
       </li>
     );
   });
+
+  items.push(
+    <Button
+      onClick={async () => {
+        currentChapter.text.forEach((text, i) => {
+          dispatch(librarySlice.actions.openBlock(i));
+        });
+      }}
+      key="openAll"
+      style="secondary"
+      className="w-full my-xs"
+    >
+      Open All Blocks
+    </Button>,
+    <Button
+      onClick={async () => {
+        currentChapter.text.forEach((text, i) => {
+          dispatch(librarySlice.actions.closeBlock(i));
+        });
+      }}
+      key="closeAll"
+      style="secondary"
+      className="w-full my-xs"
+    >
+      Close All Blocks
+    </Button>
+  );
 
   return (
     <List

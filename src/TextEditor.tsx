@@ -1,45 +1,58 @@
-import PlainClipboard from "./components/PlainClipboard";
+import highlightErrors from "./focusModeChecks";
+import { hedges } from "hedges";
+import { normalize, findSubarray, split } from "./utils";
 import { fillers } from "fillers";
+import PlainClipboard from "./components/PlainClipboard";
 
-import React, { useState, useRef, useEffect } from "react";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/24/outline";
+import React, { useEffect, useRef, useState } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import "./globals.css";
 import { useDispatch, useSelector } from "react-redux";
-import Button from "./components/Button";
-import ButtonGroup from "./components/ButtonGroup";
-import { EditorState, State } from "./Types";
-import Select from "./components/Select";
-import Input from "./components/Input";
-import ContentEditable from "./components/ContentEditable";
 import * as t from "./Types";
-import { RootState } from "./store";
+import Select from "./components/Select";
+import "./globals.css";
 import {
-  getSelectedChapter,
   getSelectedChapterTextLength,
   getText,
   librarySlice,
 } from "./reducers/librarySlice";
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  Cog6ToothIcon,
-  EyeSlashIcon,
-  LightBulbIcon,
-} from "@heroicons/react/24/outline";
+import { RootState } from "./store";
 
-import { hasVersions, useTraceUpdate } from "./utils";
 import { useParams } from "react-router-dom";
-import { languages } from "./lib/languages";
-import BlockMenu from "./components/BlockMenu";
 import CodeMenu from "./CodeMenu";
+import BlockMenu from "./components/BlockMenu";
 import Tag from "./components/Tag";
 import VersionsMenu from "./components/VersionsMenu";
+import { languages } from "./lib/languages";
+import { hasVersions } from "./utils";
+
+let Inline = Quill.import("blots/inline");
+
+class SpanClass extends Inline {
+  static create(value) {
+    let node = super.create();
+
+    if (value) {
+      node.setAttribute("class", `inline ${value}`);
+      node.setAttribute("title", value);
+    }
+    return node;
+  }
+}
+
+SpanClass.blotName = "class";
+SpanClass.tagName = "div";
+Quill.register(SpanClass);
 
 Quill.register("modules/clipboard", PlainClipboard, true);
 
 const formats = [
-  /*   "background",
+  "background",
   "bold",
   "color",
   "font",
@@ -59,7 +72,8 @@ const formats = [
   "code-block",
   "formula",
   "image",
-  "video", */
+  "video",
+  "class",
 ];
 
 function LanguageSelector({ chapterid, index }) {
@@ -106,9 +120,16 @@ function TextEditor({
   const _pushSelectionToEditor = useSelector(
     (state: RootState) => state.library.editor._pushSelectionToEditor
   );
+  const _triggerFocusModeRerender = useSelector(
+    (state: RootState) => state.library.editor._triggerFocusModeRerender
+  );
 
   const activeTextIndex = useSelector(
     (state: RootState) => state.library.editor.activeTextIndex
+  );
+
+  const viewMode: t.ViewMode = useSelector(
+    (state: RootState) => state.library.viewMode
   );
 
   const isActive = activeTextIndex === index;
@@ -118,7 +139,7 @@ function TextEditor({
   const dispatch = useDispatch();
 
   const quillRef = useRef();
-  const inputDiv = useRef();
+  const inputDiv = useRef<HTMLDivElement>();
   const { textindex } = useParams();
   const highlight = textindex && textindex === index.toString();
   const open = currentText.open; // || highlight;
@@ -131,7 +152,52 @@ function TextEditor({
     const editor = quillRef.current.getEditor();
     // TODO
     editor.setText(currentText.text);
+    highlightForFocusMode();
   }, [quillRef.current, chapterid, _pushTextToEditor]);
+
+  useEffect(() => {
+    if (viewMode === "focus") {
+      if (isActive) {
+        highlightForFocusMode();
+      }
+    } else {
+      clearFocusModeHighlights();
+    }
+  }, [viewMode, _triggerFocusModeRerender]);
+
+  /*   function updateIndicatorPosition() {
+    console.log("updateIndicatorPosition");
+    if (!inputDiv.current) return;
+    console.log("scrolling");
+    const scrollTop = inputDiv.current.scrollTop;
+    const scrollHeight = inputDiv.current.scrollHeight;
+    const clientHeight = inputDiv.current.clientHeight;
+    const widthRatio = clientHeight / scrollHeight;
+    const indicatorWidth = widthRatio * 100;
+    console.log({ indicatorWidth }, "%");
+  }
+
+  useEffect(() => {
+    console.log("useEffect", { isActive, open });
+    if (isActive) {
+      focus();
+      console.log("focus", inputDiv);
+
+      if (!inputDiv.current) return;
+      const scrollTop = inputDiv.current.scrollTop;
+      const scrollHeight = inputDiv.current.scrollHeight;
+      const clientHeight = inputDiv.current.clientHeight;
+      const widthRatio = clientHeight / scrollHeight;
+      const indicatorWidth = widthRatio * 100;
+      console.log({ indicatorWidth }, "%");
+      // Attach the scroll event listener to update the indicator position
+      inputDiv.current.addEventListener("scroll", updateIndicatorPosition);
+      return () => {
+        if (!inputDiv.current) return;
+        inputDiv.current.removeEventListener("scroll", updateIndicatorPosition);
+      };
+    }
+  }, [activeTextIndex, open, inputDiv.current]); */
 
   useEffect(() => {
     if (isActive) {
@@ -139,13 +205,48 @@ function TextEditor({
     }
   }, [activeTextIndex, open]);
 
+  function highlightForFocusMode() {
+    if (viewMode !== "focus") return;
+    // @ts-ignore
+    if (!quillRef.current || !quillRef.current.getEditor) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const text = quill.getText();
+    console.log("highlightForFocusMode");
+    quill.removeFormat(0, text.length);
+    const formatData = highlightErrors(text);
+    console.log("applying", formatData.length, "formats");
+    formatData.forEach(({ range, format }) => {
+      quill.formatText(range, format);
+    });
+    console.log("applied.");
+    dispatch(
+      librarySlice.actions.setFocusModeChecks(
+        formatData.filter((d) => d.name !== "clear")
+      )
+    );
+  }
+
+  function clearFocusModeHighlights() {
+    // @ts-ignore
+    if (!quillRef.current || !quillRef.current.getEditor) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const text = quill.getText();
+    quill.formatText({ index: 0, length: text.length }, { class: null });
+    dispatch(librarySlice.actions.setFocusModeChecks(null));
+  }
+
   useEffect(() => {
     if (isActive && _pushSelectionToEditor && quillRef.current) {
+      // @ts-ignore
+      const editor = quillRef.current.getEditor();
       if (_pushSelectionToEditor.index === -1) {
-        // @ts-ignore
-        const editor = quillRef.current.getEditor();
-
         editor.setSelection(editor.getLength());
+      } else {
+        //editor.setSelection(_pushSelectionToEditor);
+        highlightForFocusMode();
+        editor.formatText(_pushSelectionToEditor, { class: "selectedText" });
       }
       dispatch(librarySlice.actions.clearPushSelectionToEditor());
     }
@@ -263,7 +364,6 @@ function TextEditor({
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
 
-        console.log("backspace", range);
         if (range.index === 0) {
           if (
             currentText &&
@@ -277,7 +377,9 @@ function TextEditor({
           }
         }
       }
-    }
+    } /* else {
+      highlightForFocusMode();
+    } */
   };
 
   /* const handleKeyDownWhenClosed = (event) => {
@@ -395,9 +497,12 @@ function TextEditor({
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
-                onFocus={() =>
-                  dispatch(librarySlice.actions.setActiveTextIndex(index))
-                }
+                onFocus={() => {
+                  dispatch(librarySlice.actions.setActiveTextIndex(index));
+                  if (viewMode === "focus") {
+                    highlightForFocusMode();
+                  }
+                }}
                 scrollingContainer="#editDiv"
                 modules={{
                   history: {
@@ -405,7 +510,7 @@ function TextEditor({
                   },
                   toolbar: false,
                 }}
-                formats={formats}
+                /* formats={formats} */
               />
             </div>
           </div>

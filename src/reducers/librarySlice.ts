@@ -67,7 +67,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     error: "",
     loading: true,
     booksLoaded: false,
-    viewMode: "default",
+    viewMode: "focus",
     launcherOpen: false,
     popupOpen: false,
     popupData: null,
@@ -353,6 +353,9 @@ export const librarySlice = createSlice({
     clearCachedSelectedText(state) {
       state.editor._cachedSelectedText = null;
     },
+    setFocusModeChecks(state, action: PayloadAction<t.FormatData[] | null>) {
+      state.editor.focusModeChecks = action.payload;
+    },
     addSuggestion(
       state: t.State,
       action: PayloadAction<{ label: string; value: string }>
@@ -399,8 +402,20 @@ export const librarySlice = createSlice({
     setTemporaryFocusModeState(state: t.State, action: PayloadAction<string>) {
       state._temporaryFocusModeState = action.payload;
     },
+    triggerFocusModeRerender(state: t.State) {
+      state.editor._triggerFocusModeRerender =
+        state.editor._triggerFocusModeRerender || 0;
+      state.editor._triggerFocusModeRerender++;
+    },
     setViewMode(state: t.State, action: PayloadAction<t.ViewMode>) {
       state.viewMode = action.payload;
+    },
+    toggleViewMode(state: t.State, action: PayloadAction<t.ViewMode>) {
+      if (state.viewMode === action.payload) {
+        state.viewMode = "default";
+      } else {
+        state.viewMode = action.payload;
+      }
     },
     setScrollTo(state: t.State, action: PayloadAction<number>) {
       state.scrollTo = action.payload;
@@ -568,6 +583,16 @@ export const librarySlice = createSlice({
         contents: "",
       };
       state.saved = false;
+    },
+    setSelection(
+      state: t.State,
+      payload: PayloadAction<{ index: number; length: number }>
+    ) {
+      const { index, length } = payload.payload;
+      state.editor._pushSelectionToEditor = {
+        index,
+        length,
+      };
     },
     clearPushSelectionToEditor(state: t.State) {
       delete state.editor._pushSelectionToEditor;
