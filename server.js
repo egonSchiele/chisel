@@ -216,7 +216,7 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
   const { chapter } = req.body;
-  console.log(chapter);
+
   const result = await saveChapter(chapter);
   if (result.success) {
     res.status(200).json(result.data);
@@ -731,8 +731,10 @@ app.get(
       });
       res.status(200).json(definitions);
     } catch (error) {
-      console.error("Error defining word:", error);
-      res.status(400).json({ error });
+      console.error("No definitions found for word:", req.params.word);
+      res
+        .status(400)
+        .json({ error: `No definitions found for word: '${req.params.word}'` });
     }
   }
 );
@@ -766,8 +768,6 @@ app.post(
         }
       });
     });
-
-    console.log({ max, mostSimilarBlock });
 
     let prompt = `Context: ${mostSimilarBlock.block.text}`;
 

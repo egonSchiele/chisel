@@ -135,10 +135,10 @@ export async function fetchDefinition(word: string) {
   if (!word) return t.error("No word");
 
   const res = await fetch(`/api/define/${word}`);
-  if (!res.ok) {
-    return t.error(`error fetching definition: ${res.statusText}`);
-  }
   const response = await res.json();
+  if (!res.ok) {
+    return t.error(response.error);
+  }
 
   return t.success(response);
 }
