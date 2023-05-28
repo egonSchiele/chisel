@@ -71,6 +71,8 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     launcherOpen: false,
     popupOpen: false,
     popupData: null,
+    openTabs: [],
+    activeTab: null,
   };
 };
 
@@ -997,7 +999,56 @@ export const librarySlice = createSlice({
       block.id = nanoid();
       state.saved = false;
     },
+    newTab(
+      state: t.State,
+      action: PayloadAction<{
+        chapterid: string;
+      }>
+    ) {
+      state.openTabs.push(action.payload.chapterid);
+      state.activeTab = state.openTabs.length - 1;
+    },
+    closeTab(
+      state: t.State,
+      action: PayloadAction<{
+        chapterid: string;
+      }>
+    ) {
+      const index = state.openTabs.findIndex(
+        (tab) => tab === action.payload.chapterid
+      );
+      if (index !== -1) {
+        state.openTabs.splice(index, 1);
+      }
+    },
+    goToTab(
+      state: t.State,
+      action: PayloadAction<{
+        chapterid: string;
+      }>
+    ) {
+      const index = state.openTabs.findIndex(
+        (tab) => tab === action.payload.chapterid
+      );
+      if (index !== -1) {
+        state.activeTab = index;
+      }
+    },
   },
+  /* setTab(
+    state: t.State,
+    action: PayloadAction<{
+      chapterid: string;
+    }>
+  ) {
+    const index = state.openTabs.findIndex(
+      (tab) => tab === action.payload.chapterid
+    );
+    if (index !== -1) {
+      state.openTabs.splice(index, 1);
+    }
+    state.openTabs.push(action.payload.chapterid);
+  }, */
   extraReducers: (builder) => {
     builder.addCase(fetchBooksThunk.pending, (state) => {
       state.loading = true;

@@ -38,6 +38,7 @@ import { saveTextToHistory, useInterval } from "./utils";
 import BlocksSidebar from "./BlocksSidebar";
 import OutlineSidebar from "./OutlineSidebar";
 import FocusSidebar from "./FocusSidebar";
+import Tabs from "./Tabs";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -56,6 +57,7 @@ export default function Library({ mobile = false }) {
 
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
+      dispatch(librarySlice.actions.newTab(chapterid));
       dispatch(librarySlice.actions.setChapter(chapterid));
       dispatch(librarySlice.actions.closeLeftSidebar());
       dispatch(librarySlice.actions.toggleOutline());
@@ -94,6 +96,12 @@ export default function Library({ mobile = false }) {
     if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
       onTextEditorSave(state, false);
+    } else if (event.metaKey && event.shiftKey && event.code === "KeyO") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.openFileNavigator());
+    } else if (event.metaKey && event.shiftKey && event.code === "KeyT") {
+      event.preventDefault();
+      newChapter();
     } else if (event.key === "Escape") {
       event.preventDefault();
       if (state.popupOpen) {
@@ -503,7 +511,12 @@ export default function Library({ mobile = false }) {
           )}
 
           {/*  nav */}
-          <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
+          <LibErrorBoundary component="nav">
+            <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
+          </LibErrorBoundary>
+          <LibErrorBoundary component="tabs">
+            <Tabs />
+          </LibErrorBoundary>
           <div
             className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
             id="editor"

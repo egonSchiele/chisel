@@ -12,12 +12,14 @@ export type State = {
   panels: PanelState;
   suggestions: Suggestion[];
   saved: boolean;
-  _temporaryFocusModeState?: string;
   viewMode: ViewMode;
   launcherOpen: boolean;
   popupOpen: boolean;
   popupData: PopupData | null;
   scrollTo?: number;
+  openTabs: string[];
+  activeTab: number | null;
+  _temporaryFocusModeState?: string;
   _cachedPanelState?: PanelState;
 };
 
