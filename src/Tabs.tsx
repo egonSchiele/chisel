@@ -1,35 +1,69 @@
 import * as t from "./Types";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getSelectedChapter, getCompostBookId } from "./reducers/librarySlice";
+import {
+  getSelectedChapter,
+  getCompostBookId,
+  getOpenTabs,
+  librarySlice,
+} from "./reducers/librarySlice";
 import { RootState, AppDispatch } from "./store";
+import { Link } from "react-router-dom";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 //import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@reach/tabs";
 
-function Tab({ chapter }) {
+function Tab({ tab, current }: { tab: t.TabStateInfo; current: boolean }) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const currentCss = current
+    ? "border-gray-500 text-gray-300"
+    : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-200";
+  let title = tab.title || "Untitled";
+  title = title.substring(0, 30);
   return (
-    <div className="tab">
-      <div className="tab-title">{chapter.title}</div>
+    <div
+      className={`h-9 border-b-2 px-1 text-center text-sm w-72 flex font-medium cursor-pointer  ${currentCss}`}
+    >
+      <Link
+        to={`/book/${tab.bookid}/chapter/${tab.chapterid}`}
+        className="h-9 text-center block flex-grow "
+      >
+        <div className="tab-title h-9 text-center pt-xs">{title}</div>
+      </Link>
+      <XMarkIcon
+        className="py-xs flex-none"
+        onClick={() => {
+          dispatch(librarySlice.actions.closeTab(tab.chapterid));
+        }}
+      />
     </div>
   );
 }
 
 export default function Tabs() {
   const state: t.State = useSelector((state: RootState) => state.library);
-  const openTabs: string[] = useSelector(
-    (state: RootState) => state.library.openTabs
-  );
+
   const currentChapter = getSelectedChapter({ library: state });
   const compostBookId = useSelector(getCompostBookId);
   const editor = useSelector((state: RootState) => state.library.editor);
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const openTabs = useSelector(getOpenTabs);
   const currentText = currentChapter?.text || [];
 
   const dispatch = useDispatch<AppDispatch>();
 
   if (!currentChapter) return null;
   return (
-    <div className="tabs absolute top-10 left-96">
-      <Tab chapter={currentChapter} />
+    <div className="h-9">
+      <nav className="h-9 flex" aria-label="Tabs">
+        {openTabs.map((tab) => (
+          <Tab
+            key={tab.chapterid}
+            tab={tab}
+            current={currentChapter.chapterid === tab.chapterid}
+          />
+        ))}
+      </nav>
     </div>
   );
 }

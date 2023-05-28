@@ -46,6 +46,8 @@ export default function Library({ mobile = false }) {
   const compostBookId = useSelector(getCompostBookId);
   const editor = useSelector((state: RootState) => state.library.editor);
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const activeTab = useSelector((state: RootState) => state.library.activeTab);
+  const openTabs = useSelector((state: RootState) => state.library.openTabs);
   const currentText = currentChapter?.text || [];
 
   const dispatch = useDispatch<AppDispatch>();
@@ -57,7 +59,7 @@ export default function Library({ mobile = false }) {
 
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
-      dispatch(librarySlice.actions.newTab(chapterid));
+      dispatch(librarySlice.actions.newTab({ chapterid }));
       dispatch(librarySlice.actions.setChapter(chapterid));
       dispatch(librarySlice.actions.closeLeftSidebar());
       dispatch(librarySlice.actions.toggleOutline());
@@ -71,6 +73,23 @@ export default function Library({ mobile = false }) {
       dispatch(librarySlice.actions.setBook(bookid));
     }
   }, [bookid]);
+
+  useEffect(() => {
+    if (activeTab !== null) {
+      const activeChapterId = state.openTabs[activeTab].chapterid;
+      state.books.forEach((book) => {
+        book.chapters.forEach((chapter) => {
+          if (chapter.chapterid === activeChapterId) {
+            navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
+          }
+        });
+      });
+    } else {
+      if (!state.selectedChapterId && state.selectedBookId) {
+        navigate(`/book/${state.selectedBookId}`);
+      }
+    }
+  }, [activeTab, openTabs]);
 
   // if the chapter id is null set the book list open to true
   // so that we do not end up with an empty screen.
@@ -514,9 +533,9 @@ export default function Library({ mobile = false }) {
           <LibErrorBoundary component="nav">
             <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
           </LibErrorBoundary>
-          <LibErrorBoundary component="tabs">
+          {/* <LibErrorBoundary component="tabs">
             <Tabs />
-          </LibErrorBoundary>
+          </LibErrorBoundary> */}
           <div
             className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
             id="editor"

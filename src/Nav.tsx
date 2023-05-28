@@ -21,6 +21,7 @@ import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
+import Tabs from "./Tabs";
 export default function Nav({
   mobile,
   bookid,
@@ -149,7 +150,9 @@ export default function Nav({
           )}
         </div>
 
-        <div className="flex-grow" />
+        <div className="flex-grow">
+          <Tabs />
+        </div>
 
         {/* book editor nav */}
         {bookid && !chapterid && (

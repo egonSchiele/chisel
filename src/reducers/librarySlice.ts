@@ -999,36 +999,42 @@ export const librarySlice = createSlice({
       block.id = nanoid();
       state.saved = false;
     },
-    newTab(
-      state: t.State,
-      action: PayloadAction<{
-        chapterid: string;
-      }>
-    ) {
-      state.openTabs.push(action.payload.chapterid);
+    newTab(state: t.State, action: PayloadAction<t.Tab>) {
+      const index = state.openTabs.findIndex(
+        (tab) => tab.chapterid === action.payload.chapterid
+      );
+      if (index !== -1) {
+        state.activeTab = index;
+        return;
+      }
+      state.openTabs.push(action.payload);
       state.activeTab = state.openTabs.length - 1;
     },
-    closeTab(
-      state: t.State,
-      action: PayloadAction<{
-        chapterid: string;
-      }>
-    ) {
+    closeTab(state: t.State, action: PayloadAction<string>) {
       const index = state.openTabs.findIndex(
-        (tab) => tab === action.payload.chapterid
+        (tab) => tab.chapterid === action.payload
       );
+
+      if (state.openTabs.length === 0) {
+        state.activeTab = null;
+        state.selectedChapterId = null;
+      } else if (state.activeTab === index) {
+        if (state.activeTab < state.openTabs.length - 1) {
+          // no change, more tabs after this
+          //state.activeTab = 0;
+        } else {
+          // last one, so move down
+          state.activeTab = index - 1;
+        }
+        state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+      }
       if (index !== -1) {
         state.openTabs.splice(index, 1);
       }
     },
-    goToTab(
-      state: t.State,
-      action: PayloadAction<{
-        chapterid: string;
-      }>
-    ) {
+    goToTab(state: t.State, action: PayloadAction<string>) {
       const index = state.openTabs.findIndex(
-        (tab) => tab === action.payload.chapterid
+        (tab) => tab.chapterid === action.payload
       );
       if (index !== -1) {
         state.activeTab = index;
@@ -1186,6 +1192,24 @@ export const getCharacters = (state: RootState): t.Character[] | null => {
 
   if (!book) return null;
   return book.characters || null;
+};
+export const getOpenTabs = (state: RootState): t.TabStateInfo[] => {
+  const openTabs = state.library.openTabs;
+  const tabs = openTabs.map((tab) => {
+    const chapter = getChapter(tab.chapterid)(state);
+    if (!chapter) return null;
+    const book = state.library.books.find(
+      (book) => book.bookid === chapter.bookid
+    );
+    if (!book) return null;
+    return {
+      chapterid: tab.chapterid,
+      title: chapter.title,
+      bookid: chapter.bookid,
+      bookTitle: book.title,
+    };
+  });
+  return tabs.filter((tab) => tab !== null);
 };
 
 export function newBlockFromCurrent(

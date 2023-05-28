@@ -17,10 +17,21 @@ export type State = {
   popupOpen: boolean;
   popupData: PopupData | null;
   scrollTo?: number;
-  openTabs: string[];
+  openTabs: Tab[];
   activeTab: number | null;
   _temporaryFocusModeState?: string;
   _cachedPanelState?: PanelState;
+};
+
+export type Tab = {
+  chapterid: string;
+};
+
+export type TabStateInfo = {
+  title: string;
+  chapterid: string;
+  bookid: string;
+  bookTitle: string;
 };
 
 export type SelectedText = {
