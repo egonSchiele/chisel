@@ -157,6 +157,9 @@ export async function postWithCsrf(url: string, body: any) {
 export async function uploadBook(chapters) {
   const res = await postWithCsrf(`/api/uploadBook`, { chapters });
   if (!res.ok) {
+    if (res.status === 413) {
+      return t.error(`That's a big file! Keep it under 1MB.`);
+    }
     const text = await res.text();
     return t.error(`Error uploading book: ${text}`);
   }

@@ -132,7 +132,7 @@ function clearFormatting(words: string[]): t.FormatData[] {
 }
 
 export default function highlightErrors(text: string): t.FormatData[] {
-  const lines = text.split(/[.!?] ?/);
+  const lines = text.split(/[.!?:;\n–] ?/);
   const words = text.split(" ");
   console.log({ text, words });
   const formats = [
