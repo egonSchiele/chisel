@@ -88,8 +88,16 @@ export default function Library({ mobile = false }) {
   }, [bookid]);
 
   useEffect(() => {
-    if (activeTab !== null) {
-      const activeChapterId = state.openTabs[activeTab].chapterid;
+    if (activeTab === -1) {
+      navigate("/");
+    } else if (activeTab !== null) {
+      const chapter = state.openTabs[activeTab];
+      if (!chapter) {
+        console.log("no chapter found.", activeTab, state.openTabs);
+        navigate("/");
+        return;
+      }
+      const activeChapterId = chapter.chapterid;
       state.books.forEach((book) => {
         book.chapters.forEach((chapter) => {
           if (chapter.chapterid === activeChapterId) {
