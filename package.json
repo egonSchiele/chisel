@@ -91,6 +91,7 @@
     "react-router-dom": "^6.9.0",
     "react-syntax-highlighter": "^15.5.0",
     "reading-time": "^1.5.0",
+    "replicate": "^0.12.1",
     "stemmer": "^2.0.1",
     "syllable": "^5.0.1",
     "wordnet": "https://github.com/egonSchiele/wordnet"

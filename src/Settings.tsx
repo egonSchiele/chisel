@@ -123,6 +123,8 @@ function Settings({ settings, setSettings, usage, onSave }) {
         onChange={(e) => handleChange("model", e.target.value)}
       >
         <option>gpt-3.5-turbo</option>
+        {settings.admin && <option>vicuna-13b</option>}
+        {settings.admin && <option>llama-7b</option>}
         {/*         <option>text-davinci-003</option>
         <option>davinci</option>
  */}{" "}

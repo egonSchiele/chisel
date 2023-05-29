@@ -47,6 +47,12 @@ import {
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
+import Replicate from "replicate";
+
+const replicate = new Replicate({
+  // get your token from https://replicate.com/account
+  auth: settings.replicateApiKey,
+});
 
 console.log("Initializing wordnet");
 await wordnet.init("wordnet");
@@ -421,7 +427,9 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
     console.log("no user");
     res.status(404).end();
   } else {
-    res.status(200).json({ settings: user.settings, usage: user.usage });
+    const settings = user.settings;
+    settings.admin = user.admin;
+    res.status(200).json({ settings, usage: user.usage });
   }
 });
 
@@ -880,9 +888,93 @@ async function getSuggestions(
       return check;
     }
   }
+
+  const openAiModels = ["gpt-3.5-turbo", "curie"];
+
+  const replicateModels = ["vicuna-13b", "llama-7b"];
+
+  let result;
+
+  if (openAiModels.includes(model)) {
+    result = await usingOpenAi(
+      user,
+      prompt,
+      max_tokens,
+      model,
+      num_suggestions,
+      _messages,
+      customKey
+    );
+  } else if (replicateModels.includes(model) && user.admin) {
+    result = await usingReplicate(
+      user,
+      prompt,
+      max_tokens,
+      model,
+      num_suggestions,
+      _messages,
+      customKey
+    );
+  } else {
+    return failure("invalid model");
+  }
+
+  console.log({ result });
+
+  if (!result.success) {
+    return result;
+  } else {
+    if (!customKey) {
+      await updateUsage(user, result.data.usage);
+    }
+    return success({ choices: result.data.choices });
+  }
+}
+
+async function usingReplicate(
+  user,
+  prompt,
+  max_tokens = 500,
+  _model = "vicuna-13b",
+  num_suggestions = 1,
+  _messages = null,
+  customKey
+) {
+  if (!user.admin) {
+    return failure("sorry, only admins can use replicate models");
+  }
+  const models = {
+    "vicuna-13b":
+      "replicate/vicuna-13b:6282abe6a492de4145d7bb601023762212f9ddbbe78278bd6771c8b3b2f2a13b",
+    "llama-7b":
+      "replicate/llama-7b:ac808388e2e9d8ed35a5bf2eaa7d83f0ad53f9e3df31a42e4eb0a0c3249b3165",
+  };
+  const model = models[_model];
+
+  if (!model) {
+    return failure(`invalid model ${_model}`);
+  }
+
+  const input = {
+    prompt,
+  };
+  const output = await replicate.run(model, { input });
+  console.log(output);
+  return success({ choices: [{ text: output.join("") }], usage: 0 });
+}
+
+async function usingOpenAi(
+  user,
+  prompt,
+  max_tokens = 500,
+  model = "gpt-3.5-turbo",
+  num_suggestions = 1,
+  _messages = null,
+  customKey
+) {
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
-  //const prompt = req.body.prompt.substring(0, settings.maxPromptLength);
+
   let reqBody = {
     prompt,
     max_tokens,
@@ -904,7 +996,6 @@ async function getSuggestions(
   console.log(JSON.stringify(reqBody));
   const bearerKey = customKey || settings.openAiApiKey;
 
-  // console.log({ prompt: JSON.parse(req.body) });
   const res = await fetch(endpoint, {
     method: "POST",
     headers: {
@@ -921,10 +1012,6 @@ async function getSuggestions(
     return failure(json.error.message);
   }
 
-  if (!customKey) {
-    await updateUsage(user, json.usage);
-  }
-
   let choices;
   if (chatModels.includes(model)) {
     choices = json.choices.map((choice) => ({
@@ -933,7 +1020,7 @@ async function getSuggestions(
   } else {
     choices = json.choices.map((choice) => ({ text: choice.text }));
   }
-  return success({ choices });
+  return success({ choices, usage: json.usage });
 }
 
 async function getEmbeddings(user, _text) {

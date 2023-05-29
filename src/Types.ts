@@ -337,6 +337,7 @@ export type UserSettings = {
   version_control: boolean;
   prompts: Prompt[];
   design?: DesignPreferences | null;
+  admin?: boolean;
 };
 
 export type DesignPreferences = {
