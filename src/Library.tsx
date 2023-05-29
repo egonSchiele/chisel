@@ -134,6 +134,18 @@ export default function Library({ mobile = false }) {
     } else if (event.metaKey && event.shiftKey && event.code === "KeyT") {
       event.preventDefault();
       newChapter();
+    } else if (event.metaKey && event.shiftKey && event.code === "KeyW") {
+      const chapter = state.openTabs[state.activeTab];
+      if (chapter) {
+        event.preventDefault();
+        dispatch(librarySlice.actions.closeTab(chapter.chapterid));
+      }
+    } else if (event.metaKey && event.code === "BracketLeft") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.prevTab());
+    } else if (event.metaKey && event.code === "BracketRight") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.nextTab());
     } else if (event.key === "Escape") {
       event.preventDefault();
       if (state.popupOpen) {

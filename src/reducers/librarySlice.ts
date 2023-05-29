@@ -1012,6 +1012,22 @@ export const librarySlice = createSlice({
       state.openTabs.push(action.payload);
       state.activeTab = state.openTabs.length - 1;
     },
+    prevTab(state: t.State) {
+      if (state.activeTab === 0) {
+        state.activeTab = state.openTabs.length - 1;
+      } else {
+        state.activeTab -= 1;
+      }
+      state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+    },
+    nextTab(state: t.State) {
+      if (state.activeTab === state.openTabs.length - 1) {
+        state.activeTab = 0;
+      } else {
+        state.activeTab += 1;
+      }
+      state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+    },
     closeTab(state: t.State, action: PayloadAction<string>) {
       const index = state.openTabs.findIndex(
         (tab) => tab.chapterid === action.payload
