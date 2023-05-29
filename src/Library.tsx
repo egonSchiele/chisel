@@ -63,7 +63,7 @@ export default function Library({ mobile = false }) {
       dispatch(librarySlice.actions.newTab({ chapterid }));
       dispatch(librarySlice.actions.setChapter(chapterid));
       dispatch(librarySlice.actions.closeLeftSidebar());
-      dispatch(librarySlice.actions.toggleOutline());
+      //dispatch(librarySlice.actions.toggleOutline());
       return;
     }
     dispatch(librarySlice.actions.setNoChapter());
@@ -134,7 +134,7 @@ export default function Library({ mobile = false }) {
     } else if (event.metaKey && event.shiftKey && event.code === "KeyT") {
       event.preventDefault();
       newChapter();
-    } else if (event.metaKey && event.shiftKey && event.code === "KeyW") {
+    } else if (event.metaKey && event.shiftKey && event.code === "KeyX") {
       const chapter = state.openTabs[state.activeTab];
       if (chapter) {
         event.preventDefault();

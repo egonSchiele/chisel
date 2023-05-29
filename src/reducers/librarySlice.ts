@@ -1018,7 +1018,7 @@ export const librarySlice = createSlice({
       } else {
         state.activeTab -= 1;
       }
-      state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+      //state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
     },
     nextTab(state: t.State) {
       if (state.activeTab === state.openTabs.length - 1) {
@@ -1026,7 +1026,7 @@ export const librarySlice = createSlice({
       } else {
         state.activeTab += 1;
       }
-      state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+      //state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
     },
     closeTab(state: t.State, action: PayloadAction<string>) {
       const index = state.openTabs.findIndex(
@@ -1044,7 +1044,7 @@ export const librarySlice = createSlice({
           // last one, so move down
           state.activeTab = index - 1;
         }
-        state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+        //state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
       }
       if (index !== -1) {
         state.openTabs.splice(index, 1);

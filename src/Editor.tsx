@@ -1,31 +1,23 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import "./globals.css";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import DiffViewer from "./DiffViewer";
+import EmbeddedTextBlock from "./EmbeddedTextBlock";
+import ReadOnlyView from "./ReadOnlyView";
 import TextEditor from "./TextEditor";
 import * as t from "./Types";
-import {
-  getChapterText,
-  getCsrfToken,
-  hasVersions,
-  useTraceUpdate,
-} from "./utils";
-import { RootState } from "./store";
+import Button from "./components/Button";
+import ContentEditable from "./components/ContentEditable";
+import Select from "./components/Select";
+import "./globals.css";
+import { useKeyDown, useKeyboardScroll } from "./lib/hooks";
 import {
   getSelectedChapter,
   getSelectedChapterTextLength,
   getSelectedChapterTitle,
   librarySlice,
 } from "./reducers/librarySlice";
-import { postWithCsrf } from "./lib/fetchData";
-import Button from "./components/Button";
-import ContentEditable from "./components/ContentEditable";
-import { useKeyDown, useKeyboardScroll } from "./lib/hooks";
-import CodeBlock from "./components/CodeBlock";
-import MarkdownBlock from "./components/MarkdownBlock";
-import Select from "./components/Select";
-import DiffViewer from "./DiffViewer";
-import EmbeddedTextBlock from "./EmbeddedTextBlock";
-import ReadOnlyView from "./ReadOnlyView";
+import { RootState } from "./store";
+import { hasVersions } from "./utils";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -40,6 +32,9 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   );
 
   const scrollTo = useSelector((state: RootState) => state.library.scrollTo);
+  /* const activeTextIndex = useSelector(
+    (state: RootState) => state.library.activeTextIndex
+  ); */
 
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
 
@@ -181,8 +176,16 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           }}
           selector="text-editor-title"
         />
+
         {currentText.map((text, index) => {
           const key = text.id || index;
+          let isInView = true;
+          /* if (activeTextIndex) {
+            isInView =
+              index > activeTextIndex - 5 || index < activeTextIndex + 5;
+          } else {
+            isInView = index < 10;
+          } */
           if (text.type === "embeddedText") {
             return (
               <EmbeddedTextBlock
@@ -283,12 +286,20 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                 </div>
               )}
               {!text.diffWith && (
+                /*  <LazyLoad
+                    //@ts-ignore
+                    parentScroll={0}
+                    screenHeight={1080}
+                    key={text.id || index}
+                  > */
                 <TextEditor
                   chapterid={currentChapterId}
                   index={index}
                   key={text.id || index}
                   settings={settings}
+                  isInView={isInView}
                 />
+                /*  </LazyLoad> */
               )}
             </div>
           );

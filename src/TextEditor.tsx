@@ -109,10 +109,12 @@ function TextEditor({
   chapterid,
   index,
   settings,
+  isInView = true,
 }: {
   chapterid: string;
   index: number;
   settings: t.UserSettings;
+  isInView?: boolean;
 }) {
   const _pushTextToEditor = useSelector(
     (state: RootState) => state.library.editor._pushTextToEditor
@@ -430,6 +432,7 @@ function TextEditor({
   font = font || "sans-serif";
   let fontClass = font === "serif" ? "serif" : "sansSerif";
   if (currentText.type === "code") fontClass = "font-mono";
+  if (!isInView) return null;
   return (
     <div className="">
       {/* h-full"> */}
@@ -485,7 +488,7 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow border-l w-full pl-sm pr-md ${borderColor}`}
+              className={`flex-grow border-l w-full pl-sm pr-md  ${borderColor}`}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}
