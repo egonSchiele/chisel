@@ -22,7 +22,7 @@ function Tab({ tab, current }: { tab: t.TabStateInfo; current: boolean }) {
   title = title.substring(0, 30);
   return (
     <div
-      className={`h-9 border-b-2 px-1 text-center text-sm flex flex-auto overflow-hidden font-medium cursor-pointer hover:bg-gray-700 line-clamp-1 ${currentCss}`}
+      className={`h-9 border-b-2 px-1 text-center text-sm flex flex-auto overflow-hidden font-medium cursor-pointer hover:bg-gray-700 line-clamp-1 ${currentCss} max-w-md`}
     >
       <div className="flex">
         <Link

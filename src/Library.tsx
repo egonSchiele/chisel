@@ -34,7 +34,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-import { saveTextToHistory, useInterval } from "./utils";
+import { saveTextToHistory, useInterval, useLocalStorage } from "./utils";
 import BlocksSidebar from "./BlocksSidebar";
 import OutlineSidebar from "./OutlineSidebar";
 import FocusSidebar from "./FocusSidebar";
@@ -56,6 +56,7 @@ export default function Library({ mobile = false }) {
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
   const { bookid, chapterid } = useParams();
+  const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
 
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
@@ -67,6 +68,18 @@ export default function Library({ mobile = false }) {
     }
     dispatch(librarySlice.actions.setNoChapter());
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
+
+  useEffect(() => {
+    if (state.booksLoaded) {
+      setCachedBooks(
+        state.books.map((book) => ({
+          title: book.title,
+          bookid: book.bookid,
+          tag: book.tag,
+        }))
+      );
+    }
+  }, [state.booksLoaded]);
 
   useEffect(() => {
     if (bookid) {
@@ -564,7 +577,7 @@ export default function Library({ mobile = false }) {
 
           <LibErrorBoundary component="book list">
             <PanelPlaceholder
-              loaded={state.booksLoaded}
+              loaded={true}
               show={state.panels.leftSidebar.open}
               className="top-0 left-0"
             >
@@ -573,7 +586,7 @@ export default function Library({ mobile = false }) {
                   className={`absolute top-0 left-0 h-full w-48 z-10 mt-9`}
                   id="booklist"
                 >
-                  <BookList />
+                  <BookList cachedBooks={cachedBooks} />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

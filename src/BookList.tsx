@@ -33,7 +33,7 @@ const buttonStyles =
   "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
-export default function BookList() {
+export default function BookList({ cachedBooks = null }) {
   const books = useSelector((state: RootState) => state.library.books);
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
   const selectedBookId = useSelector(
@@ -70,11 +70,44 @@ export default function BookList() {
   }
 
   if (!loaded) {
-    return (
+    if (cachedBooks) {
+      const compostBook = cachedBooks.find((book) => book.tag === "compost");
+      const otherBooks = sortBy(
+        cachedBooks.filter((book) => book.tag !== "compost"),
+        ["title"]
+      );
+      const items = otherBooks.map((book) => (
+        <ListItem
+          key={book.bookid}
+          title={book.title}
+          link={`/book/${book.bookid}`}
+          selected={false}
+        />
+      ));
+      if (compostBook) {
+        items.unshift(
+          <ListItem
+            key={compostBook.bookid}
+            title={compostBook.title}
+            link={`/book/${compostBook.bookid}`}
+            selected={false}
+            className="flex pb-xs border-b border-gray-300 dark:border-gray-700 mb-xs"
+            tag={"compost"}
+          />
+        );
+      }
+      return (
+        <List
+          title="Loading Books"
+          items={items}
+          className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-sidebar dark:bg-dmsidebar`}
+        />
+      );
+    } else {
       <div
         className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
-      ></div>
-    );
+      />;
+    }
   }
 
   const compostBook = books.find((book) => book.tag === "compost");
