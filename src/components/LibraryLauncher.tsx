@@ -28,6 +28,8 @@ import {
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
   ArrowsUpDownIcon,
+  ArrowSmallLeftIcon,
+  ArrowSmallRightIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
@@ -309,6 +311,34 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     });
   } */
 
+  if (state.openTabs.length > 0) {
+    launchItems.push({
+      label: "Close Tab",
+      onClick: () => {
+        dispatch(librarySlice.actions.closeTab());
+      },
+      icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+shift+x",
+    });
+  }
+  if (state.openTabs.length > 1) {
+    launchItems.push({
+      label: "Previous Tab",
+      onClick: () => {
+        dispatch(librarySlice.actions.prevTab());
+      },
+      icon: <ArrowSmallLeftIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+[",
+    });
+    launchItems.push({
+      label: "Next Tab",
+      onClick: () => {
+        dispatch(librarySlice.actions.nextTab());
+      },
+      icon: <ArrowSmallRightIcon className="h-4 w-4" aria-hidden="true" />,
+      tooltip: "Command+]",
+    });
+  }
   if (state.viewMode === "fullscreen") {
     launchItems.push({
       label: "Exit Fullscreen",

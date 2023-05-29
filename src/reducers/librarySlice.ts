@@ -1028,10 +1028,15 @@ export const librarySlice = createSlice({
       }
       //state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
     },
-    closeTab(state: t.State, action: PayloadAction<string>) {
-      const index = state.openTabs.findIndex(
-        (tab) => tab.chapterid === action.payload
-      );
+    closeTab(state: t.State, action: PayloadAction<string | null>) {
+      let index = 0;
+      if (action.payload === null || action.payload === undefined) {
+        index = state.activeTab;
+      } else {
+        index = state.openTabs.findIndex(
+          (tab) => tab.chapterid === action.payload
+        );
+      }
 
       if (state.openTabs.length === 0) {
         state.activeTab = null;
