@@ -22,20 +22,22 @@ function Tab({ tab, current }: { tab: t.TabStateInfo; current: boolean }) {
   title = title.substring(0, 30);
   return (
     <div
-      className={`h-9 border-b-2 px-1 text-center text-sm w-72 flex font-medium cursor-pointer  ${currentCss}`}
+      className={`h-9 border-b-2 px-1 text-center text-sm flex flex-auto overflow-hidden font-medium cursor-pointer hover:bg-gray-700 line-clamp-1 ${currentCss}`}
     >
-      <Link
-        to={`/book/${tab.bookid}/chapter/${tab.chapterid}`}
-        className="h-9 text-center block flex-grow "
-      >
-        <div className="tab-title h-9 text-center pt-xs">{title}</div>
-      </Link>
-      <XMarkIcon
-        className="py-xs flex-none"
-        onClick={() => {
-          dispatch(librarySlice.actions.closeTab(tab.chapterid));
-        }}
-      />
+      <div className="flex">
+        <Link
+          to={`/book/${tab.bookid}/chapter/${tab.chapterid}`}
+          className="h-9 text-center flex-grow"
+        >
+          <div className="tab-title h-9 text-center pt-xs">{title}</div>
+        </Link>
+        <XMarkIcon
+          className="w-5 h-9 flex-none"
+          onClick={() => {
+            dispatch(librarySlice.actions.closeTab(tab.chapterid));
+          }}
+        />
+      </div>
     </div>
   );
 }

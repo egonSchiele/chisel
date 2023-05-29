@@ -46,7 +46,7 @@ export default function Nav({
   }
   return (
     <div
-      className="h-9 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-700 align-middle"
+      className="h-9 w-screen absolute left-0 top-0 z-50 flex-grow bg-gray-700 align-middle"
       id="nav"
     >
       <div className="h-full flex align-middle">
@@ -150,7 +150,7 @@ export default function Nav({
           )}
         </div>
 
-        <div className="flex-grow">
+        <div className="flex-grow w-[calc(100%-50rem)] overflow-x-scroll">
           <Tabs />
         </div>
 

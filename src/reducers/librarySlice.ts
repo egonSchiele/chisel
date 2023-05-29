@@ -18,7 +18,9 @@ import sortBy from "lodash/sortBy";
 import { nanoid } from "nanoid";
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
-
+function tab(chapterid) {
+  return { chapterid };
+}
 type DefaultChapter = {
   title: string;
   text: t.TextBlock[];
