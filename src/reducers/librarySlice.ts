@@ -467,7 +467,12 @@ export const librarySlice = createSlice({
     },
 
     toggleRightSidebar(state: t.State) {
-      state.panels.rightSidebar.open = !state.panels.rightSidebar.open;
+      if (state.panels.rightSidebar.activePanel !== "chat") {
+        state.panels.rightSidebar.open = !state.panels.rightSidebar.open;
+      } else {
+        state.panels.rightSidebar.open = true;
+        state.panels.rightSidebar.activePanel = "info";
+      }
       localStorage.setItem(
         "rightSidebarOpen",
         state.panels.rightSidebar.open ? "true" : "false"
@@ -524,6 +529,7 @@ export const librarySlice = createSlice({
     },
     setActivePanel(state: t.State, action: PayloadAction<t.ActivePanel>) {
       state.panels.rightSidebar.activePanel = action.payload;
+      state.panels.rightSidebar.open = true;
       localStorage.setItem("activePanel", action.payload);
     },
     toggleLauncher(state: t.State) {

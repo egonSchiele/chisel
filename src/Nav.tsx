@@ -1,5 +1,6 @@
 import {
   Bars3Icon,
+  ChatBubbleOvalLeftIcon,
   CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -285,6 +286,18 @@ export default function Nav({
                     selector="sidebar-button"
                   >
                     <EllipsisHorizontalCircleIcon
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                  <NavButton
+                    label="Chat"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.setActivePanel("chat"));
+                    }}
+                    selector="chat-button"
+                  >
+                    <ChatBubbleOvalLeftIcon
                       className="h-5 w-5"
                       aria-hidden="true"
                     />

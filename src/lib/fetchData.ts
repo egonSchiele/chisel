@@ -38,7 +38,6 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
-  label: string,
   _customKey?: string
 ) => {
   let prompt = _prompt.replaceAll("{{text}}", text);

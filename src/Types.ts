@@ -421,7 +421,12 @@ export type SelectOption = {
   value: string;
 };
 
-export type ActivePanel = "info" | "suggestions" | "settings" | "history";
+export type ActivePanel =
+  | "info"
+  | "suggestions"
+  | "settings"
+  | "history"
+  | "chat";
 export type LeftActivePanel =
   | "filenavigator"
   | "prompts"

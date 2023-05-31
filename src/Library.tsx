@@ -1,3 +1,4 @@
+import ChatSidebar from "./ChatSidebar";
 import { ArrowUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -479,6 +480,15 @@ export default function Library({ mobile = false }) {
 
   const rightSidebarOpen = !!(
     state.panels.rightSidebar.open &&
+    state.panels.rightSidebar.activePanel !== "chat" &&
+    state.viewMode !== "focus" &&
+    currentChapter &&
+    !mobile
+  );
+
+  const chatOpen = !!(
+    state.panels.rightSidebar.open &&
+    state.panels.rightSidebar.activePanel === "chat" &&
     state.viewMode !== "focus" &&
     currentChapter &&
     !mobile
@@ -709,6 +719,20 @@ export default function Library({ mobile = false }) {
                     }}
                     triggerHistoryRerender={triggerHistoryRerender}
                   />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="chat">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.rightSidebar.open}
+              className="top-0 right-0"
+            >
+              <SlideTransition show={chatOpen} direction="right">
+                <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+                  <ChatSidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

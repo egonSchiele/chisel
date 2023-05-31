@@ -117,7 +117,6 @@ export const fetchSuggestionsWrapper = async (
     _num_suggestions,
     max_tokens_with_min,
     prompt,
-    label,
     _customKey
   );
   setLoading(false);
