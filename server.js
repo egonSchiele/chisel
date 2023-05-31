@@ -339,17 +339,7 @@ app.get(
   requireAdmin,
 
   async (req, res) => {
-    const suggestions = await chain(req, "bow ties were never in fashion", [
-      mk(
-        "Given this text, list the words that have multiple meanings. Here's the text: {{text}}",
-        "{words:[{word:string, meanings:[string]}]}"
-      ),
-      mk(
-        ({ words }) =>
-          `Rewrite this text to make sense if the word ${words[0].word} means ${words[1].meanings[0]} . Here's the text: {{text}}`,
-        null
-      ),
-    ]);
+    const suggestions = await chain(req, "", []);
     console.log(JSON.stringify(suggestions));
 
     res.json(suggestions);
@@ -361,12 +351,12 @@ async function chain(req, promptText, steps) {
   const num_suggestions = 1;
   const model = "gpt-3.5-turbo";
   const user = await getUser(req);
-  let result;
+  let result = [];
   for (const step of steps) {
     let prompt = step.prompt;
     if (typeof prompt === "function") {
       try {
-        prompt = prompt(result);
+        prompt = prompt(result.at(-1));
       } catch (e) {
         console.log(e);
         return {
@@ -404,7 +394,11 @@ async function chain(req, promptText, steps) {
       console.log(suggestions.message);
       return suggestions;
     } else {
-      result = suggestions.data;
+      if (schema) {
+        result.push(suggestions.data);
+      } else {
+        result.push(suggestions.data.choices[0].text);
+      }
     }
   }
   return result;
