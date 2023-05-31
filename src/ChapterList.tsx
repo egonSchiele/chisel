@@ -315,8 +315,8 @@ export default function ChapterList({
     </div>,
   ];
 
-  const buttonStyles =
-    "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
+  const buttonStyles = "";
+  //"hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar";
   /* let rightMenuItem = canCloseSidebar && {
     label: "Close",
     icon: <XMarkIcon className="w-6 h-6 xl:w-5 xl:h-5" />,

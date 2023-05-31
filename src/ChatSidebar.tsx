@@ -1,3 +1,4 @@
+import * as t from "./Types";
 import Input from "./components/Input";
 import * as fd from "./lib/fetchData";
 import React, { useContext } from "react";
@@ -20,20 +21,16 @@ import LibraryContext from "./LibraryContext";
 import Spinner from "./components/Spinner";
 import { useLocalStorage } from "./utils";
 import TextArea from "./components/TextArea";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
-type ChatHistory = {
-  tag: "user" | "ai";
-  text: string;
-};
-
-function Chat({ tag, text, className = null }) {
+function Chat({ role, content, className = null }) {
   return (
     <div
       className={`p-xs mb-sm rounded ${
-        tag === "user" ? "bg-gray-800" : "bg-gray-600"
+        role === "user" ? "bg-gray-800" : "bg-gray-600"
       } ${className}`}
     >
-      {text}
+      {content}
     </div>
   );
 }
@@ -47,14 +44,21 @@ export default function ChatSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { settings } = useContext(LibraryContext) as LibraryContextType;
-  const [chatHistory, setChatHistory] = useLocalStorage("chatHistory", []);
+  const [chatHistory, setChatHistory] = useLocalStorage<t.ChatHistory[]>(
+    "chatHistory",
+    []
+  );
   const [chatInput, setChatInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   async function sendChat() {
+    const contextSize = 10;
+    const start = Math.max(0, chatHistory.length - contextSize);
+    const end = chatHistory.length - 1;
+
     setLoading(true);
     const newChatHistory = [...chatHistory];
-    newChatHistory.push({ tag: "user", text: chatInput });
+    newChatHistory.push({ role: "user", content: chatInput });
     setChatHistory(newChatHistory);
 
     const result = await fd.fetchSuggestions(
@@ -64,18 +68,18 @@ export default function ChatSidebar() {
       settings.num_suggestions,
       settings.max_tokens,
       chatInput,
-      null
+      chatHistory.slice(start, end)
     );
 
     if (result.tag === "error") {
       dispatch(librarySlice.actions.setError(result.message));
-      return;
+      newChatHistory.push({ role: "system", content: result.message });
+    } else {
+      result.payload.forEach((choice: { text: any }) => {
+        const generatedText = choice.text;
+        newChatHistory.push({ role: "system", content: generatedText });
+      });
     }
-
-    result.payload.forEach((choice: { text: any }) => {
-      const generatedText = choice.text;
-      newChatHistory.push({ tag: "ai", text: generatedText });
-    });
 
     setLoading(false);
     setChatHistory(newChatHistory);
@@ -107,12 +111,20 @@ export default function ChatSidebar() {
     onClick: () => {},
   };
 
+  const clear = {
+    label: "Clear",
+    icon: <TrashIcon className="w-5 h-5" />,
+    onClick: () => {
+      setChatHistory([]);
+    },
+  };
+
   return (
     <List
       title="Chat"
       items={items}
       leftMenuItem={loading ? spinner : null}
-      rightMenuItem={null}
+      rightMenuItem={clear}
       className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-l border-b border-gray-700 w-48"
       selector="chatList"
     />

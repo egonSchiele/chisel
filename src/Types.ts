@@ -447,3 +447,8 @@ export type LibraryContextType = {
   usage: Usage | null;
   deleteChapter: (deletedChapterid: string) => Promise<void>;
 };
+
+export type ChatHistory = {
+  role: "user" | "system";
+  content: string;
+};

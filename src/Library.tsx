@@ -234,6 +234,13 @@ export default function Library({ mobile = false }) {
     setLoading(false);
 
     if (result.tag === "success") {
+      result.payload.settings.num_suggestions = parseInt(
+        result.payload.settings.num_suggestions
+      );
+      result.payload.settings.max_tokens = parseInt(
+        result.payload.settings.max_tokens
+      );
+
       setSettings(result.payload.settings);
       setUsage(result.payload.usage);
     } else {

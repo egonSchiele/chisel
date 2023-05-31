@@ -96,6 +96,8 @@ function Settings({ settings, setSettings, usage, onSave }) {
     e.preventDefault();
     const _settings = { ...settings };
     _settings.customKey = null;
+    _settings.max_tokens = parseInt(_settings.max_tokens);
+    _settings.num_suggestions = parseInt(_settings.num_suggestions);
     await fetch("/api/settings", {
       method: "POST",
       headers: {
@@ -122,7 +124,6 @@ function Settings({ settings, setSettings, usage, onSave }) {
         value={settings.model}
         onChange={(e) => {
           handleChange("model", e.target.value);
-          handleSave(e);
         }}
       >
         <option>gpt-3.5-turbo</option>
@@ -140,13 +141,15 @@ function Settings({ settings, setSettings, usage, onSave }) {
         title="Max Tokens"
         name="max_tokens"
         value={settings.max_tokens}
-        onChange={(e) => handleChange("max_tokens", e.target.value)}
+        onChange={(e) => handleChange("max_tokens", parseInt(e.target.value))}
       />
       <Input
         title="Num Suggestions"
         name="num_suggestions"
         value={settings.num_suggestions}
-        onChange={(e) => handleChange("num_suggestions", e.target.value)}
+        onChange={(e) =>
+          handleChange("num_suggestions", parseInt(e.target.value))
+        }
       />
       <Input
         title="Your key (use with caution!)"

@@ -714,7 +714,7 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
     req.body.max_tokens,
     req.body.model,
     req.body.num_suggestions,
-    null,
+    req.body.messages || [],
     req.body.customKey
   );
   if (suggestions.success) {
@@ -1084,7 +1084,10 @@ async function usingOpenAi(
   if (chatModels.includes(model)) {
     endpoint = "https://api.openai.com/v1/chat/completions";
 
-    const messages = _messages || [{ role: "user", content: prompt }];
+    let messages = _messages;
+    if (messages === null || messages.length === 0) {
+      messages = [{ role: "user", content: prompt }];
+    }
     reqBody = {
       messages,
       max_tokens,

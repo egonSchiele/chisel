@@ -38,8 +38,10 @@ export const fetchSuggestions = async (
   num_suggestions: number,
   max_tokens: number,
   _prompt: string,
+  messages: t.ChatHistory[] = [],
   _customKey?: string
 ) => {
+  // @ts-ignore
   let prompt = _prompt.replaceAll("{{text}}", text);
   prompt = prompt.replaceAll("{{synopsis}}", synopsis);
   const customKey = _customKey || null;
@@ -50,6 +52,7 @@ export const fetchSuggestions = async (
     max_tokens,
     num_suggestions,
     customKey,
+    messages,
   });
 
   if (!res.ok) {
