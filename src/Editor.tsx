@@ -209,10 +209,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           return (
             <div key={key}>
               {hasVersions(text) && (
-                <div
-                  className="text-sm flex items-center mb-sm mt-md mx-[72px] p-xs bg-gray-700 rounded w-full"
-                  key={text.id || index}
-                >
+                <div className="text-sm flex items-center mb-sm mt-md mx-[72px] p-xs bg-gray-700 rounded w-full">
                   <div className="w-full flex justify-center items-baseline">
                     <p className="mr-xs uppercase text-gray-400 dark:text-gray-200 text-xs">
                       Diff against:
@@ -221,7 +218,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                       title=""
                       name="version"
                       className="max-w-24 flex-none !m-0 dark:bg-gray-800"
-                      value={text.diffWith}
+                      value={text.diffWith || ""}
                       onChange={(event) => {
                         dispatch(
                           librarySlice.actions.setDiffWith({
@@ -258,10 +255,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                 </div>
               )}
               {text.diffWith && (
-                <div
-                  className="flex overflow-auto w-full mx-[72px]"
-                  key={text.id || index}
-                >
+                <div className="flex overflow-auto w-full mx-[72px]">
                   <DiffViewer
                     originalText={text.text}
                     newText={diffWithText}
@@ -295,7 +289,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                 <TextEditor
                   chapterid={currentChapterId}
                   index={index}
-                  key={text.id || index}
                   settings={settings}
                   isInView={isInView}
                 />

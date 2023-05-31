@@ -1,3 +1,4 @@
+import blocklist from "./src/blocklist.js";
 import wordnet from "wordnet";
 import zip from "lodash";
 import similarity from "compute-cosine-similarity";
@@ -330,7 +331,7 @@ app.post("/api/saveToHistory", requireLogin, async (req, res) => {
   }
 });
 
-function mk(prompt, schema) {
+function mk(prompt, schema = null) {
   return { prompt, schema };
 }
 
@@ -365,6 +366,7 @@ async function chain(req, promptText, steps) {
         };
       }
     }
+    if (prompt === null) continue;
     prompt = prompt.replace("{{text}}", promptText);
     console.log({ prompt });
     const schema = step.schema;
@@ -1046,9 +1048,22 @@ async function usingReplicate(
   return success({ choices: [{ text: output.join("") }], usage: 0 });
 }
 
+function sanitize(str) {
+  return str
+    .split(" ")
+    .map((word) => {
+      if (blocklist.includes(word.toLowerCase())) {
+        return "****";
+      } else {
+        return word;
+      }
+    })
+    .join(" ");
+}
+
 async function usingOpenAi(
   user,
-  prompt,
+  _prompt,
   max_tokens = 500,
   model = "gpt-3.5-turbo",
   num_suggestions = 1,
@@ -1058,6 +1073,8 @@ async function usingOpenAi(
   const chatModels = ["gpt-3.5-turbo"];
   let endpoint = "https://api.openai.com/v1/completions";
 
+  const prompt = sanitize(_prompt);
+  console.log({ prompt });
   let reqBody = {
     prompt,
     max_tokens,

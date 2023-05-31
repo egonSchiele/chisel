@@ -1,4 +1,8 @@
-import { Bars3Icon, InformationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  InformationCircleIcon,
+  Square2StackIcon,
+} from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { getText } from "./reducers/librarySlice";
@@ -8,6 +12,7 @@ import { Tab } from "@headlessui/react";
 import BlockActionsSidebar from "./BlockActionsSidebar";
 import BlockInfoSidebar from "./BlockInfoSidebar";
 import OutlineSidebar from "./OutlineSidebar";
+import VersionsSidebar from "./VersionsSidebar";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -38,7 +43,7 @@ export default function BlockSidebar({ tabIndex = 0 }: { tabIndex?: number }) {
             <InformationCircleIcon className="w-5 h-5 mx-auto text-gray-200" />
           </Tab>
           <Tab className={getClassNames}>
-            <Bars3Icon className="w-5 h-5 mx-auto text-gray-200" />
+            <Square2StackIcon className="w-5 h-5 mx-auto text-gray-200" />
           </Tab>
         </Tab.List>
         <Tab.Panels className="">
@@ -46,7 +51,7 @@ export default function BlockSidebar({ tabIndex = 0 }: { tabIndex?: number }) {
             <BlockInfoSidebar />
           </Tab.Panel>
           <Tab.Panel>
-            <OutlineSidebar />
+            <VersionsSidebar />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
