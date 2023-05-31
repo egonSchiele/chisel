@@ -18,6 +18,8 @@ import { RootState } from "./store";
 import { text } from "express";
 import LibraryContext from "./LibraryContext";
 import Spinner from "./components/Spinner";
+import { useLocalStorage } from "./utils";
+import TextArea from "./components/TextArea";
 
 type ChatHistory = {
   tag: "user" | "ai";
@@ -45,7 +47,7 @@ export default function ChatSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { settings } = useContext(LibraryContext) as LibraryContextType;
-  const [chatHistory, setChatHistory] = React.useState<ChatHistory[]>([]);
+  const [chatHistory, setChatHistory] = useLocalStorage("chatHistory", []);
   const [chatInput, setChatInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
@@ -85,12 +87,14 @@ export default function ChatSidebar() {
     items.push(<Chat key={i} {...chat} />);
   });
   items.push(
-    <Input
+    <TextArea
       key="input"
       value={chatInput}
       onChange={(e) => setChatInput(e.target.value)}
       name="chatInput"
       title="Input"
+      rounded={true}
+      rows={6}
     />,
     <Button style="secondary" key="send" onClick={sendChat} className="w-full">
       Send
