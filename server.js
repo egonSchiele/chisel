@@ -330,6 +330,86 @@ app.post("/api/saveToHistory", requireLogin, async (req, res) => {
   }
 });
 
+function mk(prompt, schema) {
+  return { prompt, schema };
+}
+
+app.get(
+  "/api/chain2",
+  requireAdmin,
+
+  async (req, res) => {
+    const suggestions = await chain(req, "bow ties were never in fashion", [
+      mk(
+        "Given this text, list the words that have multiple meanings. Here's the text: {{text}}",
+        "{words:[{word:string, meanings:[string]}]}"
+      ),
+      mk(
+        ({ words }) =>
+          `Rewrite this text to make sense if the word ${words[0].word} means ${words[1].meanings[0]} . Here's the text: {{text}}`,
+        null
+      ),
+    ]);
+    console.log(JSON.stringify(suggestions));
+
+    res.json(suggestions);
+  }
+);
+
+async function chain(req, promptText, steps) {
+  const max_tokens = 500;
+  const num_suggestions = 1;
+  const model = "gpt-3.5-turbo";
+  const user = await getUser(req);
+  let result;
+  for (const step of steps) {
+    let prompt = step.prompt;
+    if (typeof prompt === "function") {
+      try {
+        prompt = prompt(result);
+      } catch (e) {
+        console.log(e);
+        return {
+          success: false,
+          message: `Couldn't apply prompt in chain: ${e.message}`,
+        };
+      }
+    }
+    prompt = prompt.replace("{{text}}", promptText);
+    console.log({ prompt });
+    const schema = step.schema;
+    let suggestions;
+    if (schema) {
+      suggestions = await getSuggestionsJSON(
+        user,
+        prompt,
+        max_tokens,
+        model,
+        num_suggestions,
+        schema
+      );
+    } else {
+      suggestions = await getSuggestions(
+        user,
+        prompt,
+        max_tokens,
+        model,
+        num_suggestions,
+        null,
+        null
+      );
+    }
+    console.log("suggestions: " + JSON.stringify(suggestions));
+    if (!suggestions.success) {
+      console.log(suggestions.message);
+      return suggestions;
+    } else {
+      result = suggestions.data;
+    }
+  }
+  return result;
+}
+
 app.get(
   "/api/getHistory/:bookid/:chapterid",
   requireLogin,
@@ -891,7 +971,12 @@ async function getSuggestions(
 
   const openAiModels = ["gpt-3.5-turbo", "curie"];
 
-  const replicateModels = ["vicuna-13b", "llama-7b"];
+  const replicateModels = [
+    "vicuna-13b",
+    "llama-7b",
+    "stablelm-tuned-alpha-7b",
+    "flan-t5-xl",
+  ];
 
   let result;
 
@@ -948,6 +1033,10 @@ async function usingReplicate(
       "replicate/vicuna-13b:6282abe6a492de4145d7bb601023762212f9ddbbe78278bd6771c8b3b2f2a13b",
     "llama-7b":
       "replicate/llama-7b:ac808388e2e9d8ed35a5bf2eaa7d83f0ad53f9e3df31a42e4eb0a0c3249b3165",
+    "stablelm-tuned-alpha-7b":
+      "stability-ai/stablelm-tuned-alpha-7b:c49dae362cbaecd2ceabb5bd34fdb68413c4ff775111fea065d259d577757beb",
+    "flan-t5-xl":
+      "replicate/flan-t5-xl:7a216605843d87f5426a10d2cc6940485a232336ed04d655ef86b91e020e9210",
   };
   const model = models[_model];
 

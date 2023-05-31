@@ -120,11 +120,16 @@ function Settings({ settings, setSettings, usage, onSave }) {
         title="Model"
         name="model"
         value={settings.model}
-        onChange={(e) => handleChange("model", e.target.value)}
+        onChange={(e) => {
+          handleChange("model", e.target.value);
+          handleSave(e);
+        }}
       >
         <option>gpt-3.5-turbo</option>
         {settings.admin && <option>vicuna-13b</option>}
         {settings.admin && <option>llama-7b</option>}
+        {settings.admin && <option>stablelm-tuned-alpha-7b</option>}
+        {settings.admin && <option>flan-t5-xl</option>}
         {/*         <option>text-davinci-003</option>
         <option>davinci</option>
  */}{" "}
@@ -207,7 +212,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
       <Button
         onClick={handleSave}
         rounded
-        className="mt-0"
+        className="mt-0 mb-xl"
         selector="sidebar-save-button"
       >
         Save
