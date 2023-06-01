@@ -66,6 +66,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     },
     suggestions: chapter.suggestions,
     saved: true,
+    settingsSaved: true,
     error: "",
     loading: true,
     booksLoaded: false,
@@ -262,6 +263,9 @@ export const librarySlice = createSlice({
     setSaved(state: t.State, action: PayloadAction<boolean>) {
       state.saved = action.payload;
     },
+    setSettingsSaved(state: t.State, action: PayloadAction<boolean>) {
+      state.settingsSaved = action.payload;
+    },
     moveChapter(state: t.State, action: PayloadAction<string>) {
       const chapter = getSelectedChapter({ library: state });
       const book = getSelectedBook({ library: state });
@@ -370,7 +374,7 @@ export const librarySlice = createSlice({
         contents: value,
       });
 
-      const chapter = getSelectedChapter({ library: state });
+      /* const chapter = getSelectedChapter({ library: state });
       const index = state.editor.activeTextIndex;
       console.log("addSuggestion", chapter, index);
       if (chapter && index !== null && index !== undefined) {
@@ -387,7 +391,7 @@ export const librarySlice = createSlice({
           text.diffWith = id;
           text.id = nanoid();
         }
-      }
+      } */
 
       state.saved = false;
     },

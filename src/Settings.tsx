@@ -6,6 +6,9 @@ import Select from "./components/Select";
 import * as t from "./Types";
 import TextArea from "./components/TextArea";
 import { getCsrfToken } from "./utils";
+import { librarySlice } from "./reducers/librarySlice";
+import { AppDispatch } from "./store";
+import { useDispatch } from "react-redux";
 
 function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
   return (
@@ -47,6 +50,7 @@ function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
 }
 
 function Settings({ settings, setSettings, usage, onSave }) {
+  const dispatch = useDispatch<AppDispatch>();
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
@@ -54,6 +58,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         draft[key] = value;
       })
     );
+    dispatch(librarySlice.actions.setSettingsSaved(false));
   };
 
   const handlePromptChange = (index: number, key: string, value: string) => {
@@ -63,6 +68,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         draft.prompts[index][key] = value;
       })
     );
+    dispatch(librarySlice.actions.setSettingsSaved(false));
   };
   const handleDesignChange = (key: string, value: string) => {
     setSettings(
@@ -72,6 +78,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         draft.design[key] = value;
       })
     );
+    dispatch(librarySlice.actions.setSettingsSaved(false));
   };
 
   const deletePrompt = (index: number) => {
@@ -81,6 +88,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         draft.prompts.splice(index, 1);
       })
     );
+    dispatch(librarySlice.actions.setSettingsSaved(false));
   };
 
   const addPrompt = (index: number) => {
@@ -90,22 +98,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         draft.prompts.push({ label: "NewPrompt", text: "" });
       })
     );
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    const _settings = { ...settings };
-    _settings.customKey = null;
-    _settings.max_tokens = parseInt(_settings.max_tokens);
-    _settings.num_suggestions = parseInt(_settings.num_suggestions);
-    await fetch("/api/settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ settings: _settings, csrfToken: getCsrfToken() }),
-    });
-    onSave();
+    dispatch(librarySlice.actions.setSettingsSaved(false));
   };
 
   let monthlyUsage;
@@ -213,14 +206,6 @@ function Settings({ settings, setSettings, usage, onSave }) {
         selector="sidebar-new-prompt-button"
       >
         New Prompt
-      </Button>
-      <Button
-        onClick={handleSave}
-        rounded
-        className="mt-0 mb-xl"
-        selector="sidebar-save-button"
-      >
-        Save
       </Button>
     </form>
   );

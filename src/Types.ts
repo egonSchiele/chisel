@@ -12,6 +12,7 @@ export type State = {
   panels: PanelState;
   suggestions: Suggestion[];
   saved: boolean;
+  settingsSaved: boolean;
   viewMode: ViewMode;
   launcherOpen: boolean;
   popupOpen: boolean;

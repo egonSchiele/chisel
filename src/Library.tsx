@@ -35,7 +35,12 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-import { saveTextToHistory, useInterval, useLocalStorage } from "./utils";
+import {
+  getCsrfToken,
+  saveTextToHistory,
+  useInterval,
+  useLocalStorage,
+} from "./utils";
 import BlocksSidebar from "./BlocksSidebar";
 import OutlineSidebar from "./OutlineSidebar";
 import FocusSidebar from "./FocusSidebar";
@@ -357,6 +362,20 @@ export default function Library({ mobile = false }) {
     }
   }
 
+  async function saveSettings() {
+    const _settings = { ...settings };
+    _settings.customKey = null;
+    console.log("Saving settings", _settings);
+    await fetch("/api/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ settings: _settings, csrfToken: getCsrfToken() }),
+    });
+    dispatch(librarySlice.actions.setSettingsSaved(true));
+  }
+
   useInterval(() => {
     const func = async () => {
       if (state.saved) return;
@@ -373,6 +392,14 @@ export default function Library({ mobile = false }) {
         return;
       }
       await saveBook(book);
+    };
+    func();
+  }, 5000);
+
+  useInterval(() => {
+    const func = async () => {
+      if (state.settingsSaved) return;
+      await saveSettings();
     };
     func();
   }, 5000);
