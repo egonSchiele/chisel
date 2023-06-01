@@ -117,6 +117,7 @@ export const fetchSuggestionsWrapper = async (
     _num_suggestions,
     max_tokens_with_min,
     prompt,
+    [],
     _customKey
   );
   setLoading(false);
@@ -138,6 +139,7 @@ export const fetchSuggestionsWrapper = async (
 };
 
 export function split(text: string) {
+  // @ts-ignore
   let parts = text.replaceAll("\n", "\n ").split(" ");
   parts = parts.filter((part: string) => part !== "");
   return parts;
@@ -161,6 +163,7 @@ export function findSubarray(array: any[], subarray: any[]) {
 }
 
 export function getCsrfToken() {
+  // @ts-ignore
   const token = document
     .querySelector('meta[name="csrf-token"]')
     .getAttribute("content");

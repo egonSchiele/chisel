@@ -951,10 +951,10 @@ async function updateUsage(user, usage) {
 
 async function getSuggestions(
   user,
-  prompt,
-  max_tokens = 500,
+  _prompt,
+  _max_tokens = 500,
   model = "gpt-3.5-turbo",
-  num_suggestions = 1,
+  _num_suggestions = 1,
   _messages = null,
   customKey
 ) {
@@ -964,6 +964,10 @@ async function getSuggestions(
       return check;
     }
   }
+
+  const prompt = _prompt.substring(0, settings.maxPromptLength);
+  const max_tokens = Math.min(_max_tokens, settings.maxTokens);
+  const num_suggestions = Math.min(_num_suggestions, settings.maxSuggestions);
 
   const openAiModels = ["gpt-3.5-turbo", "curie"];
 

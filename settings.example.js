@@ -4,6 +4,8 @@ export default {
   maxMonthlyTokens: 100000,
   maxMonthlyGuestTokens: 50000,
   maxPromptLength: 2048,
+  maxTokens: 4000,
+  maxSuggestions: 3,
   storage: "firebase",
   tokenSalt: "",
   firebaseConfig: {

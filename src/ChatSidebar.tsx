@@ -13,6 +13,7 @@ import sortBy from "lodash/sortBy";
 import {
   getSelectedBook,
   getSelectedChapter,
+  getText,
   librarySlice,
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
@@ -26,7 +27,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 function Chat({ role, content, className = null }) {
   return (
     <div
-      className={`p-xs mb-sm rounded ${
+      className={`py-xs px-sm text-lg mb-sm rounded ${
         role === "user" ? "bg-gray-800" : "bg-gray-600"
       } ${className}`}
     >
@@ -40,6 +41,7 @@ export default function ChatSidebar() {
     (state: RootState) => state.library.editor
   );
   const currentBook = useSelector(getSelectedBook);
+  const currentText = useSelector(getText(state.activeTextIndex));
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,23 +53,39 @@ export default function ChatSidebar() {
   const [chatInput, setChatInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
+  function getTextForSuggestions() {
+    if (!currentText) return "";
+    let { text } = currentText;
+    if (
+      state._cachedSelectedText &&
+      state._cachedSelectedText.contents &&
+      state._cachedSelectedText.contents.length > 0
+    ) {
+      text = state._cachedSelectedText.contents;
+    }
+    return text;
+  }
+
   async function sendChat() {
     const contextSize = 10;
     const start = Math.max(0, chatHistory.length - contextSize);
     const end = chatHistory.length - 1;
+    let prompt = chatInput;
+    prompt = prompt.replaceAll("{{text}}", getTextForSuggestions());
+    prompt = prompt.replaceAll("{{synopsis}}", currentBook?.synopsis || "");
 
     setLoading(true);
     const newChatHistory = [...chatHistory];
-    newChatHistory.push({ role: "user", content: chatInput });
+    newChatHistory.push({ role: "user", content: prompt });
     setChatHistory(newChatHistory);
 
     const result = await fd.fetchSuggestions(
       "",
       "",
       settings.model,
-      settings.num_suggestions,
+      1,
       settings.max_tokens,
-      chatInput,
+      prompt,
       chatHistory.slice(start, end)
     );
 
@@ -99,6 +117,7 @@ export default function ChatSidebar() {
       title="Input"
       rounded={true}
       rows={6}
+      inputClassName="!text-lg"
     />,
     <Button style="secondary" key="send" onClick={sendChat} className="w-full">
       Send

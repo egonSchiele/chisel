@@ -39,7 +39,7 @@ export const fetchSuggestions = async (
   max_tokens: number,
   _prompt: string,
   messages: t.ChatHistory[] = [],
-  _customKey?: string
+  _customKey?: string | null
 ) => {
   // @ts-ignore
   let prompt = _prompt.replaceAll("{{text}}", text);
