@@ -585,7 +585,9 @@ export default function Library({ mobile = false }) {
         )}
         {window.scrollY > 5 && (
           <div
-            className="fixed bottom-0 right-0 mr-4 mb-4 cursor-pointer bg-blue-700 text-gray-200 z-50 p-sm rounded-md"
+            className={`fixed bottom-0 right-0 mr-4 mb-4 cursor-pointer text-gray-200 z-50 p-sm rounded-md ${
+              state.error ? "bg-red-700" : "bg-blue-700"
+            }`}
             onClick={() => {
               window.scrollTo(0, 0);
             }}

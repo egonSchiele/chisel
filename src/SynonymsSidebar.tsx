@@ -17,6 +17,7 @@ import {
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { capitalize, normalize } from "./utils";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 function Definition({ definition }) {
   const [theDefinition, ...examples] = definition.glossary.split("; ");
@@ -63,11 +64,12 @@ export default function SynonymsSidebar() {
   const [synonymInput, setSynonymInput] = useState<string>("");
   const [synonyms, setSynonyms] = useState<string[]>([]);
   const [definition, setDefinition] = useState<string[]>([]);
+  const [error, setError] = useState<string>("");
 
   const fetchSynonyms = async () => {
     const res = await fd.fetchSynonyms(normalize(synonymInput));
     if (res.tag === "error") {
-      dispatch(librarySlice.actions.setError(res.message));
+      setError(res.message);
       return;
     }
 
@@ -77,7 +79,7 @@ export default function SynonymsSidebar() {
   const fetchDefinition = async () => {
     const res = await fd.fetchDefinition(normalize(synonymInput));
     if (res.tag === "error") {
-      dispatch(librarySlice.actions.setError(res.message));
+      setError(res.message);
       return;
     }
 
@@ -113,12 +115,23 @@ export default function SynonymsSidebar() {
         await fetchSynonyms();
         await fetchDefinition();
       }}
-      className="w-full mb-md"
+      className="w-full mb-sm"
       key="getSynonyms"
     >
       Get synonyms
     </Button>,
   ];
+
+  if (error) {
+    items.push(
+      <div className="bg-red-700 p-2 text-white w-full rounded-md mb-xs flex">
+        <p className="flex-grow">{error}</p>
+        <div className="cursor-pointer flex-none" onClick={() => setError("")}>
+          <XMarkIcon className="w-5 h-5 my-auto" />
+        </div>
+      </div>
+    );
+  }
 
   const defs = definition.map((def, i) => {
     return (
@@ -130,7 +143,7 @@ export default function SynonymsSidebar() {
   if (defs.length > 0) {
     items.push(
       <>
-        <label className="settings_label">Definition</label>
+        <label className="settings_label mt-md">Definition</label>
 
         <ul key="definitions" className="list-decimal px-sm mb-sm">
           {defs}

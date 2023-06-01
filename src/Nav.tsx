@@ -293,7 +293,7 @@ export default function Nav({
                   <NavButton
                     label="Chat"
                     onClick={() => {
-                      dispatch(librarySlice.actions.setActivePanel("chat"));
+                      dispatch(librarySlice.actions.toggleChat());
                     }}
                     selector="chat-button"
                   >

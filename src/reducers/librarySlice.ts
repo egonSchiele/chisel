@@ -536,6 +536,22 @@ export const librarySlice = createSlice({
       state.panels.rightSidebar.open = true;
       localStorage.setItem("activePanel", action.payload);
     },
+    toggleChat(state: t.State) {
+      if (
+        state.panels.rightSidebar.open &&
+        state.panels.rightSidebar.activePanel === "chat"
+      ) {
+        state.panels.rightSidebar.open = false;
+      } else {
+        state.panels.rightSidebar.activePanel = "chat";
+        state.panels.rightSidebar.open = true;
+        localStorage.setItem("activePanel", "chat");
+      }
+      localStorage.setItem(
+        "rightSidebarOpen",
+        String(state.panels.rightSidebar.open)
+      );
+    },
     toggleLauncher(state: t.State) {
       state.launcherOpen = !state.launcherOpen;
     },
