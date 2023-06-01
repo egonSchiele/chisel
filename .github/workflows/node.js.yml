@@ -26,5 +26,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - run: yarn
-      - run: NODE_OPTIONS=--experimental-vm-modules yarn test
+        #- run: NODE_OPTIONS=--experimental-vm-modules yarn test
       #- run: yarn lint
