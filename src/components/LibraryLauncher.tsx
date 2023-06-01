@@ -133,6 +133,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       onClick: () => {
         dispatch(librarySlice.actions.toggleFileNavigator());
       },
+      tooltip: "Command+Shift+o",
     },
 
     {
@@ -170,7 +171,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       onClick: () => {
         dispatch(librarySlice.actions.toggleOutline());
       },
-      tooltip: "Command+Shift+o",
+      tooltip: "Command+Shift+b",
     },
 
     {

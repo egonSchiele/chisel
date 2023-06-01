@@ -149,6 +149,7 @@ export default function Library({ mobile = false }) {
       event.preventDefault();
       newChapter();
     } else if (event.metaKey && event.shiftKey && event.code === "KeyX") {
+      if (!state.activeTab) return;
       const chapter = state.openTabs[state.activeTab];
       if (chapter) {
         event.preventDefault();
@@ -214,15 +215,15 @@ export default function Library({ mobile = false }) {
       } else {
         dispatch(librarySlice.actions.setViewMode("focus"));
       }
-    } else if (event.metaKey && event.key === "b") {
-      event.preventDefault();
-      dispatch(librarySlice.actions.toggleBlocks());
     } else if (event.metaKey && event.key === "p") {
       event.preventDefault();
       dispatch(librarySlice.actions.togglePrompts());
-    } else if (event.shiftKey && event.metaKey && event.key === "o") {
+    } else if (event.shiftKey && event.metaKey && event.key === "b") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleOutline());
+    } else if (event.metaKey && event.key === "b") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.toggleBlocks());
     }
   });
 
