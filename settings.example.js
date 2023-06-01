@@ -1,6 +1,7 @@
 export default {
   openAiApiKey: "",
   replicateApiKey: "",
+  huggingFaceApiKey: "",
   maxMonthlyTokens: 100000,
   maxMonthlyGuestTokens: 50000,
   maxPromptLength: 2048,
