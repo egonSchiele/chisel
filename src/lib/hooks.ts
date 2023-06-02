@@ -66,22 +66,24 @@ export function useColors() {
   }
 }
 export function darkColors() {
-  let background = " bg-dmSidebarSecondary";
-  let backgroundHover = " hover:bg-gray-600";
-  let backgroundAlt = "bg-dmSidebar hover:bg-gray-600";
-  let selectedBackground = "bg-gray-700 hover:bg-gray-500";
-  let borderColor = "border-gray-500";
-  let selectedBorderColor = "border-gray-500";
-  let primaryTextColor = " text-gray-200";
-  let secondaryTextColor = " text-gray-400";
-  let secondaryTextColorSelected = " text-gray-300";
-  let selectedTextColor = " text-gray-200";
-  let highlightTextColor = " text-blue-400";
-  let itemHover = " hover:bg-gray-600";
-  let buttonBackgroundColor = " bg-blue-700 hover:bg-blue-500";
-  let buttonTextColor = " text-gray-200";
-  let buttonBackgroundColorSecondary = " bg-dmbutton hover:bg-dmbuttonhover";
-  let buttonTextColorSecondary = " text-dmtext hover:text-dmbuttonhovertext";
+  let background = " dark:bg-dmSidebarSecondary";
+  let backgroundHover = " dark:hover:bg-gray-600";
+  let backgroundAlt = "dark:bg-dmSidebar hover:dark:bg-gray-600";
+  let selectedBackground = "dark:bg-gray-700 hover:dark:bg-gray-500";
+  let borderColor = "dark:border-gray-500";
+  let selectedBorderColor = "dark:border-gray-500";
+  let primaryTextColor = " dark:text-gray-200";
+  let secondaryTextColor = " dark:text-gray-400";
+  let secondaryTextColorSelected = " dark:text-gray-300";
+  let selectedTextColor = " dark:text-gray-200";
+  let highlightTextColor = " dark:text-blue-400";
+  let itemHover = " hover:dark:bg-gray-600";
+  let buttonBackgroundColor = " dark:bg-blue-700 dark:hover:bg-blue-500";
+  let buttonTextColor = " dark:text-gray-200";
+  let buttonBackgroundColorSecondary =
+    " dark:bg-dmbutton dark:hover:bg-dmbuttonhover";
+  let buttonTextColorSecondary =
+    " dark:text-dmtext dark:hover:text-dmbuttonhovertext";
   return {
     background,
     backgroundHover,

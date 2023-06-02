@@ -19,7 +19,6 @@ function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
           title="Button Label"
           value={label}
           className=" w-full"
-          labelClassName="dark:text-black"
           onChange={(e) => onLabelChange(e.target.value)}
           selector={`prompt-${label}-label`}
         />
@@ -27,10 +26,9 @@ function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
       <div className="w-full">
         <TextArea
           name="text"
-          title="Prompt (use {{text}} for input text)"
+          title="Prompt"
           value={text}
           className="w-full"
-          labelClassName="dark:text-black"
           onChange={(e) => onTextChange(e.target.value)}
           selector={`prompt-${label}-text`}
         />
@@ -147,25 +145,12 @@ function Settings({ settings, setSettings, usage, onSave }) {
         }
       />
       <Input
-        title="Your key (use with caution!)"
+        title="Your key"
         name="customKey"
         value={settings.customKey}
         onChange={(e) => handleChange("customKey", e.target.value)}
       />
 
-      {usage && (
-        <div>
-          <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
-            Usage
-          </h4>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="uppercase ">Monthly:</span> {monthlyUsage} tokens
-          </p>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            <span className="uppercase ">Total:</span> {totalUsage} tokens
-          </p>
-        </div>
-      )}
       <Select
         title="Font"
         name="font"
@@ -189,14 +174,19 @@ function Settings({ settings, setSettings, usage, onSave }) {
         <option>dark</option>
       </Select>
 
-      {/*  <label>
-        Version Control:
-        <input
-          type="checkbox"
-          checked={settings.version_control}
-          onChange={(e) => handleChange("version_control", e.target.checked)}
-        />
-      </label> */}
+      {usage && (
+        <div>
+          <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
+            Usage
+          </h4>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="uppercase ">Monthly:</span> {monthlyUsage} tokens
+          </p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="uppercase ">Total:</span> {totalUsage} tokens
+          </p>
+        </div>
+      )}
       <div>
         <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs mt-sm">
           Prompts

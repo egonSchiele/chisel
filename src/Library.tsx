@@ -63,13 +63,13 @@ export default function Library({ mobile = false }) {
   const [usage, setUsage] = useState<t.Usage | null>(null);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
-  /* useEffect(() => {
-    if (settings.theme === "dark") {
+  useEffect(() => {
+    if (settings.theme === "dark" || settings.theme === "default") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, [settings]); */
+  }, [settings]);
 
   const { bookid, chapterid } = useParams();
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
@@ -768,7 +768,9 @@ export default function Library({ mobile = false }) {
               className="top-0 right-0"
             >
               <SlideTransition show={rightSidebarOpen} direction="right">
-                <div className={`absolute top-0 right-0 h-screen w-48 mt-9`}>
+                <div
+                  className={`absolute top-0 right-0 h-screen w-48 xl:w-72 mt-9`}
+                >
                   <Sidebar
                     onSuggestionClick={addToContents}
                     onHistoryClick={async (e, newText) => {

@@ -49,10 +49,11 @@ function Navigation({
   fullscreen,
   exitFullscreen,
 }) {
-  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48";
+  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
   return (
     <div className={`${width} flex h-8`}>
-      <div className="w-full items-center">
+      <div className="w-full flex items-center">
+        <div className="flex-grow" />
         <NavButton
           label="Info"
           onClick={() => onClick("info")}
@@ -118,6 +119,7 @@ function Navigation({
             <XMarkIcon className="h-4 w-4 xl:h-5 xl:w-5" aria-hidden="true" />
           </NavButton>
         )}
+        <div className="flex-grow" />
       </div>
     </div>
   );
@@ -161,7 +163,7 @@ export default function Sidebar({
     <div
       className={`min-h-full ${colors.background} ${!maximize && "border-l"} ${
         colors.borderColor
-      }  pb-12`}
+      } dark:[color-scheme:dark] pb-12`}
     >
       <div className="pt-xs">
         <Navigation

@@ -69,7 +69,7 @@ export default function List({
   const colors = useColors();
   return (
     <div
-      className={`px-xs py-sm h-screen no-scrollbar  overflow-y-auto overflow-x-hidden w-full ${colors.background} ${colors.borderColor} ${className} `}
+      className={`px-xs py-sm h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${colors.background} ${colors.borderColor} ${className} `}
       data-selector={`${selector}-list`}
     >
       <div

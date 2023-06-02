@@ -429,6 +429,7 @@ export const librarySlice = createSlice({
       state.scrollTo = action.payload;
     },
     openFileNavigator(state: t.State) {
+      state.viewMode = "default";
       state.panels.leftSidebar.open = true;
       state.panels.leftSidebar.activePanel = "filenavigator";
       localStorage.setItem("leftSidebarOpen", "true");
@@ -438,6 +439,7 @@ export const librarySlice = createSlice({
       localStorage.setItem("leftSidebarOpen", "false");
     },
     openLeftSidebar(state: t.State) {
+      state.viewMode = "default";
       state.panels.leftSidebar.open = true;
       localStorage.setItem("leftSidebarOpen", "true");
     },
@@ -446,6 +448,7 @@ export const librarySlice = createSlice({
       localStorage.setItem("leftSidebarOpen", "false");
     },
     openRightSidebar(state: t.State) {
+      state.viewMode = "default";
       state.panels.rightSidebar.open = true;
       localStorage.setItem("rightSidebarOpen", "true");
     },
@@ -471,6 +474,7 @@ export const librarySlice = createSlice({
     },
 
     toggleRightSidebar(state: t.State) {
+      state.viewMode = "default";
       if (state.panels.rightSidebar.activePanel !== "chat") {
         state.panels.rightSidebar.open = !state.panels.rightSidebar.open;
       } else {
@@ -498,6 +502,7 @@ export const librarySlice = createSlice({
       localStorage.setItem("rightSidebarOpen", "false");
     },
     openAllPanels(state: t.State) {
+      state.viewMode = "default";
       if (state._cachedPanelState) {
         state.panels = { ...state._cachedPanelState };
       } else {
@@ -532,11 +537,13 @@ export const librarySlice = createSlice({
       localStorage.setItem("promptsOpen", promptsOpen.toString()); */
     },
     setActivePanel(state: t.State, action: PayloadAction<t.ActivePanel>) {
+      state.viewMode = "default";
       state.panels.rightSidebar.activePanel = action.payload;
       state.panels.rightSidebar.open = true;
       localStorage.setItem("activePanel", action.payload);
     },
     toggleChat(state: t.State) {
+      state.viewMode = "default";
       if (
         state.panels.rightSidebar.open &&
         state.panels.rightSidebar.activePanel === "chat"
@@ -1295,6 +1302,7 @@ export const defaultSettings: t.UserSettings = {
 };
 
 function toggleBase(state: t.State, panel: t.LeftActivePanel) {
+  state.viewMode = "default";
   if (
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === panel

@@ -63,7 +63,7 @@ export default function ChapterList({
   if (!loaded) {
     return (
       <div
-        className={`p-xs h-screen no-scrollbar  overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
+        className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
       ></div>
     );
   }

@@ -134,7 +134,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     return (
       <div
         ref={readonlyDiv}
-        className="flex h-screen overflow-auto  w-full mx-auto"
+        className="flex h-screen overflow-auto dark:[color-scheme:dark] w-full mx-auto"
         id="readonly"
       >
         <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full">
@@ -157,7 +157,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   return (
     <div
       id="editDiv"
-      className="flex h-screen  overflow-y-auto overflow-x-visible w-full"
+      className="flex h-screen dark:[color-scheme:dark] overflow-y-auto overflow-x-visible w-full"
       ref={editDiv}
     >
       <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full ">
