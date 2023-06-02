@@ -68,7 +68,7 @@ export function useColors() {
   }
 }
 export function darkColors() {
-  let background = " dark:bg-dmSidebarSecondary";
+  let background = " dark:bg-black";
   let backgroundHover = " dark:hover:bg-gray-600";
   let backgroundAlt = "dark:bg-dmSidebar hover:dark:bg-gray-600";
   let selectedBackground = "dark:bg-gray-700 hover:dark:bg-gray-500";

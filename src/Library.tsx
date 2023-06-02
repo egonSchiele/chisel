@@ -20,7 +20,7 @@ import Popup from "./components/Popup";
 import SlideTransition from "./components/SlideTransition";
 import "./globals.css";
 import * as fd from "./lib/fetchData";
-import { useKeyDown } from "./lib/hooks";
+import { useColors, useKeyDown } from "./lib/hooks";
 import LoadingPlaceholder, {
   EditorPlaceholder,
   PanelPlaceholder,
@@ -73,6 +73,7 @@ export default function Library({ mobile = false }) {
 
   const { bookid, chapterid } = useParams();
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
+
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
       dispatch(librarySlice.actions.newTab({ chapterid }));
@@ -616,7 +617,7 @@ export default function Library({ mobile = false }) {
         )}
         {window.scrollY > 5 && (
           <div
-            className={`fixed bottom-0 right-0 mr-4 mb-4 cursor-pointer text-gray-200 z-50 p-sm rounded-md ${
+            className={`fixed bottom-0 right-0 mr-4 mb-4 cursor-pointer text-gray-200 z-50 p-sm rounded-md active:scale-75 ${
               state.error ? "bg-red-700" : "bg-blue-700"
             }`}
             onClick={() => {
@@ -769,7 +770,7 @@ export default function Library({ mobile = false }) {
             >
               <SlideTransition show={rightSidebarOpen} direction="right">
                 <div
-                  className={`absolute top-0 right-0 h-screen w-48 xl:w-72 mt-9`}
+                  className={`absolute top-0 right-0 h-screen w-48 2xl:w-72 mt-9 z-10`}
                 >
                   <Sidebar
                     onSuggestionClick={addToContents}

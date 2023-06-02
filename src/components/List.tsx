@@ -27,7 +27,7 @@ function MenuItem({
     : "hover:dark:text-white";
   return (
     <div
-      className={`relative h-5 w-5 rounded-md inline-flex items-center ${colors.secondaryTextColor} ${colors.background} cursor-pointer ring-0 ${animCss} ${className}`}
+      className={`relative h-5 w-5 rounded-md inline items-center ${colors.secondaryTextColor} ${colors.background} cursor-pointer ring-0 ${animCss} ${className}`}
       onClick={async () => {
         if (showSpinner) {
           setIcon(<Spinner className="w-5 h-5" />);

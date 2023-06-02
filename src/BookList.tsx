@@ -30,8 +30,7 @@ async function favoriteBook(bookid: string) {
   }
 }
 
-const buttonStyles =
-  "bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
+const buttonStyles = ""; //"bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
 export default function BookList({ cachedBooks = null }) {
@@ -216,7 +215,7 @@ export default function BookList({ cachedBooks = null }) {
         items={dropdownMenuItems}
         label="Book Menu"
         selector="book-menu"
-        className="-translate-x-1/4"
+        className={`-translate-x-1/4`}
         buttonClassName="ml-xs"
       />
     ),

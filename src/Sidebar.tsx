@@ -49,7 +49,7 @@ function Navigation({
   fullscreen,
   exitFullscreen,
 }) {
-  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 xl:w-72";
+  const width = maximize ? "w-3/4 mx-auto mt-md" : "w-48 2xl:w-72";
   return (
     <div className={`${width} flex h-8`}>
       <div className="w-full flex items-center">
