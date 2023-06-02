@@ -23,6 +23,7 @@ import Spinner from "./components/Spinner";
 import { useLocalStorage } from "./utils";
 import TextArea from "./components/TextArea";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useColors } from "./lib/hooks";
 
 function Chat({ role, content, className = null }) {
   return (
@@ -52,6 +53,7 @@ export default function ChatSidebar() {
   );
   const [chatInput, setChatInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const colors = useColors();
 
   function getTextForSuggestions() {
     if (!currentText) return "";
@@ -144,7 +146,7 @@ export default function ChatSidebar() {
       items={items}
       leftMenuItem={loading ? spinner : null}
       rightMenuItem={clear}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-l border-b border-gray-700 w-48"
+      className="border-l  w-48"
       selector="chatList"
     />
   );

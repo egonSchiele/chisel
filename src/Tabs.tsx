@@ -10,19 +10,21 @@ import {
 import { RootState, AppDispatch } from "./store";
 import { Link } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useColors } from "./lib/hooks";
 //import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@reach/tabs";
 
 function Tab({ tab, current }: { tab: t.TabStateInfo; current: boolean }) {
   const dispatch = useDispatch<AppDispatch>();
 
+  const colors = useColors();
   const currentCss = current
-    ? "border-gray-500 text-gray-300"
-    : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-200";
+    ? `${colors.selectedBorderColor} ${colors.secondaryTextColorSelected}`
+    : `border-transparent ${colors.secondaryTextColor} hover:border-gray-300 hover:text-gray-200`;
   let title = tab.title || "Untitled";
   //title = title.substring(0, 30);
   return (
     <div
-      className={`h-9 border-b-2 px-1 text-center text-sm flex flex-auto overflow-hidden font-medium cursor-pointer hover:bg-gray-700 line-clamp-1 ${currentCss} max-w-md`}
+      className={`h-9 border-b-2 px-1 text-center text-sm flex flex-auto overflow-hidden font-medium cursor-pointer ${colors.itemHover} line-clamp-1 ${currentCss} max-w-md`}
     >
       <div className="flex">
         <Link
@@ -56,7 +58,7 @@ export default function Tabs() {
 
   if (!currentChapter) return null;
   return (
-    <div className="h-9">
+    <div className="h-9 bg-gray-100 dark:bg-gray-700">
       <nav className="h-9 flex" aria-label="Tabs">
         {openTabs.map((tab) => (
           <Tab

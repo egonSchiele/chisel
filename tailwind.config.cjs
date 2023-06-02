@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  //darkMode: "class",
+  darkMode: "class",
   content: [
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
@@ -114,4 +114,5 @@ module.exports = {
     require("@tailwindcss/line-clamp"),
     require("tailwindcss-safe-area"),
   ],
+  safelist: ["ql-editor", "ql-toolbar", "ql-snow"],
 };

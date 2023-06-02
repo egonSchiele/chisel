@@ -176,6 +176,19 @@ function Settings({ settings, setSettings, usage, onSave }) {
         <option value="serif">serif</option>
       </Select>
 
+      <Select
+        title="Theme"
+        name="theme"
+        value={settings.theme}
+        onChange={(e) => {
+          handleChange("theme", e.target.value);
+        }}
+      >
+        <option>default</option>
+        <option>light</option>
+        <option>dark</option>
+      </Select>
+
       {/*  <label>
         Version Control:
         <input

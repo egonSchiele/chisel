@@ -1,4 +1,5 @@
 import React from "react";
+import { useColors } from "../lib/hooks";
 
 export default function TextArea({
   name,
@@ -32,12 +33,13 @@ export default function TextArea({
   selector?: string;
 }) {
   const roundedCss = rounded ? "rounded-md" : "";
+  const colors = useColors();
   return (
     <div className={className}>
       {title && (
         <label
           htmlFor={name}
-          className={`block text-sm font-light leading-6 text-text dark:text-dmtext uppercase ${labelClassName}`}
+          className={`block text-sm font-light leading-6 ${colors.primaryTextColor} uppercase ${labelClassName}`}
         >
           {title}
         </label>
@@ -52,7 +54,7 @@ export default function TextArea({
           onBlur={onBlur as any}
           placeholder={placeholder}
           onKeyDown={onKeyDown as any}
-          className={`block w-full py-1 px-2 text-gray-900 shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+          className={`block w-full py-1 px-2 shadow-sm border ${colors.borderColor} ${colors.primaryTextColor} dark:bg-black  sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
           rows={rows}
           data-selector={selector}
         />

@@ -12,6 +12,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
+import { useColors } from "./lib/hooks";
 
 export default function OutlineSidebar() {
   const state = useSelector((state: RootState) => state.library.editor);
@@ -20,6 +21,7 @@ export default function OutlineSidebar() {
   const currentChapter = useSelector(getSelectedChapter);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const colors = useColors();
 
   if (!currentChapter) return null;
   const items = currentChapter!.text.map((text, i) => {
@@ -28,9 +30,11 @@ export default function OutlineSidebar() {
       label = text.text;
     }
     label = label.substring(0, 40);
-    let selectedCss = text.open ? "dark:text-gray-300" : "dark:text-gray-500";
+    let selectedCss = text.open
+      ? "text-gray-900 dark:text-gray-300"
+      : "text-gray-700 dark:text-gray-500";
     if (i === index) {
-      selectedCss = "bg-gray-700 dark:text-gray-200";
+      selectedCss = "bg-gray-200 dark:bg-gray-700 dark:text-gray-200";
     }
     return (
       <li
@@ -42,7 +46,7 @@ export default function OutlineSidebar() {
             }/${i}`
           );
         }}
-        className={`w-full flex text-sm mb-xs cursor-pointer p-xs border-b border-gray-700  hover:bg-gray-600 ${selectedCss}`}
+        className={`w-full flex text-sm mb-xs cursor-pointer p-xs border-b ${colors.borderColor} ${colors.itemHover}  ${selectedCss}`}
       >
         {/* <Bars3Icon className="h-4 w-4 flex-none mr-xs" aria-hidden="true" />{" "} */}
         <p className="flex-grow line-clamp-1">

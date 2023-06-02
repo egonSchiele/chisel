@@ -23,6 +23,7 @@ import Spinner from "./components/Spinner";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import Tabs from "./Tabs";
+import { useColors } from "./lib/hooks";
 export default function Nav({
   mobile,
   bookid,
@@ -37,17 +38,18 @@ export default function Nav({
   const currentChapter = getSelectedChapter({ library: state });
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const colors = useColors();
   if (!loaded) {
     return (
       <div
-        className="h-9 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-700 animate-pulse"
+        className="h-9 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-100 dark:bg-gray-700 animate-pulse"
         id="nav"
       ></div>
     );
   }
   return (
     <div
-      className="h-9 w-screen absolute left-0 top-0 z-50 flex-grow bg-gray-700 align-middle"
+      className="h-9 w-screen absolute left-0 top-0 z-50 flex-grow bg-gray-100 dark:bg-gray-700 align-middle"
       id="nav"
     >
       <div className="h-full flex align-middle">
@@ -167,7 +169,7 @@ export default function Nav({
             {state.saved && (
               <NavButton label="Saved" onClick={() => {}}>
                 <CheckCircleIcon
-                  className="h-5 w-5 text-blue-700 dark:text-blue-400"
+                  className={`h-5 w-5 ${colors.highlightTextColor}`}
                   aria-hidden="true"
                 />
               </NavButton>
@@ -216,7 +218,7 @@ export default function Nav({
               {state.saved && (
                 <NavButton label="Saved" onClick={() => {}}>
                   <CheckCircleIcon
-                    className="h-5 w-5 text-blue-700 dark:text-blue-400"
+                    className={`h-5 w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -242,7 +244,7 @@ export default function Nav({
                   selector="readonly-close"
                 >
                   <PencilIcon
-                    className="h-5 w-5 text-blue-700 dark:text-blue-400"
+                    className={`h-5 w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />
                 </NavButton>

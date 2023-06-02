@@ -436,9 +436,9 @@ function TextEditor({
   return (
     <div className="">
       {/* h-full"> */}
-      <div className="ql-editor hidden">hi</div>
+      {/*       <div className="ql-editor hidden">hi</div>
       <div className="ql-toolbar ql-snow hidden">hi</div>
-
+ */}
       <div className="mb-sm h-full w-full scroll-mt-lg" ref={inputDiv}>
         {open && (
           <div className="flex">

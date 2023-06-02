@@ -3,6 +3,7 @@ import * as t from "../Types";
 import { useDispatch } from "react-redux";
 import { librarySlice } from "../reducers/librarySlice";
 import Spinner from "./Spinner";
+import { useColors } from "../lib/hooks";
 // Top left and top right menu items
 function MenuItem({
   label,
@@ -20,12 +21,13 @@ function MenuItem({
   animate?: boolean;
 }) {
   const [_icon, setIcon] = React.useState(icon);
+  const colors = useColors();
   const animCss = animate
     ? "transition ease-in-out hover:scale-125 duration-100 active:scale-75 hover:dark:text-white"
     : "hover:dark:text-white";
   return (
     <div
-      className={`relative h-5 w-5 rounded-md inline-flex items-center text-black dark:text-gray-400  "hover:bg-sidebar bg-sidebarSecondary dark:bg-dmsidebarSecondary dark:hover:bg-dmsidebar" cursor-pointer ring-0 ${animCss} ${className}`}
+      className={`relative h-5 w-5 rounded-md inline-flex items-center ${colors.secondaryTextColor} ${colors.background} cursor-pointer ring-0 ${animCss} ${className}`}
       onClick={async () => {
         if (showSpinner) {
           setIcon(<Spinner className="w-5 h-5" />);
@@ -64,15 +66,18 @@ export default function List({
   open?: (() => void) | null;
   onTitleClick?: (() => void) | null;
 }) {
+  const colors = useColors();
   return (
     <div
-      className={`px-xs py-sm h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${className} `}
+      className={`px-xs py-sm h-screen no-scrollbar  overflow-y-auto overflow-x-hidden w-full ${colors.background} ${colors.borderColor} ${className} `}
       data-selector={`${selector}-list`}
     >
-      <div className="w-full h-5 flex pb-md border-b border-listBorder dark:border-gray-600 relative">
+      <div
+        className={`w-full h-5 flex pb-md border-b ${colors.borderColor} relative`}
+      >
         <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
           <h3
-            className="text-md md:text-sm uppercase font-semibold text-gray-700 dark:text-gray-300"
+            className={`text-md md:text-sm uppercase font-semibold ${colors.primaryTextColor}`}
             // @ts-ignore
             onClick={onTitleClick}
           >

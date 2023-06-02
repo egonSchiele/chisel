@@ -11,6 +11,7 @@ import * as fd from "./lib/fetchData";
 import { librarySlice } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { LibraryContextType } from "./Types";
+import { useColors } from "./lib/hooks";
 
 async function deleteBook(bookid: string, onDelete) {
   const res = await fd.deleteBook(bookid);
@@ -44,6 +45,8 @@ export default function BookList({ cachedBooks = null }) {
   const { newBook, saveBook } = useContext(
     LibraryContext
   ) as LibraryContextType;
+
+  const colors = useColors();
 
   function onDelete(deletedBookid) {
     dispatch(librarySlice.actions.deleteBook(deletedBookid));
@@ -250,7 +253,7 @@ export default function BookList({ cachedBooks = null }) {
         items={[upload, ...items]}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
-        className="bg-sidebar dark:bg-dmsidebar"
+        /* className={colors.backgroundAlt} */
         /* swipeToClose="left"
         close={close} */
         open={open}

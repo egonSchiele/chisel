@@ -38,6 +38,8 @@ import { AppDispatch, RootState } from "./store";
 import {
   getCsrfToken,
   saveTextToHistory,
+  today,
+  uniq,
   useInterval,
   useLocalStorage,
 } from "./utils";
@@ -61,9 +63,16 @@ export default function Library({ mobile = false }) {
   const [usage, setUsage] = useState<t.Usage | null>(null);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
+  /* useEffect(() => {
+    if (settings.theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [settings]); */
+
   const { bookid, chapterid } = useParams();
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
-
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
       dispatch(librarySlice.actions.newTab({ chapterid }));
@@ -169,8 +178,9 @@ export default function Library({ mobile = false }) {
         dispatch(librarySlice.actions.toggleLauncher());
         /* } else if (state.viewMode === "focus") {
         focusModeClose();
+       */
       } else if (state.viewMode !== "default") {
-        dispatch(librarySlice.actions.setViewMode("default")); */
+        dispatch(librarySlice.actions.setViewMode("default"));
       } else if (
         state.panels.leftSidebar.open ||
         state.panels.rightSidebar.open
@@ -341,6 +351,24 @@ export default function Library({ mobile = false }) {
     }
   }
 
+  function addToWritingStreak(chapter: t.Chapter) {
+    if (!chapter.writingStreak) {
+      chapter.writingStreak = [];
+    } else {
+      chapter.writingStreak = chapter.writingStreak.slice();
+    }
+    const todaysDate = today();
+    const exists = chapter.writingStreak.find(
+      (date) =>
+        date.day === todaysDate.day &&
+        date.month === todaysDate.month &&
+        date.year === todaysDate.year
+    );
+    if (!exists) {
+      chapter.writingStreak.push(todaysDate);
+    }
+  }
+
   async function saveChapter(
     _chapter: t.Chapter,
     suggestions: t.Suggestion[] | null = null
@@ -349,6 +377,8 @@ export default function Library({ mobile = false }) {
     if (suggestions !== null) {
       chapter.suggestions = suggestions;
     }
+
+    addToWritingStreak(chapter);
 
     const result = await makeApiCall(fd.saveChapter, [chapter]);
 

@@ -263,6 +263,12 @@ export type TextBlock =
 
 export type NewTextForBlock = { index: number; text: string };
 
+export type Date = {
+  month: number;
+  day: number;
+  year: number;
+};
+
 export type Chapter = {
   bookid: string;
   chapterid: string;
@@ -276,6 +282,7 @@ export type Chapter = {
   status?: ChapterStatus;
   embeddings?: number[];
   embeddingsLastCalculatedAt?: number;
+  writingStreak?: Date[];
 };
 
 export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done";
@@ -352,7 +359,7 @@ export type Prompt = {
   text: string;
 };
 
-export type Theme = "default";
+export type Theme = "default" | "dark" | "light";
 
 export type UserPermissions = {
   openai_api: boolean;

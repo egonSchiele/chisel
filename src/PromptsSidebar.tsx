@@ -122,7 +122,7 @@ export default function PromptsSidebar({
     <List
       title="Prompts"
       items={prompts}
-      className="border-r border-gray-700 bg-sidebarSecondary dark:bg-dmsidebarSecondary"
+      className="border-r"
       rightMenuItem={rightMenuItem}
       leftMenuItem={leftMenuItem}
     />

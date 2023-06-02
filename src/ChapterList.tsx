@@ -26,6 +26,7 @@ import { RootState } from "./store";
 import sortBy from "lodash/sortBy";
 import { nanoid } from "nanoid";
 import LibraryContext from "./LibraryContext";
+import { useColors } from "./lib/hooks";
 
 // import Draggable from "react-draggable";
 
@@ -58,11 +59,11 @@ export default function ChapterList({
   ) as t.LibraryContextType;
 
   const uploadFileRef = React.useRef<HTMLInputElement>(null);
-
+  const colors = useColors();
   if (!loaded) {
     return (
       <div
-        className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
+        className={`p-xs h-screen no-scrollbar  overflow-y-auto overflow-x-hidden w-full bg-gray-500 animate-pulse`}
       ></div>
     );
   }
@@ -432,7 +433,7 @@ export default function ChapterList({
           items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
           rightMenuItem={rightMenuItem}
           leftMenuItem={leftMenuItem}
-          className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-gray-700"
+          className={`${colors.background} border-r ${colors.borderColor}`}
           selector="chapterlist"
           onTitleClick={() => setMode("references")}
           /*         swipeToClose="left"
@@ -501,7 +502,7 @@ export default function ChapterList({
         items={referenceItems}
         leftMenuItem={null}
         rightMenuItem={rightMenuItem}
-        className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-500"
+        className={`${colors.background} border-r ${colors.borderColor}`}
         selector="referencelist"
         onTitleClick={() => setMode("chapters")}
       />

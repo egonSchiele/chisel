@@ -1,4 +1,5 @@
 import React from "react";
+import { useColors } from "../lib/hooks";
 
 export default function NavButton({
   label,
@@ -8,11 +9,13 @@ export default function NavButton({
   selector = "",
   selected = false,
 }) {
+  const colors = useColors();
   const animCss =
     "transition ease-in-out hover:scale-125 duration-100 active:scale-75 hover:dark:text-white";
   const selectedCss = selected
-    ? "bg-gray-700 dark:bg-gray-500"
-    : "text-black dark:text-gray-200";
+    ? `${colors.selectedBackground} ${colors.selectedTextColor}`
+    : `${colors.background} ${colors.secondaryTextColor}`;
+
   return (
     <button
       type="button"

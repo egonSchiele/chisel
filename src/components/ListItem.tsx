@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BoltIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import * as t from "../Types";
 import ListMenu from "./ListMenu";
+import { useColors } from "../lib/hooks";
 
 export default function ListItem({
   title,
@@ -32,6 +33,7 @@ export default function ListItem({
   onMouseLeave?: MouseEventHandler<HTMLDivElement>;
 }) {
   const navigate = useNavigate();
+  const colors = useColors();
   let _onClick = onClick;
   if (link) {
     _onClick = () => {
@@ -42,7 +44,7 @@ export default function ListItem({
   const selectedCss = selected ? "border-l-4 border-gray-500" : "";
   return (
     <div
-      className={`flex text-black w-full dark:text-slate-300 text-sm xl:text-md items-center hover:bg-listitemhover hover:dark:bg-dmlistitemhover ${selectedCss} `}
+      className={`flex  w-full ${colors.primaryTextColor} text-sm xl:text-md items-center ${colors.itemHover} ${selectedCss} `}
     >
       <div
         onClick={_onClick}
@@ -77,7 +79,7 @@ export default function ListItem({
               {title}
             </p>
             <p
-              className={`px-xs text-gray-300 dark:text-gray-500 line-clamp-2 leading-4  text-ellipsis ${contentClassName}`}
+              className={`px-xs ${colors.secondaryTextColor} line-clamp-2 leading-4  text-ellipsis ${contentClassName}`}
             >
               {content}
             </p>

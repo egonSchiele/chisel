@@ -24,6 +24,7 @@ import {
 import { getChapterText } from "./utils";
 import LibraryContext from "./LibraryContext";
 import { LibraryContextType } from "./Types";
+import { useColors } from "./lib/hooks";
 
 function Suggestions({ suggestions, onClick, onDelete }) {
   return (
@@ -135,6 +136,7 @@ export default function Sidebar({
   const activePanel = useSelector(
     (state: RootState) => state.library.panels.rightSidebar.activePanel
   );
+  const colors = useColors();
 
   const maximize = useSelector(
     (state: RootState) => state.library.viewMode === "fullscreen"
@@ -156,7 +158,11 @@ export default function Sidebar({
   }
 
   return (
-    <div className="min-h-full bg-sidebar dark:bg-dmsidebarSecondary border-l border-gray-700 dark:[color-scheme:dark] pb-12">
+    <div
+      className={`min-h-full ${colors.background} ${!maximize && "border-l"} ${
+        colors.borderColor
+      }  pb-12`}
+    >
       <div className="pt-xs">
         <Navigation
           onClick={setActivePanel}

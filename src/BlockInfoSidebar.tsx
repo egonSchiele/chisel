@@ -19,6 +19,7 @@ import Input from "./components/Input";
 import Select from "./components/Select";
 import { languages } from "./lib/languages";
 import BlockActionsSidebar from "./BlockActionsSidebar";
+import { useColors } from "./lib/hooks";
 
 function BlockVersions({
   versions,
@@ -124,12 +125,13 @@ function BlockLanguage({
 }
 function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
   let [plan, setPlan] = useState("startup");
-
+  const colors = useColors();
   function getStyle(checked) {
     let styles =
       " w-full p-xs my-1 rounded-md border border-gray-300 dark:border-gray-700 text-sm cursor-pointer flex hover:bg-gray-100 dark:hover:bg-gray-700";
     if (checked) {
-      styles += " bg-blue-700 hover:bg-blue-500 dark:hover:bg-blue-500";
+      styles +=
+        " bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 dark:hover:bg-blue-500";
     }
     return styles;
   }
@@ -170,8 +172,10 @@ function BlockPreview({ currentText }: { currentText: t.TextBlock }) {
   text = text.substring(0, 100);
   return (
     <div
-      className={`my-sm p-xs bg-gray-800 ${
-        currentText.open ? "text-gray-300" : "text-gray-500"
+      className={`my-sm p-xs bg-gray-200 dark:bg-gray-800 ${
+        currentText.open
+          ? "text-gray-900 dark:text-gray-300"
+          : "text-gray-700 dark:text-gray-500"
       }`}
     >
       <div className="text-xs line-clamp-2">{text}</div>

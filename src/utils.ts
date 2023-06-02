@@ -334,3 +334,16 @@ export function hasVersions(block: t.TextBlock) {
 export function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function today(): t.Date {
+  const d = new Date();
+  return {
+    day: d.getDate(),
+    month: d.getMonth() + 1,
+    year: d.getFullYear(),
+  };
+}
+
+export function uniq(array: any[]): any[] {
+  return [...new Set(array)];
+}

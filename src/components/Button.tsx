@@ -1,5 +1,6 @@
 import React from "react";
 import { ButtonSize } from "../Types";
+import { useColors } from "../lib/hooks";
 
 export default function Button({
   children,
@@ -20,12 +21,12 @@ export default function Button({
   style?: "primary" | "secondary";
   selector?: string;
 }) {
-  let colors =
-    "bg-button hover:bg-buttonhover text-buttontext hover:text-buttonhovertext dark:bg-dmbutton dark:hover:bg-dmbuttonhover dark:text-dmtext dark:hover:text-dmbuttonhovertext border border-gray-300 dark:border-gray-700";
+  const globalColors = useColors();
+
+  let colors = `border border-gray-300 dark:border-gray-700 ${globalColors.buttonBackgroundColorSecondary} ${globalColors.buttonTextColorSecondary}`;
 
   if (style === "secondary") {
-    colors =
-      "bg-blue-700 hover:bg-buttonhover text-white hover:text-buttonhovertext dark:bg-blue-700 dark:hover:bg-blue-500 dark:text-dmtextsecondary dark:hover:text-dmbuttonhovertextsecondary";
+    colors = `${globalColors.buttonBackgroundColor} hover:bg-buttonhover ${globalColors.buttonTextColor}`;
   }
 
   const sizes = {
