@@ -13,6 +13,7 @@ import {
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { useColors } from "./lib/hooks";
+import { Square2StackIcon } from "@heroicons/react/24/outline";
 
 export default function OutlineSidebar() {
   const state = useSelector((state: RootState) => state.library.editor);
@@ -48,10 +49,21 @@ export default function OutlineSidebar() {
         }}
         className={`w-full flex text-sm mb-xs cursor-pointer p-xs border-b ${colors.borderColor} ${colors.itemHover}  ${selectedCss}`}
       >
-        {/* <Bars3Icon className="h-4 w-4 flex-none mr-xs" aria-hidden="true" />{" "} */}
-        <p className="flex-grow line-clamp-1">
+        <p
+          className={`flex-grow line-clamp-1 ${
+            text.type === "code" && "font-mono"
+          }`}
+        >
           {i + 1}. {label}
         </p>
+        {text.type !== "embeddedText" &&
+          text.versions &&
+          text.versions.length > 0 && (
+            <Square2StackIcon
+              className="h-4 w-4 flex-none mr-xs"
+              aria-hidden="true"
+            />
+          )}
       </li>
     );
   });

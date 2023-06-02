@@ -187,7 +187,11 @@ export const librarySlice = createSlice({
 
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
-      chapter.text[index].text = text;
+      const block = chapter.text[index];
+      if (!block) {
+        console.error("No block found for index", index, chapter.chapterid);
+      }
+      block.text = text;
       state.saved = false;
     },
     setChapterStatus(state: t.State, action: PayloadAction<t.ChapterStatus>) {
@@ -1095,6 +1099,12 @@ export const librarySlice = createSlice({
       if (index !== -1) {
         state.activeTab = index;
       }
+    },
+    togglePinToHome(state: t.State) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      chapter.pinToHome = !chapter.pinToHome;
+      state.saved = false;
     },
   },
   /* setTab(

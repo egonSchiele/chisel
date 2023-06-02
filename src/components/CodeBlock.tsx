@@ -1,6 +1,6 @@
 import React from "react";
 import SyntaxHighlighter from "../lib/languages";
-import zenburn from "react-syntax-highlighter/dist/esm/styles/hljs/zenburn";
+import vs2015 from "react-syntax-highlighter/dist/esm/styles/hljs/vs2015";
 
 export default function CodeBlock({
   text,
@@ -18,8 +18,8 @@ export default function CodeBlock({
       </div>
       <SyntaxHighlighter
         language={language}
-        style={zenburn}
-        showLineNumbers={true}
+        style={vs2015}
+        /* showLineNumbers={true} */
         wrapLines={true}
       >
         {fixedText}

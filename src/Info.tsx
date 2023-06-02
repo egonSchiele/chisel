@@ -3,7 +3,11 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syllable } from "syllable";
 import { RootState } from "./store";
-import { getCharacters, getSelectedChapter } from "./reducers/librarySlice";
+import {
+  getCharacters,
+  getSelectedChapter,
+  librarySlice,
+} from "./reducers/librarySlice";
 import readingTime from "reading-time/lib/reading-time";
 import { getChapterText, useLocalStorage } from "./utils";
 import Switch from "./components/Switch";
@@ -69,6 +73,13 @@ export default function Info() {
         label="Show hidden in export?"
         enabled={showHidden}
         setEnabled={setShowHidden}
+      />
+      <Switch
+        label="Pin to home"
+        enabled={currentChapter.pinToHome || false}
+        setEnabled={() => {
+          dispatch(librarySlice.actions.togglePinToHome());
+        }}
       />
       <CharacterInfo />
     </div>

@@ -1,3 +1,4 @@
+import Home from "./Home";
 import ChatSidebar from "./ChatSidebar";
 import { ArrowUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
@@ -651,6 +652,18 @@ export default function Library({ mobile = false }) {
             className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
             id="editor"
           >
+            <div className="h-full w-full">
+              {!bookid && !currentChapter && (
+                <LibErrorBoundary component="home">
+                  <EditorPlaceholder loaded={state.booksLoaded}>
+                    <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                      <Home />
+                    </div>
+                  </EditorPlaceholder>
+                </LibErrorBoundary>
+              )}
+            </div>
+
             <div className="h-full w-full">
               {bookid && !currentChapter && (
                 <LibErrorBoundary component="front matter section">

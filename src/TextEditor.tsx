@@ -65,7 +65,7 @@ const formats = [
   "underline",
   "blockquote",
   // "header",
-  "indent",
+  //"indent",
   // "list", <-- commented-out to suppress auto bullets
   "align",
   "direction",
@@ -155,6 +155,7 @@ function TextEditor({
     // TODO
     editor.setText(currentText.text.trim());
     highlightForFocusMode();
+    formatMarkdown();
   }, [quillRef.current, chapterid, _pushTextToEditor]);
 
   useEffect(() => {
@@ -215,7 +216,7 @@ function TextEditor({
     const quill = quillRef.current.getEditor();
     const text = quill.getText();
     console.log("highlightForFocusMode");
-    quill.removeFormat(0, text.length);
+    quill.removeFormat(0, text.length - 1);
     quill.setText(text.trim());
     const formatData = highlightErrors(text);
     console.log("applying", formatData.length, "formats");
@@ -228,6 +229,36 @@ function TextEditor({
         formatData.filter((d) => d.name !== "clear")
       )
     );
+  }
+
+  function formatMarkdown() {
+    // @ts-ignore
+    if (!quillRef.current || !quillRef.current.getEditor) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const text = quill.getText();
+    quill.removeFormat(0, text.length - 1);
+
+    const lines = text.split("\n");
+    let index = 0;
+    lines.forEach((line, i) => {
+      const lineLength = line.length;
+
+      if (line.startsWith("# ")) {
+        quill.formatText(index, 1, { class: "grayedout" });
+        quill.formatText(index + 2, lineLength - 2, { class: "h1" });
+      } else if (line.startsWith("## ")) {
+        quill.formatText(index, 2, { class: "grayedout" });
+        quill.formatText(index + 3, lineLength - 3, { class: "h2" });
+      } else if (line.startsWith("### ")) {
+        quill.formatText(index, 3, { class: "grayedout" });
+        quill.formatText(index + 4, lineLength - 4, { class: "h3" });
+      } else if (line.startsWith("#### ")) {
+        quill.formatText(index, 4, { class: "grayedout" });
+        quill.formatText(index + 5, lineLength - 5, { class: "h4" });
+      }
+      index += lineLength + 1;
+    });
   }
 
   function clearFocusModeHighlights() {
@@ -310,10 +341,127 @@ function TextEditor({
     }
   }
 
+  function addQuotes(leftQuote, _rightQuote: null | undefined | string = null) {
+    const rightQuote = _rightQuote || leftQuote;
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      quill.insertText(range.index, leftQuote, "user");
+      quill.insertText(range.index + range.length + 1, rightQuote, "user");
+      quill.setSelection(
+        range.index - leftQuote.length + 1,
+        range.length + leftQuote.length + rightQuote.length
+      );
+    }
+  }
+
+  function prepend(char: string) {
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      const text = quill.getText(range.index, range.length);
+      const newText = text
+        .split("\n")
+        .map((line) => char + line)
+        .join("\n");
+      quill.deleteText(range.index, range.length, "user");
+      quill.insertText(range.index, newText, "user");
+      quill.setSelection(range.index, newText.length);
+    }
+  }
+
+  function textIsSelected() {
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      return range.length > 0;
+    }
+    return false;
+  }
+
   const handleKeyDown = (event) => {
     setEdited(true);
+    console.log("handleKeyDown", event.shiftKey, event.code);
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      console.log("range", range);
+    }
+
+    if (event.shiftKey && event.code === "Quote" && textIsSelected()) {
+      event.preventDefault();
+      addQuotes('"');
+    } else if (event.code === "Quote" && textIsSelected()) {
+      event.preventDefault();
+      addQuotes("'");
+    } else if (
+      event.shiftKey &&
+      event.code === "Backquote" &&
+      textIsSelected()
+    ) {
+      event.preventDefault();
+      addQuotes("~");
+    } else if (event.code === "Backquote" && textIsSelected()) {
+      event.preventDefault();
+      addQuotes("`");
+    } else if (
+      event.shiftKey &&
+      (event.code === "BracketLeft" || event.code === "BracketRight") &&
+      textIsSelected()
+    ) {
+      event.preventDefault();
+      addQuotes("{", "}");
+    } else if (
+      (event.code === "BracketLeft" || event.code === "BracketRight") &&
+      textIsSelected()
+    ) {
+      event.preventDefault();
+      addQuotes("[", "]");
+    } else if (
+      ((event.shiftKey && event.code === "Digit9") ||
+        event.code === "Digit0") &&
+      textIsSelected()
+    ) {
+      event.preventDefault();
+      addQuotes("(", ")");
+    } else if (
+      ((event.shiftKey && event.code === "Comma") || event.code === "Period") &&
+      textIsSelected()
+    ) {
+      event.preventDefault();
+      addQuotes("<", ">");
+    } else if (event.shiftKey && event.code === "Digit8" && textIsSelected()) {
+      event.preventDefault();
+      addQuotes("*");
+    } else if (event.code === "Minus" && textIsSelected()) {
+      event.preventDefault();
+      prepend("-");
+    } else if (event.code === "Space" && textIsSelected()) {
+      event.preventDefault();
+      prepend(" ");
+    } else if (event.code === "Tab" && textIsSelected()) {
+      event.preventDefault();
+      prepend("\t");
+    } else if (
+      event.code === "Enter" ||
+      event.code === "ArrowDown" ||
+      event.code === "ArrowUp" ||
+      event.code === "ArrowLeft" ||
+      event.code === "ArrowRight"
+    ) {
+      formatMarkdown();
+    }
 
     if (event.altKey && event.shiftKey) {
+      //    dispatch(librarySlice.actions.setText({ index, text: editor.getText() }));
+
       if (event.code === "ArrowDown" || event.code === "ArrowUp") {
         event.preventDefault();
         dispatch(librarySlice.actions.extractBlock());
@@ -514,7 +662,7 @@ function TextEditor({
                   },
                   toolbar: false,
                 }}
-                /* formats={formats} */
+                formats={formats}
               />
             </div>
           </div>

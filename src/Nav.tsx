@@ -42,14 +42,14 @@ export default function Nav({
   if (!loaded) {
     return (
       <div
-        className="h-9 w-full absolute left-0 top-0 z-50 flex-grow bg-gray-100 dark:bg-gray-700 animate-pulse"
+        className={`h-9 w-full absolute left-0 top-0 z-50 flex-grow ${colors.navBackgroundColor} animate-pulse`}
         id="nav"
       ></div>
     );
   }
   return (
     <div
-      className="h-9 w-screen absolute left-0 top-0 z-50 flex-grow bg-gray-100 dark:bg-gray-700 align-middle"
+      className={`h-9 w-screen absolute left-0 top-0 z-50 flex-grow ${colors.navBackgroundColor} align-middle`}
       id="nav"
     >
       <div className="h-full flex align-middle">
@@ -64,6 +64,7 @@ export default function Nav({
                 data-selector="open-file-navigator-for-cypress"
               ></button>
               <NavButton
+                color="nav"
                 label="File Navigator"
                 onClick={() => {
                   dispatch(librarySlice.actions.toggleFileNavigator());
@@ -78,6 +79,7 @@ export default function Nav({
                 <DocumentDuplicateIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
               <NavButton
+                color="nav"
                 label="Prompts"
                 onClick={() => {
                   dispatch(librarySlice.actions.togglePrompts());
@@ -93,6 +95,7 @@ export default function Nav({
               </NavButton>
 
               <NavButton
+                color="nav"
                 label="Blocks"
                 onClick={() => {
                   dispatch(librarySlice.actions.toggleBlocks());
@@ -108,6 +111,7 @@ export default function Nav({
               </NavButton>
 
               <NavButton
+                color="nav"
                 label="Outline"
                 onClick={() => {
                   dispatch(librarySlice.actions.toggleOutline());
@@ -126,6 +130,7 @@ export default function Nav({
 
           {/*           {state.panels.leftSidebar.open && !mobile && currentChapter && (
             <NavButton
+            color="nav"
               label="Close"
               onClick={() => {
                 dispatch(librarySlice.actions.closeFileNavigator());
@@ -141,6 +146,7 @@ export default function Nav({
 
           {mobile && (
             <NavButton
+              color="nav"
               label="Open"
               onClick={() => {
                 navigate(`/book/${state.selectedBookId}`);
@@ -161,13 +167,13 @@ export default function Nav({
         {bookid && !chapterid && (
           <div className="mr-xs">
             {!state.saved && (
-              <NavButton label="Unsaved" onClick={() => {}}>
+              <NavButton color="nav" label="Unsaved" onClick={() => {}}>
                 <MinusIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
             )}
 
             {state.saved && (
-              <NavButton label="Saved" onClick={() => {}}>
+              <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckCircleIcon
                   className={`h-5 w-5 ${colors.highlightTextColor}`}
                   aria-hidden="true"
@@ -182,7 +188,12 @@ export default function Nav({
           <LibErrorBoundary component="navigation">
             <div className="flex-none">
               {state.loading && (
-                <NavButton label="Loading" onClick={() => {}} className="p-0">
+                <NavButton
+                  color="nav"
+                  label="Loading"
+                  onClick={() => {}}
+                  className="p-0"
+                >
                   <Spinner className="w-5 h-5" />
                 </NavButton>
               )}
@@ -190,6 +201,7 @@ export default function Nav({
               {/*               {state.editor.selectedText &&
                 state.editor.selectedText.length > 0 && (
                   <NavButton
+                  color="nav"
                     label="Extract Block"
                     onClick={() => {
                       dispatch(librarySlice.actions.extractBlock());
@@ -210,13 +222,13 @@ export default function Nav({
                 </span>
               )}
               {!state.saved && (
-                <NavButton label="Unsaved" onClick={() => {}}>
+                <NavButton color="nav" label="Unsaved" onClick={() => {}}>
                   <MinusIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
               )}
 
               {state.saved && (
-                <NavButton label="Saved" onClick={() => {}}>
+                <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckCircleIcon
                     className={`h-5 w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
@@ -226,6 +238,7 @@ export default function Nav({
 
               {state.viewMode !== "readonly" && (
                 <NavButton
+                  color="nav"
                   label="Read only"
                   onClick={() =>
                     dispatch(librarySlice.actions.setViewMode("readonly"))
@@ -237,6 +250,7 @@ export default function Nav({
               )}
               {state.viewMode === "readonly" && (
                 <NavButton
+                  color="nav"
                   label="Exit read only"
                   onClick={() =>
                     dispatch(librarySlice.actions.setViewMode("default"))
@@ -253,6 +267,7 @@ export default function Nav({
               {!mobile && (
                 <>
                   <NavButton
+                    color="nav"
                     label="Focus Mode"
                     onClick={() =>
                       dispatch(librarySlice.actions.toggleViewMode("focus"))
@@ -268,6 +283,7 @@ export default function Nav({
                   </NavButton>
 
                   {/*   <NavButton
+                  color="nav"
                     label="Prompts"
                     onClick={() => {
                       dispatch(librarySlice.actions.togglePrompts());
@@ -281,6 +297,7 @@ export default function Nav({
                   </NavButton> */}
 
                   <NavButton
+                    color="nav"
                     label="Sidebar"
                     onClick={() => {
                       dispatch(librarySlice.actions.toggleRightSidebar());
@@ -293,6 +310,7 @@ export default function Nav({
                     />
                   </NavButton>
                   <NavButton
+                    color="nav"
                     label="Chat"
                     onClick={() => {
                       dispatch(librarySlice.actions.toggleChat());

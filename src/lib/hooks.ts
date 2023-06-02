@@ -61,8 +61,9 @@ export function useColors() {
   const theme = settings?.theme || "default";
   if (theme === "dark" || theme === "default") {
     return darkColors();
-  } else if (theme === "solarized") {
+    /*   } else if (theme === "solarized") {
     return solarizedColors();
+ */
   } else {
     return lightColors();
   }
@@ -86,6 +87,8 @@ export function darkColors() {
     " dark:bg-dmbutton dark:hover:bg-dmbuttonhover";
   let buttonTextColorSecondary =
     " dark:text-dmtext dark:hover:text-dmbuttonhovertext";
+  let navBackgroundColor = " dark:bg-gray-700";
+  let navBackgroundColorSelected = " dark:bg-gray-600";
   return {
     background,
     backgroundHover,
@@ -103,6 +106,8 @@ export function darkColors() {
     buttonTextColor,
     buttonBackgroundColorSecondary,
     buttonTextColorSecondary,
+    navBackgroundColor,
+    navBackgroundColorSelected,
   };
 }
 export function lightColors() {
@@ -122,6 +127,8 @@ export function lightColors() {
   let buttonTextColor = "text-gray-900 hover:text-white";
   let buttonBackgroundColorSecondary = "bg-gray-300 hover:bg-gray-400";
   let buttonTextColorSecondary = "text-gray-800 hover:text-white";
+  let navBackgroundColor = " bg-gray-100";
+  let navBackgroundColorSelected = " bg-gray-200";
   return {
     background,
     backgroundHover,
@@ -139,9 +146,11 @@ export function lightColors() {
     buttonTextColor,
     buttonBackgroundColorSecondary,
     buttonTextColorSecondary,
+    navBackgroundColor,
+    navBackgroundColorSelected,
   };
 }
-export function solarizedColors() {
+/* export function solarizedColors() {
   let background = "bg-red-500";
   let backgroundHover = "hover:bg-gray-200";
   let backgroundAlt = "bg-gray-50 hover:bg-gray-100";
@@ -177,3 +186,4 @@ export function solarizedColors() {
     buttonTextColorSecondary,
   };
 }
+ */

@@ -8,13 +8,30 @@ export default function NavButton({
   className = "",
   selector = "",
   selected = false,
+  color = "list",
+}: {
+  label: string;
+  onClick: () => void;
+  children: React.ReactNode;
+  className?: string;
+  selector?: string;
+  selected?: boolean;
+  color?: "list" | "nav";
 }) {
   const colors = useColors();
   const animCss =
     "transition ease-in-out hover:scale-125 duration-100 active:scale-75 hover:dark:text-white";
-  const selectedCss = selected
-    ? `${colors.selectedBackground} ${colors.selectedTextColor}`
-    : `${colors.background} ${colors.secondaryTextColor}`;
+  let selectedCss = "";
+
+  if (color === "list") {
+    selectedCss = selected
+      ? `${colors.selectedBackground} ${colors.selectedTextColor}`
+      : `${colors.background} ${colors.secondaryTextColor}`;
+  } else {
+    selectedCss = selected
+      ? `${colors.navBackgroundColorSelected} ${colors.selectedTextColor}`
+      : `${colors.navBackgroundColor} ${colors.secondaryTextColor}`;
+  }
 
   return (
     <button

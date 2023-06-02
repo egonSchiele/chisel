@@ -15,19 +15,20 @@ export default function Launcher({
   items,
   open,
   close,
-  onChoose,
-  autocompleteCache,
+  onChoose = (m) => {},
+  autocompleteCache = {},
 }: {
   items: MenuItem[];
   open: boolean;
   close: () => void;
-  onChoose: (m: MenuItem) => void;
-  autocompleteCache: { [key: string]: MenuItem[] };
+  onChoose?: (m: MenuItem) => void;
+  autocompleteCache?: { [key: string]: number };
 }) {
   const [query, setQuery] = useState("");
 
   let filteredItems = items;
   if (query !== "") {
+    // @ts-ignore
     filteredItems = items.map((item) => {
       const a = item.label.toLowerCase().split(" ");
       const b = query.toLowerCase().split(" ");

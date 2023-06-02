@@ -102,7 +102,7 @@ export default function BookList({ cachedBooks = null }) {
         <List
           title="Loading Books"
           items={items}
-          className={`p-xs h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full bg-sidebar dark:bg-dmsidebar`}
+          className={`p-xs h-screen no-scrollbar w-full ${colors.backgroundAlt}`}
         />
       );
     } else {
