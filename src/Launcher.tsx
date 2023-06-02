@@ -15,10 +15,14 @@ export default function Launcher({
   items,
   open,
   close,
+  onChoose,
+  autocompleteCache,
 }: {
   items: MenuItem[];
   open: boolean;
   close: () => void;
+  onChoose: (m: MenuItem) => void;
+  autocompleteCache: { [key: string]: MenuItem[] };
 }) {
   const [query, setQuery] = useState("");
 
@@ -36,14 +40,18 @@ export default function Launcher({
         }
       }
       if (matches > 0) {
-        return { ...item, matchPercentage: matches / a.length };
+        const frequency = autocompleteCache[item.label] || 0;
+        return { ...item, frequency, matchPercentage: matches / a.length };
       } else {
         return null;
       }
     });
     filteredItems = filteredItems.filter((item) => item !== null);
 
-    filteredItems = sortBy(filteredItems, ["matchPercentage"]).reverse();
+    filteredItems = sortBy(filteredItems, [
+      "frequency",
+      "matchPercentage",
+    ]).reverse();
     /*     filteredItems = sortBy(filteredItems, (item) => {
       return levenshtein(item.label.toLowerCase(), query.toLowerCase());
     }); */
@@ -83,6 +91,7 @@ export default function Launcher({
               <Combobox
                 onChange={(item: MenuItem) => {
                   item.onClick();
+                  onChoose(item);
                   close();
                 }}
               >

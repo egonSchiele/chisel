@@ -1,3 +1,4 @@
+import * as t from "../Types";
 import React, { useContext } from "react";
 import {
   getSelectedBook,
@@ -64,8 +65,15 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { newBook, newCompostNote, newChapter, renameBook, renameChapter } =
-    useContext(LibraryContext) as LibraryContextType;
+  const {
+    newBook,
+    newCompostNote,
+    newChapter,
+    renameBook,
+    renameChapter,
+    settings,
+    setSettings,
+  } = useContext(LibraryContext) as LibraryContextType;
 
   function toggleRightPanel(panel: string) {
     if (
@@ -679,12 +687,27 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     });
   }
 
+  function onChoose(item: t.MenuItem) {
+    const label = item.label;
+    const cache = settings.autocompleteCache || {};
+    const newCache = { ...cache };
+    if (label in newCache) {
+      newCache[label] += 1;
+    } else {
+      newCache[label] = 1;
+    }
+    setSettings({ ...settings, autocompleteCache: newCache });
+    dispatch(librarySlice.actions.setSettingsSaved(false));
+  }
+
   return (
     <Launcher
       //@ts-ignore
       items={launchItems}
       open={state.launcherOpen}
       close={onLauncherClose}
+      onChoose={onChoose}
+      autocompleteCache={settings.autocompleteCache || {}}
     />
   );
 }

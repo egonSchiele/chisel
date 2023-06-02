@@ -346,6 +346,7 @@ export type UserSettings = {
   prompts: Prompt[];
   design?: DesignPreferences | null;
   admin?: boolean;
+  autocompleteCache?: { [key: string]: number };
 };
 
 export type DesignPreferences = {
