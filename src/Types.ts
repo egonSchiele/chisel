@@ -359,7 +359,7 @@ export type Prompt = {
   text: string;
 };
 
-export type Theme = "default" | "dark" | "light";
+export type Theme = "default" | "dark" | "light" | "solarized";
 
 export type UserPermissions = {
   openai_api: boolean;

@@ -172,6 +172,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         <option>default</option>
         <option>light</option>
         <option>dark</option>
+        {/* <option>solarized</option> */}
       </Select>
 
       {usage && (

@@ -61,6 +61,8 @@ export function useColors() {
   const theme = settings?.theme || "default";
   if (theme === "dark" || theme === "default") {
     return darkColors();
+  } else if (theme === "solarized") {
+    return solarizedColors();
   } else {
     return lightColors();
   }
@@ -105,6 +107,42 @@ export function darkColors() {
 }
 export function lightColors() {
   let background = "bg-gray-100";
+  let backgroundHover = "hover:bg-gray-200";
+  let backgroundAlt = "bg-gray-50 hover:bg-gray-100";
+  let selectedBackground = "bg-gray-300";
+  let borderColor = "border-gray-100";
+  let selectedBorderColor = "border-gray-300";
+  let primaryTextColor = "text-gray-900";
+  let secondaryTextColor = "text-gray-500";
+  let secondaryTextColorSelected = "text-gray-600";
+  let selectedTextColor = "text-gray-900";
+  let highlightTextColor = "text-blue-700";
+  let itemHover = "hover:bg-gray-200";
+  let buttonBackgroundColor = "bg-blue-400 hover:bg-blue-600";
+  let buttonTextColor = "text-gray-900 hover:text-white";
+  let buttonBackgroundColorSecondary = "bg-gray-300 hover:bg-gray-400";
+  let buttonTextColorSecondary = "text-gray-800 hover:text-white";
+  return {
+    background,
+    backgroundHover,
+    backgroundAlt,
+    selectedBackground,
+    borderColor,
+    selectedBorderColor,
+    primaryTextColor,
+    secondaryTextColor,
+    secondaryTextColorSelected,
+    selectedTextColor,
+    highlightTextColor,
+    itemHover,
+    buttonBackgroundColor,
+    buttonTextColor,
+    buttonBackgroundColorSecondary,
+    buttonTextColorSecondary,
+  };
+}
+export function solarizedColors() {
+  let background = "bg-red-500";
   let backgroundHover = "hover:bg-gray-200";
   let backgroundAlt = "bg-gray-50 hover:bg-gray-100";
   let selectedBackground = "bg-gray-300";

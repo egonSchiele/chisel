@@ -86,7 +86,7 @@ export const fetchSuggestionsWrapper = async (
     model: any;
     max_tokens: any;
     num_suggestions: any;
-    theme?: "default";
+    theme?: t.Theme;
     version_control?: boolean;
     prompts?: t.Prompt[];
     customKey?: string;
