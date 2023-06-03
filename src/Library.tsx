@@ -332,6 +332,8 @@ export default function Library({ mobile = false }) {
       await saveToHistory(state);
       setTriggerHistoryRerender((t) => t + 1);
     }
+
+    if (!state.settingsSaved) await saveSettings();
   }
 
   async function saveToHistory(state: t.State) {

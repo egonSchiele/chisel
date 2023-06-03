@@ -22,6 +22,7 @@ describe("settings", () => {
     cy.selectChapter();
 
     cy.toggleRightSidebar();
+    cy.togglePrompts();
     cy.showSettings();
 
     cy.get("input[data-selector='prompt-Expand-label']").type(
@@ -31,29 +32,8 @@ describe("settings", () => {
       `{selectAll}{backspace}${promptText}`
     );
 
-    // we didn't save, so the prompt shouldn't be there
-    cy.visit("http://localhost:80/");
-
-    cy.selectBook();
-    cy.selectChapter();
-
-    cy.get("input[data-selector='prompt-Expand-label']").should(
-      "have.value",
-      "Expand"
-    );
-    cy.get(`input[data-selector='prompt-${promptLabel}-label']`).should(
-      "not.exist"
-    );
-
-    cy.get("input[data-selector='prompt-Expand-label']").type(
-      `{selectAll}{backspace}${promptLabel}`
-    );
-    cy.get(`textarea[data-selector='prompt-${promptLabel}-text']`).type(
-      `{selectAll}{backspace}${promptText}`
-    );
-
     // save!
-    cy.get("button[data-selector='sidebar-save-button']").click();
+    cy.manuallySave();
     cy.wait(2000);
     // now the new prompt should be there
     cy.visit("http://localhost:80/");
@@ -86,7 +66,7 @@ describe("settings", () => {
     );
 
     // save!
-    cy.get("button[data-selector='sidebar-save-button']").click();
+    cy.manuallySave();
 
     // the prompt we just added should be there
     cy.visit("http://localhost:80/");

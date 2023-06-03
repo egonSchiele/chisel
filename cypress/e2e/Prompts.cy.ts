@@ -36,18 +36,15 @@ describe("prompts", () => {
       url: "/api/suggestions",
     }).as("postSuggestions");
 
-    cy.get("li[data-selector='prompt-Expand-button-list-item']").click();
+    cy.get("[data-selector='prompt-Expand-button-list-item']").click();
 
     cy.wait("@postSuggestions", { timeout: 15000 });
 
-    cy.get(`div[data-selector='ai-suggestion-panel']`).should("exist");
-    cy.get(`div[data-selector='ai-suggestion-panel']`).first().click();
+    cy.get(`[data-selector='ai-suggestion-panel']`).should("exist");
+    cy.get(`[data-selector='ai-suggestion-panel']`).first().click();
 
-    cy.get("#diff-view").contains("once upon a"); //.invoke("text");
-    /*       .then((t) => {
-        expect(t.length).to.be.greaterThan(text.length);
-      });
- */
+    cy.get("[data-selector='texteditor-0']").contains("once upon a");
+
     cy.autoSave();
 
     // go back, the new suggestion should be there
@@ -56,14 +53,14 @@ describe("prompts", () => {
     cy.selectBook();
     cy.selectChapter();
 
-    cy.get(`div[data-selector='ai-suggestion-panel']`).should("exist");
+    cy.get(`[data-selector='ai-suggestion-panel']`).should("exist");
 
-    cy.get(`div[data-selector='ai-suggestion-panel']`).should("exist");
+    cy.get(`[data-selector='ai-suggestion-panel']`).should("exist");
 
     // delete it
     cy.get(`svg[data-selector='delete-ai-suggestion-panel']`).click();
 
-    cy.get(`div[data-selector='ai-suggestion-panel']`).should("not.exist");
+    cy.get(`[data-selector='ai-suggestion-panel']`).should("not.exist");
     cy.autoSave();
     // go back, the new suggestion should not be there anymore
     cy.visit("http://localhost:80/");
@@ -71,7 +68,7 @@ describe("prompts", () => {
     cy.selectBook();
     cy.selectChapter();
 
-    cy.get(`div[data-selector='ai-suggestion-panel']`).should("not.exist");
+    cy.get(`[data-selector='ai-suggestion-panel']`).should("not.exist");
 
     cy.deleteChapter();
     cy.deleteBook();
