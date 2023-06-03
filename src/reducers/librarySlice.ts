@@ -1253,6 +1253,32 @@ export const getSelectedBookChapters = (
   return chapters;
 };
 
+export const getNextChapter = (state: RootState): t.Chapter | null => {
+  const chapters = getSelectedBookChapters(state);
+
+  if (!chapters) return null;
+
+  const index = chapters.findIndex(
+    (chapter) => chapter.chapterid === chapter.chapterid
+  );
+  if (index === -1) return null;
+  if (index === chapters.length - 1) return chapters[0];
+  return chapters[index + 1];
+};
+
+export const getPreviousChapter = (state: RootState): t.Chapter | null => {
+  const chapters = getSelectedBookChapters(state);
+
+  if (!chapters) return null;
+
+  const index = chapters.findIndex(
+    (chapter) => chapter.chapterid === chapter.chapterid
+  );
+  if (index === -1) return null;
+  if (index === 0) return chapters[chapters.length - 1];
+  return chapters[index - 1];
+};
+
 export const getCharacters = (state: RootState): t.Character[] | null => {
   const book = getSelectedBook(state);
 

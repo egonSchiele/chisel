@@ -11,6 +11,8 @@ import Select from "./components/Select";
 import "./globals.css";
 import { useKeyDown, useKeyboardScroll } from "./lib/hooks";
 import {
+  getNextChapter,
+  getPreviousChapter,
   getSelectedChapter,
   getSelectedChapterTextLength,
   getSelectedChapterTitle,
@@ -18,6 +20,11 @@ import {
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { hasVersions } from "./utils";
+import { Link } from "react-router-dom";
+import {
+  ArrowSmallLeftIcon,
+  ArrowSmallRightIcon,
+} from "@heroicons/react/24/outline";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -26,6 +33,9 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     const chapter = getSelectedChapter(state);
     return chapter ? chapter.text : [];
   });
+
+  const nextChapter = useSelector(getNextChapter);
+  const previousChapter = useSelector(getPreviousChapter);
 
   const currentChapterId = useSelector(
     (state: RootState) => state.library.selectedChapterId
@@ -147,6 +157,34 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
               fontClass={fontClass}
             />
           </div>
+
+          {
+            <div className="w-full flex mt-sm">
+              {previousChapter && (
+                <div className="flex-none">
+                  {/* <ArrowSmallLeftIcon className="w-4 h-4 mr-sm" /> */}
+                  <Link
+                    to={`/book/${previousChapter.bookid}/chapter/${previousChapter.chapterid}`}
+                  >
+                    Previous: {previousChapter.title}
+                  </Link>
+                </div>
+              )}
+              <div className="flex-grow" />
+
+              {nextChapter && (
+                <div className="flex-none">
+                  <Link
+                    to={`/book/${nextChapter.bookid}/chapter/${nextChapter.chapterid}`}
+                  >
+                    Next: {nextChapter.title}
+                  </Link>
+                  {/*                   <ArrowSmallRightIcon className="w-4 h-4 ml-sm" />
+                   */}{" "}
+                </div>
+              )}
+            </div>
+          }
 
           <div className="h-24" />
         </div>
