@@ -105,12 +105,14 @@ export const submitLogin = async (req, res) => {
 
     const token = await stringToHash(user.userid);
     const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-    res.cookie("userid", user.userid, { maxAge });
+    res.json({ userid: user.userid, token });
+    /*     res.cookie("userid", user.userid, { maxAge });
     res.cookie("token", token, { maxAge });
     res.redirect("/");
+ */
   } catch (err) {
     console.log(err);
-    res.redirect(`/login.html?err=${err}`);
+    res.status(400).json({ message: err.code });
   }
 };
 
@@ -130,10 +132,20 @@ export const submitRegister = async (req, res) => {
       throw new Error("Failed to create user");
     }
 
+    if (!user.approved) {
+      throw new Error("User not approved");
+    }
+
+    const token = await stringToHash(user.userid);
+    //const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+    res.json({ userid: user.userid, token });
+    /*     res.cookie("userid", user.userid, { maxAge });
+    res.cookie("token", token, { maxAge });
     res.redirect("/");
+ */
   } catch (err) {
     console.log(err);
-    res.redirect(`/register.html?err=${err}`);
+    res.status(400).json({ message: err.code });
   }
 };
 

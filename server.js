@@ -218,7 +218,7 @@ app.post("/loginGuestUser", async (req, res) => {
 app.get("/logout", async (req, res) => {
   res.clearCookie("userid");
   res.clearCookie("token");
-  res.redirect("/login.html");
+  res.redirect("/login");
 });
 
 app.post("/api/saveBook", requireLogin, async (req, res) => {
@@ -467,6 +467,22 @@ function serveFile(filename, res) {
   });
   res.send(rendered).end();
 }
+
+app.get("/login", async (req, res) => {
+  serveFile("login.html", res);
+});
+
+app.get("/register", async (req, res) => {
+  serveFile("login.html", res);
+});
+
+app.get("/login.html", async (req, res) => {
+  serveFile("login.html", res);
+});
+
+app.get("/register.html", async (req, res) => {
+  serveFile("login.html", res);
+});
 
 app.get(
   "/book/:bookid/chapter/:chapterid/:textindex",
