@@ -13,17 +13,20 @@ import {
   SparklesIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LibErrorBoundary from "./LibErrorBoundary";
 import * as t from "./Types";
+import * as fd from "./lib/fetchData";
 import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import Tabs from "./Tabs";
 import { useColors } from "./lib/hooks";
+import LibraryContext from "./LibraryContext";
+// import { AudioRecorder } from "react-audio-voice-recorder";
 export default function Nav({
   mobile,
   bookid,
@@ -39,6 +42,19 @@ export default function Nav({
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const colors = useColors();
+  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
+
+  const addAudioElement = async (blob) => {
+    console.log("hi");
+    const res = await fd.uploadAudio(blob);
+    console.log(res);
+    /* const url = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    document.body.appendChild(audio); */
+  };
+
   if (!loaded) {
     return (
       <div
@@ -322,6 +338,18 @@ export default function Nav({
                       aria-hidden="true"
                     />
                   </NavButton>
+
+                  {/* {settings.admin && (
+                    <AudioRecorder
+                      onRecordingComplete={addAudioElement}
+                      audioTrackConstraints={{
+                        noiseSuppression: true,
+                        echoCancellation: true,
+                      }}
+                      downloadOnSavePress={true}
+                      downloadFileExtension="mp3"
+                    />
+                  )} */}
                 </>
               )}
             </div>

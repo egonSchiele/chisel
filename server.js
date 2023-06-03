@@ -67,10 +67,14 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
+app.use(
+  express.raw({ type: ["multipart/form-data", "application/octet-stream"] })
+);
 app.use(express.json({ limit: "5mb" }));
 app.use(
   express.urlencoded({
     limit: "5mb",
+    extended: true,
   })
 );
 app.use(compression());
@@ -252,6 +256,19 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
     // res.redirect(`/book/${bookid}`);
   }
 });
+
+app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
+  const user = await getUser(req);
+  const userid = user.userid;
+  const { audio } = req.body;
+  fs.writeFile("test.mp3", req.body, function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+  res.send("ok");
+});
+
 app.post("/api/uploadBook", requireLogin, async (req, res) => {
   const user = await getUser(req);
   const userid = user.userid;
