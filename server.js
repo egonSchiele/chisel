@@ -469,19 +469,19 @@ function serveFile(filename, res) {
 }
 
 app.get("/login", async (req, res) => {
-  serveFile("login.html", res);
+  serveFile("login-base.html", res);
 });
 
 app.get("/register", async (req, res) => {
-  serveFile("login.html", res);
+  serveFile("login-base.html", res);
 });
 
 app.get("/login.html", async (req, res) => {
-  serveFile("login.html", res);
+  serveFile("login-base.html", res);
 });
 
 app.get("/register.html", async (req, res) => {
-  serveFile("login.html", res);
+  serveFile("login-base.html", res);
 });
 
 app.get(

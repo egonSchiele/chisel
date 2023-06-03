@@ -33,35 +33,35 @@ function AuthApp() {
       window.location.href = "/";
     }
   }
+  const login = (
+    <Auth
+      title={"Sign in to your account"}
+      primary={"Sign in"}
+      secondary={"Register"}
+      primaryAction={submitLogin}
+      secondaryAction="/register"
+      error={error}
+    />
+  );
+
+  const register = (
+    <Auth
+      title={"Register"}
+      primary={"Register"}
+      secondary={"Sign in"}
+      primaryAction={submitRegister}
+      secondaryAction="/login"
+      error={error}
+    />
+  );
+
   return (
     <div>
       <Routes>
-        <Route
-          path="/login"
-          element={
-            <Auth
-              title={"Sign in to your account"}
-              primary={"Sign in"}
-              secondary={"Register"}
-              primaryAction={submitLogin}
-              secondaryAction="/register"
-              error={error}
-            />
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <Auth
-              title={"Register"}
-              primary={"Register"}
-              secondary={"Sign in"}
-              primaryAction={submitRegister}
-              secondaryAction="/login"
-              error={error}
-            />
-          }
-        />
+        <Route path="/login" element={login} />
+        <Route path="/register" element={register} />
+        <Route path="/login.html" element={login} />
+        <Route path="/register.html" element={register} />
       </Routes>
     </div>
   );

@@ -37,7 +37,7 @@ module.exports = {
     library: "./library.tsx",
     book: "./library.tsx",
     chapter: "./library.tsx",
-    login: "./login.tsx",
+    "login-base": "./login.tsx",
     privacy: "./empty.tsx",
     register: "./login.tsx",
     mobile: "./mobile.tsx",
