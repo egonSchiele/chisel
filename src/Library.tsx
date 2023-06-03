@@ -550,13 +550,17 @@ export default function Library({ mobile = false }) {
     const originalText = currentText[editor.activeTextIndex].text;
     const newText = currentText[editor.activeTextIndex + 1].text;
     return (
-      <LibErrorBoundary component="diff mode">
-        <DiffViewer
-          originalText={originalText}
-          newText={newText}
-          onClose={() => dispatch(librarySlice.actions.setViewMode("default"))}
-        />
-      </LibErrorBoundary>
+      <LibraryContext.Provider value={libraryUtils}>
+        <LibErrorBoundary component="diff mode">
+          <DiffViewer
+            originalText={originalText}
+            newText={newText}
+            onClose={() =>
+              dispatch(librarySlice.actions.setViewMode("default"))
+            }
+          />
+        </LibErrorBoundary>
+      </LibraryContext.Provider>
     );
   }
 

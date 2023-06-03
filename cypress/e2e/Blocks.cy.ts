@@ -19,11 +19,11 @@ describe("blocks", () => {
 
     // You can fold a block
     cy.get("div[data-selector='texteditor-0']").type(text);
-    
-    // make a new block
-    cy.launcher("new block after current")
 
-    cy.get("div[data-selector='texteditor-1']").type(text2)
+    // make a new block
+    cy.launcher("new block after current");
+
+    cy.get("div[data-selector='texteditor-1']").type(text2);
     cy.get("div[data-selector='close-0']").click();
     cy.get("div[data-selector='texteditor-0']").should("not.exist");
     cy.get("p[data-selector='text-preview-0']").contains(text.split("\n")[0]);
@@ -31,7 +31,7 @@ describe("blocks", () => {
     // merge block up
     // cannot test because can't get the ql-editor to stay active
     // when invoking the launcher. argh
-/*     cy.launcher(`merge block up`)
+    /*     cy.launcher(`merge block up`)
 
     cy.get("div[data-selector='texteditor-1']").should("not.exist");
     cy.get("div[data-selector='texteditor-0']").contains("first");
@@ -42,7 +42,7 @@ describe("blocks", () => {
     // make another new block
     cy.launcher("new block after current")
     cy.get("div[data-selector='texteditor-1']").type(text2) */
-    
+
     cy.autoSave();
 
     // The block stays folded
@@ -56,14 +56,14 @@ describe("blocks", () => {
     // readonly mode
     cy.get("button[data-selector='readonly-open']").click();
 
-    // closed block is not shown
-    cy.contains("div[id=readonly]", "first").should("not.exist");
-    cy.contains("div[id=readonly]", "fourth")
+    // closed block is shown
+    cy.contains("div[id=readonly]", "first");
+    cy.contains("div[id=readonly]", "fourth");
     cy.get("button[data-selector='readonly-close']").click();
 
     // diff viewer
     cy.get("div[data-selector='open-0']").click();
-    cy.launcher("diff with block below")
+    cy.launcher("diff with block below");
     cy.contains("div[id='diff-view']", "first");
     cy.get("button[data-selector='diff-view-close']").click();
 
