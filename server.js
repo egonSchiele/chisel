@@ -113,7 +113,7 @@ function isMobile(req) {
 
 const csrf = (req, res, next) => {
   if (req.method !== "GET") {
-    const excluded = ["/submitLogin", "/submitRegister"];
+    const excluded = ["/submitLogin", "/submitRegister", "/loginGuestUser"];
     if (excluded.includes(req.url)) {
       next();
       return;
