@@ -31,6 +31,20 @@ export const fetchSettings = async () => {
   return t.success(data);
 };
 
+export const fetchBookTitles = async () => {
+  const res = await fetch(`/api/bookTitles`, { credentials: "include" });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error fetching book titles: ${text}`);
+  }
+  const data = await res.json();
+
+  if (!data) {
+    return t.error("bookTitles not found");
+  }
+  return t.success(data);
+};
+
 export const fetchSuggestions = async (
   text: string,
   synopsis: string,

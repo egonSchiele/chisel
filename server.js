@@ -34,6 +34,7 @@ import {
   getBook,
   deleteBook,
   getBooks,
+  getBookTitles,
   saveChapter,
   deleteChapter,
   favoriteChapter,
@@ -559,6 +560,18 @@ app.get("/api/books", requireLogin, noCache, async (req, res) => {
     res.status(404).end();
   } else {
     const books = await getBooks(userid);
+    res.status(200).json({ books });
+  }
+});
+
+app.get("/api/bookTitles", requireLogin, noCache, async (req, res) => {
+  const userid = getUserId(req);
+  if (!userid) {
+    console.log("no userid");
+    res.status(404).end();
+  } else {
+    const books = await getBookTitles(userid);
+
     res.status(200).json({ books });
   }
 });

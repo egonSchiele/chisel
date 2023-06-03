@@ -73,7 +73,7 @@ export function darkColors() {
   let backgroundHover = " dark:hover:bg-gray-600";
   let backgroundAlt = "dark:bg-dmSidebar hover:dark:bg-gray-600";
   let selectedBackground = "dark:bg-gray-700 hover:dark:bg-gray-500";
-  let borderColor = "dark:border-gray-500";
+  let borderColor = "dark:border-gray-800";
   let selectedBorderColor = "dark:border-gray-500";
   let primaryTextColor = " dark:text-gray-200";
   let secondaryTextColor = " dark:text-gray-400";

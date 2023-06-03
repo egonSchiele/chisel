@@ -132,6 +132,21 @@ function asArray(snapshot) {
   return array;
 }
 
+export const getBookTitles = async (userid) => {
+  console.log("getting book titles");
+
+  const _books = await db
+    .collection("books")
+    .where("userid", "==", userid)
+    .get();
+
+  const books = asArray(_books);
+  const bookTitles = books.map((book) => {
+    return { bookid: book.bookid, title: book.title, tag: book.tag };
+  });
+  return bookTitles;
+};
+
 export const getBooks = async (userid) => {
   console.log("getting books");
 
@@ -142,6 +157,7 @@ export const getBooks = async (userid) => {
 
   if (books.empty) {
     console.log("No books found.");
+    return [];
   }
   const allBooks = [];
   const promises = asArray(books).map(async (book) => {

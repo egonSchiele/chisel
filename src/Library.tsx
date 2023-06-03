@@ -266,9 +266,40 @@ export default function Library({ mobile = false }) {
     }
   };
 
+  const fetchBookTitles = async () => {
+    if (!bookid && !chapterid) return;
+    setLoading(true);
+    const result = await fd.fetchBookTitles();
+    setLoading(false);
+
+    if (result.tag === "success") {
+      console.log(result.payload);
+      setCachedBooks(
+        result.payload.map((book) => ({
+          title: book.title,
+          bookid: book.bookid,
+          tag: book.tag,
+        }))
+      );
+      /*    result.payload.settings.num_suggestions = parseInt(
+        result.payload.settings.num_suggestions
+      );
+      result.payload.settings.max_tokens = parseInt(
+        result.payload.settings.max_tokens
+      );
+
+      setSettings(result.payload.settings);
+      setUsage(result.payload.usage); */
+    } else {
+      dispatch(librarySlice.actions.setError(result.message));
+    }
+  };
+
   useEffect(() => {
-    fetchBooks();
-    fetchSettings();
+    const func = async () => {
+      await Promise.all([fetchBooks(), fetchSettings(), fetchBookTitles()]);
+    };
+    func();
   }, []);
 
   const navigate = useNavigate();
