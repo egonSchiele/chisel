@@ -31,6 +31,7 @@ import {
   ArrowsUpDownIcon,
   ArrowSmallLeftIcon,
   ArrowSmallRightIcon,
+  ChatBubbleLeftIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
@@ -122,7 +123,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       label: "New Compost Note",
       onClick: newCompostNote,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
-      tooltip: "Command+Shift+c",
+      tooltip: "Command+Shift+m",
     },
     /*  {
       label: "Grid",
@@ -155,6 +156,18 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
         dispatch(librarySlice.actions.togglePrompts());
       },
       tooltip: "Command+p",
+    },
+    {
+      label:
+        state.panels.rightSidebar.open &&
+        state.panels.rightSidebar.activePanel === "chat"
+          ? "Close Chat"
+          : "Open Chat",
+      icon: <ChatBubbleLeftIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleChat());
+      },
+      tooltip: "Command+shift+c",
     },
 
     {

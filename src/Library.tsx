@@ -206,10 +206,10 @@ export default function Library({ mobile = false }) {
       ) {
         dispatch(librarySlice.actions.setViewMode("diff"));
       }
-    } else if (event.altKey && event.key === "n") {
-      event.preventDefault();
-      await newChapter();
     } else if (event.shiftKey && event.metaKey && event.key === "c") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.toggleChat());
+    } else if (event.shiftKey && event.metaKey && event.key === "m") {
       event.preventDefault();
       await newCompostNote();
     } else if (event.shiftKey && event.metaKey && event.key === "r") {

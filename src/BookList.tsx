@@ -236,8 +236,8 @@ export default function BookList({ cachedBooks = null }) {
     />
   );
   // Account for compost heap book, which is always there
-  const booksLength = books.length - 1;
-
+  let booksLength = books.length - 1;
+  if (booksLength < 0) booksLength = 0;
   let bookCountTitle = `${booksLength} books`;
   if (booksLength === 1) {
     bookCountTitle = "1 book";

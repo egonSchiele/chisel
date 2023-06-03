@@ -1,5 +1,6 @@
 import {
   Bars3Icon,
+  ChatBubbleLeftIcon,
   ChatBubbleOvalLeftIcon,
   CheckCircleIcon,
   ChevronLeftIcon,
@@ -333,7 +334,7 @@ export default function Nav({
                     }}
                     selector="chat-button"
                   >
-                    <ChatBubbleOvalLeftIcon
+                    <ChatBubbleLeftIcon
                       className="h-5 w-5"
                       aria-hidden="true"
                     />
