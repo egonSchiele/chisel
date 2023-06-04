@@ -48,6 +48,7 @@ import BlocksSidebar from "./BlocksSidebar";
 import OutlineSidebar from "./OutlineSidebar";
 import FocusSidebar from "./FocusSidebar";
 import Tabs from "./Tabs";
+import EditHistorySidebar from "./EditHistorySidebar";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -578,6 +579,10 @@ export default function Library({ mobile = false }) {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "blocks";
 
+  const editHistoryOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "editHistory";
+
   const outlineOpen =
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "outline";
@@ -792,6 +797,22 @@ export default function Library({ mobile = false }) {
                   className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
                 >
                   <BlocksSidebar />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="Edit history sidebar">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.leftSidebar.open}
+              className={` top-0 left-0`}
+            >
+              <SlideTransition show={editHistoryOpen} direction="left">
+                <div
+                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                >
+                  <EditHistorySidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

@@ -4,6 +4,7 @@ import {
   BarsArrowDownIcon,
   BarsArrowUpIcon,
   DocumentDuplicateIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,6 +98,14 @@ export default function BlockActionsSidebar({}: {}) {
       dispatch(librarySlice.actions.setViewMode("diff"));
     },
     icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  items.push({
+    label: "Delete block",
+    onClick: () => {
+      dispatch(librarySlice.actions.deleteBlock(index));
+    },
+    icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
   });
 
   items.forEach((item) => {

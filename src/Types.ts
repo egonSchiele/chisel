@@ -22,6 +22,13 @@ export type State = {
   activeTab: number | null;
   _temporaryFocusModeState?: string;
   _cachedPanelState?: PanelState;
+  editHistory: History[];
+};
+
+export type History = {
+  id: string;
+  label: string;
+  books: Book[];
 };
 
 export type Tab = {
@@ -34,6 +41,19 @@ export type TabStateInfo = {
   bookid: string;
   bookTitle: string;
 };
+
+export type ActivePanel =
+  | "info"
+  | "suggestions"
+  | "settings"
+  | "history"
+  | "chat";
+export type LeftActivePanel =
+  | "filenavigator"
+  | "prompts"
+  | "blocks"
+  | "outline"
+  | "editHistory";
 
 export type SelectedText = {
   index: number;
@@ -393,8 +413,8 @@ export type User = {
   created_at: string;
 };
 
-export type History = string[];
-
+/* export type History = string[];
+ */
 export type Error = {
   tag: "error";
   message: string;
@@ -430,18 +450,6 @@ export type SelectOption = {
   label: string;
   value: string;
 };
-
-export type ActivePanel =
-  | "info"
-  | "suggestions"
-  | "settings"
-  | "history"
-  | "chat";
-export type LeftActivePanel =
-  | "filenavigator"
-  | "prompts"
-  | "blocks"
-  | "outline";
 
 export type LibraryContextType = {
   newChapter: (title?: any, text?: any, bookid?: any) => Promise<void>;

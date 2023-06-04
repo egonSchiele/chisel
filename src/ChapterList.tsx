@@ -372,7 +372,7 @@ export default function ChapterList({
     className: buttonStyles,
   };
 
-  let rightMenuItem: any = newMenuItem; //, dropdownMenu];
+  let rightMenuItem: any = bookid && newMenuItem; //, dropdownMenu];
 
   if (mobile) {
     rightMenuItem = {

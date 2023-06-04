@@ -194,6 +194,17 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       },
       tooltip: "Command+Shift+b",
     },
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "editHistory"
+          ? "Close Edit History"
+          : "Open Edit History",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleEditHistory());
+      },
+    },
 
     {
       label:

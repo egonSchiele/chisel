@@ -76,6 +76,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     popupData: null,
     openTabs: [],
     activeTab: null,
+    editHistory: [],
   };
 };
 
@@ -118,6 +119,7 @@ export const librarySlice = createSlice({
       state.selectedBookId = action.payload;
     },
     deleteBook(state: t.State, action: PayloadAction<string>) {
+      saveToEditHistory(state, "delete book");
       const bookid = action.payload;
       state.books = state.books.filter((book) => book.bookid !== bookid);
     },
@@ -138,6 +140,7 @@ export const librarySlice = createSlice({
       });
     },
     deleteChapter(state: t.State, action: PayloadAction<string>) {
+      saveToEditHistory(state, "delete chapter");
       const chapterid = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book) return;
@@ -213,6 +216,7 @@ export const librarySlice = createSlice({
       state: t.State,
       action: PayloadAction<{ text: string; metaKey: boolean }>
     ) {
+      saveToEditHistory(state, "restore from git history");
       const { text, metaKey } = action.payload;
       const { activeTextIndex } = state.editor;
       const chapter = getSelectedChapter({ library: state });
@@ -271,6 +275,7 @@ export const librarySlice = createSlice({
       state.settingsSaved = action.payload;
     },
     moveChapter(state: t.State, action: PayloadAction<string>) {
+      saveToEditHistory(state, "move chapter");
       const chapter = getSelectedChapter({ library: state });
       const book = getSelectedBook({ library: state });
       if (!book) return;
@@ -334,6 +339,7 @@ export const librarySlice = createSlice({
       }
     },
     addToContents(state: t.State, action: PayloadAction<string>) {
+      saveToEditHistory(state, "add to contents");
       const toAdd = action.payload;
       const { activeTextIndex } = state.editor;
       const chapter = getSelectedChapter({ library: state });
@@ -404,6 +410,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     setChapterOrder(state: t.State, action: PayloadAction<t.ChapterId[]>) {
+      saveToEditHistory(state, "chapter order");
       const ids = action.payload;
 
       const book = getSelectedBook({ library: state });
@@ -475,6 +482,9 @@ export const librarySlice = createSlice({
     },
     toggleOutline(state: t.State) {
       toggleBase(state, "outline");
+    },
+    toggleEditHistory(state: t.State) {
+      toggleBase(state, "editHistory");
     },
 
     toggleRightSidebar(state: t.State) {
@@ -721,6 +731,7 @@ export const librarySlice = createSlice({
         setDiffWith?: boolean;
       }>
     ) {
+      saveToEditHistory(state, "add version");
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
       const { index, text, setDiffWith } = action.payload;
@@ -782,6 +793,7 @@ export const librarySlice = createSlice({
       state: t.State,
       action: PayloadAction<{ index: number }>
     ) {
+      saveToEditHistory(state, "delete all versions");
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
       const { index } = action.payload;
@@ -832,6 +844,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     mergeBlockUp(state: t.State, action: PayloadAction<number | null>) {
+      saveToEditHistory(state, "merge block up");
       const index = action.payload || state.editor.activeTextIndex;
       if (index === 0) return;
       const chapter = getSelectedChapter({ library: state });
@@ -846,6 +859,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     mergeBlockDown(state: t.State, action: PayloadAction<number | null>) {
+      saveToEditHistory(state, "merge block down");
       const index = action.payload || state.editor.activeTextIndex;
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
@@ -862,6 +876,7 @@ export const librarySlice = createSlice({
       state: t.State,
       action: PayloadAction<number | null>
     ) {
+      saveToEditHistory(state, "merge with surrounding blocks");
       const index = action.payload || state.editor.activeTextIndex;
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
@@ -877,6 +892,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     deleteBlock(state: t.State, action: PayloadAction<number>) {
+      saveToEditHistory(state, "delete block");
       const index = action.payload;
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
@@ -890,6 +906,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     extractBlock(state: t.State) {
+      saveToEditHistory(state, "extract block");
       let { index, length, contents } = state.editor.selectedText;
       if (
         length === 0 &&
@@ -1010,6 +1027,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     deleteCharacter(state: t.State, action: PayloadAction<{ index: number }>) {
+      saveToEditHistory(state, "delete character");
       const book = getSelectedBook({ library: state });
       if (!book) return;
       if (!book.characters) return;
@@ -1102,6 +1120,18 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
       chapter.pinToHome = !chapter.pinToHome;
+      state.saved = false;
+    },
+    restoreFromEditHistory(state: t.State, action: PayloadAction<number>) {
+      const historyId = action.payload;
+      const prevState = state.editHistory[historyId];
+
+      if (!prevState) return;
+
+      saveToEditHistory(state, "restore from history");
+
+      state.books = prevState.books;
+      state.editor._pushTextToEditor = nanoid();
       state.saved = false;
     },
   },
@@ -1357,4 +1387,13 @@ function toggleBase(state: t.State, panel: t.LeftActivePanel) {
     "leftSidebarOpen",
     state.panels.leftSidebar.open ? "true" : "false"
   );
+}
+
+function saveToEditHistory(state: t.State, label: string) {
+  const books = state.books;
+  state.editHistory.push({
+    label,
+    books: JSON.parse(JSON.stringify(books)),
+    id: nanoid(),
+  });
 }
