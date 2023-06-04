@@ -1255,26 +1255,33 @@ export const getSelectedBookChapters = (
 
 export const getNextChapter = (state: RootState): t.Chapter | null => {
   const chapters = getSelectedBookChapters(state);
-
+  const selectedChapter = getSelectedChapter(state);
   if (!chapters) return null;
+  if (chapters.length < 2) return null;
 
   const index = chapters.findIndex(
-    (chapter) => chapter.chapterid === chapter.chapterid
+    (chapter) => selectedChapter.chapterid === chapter.chapterid
   );
+  console.log(chapters.length, index, "next chapter");
   if (index === -1) return null;
+  if (chapters.length === 2 && index === 1) return null;
   if (index === chapters.length - 1) return chapters[0];
   return chapters[index + 1];
 };
 
 export const getPreviousChapter = (state: RootState): t.Chapter | null => {
   const chapters = getSelectedBookChapters(state);
-
+  const selectedChapter = getSelectedChapter(state);
   if (!chapters) return null;
+  if (chapters.length < 2) return null;
 
   const index = chapters.findIndex(
-    (chapter) => chapter.chapterid === chapter.chapterid
+    (chapter) => selectedChapter.chapterid === chapter.chapterid
   );
+  console.log({ chapters });
+  console.log(chapters.length, index, "previous chapter");
   if (index === -1) return null;
+  if (chapters.length === 2 && index === 0) return null;
   if (index === 0) return chapters[chapters.length - 1];
   return chapters[index - 1];
 };

@@ -47,6 +47,7 @@ import Popup from "./components/Popup";
 import LibraryLauncher from "./components/LibraryLauncher";
 import Button from "./components/Button";
 import LibraryContext from "./LibraryContext";
+import { useColors } from "./lib/hooks";
 
 export default function Library() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -63,6 +64,10 @@ export default function Library() {
     }
     return null;
   });
+
+  const colors = {
+    background: "bg-white dark:bg-gray-900",
+  }; //useColors();
 
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
@@ -197,7 +202,11 @@ export default function Library() {
   }
 
   if (!state.booksLoaded) {
-    return <div className="h-screen w-screen bg-gray-800 animate-pulse"></div>;
+    return (
+      <div
+        className={`h-screen w-screen ${colors.background} animate-pulse`}
+      ></div>
+    );
   }
 
   // @ts-ignore

@@ -326,14 +326,6 @@ export default function ChapterList({
     animate: true,
   }; */
 
-  /*  rightMenuItem = mobile && {
-    label: "Back",
-    icon: <p>Back</p>,
-    onClick: () => navigate("/"),
-    className: buttonStyles,
-    animate: true,
-  }; */
-
   const newMenuItem = {
     label: "New Chapter",
     icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
@@ -381,6 +373,16 @@ export default function ChapterList({
   };
 
   let rightMenuItem: any = newMenuItem; //, dropdownMenu];
+
+  if (mobile) {
+    rightMenuItem = {
+      label: "Back",
+      icon: <p>Back</p>,
+      onClick: () => navigate("/"),
+      className: buttonStyles,
+      animate: true,
+    };
+  }
 
   if (editing) {
     rightMenuItem = [

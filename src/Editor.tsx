@@ -9,7 +9,7 @@ import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
 import Select from "./components/Select";
 import "./globals.css";
-import { useKeyDown, useKeyboardScroll } from "./lib/hooks";
+import { useColors, useKeyDown, useKeyboardScroll } from "./lib/hooks";
 import {
   getNextChapter,
   getPreviousChapter,
@@ -36,6 +36,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
 
   const nextChapter = useSelector(getNextChapter);
   const previousChapter = useSelector(getPreviousChapter);
+  const colors = useColors();
 
   const currentChapterId = useSelector(
     (state: RootState) => state.library.selectedChapterId
@@ -159,7 +160,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           </div>
 
           {
-            <div className="w-full flex mt-sm">
+            <div className={`w-full flex mt-sm ${colors.secondaryTextColor}`}>
               {previousChapter && (
                 <div className="flex-none">
                   {/* <ArrowSmallLeftIcon className="w-4 h-4 mr-sm" /> */}

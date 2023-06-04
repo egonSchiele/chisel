@@ -663,6 +663,7 @@ export default function Library({ mobile = false }) {
             }}
           >
             <ArrowUpIcon className="w-8 h-8" />
+            <p className="w-full text-center">{window.scrollY}</p>
           </div>
         )}
 
