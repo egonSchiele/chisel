@@ -815,7 +815,7 @@ export const librarySlice = createSlice({
       if (!chapter) return;
       const { index, caption } = action.payload;
       const block = chapter.text[index];
-      console.log("addCaption", block);
+
       block.caption = caption;
       block.id = nanoid();
 
@@ -904,16 +904,14 @@ export const librarySlice = createSlice({
       if (!chapter) return;
       const text = chapter.text[state.editor.activeTextIndex];
 
-      /*        console.log("extractBlock", index, length, contents, text.text, state.editor.activeTextIndex)
-       */ if (length === 0) {
+      if (length === 0) {
         if (index === 0) {
           // newBlockBeforeCurrent
           const newBlock = newBlockFromCurrent(state);
           if (!newBlock) return;
           chapter.text.splice(state.editor.activeTextIndex, 0, newBlock);
           const cur = current(chapter.text);
-          //   console.log("cur", cur)
-          //        state.saved = false;
+
           return;
         } else if (index === text.text.length - 1) {
           // newBlockAfterCurrent
@@ -1262,7 +1260,7 @@ export const getNextChapter = (state: RootState): t.Chapter | null => {
   const index = chapters.findIndex(
     (chapter) => selectedChapter.chapterid === chapter.chapterid
   );
-  console.log(chapters.length, index, "next chapter");
+
   if (index === -1) return null;
   if (chapters.length === 2 && index === 1) return null;
   if (index === chapters.length - 1) return chapters[0];
@@ -1278,8 +1276,7 @@ export const getPreviousChapter = (state: RootState): t.Chapter | null => {
   const index = chapters.findIndex(
     (chapter) => selectedChapter.chapterid === chapter.chapterid
   );
-  console.log({ chapters });
-  console.log(chapters.length, index, "previous chapter");
+
   if (index === -1) return null;
   if (chapters.length === 2 && index === 0) return null;
   if (index === 0) return chapters[chapters.length - 1];

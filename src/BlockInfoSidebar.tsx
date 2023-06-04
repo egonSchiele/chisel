@@ -1,6 +1,6 @@
 import InfoSection from "./components/InfoSection";
-import { RadioGroup } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import RadioGroup from "./components/RadioGroup";
+
 import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import LibraryContext from "./LibraryContext";
@@ -124,43 +124,26 @@ function BlockLanguage({
   );
 }
 function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
-  let [plan, setPlan] = useState("startup");
-  const colors = useColors();
-  function getStyle(checked) {
-    let styles =
-      " w-full p-xs my-1 rounded-md border border-gray-300 dark:border-gray-700 text-sm cursor-pointer flex hover:bg-gray-100 dark:hover:bg-gray-700";
-    if (checked) {
-      styles +=
-        " bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 dark:hover:bg-blue-500";
-    }
-    return styles;
-  }
-
-  function option(type, label) {
-    return (
-      <RadioGroup.Option value={type}>
-        {({ checked }) => (
-          <div className={getStyle(checked)}>
-            <span className="flex-grow">{label}</span>
-            {checked && (
-              <div className="shrink-0 text-white">
-                <CheckIcon className="h-5 w-5" />
-              </div>
-            )}
-          </div>
-        )}
-      </RadioGroup.Option>
-    );
-  }
-
+  const options = [
+    { type: "plain", label: "Plain" },
+    { type: "markdown", label: "Markdown" },
+    { type: "code", label: "Code" },
+    { type: "embeddedText", label: "Embedded Text" },
+  ];
   return (
-    <RadioGroup value={type} onChange={setType} className={"grid grid-cols-1"}>
-      <RadioGroup.Label className="settings_label">Type</RadioGroup.Label>
+    <RadioGroup
+      value={type}
+      onChange={setType}
+      className={"grid grid-cols-1"}
+      label="Type"
+      options={options}
+    />
+    /*  <RadioGroup.Label className="settings_label">Type</RadioGroup.Label>
       {option("plain", "Plain")}
       {option("markdown", "Markdown")}
       {option("code", "Code")}
       {option("embeddedText", "Embedded Text")}
-    </RadioGroup>
+    </RadioGroup> */
   );
 }
 
@@ -284,7 +267,7 @@ export default function BlockInfoSidebar({}: {}) {
   listItems.push(
     <li key="reference">
       <Switch
-        label="Reference"
+        label="Pin"
         enabled={currentText.reference}
         setEnabled={() =>
           dispatch(librarySlice.actions.toggleReference(state.activeTextIndex))
@@ -339,7 +322,6 @@ export default function BlockInfoSidebar({}: {}) {
       items={listItems}
       leftMenuItem={null}
       rightMenuItem={null}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-700"
       selector="blockInfoList"
     />
   );

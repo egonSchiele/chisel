@@ -76,7 +76,6 @@ export default function FocusSidebar() {
       items={items}
       leftMenuItem={null}
       rightMenuItem={null}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-l border-b border-gray-700 w-48"
       selector="focusModeList"
     />
   );

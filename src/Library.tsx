@@ -275,7 +275,7 @@ export default function Library({ mobile = false }) {
     if (result.tag === "success") {
       console.log(result.payload);
       setCachedBooks(
-        result.payload.map((book) => ({
+        result.payload.books.map((book) => ({
           title: book.title,
           bookid: book.bookid,
           tag: book.tag,

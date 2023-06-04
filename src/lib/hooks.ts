@@ -116,6 +116,7 @@ export function lightColors() {
   let backgroundAlt = "bg-gray-50 hover:bg-gray-100";
   let selectedBackground = "bg-gray-300";
   let borderColor = "border-gray-100";
+
   let selectedBorderColor = "border-gray-300";
   let primaryTextColor = "text-gray-900";
   let secondaryTextColor = "text-gray-500";

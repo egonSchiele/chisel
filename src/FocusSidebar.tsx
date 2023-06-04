@@ -15,6 +15,7 @@ import BlockInfoSidebar from "./BlockInfoSidebar";
 import OutlineSidebar from "./OutlineSidebar";
 import FocusChecksSidebar from "./FocusChecksSidebar";
 import SynonymsSidebar from "./SynonymsSidebar";
+import { useColors } from "./lib/hooks";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -26,26 +27,28 @@ export default function FocusSidebar({ tabIndex = 1 }: { tabIndex?: number }) {
   const state = useSelector((state: RootState) => state.library.editor);
   const index = state.activeTextIndex;
   const currentText = useSelector(getText(index));
-
+  const colors = useColors();
   if (!currentText) return null;
   function getClassNames({ selected }) {
     const defaultClasses = "w-full py-1 text-sm font-medium text-center";
     return classNames(
       defaultClasses,
-      selected
-        ? "bg-gray-700 hover:bg-gray-500"
-        : "bg-dmSidebarSecondary hover:bg-gray-600"
+      selected ? colors.selectedBackground : colors.background
     );
   }
   return (
     <div className="w-full px-0">
       <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <Tab.List className="flex border-r border-gray-700">
+        <Tab.List className={`flex border-r ${colors.borderColor}`}>
           <Tab className={getClassNames}>
-            <BugAntIcon className="w-5 h-5 mx-auto text-gray-200" />
+            <BugAntIcon
+              className={`w-5 h-5 mx-auto ${colors.primaryTextColor}`}
+            />
           </Tab>
           <Tab className={getClassNames}>
-            <BeakerIcon className="w-5 h-5 mx-auto text-gray-200" />
+            <BeakerIcon
+              className={`w-5 h-5 mx-auto ${colors.primaryTextColor}`}
+            />
           </Tab>
         </Tab.List>
         <Tab.Panels className="">

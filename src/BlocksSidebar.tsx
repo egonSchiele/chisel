@@ -39,7 +39,7 @@ export default function BlockSidebar({ tabIndex = 0 }: { tabIndex?: number }) {
   return (
     <div className="w-full px-0">
       <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <Tab.List className="flex border-r border-gray-700">
+        <Tab.List className={`flex border-r ${colors.borderColor}`}>
           <Tab className={getClassNames}>
             <InformationCircleIcon
               className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}

@@ -60,3 +60,7 @@ yarn cypress
 ```
 
 And follow the instructions.
+
+### Bundle size
+
+Run `yarn buildstats` and then run through https://chrisbateman.github.io/webpack-visualizer/

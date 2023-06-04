@@ -176,7 +176,6 @@ export default function SynonymsSidebar() {
       items={items}
       leftMenuItem={null}
       rightMenuItem={null}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-l border-b border-gray-700 w-72"
       selector="synonymsList"
     />
   );

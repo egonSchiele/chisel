@@ -73,7 +73,7 @@ export default function List({
       data-selector={`${selector}-list`}
     >
       <div
-        className={`w-full h-5 flex pb-md border-b ${colors.borderColor} relative`}
+        className={`w-full h-5 flex border-b ${colors.borderColor} relative`}
       >
         <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
           <h3
@@ -100,9 +100,10 @@ export default function List({
           </div>
         )}
       </div>
-      <ul className="pt-xs pb-lg px-xs" data-title={title}>
+      <ul className="pt-xs px-xs" data-title={title}>
         {items}
       </ul>
+      <div className="h-24 block"></div> {/* Spacer */}
     </div>
   );
 }

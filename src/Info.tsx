@@ -11,6 +11,8 @@ import {
 import readingTime from "reading-time/lib/reading-time";
 import { getChapterText, useLocalStorage } from "./utils";
 import Switch from "./components/Switch";
+import RadioGroup from "./components/RadioGroup";
+import { Chapter, chapterStatuses } from "./Types";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -48,13 +50,26 @@ function CharacterInfo() {
   }
   return null;
 }
-function Line({ text, subtext }) {
+
+function ChapterStatus({ chapter }: { chapter: Chapter }) {
+  const dispatch = useDispatch();
+  function setStatus(status) {
+    dispatch(librarySlice.actions.setChapterStatus(status));
+  }
+  const options = chapterStatuses.map((status) => ({
+    type: status,
+    label: status,
+  }));
   return (
-    <p>
-      {text} <span className="text-gray-400">{subtext}</span>
-    </p>
+    <RadioGroup
+      value={chapter.status || "not-started"}
+      onChange={setStatus}
+      label="Chapter Status"
+      options={options}
+    />
   );
 }
+
 export default function Info() {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
@@ -70,7 +85,7 @@ export default function Info() {
     <div className="text-sm xl:text-md">
       <InfoSection text={infoText} />
       <Switch
-        label="Show hidden in export?"
+        label="Include blocks that are hidden in export to count?"
         enabled={showHidden}
         setEnabled={setShowHidden}
       />
@@ -81,6 +96,9 @@ export default function Info() {
           dispatch(librarySlice.actions.togglePinToHome());
         }}
       />
+      <div className="mt-sm">
+        <ChapterStatus chapter={currentChapter} />
+      </div>
       <CharacterInfo />
     </div>
   );

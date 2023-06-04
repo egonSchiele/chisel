@@ -101,7 +101,6 @@ export default function OutlineSidebar() {
       items={items}
       leftMenuItem={null}
       rightMenuItem={null}
-      className="bg-sidebarSecondary dark:bg-dmsidebarSecondary border-r border-b border-gray-700 w-96"
       selector="outlineList"
     />
   );

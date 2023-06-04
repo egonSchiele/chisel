@@ -26,7 +26,7 @@ export default function Button({
   let colors = `border border-gray-300 dark:border-gray-700 ${globalColors.buttonBackgroundColorSecondary} ${globalColors.buttonTextColorSecondary}`;
 
   if (style === "secondary") {
-    colors = `${globalColors.buttonBackgroundColor} hover:bg-buttonhover ${globalColors.buttonTextColor}`;
+    colors = `${globalColors.buttonBackgroundColor} ${globalColors.buttonTextColor}`;
   }
 
   const sizes = {

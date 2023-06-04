@@ -3,6 +3,7 @@ import {
   Bars3Icon,
   BarsArrowDownIcon,
   BarsArrowUpIcon,
+  DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
 import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -89,6 +90,14 @@ export default function BlockActionsSidebar({}: {}) {
       icon: <ArrowsUpDownIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
+
+  items.push({
+    label: "Diff with block below",
+    onClick: () => {
+      dispatch(librarySlice.actions.setViewMode("diff"));
+    },
+    icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
+  });
 
   items.forEach((item) => {
     listItems.push(

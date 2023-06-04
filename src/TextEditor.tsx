@@ -30,6 +30,7 @@ import Tag from "./components/Tag";
 import VersionsMenu from "./components/VersionsMenu";
 import { languages } from "./lib/languages";
 import { hasVersions } from "./utils";
+import { useColors } from "./lib/hooks";
 
 let Inline = Quill.import("blots/inline");
 
@@ -139,6 +140,7 @@ function TextEditor({
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
 
   const dispatch = useDispatch();
+  const colors = useColors();
 
   const quillRef = useRef();
   const inputDiv = useRef<HTMLDivElement>();
@@ -387,13 +389,10 @@ function TextEditor({
 
   const handleKeyDown = (event) => {
     setEdited(true);
-    console.log("handleKeyDown", event.shiftKey, event.code);
+
     // @ts-ignore
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
-    if (range) {
-      console.log("range", range);
-    }
 
     if (event.shiftKey && event.code === "Quote" && textIsSelected()) {
       event.preventDefault();
@@ -569,8 +568,8 @@ function TextEditor({
     }
   }
 
-  let borderColor = "border-gray-700";
-  if (isActive) borderColor = "border-gray-500";
+  let borderColor = colors.borderColor;
+  if (isActive) borderColor = colors.selectedBorderColor;
   //if (highlight) borderColor = "border-green-400";
 
   let textColor = "text-gray-300 dark:text-gray-500";
