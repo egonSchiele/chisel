@@ -13,7 +13,7 @@ import {
 import { RootState } from "./store";
 
 export default function EditHistorySidebar() {
-  const editHistory: t.History[] = useSelector(
+  const editHistory: t.EditHistory[] = useSelector(
     (state: RootState) => state.library.editHistory
   );
   const currentBook = useSelector(getSelectedBook);

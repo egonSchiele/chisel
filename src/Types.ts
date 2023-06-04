@@ -22,10 +22,10 @@ export type State = {
   activeTab: number | null;
   _temporaryFocusModeState?: string;
   _cachedPanelState?: PanelState;
-  editHistory: History[];
+  editHistory: EditHistory[];
 };
 
-export type History = {
+export type EditHistory = {
   id: string;
   label: string;
   books: Book[];
@@ -413,8 +413,8 @@ export type User = {
   created_at: string;
 };
 
-/* export type History = string[];
- */
+export type History = string[];
+
 export type Error = {
   tag: "error";
   message: string;
