@@ -296,24 +296,38 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     });
   });
 
-  /*   settings.prompts.forEach((prompt, i) => {
+  settings.prompts.forEach((prompt, i) => {
+    const onLoad = () => {
+      dispatch(librarySlice.actions.openRightSidebar());
+      dispatch(librarySlice.actions.setActivePanel("suggestions"));
+    };
+
+    function setLoading(bool) {
+      if (bool) {
+        dispatch(librarySlice.actions.loading());
+      } else {
+        dispatch(librarySlice.actions.loaded());
+      }
+    }
+
     launchItems.push({
       label: prompt.label,
       onClick: () => {
         fetchSuggestionsWrapper(
           settings,
           setLoading,
-          onSuggestionLoad,
+          onLoad,
           prompt.text,
           prompt.label,
           getTextForSuggestions(),
+          currentBook?.synopsis || "",
           dispatch
         );
       },
 
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
     });
-  }); */
+  });
 
   /*   if (state.panels.sidebar.open) {
     launchItems.push({
