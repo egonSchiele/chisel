@@ -262,7 +262,7 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 
   const result = await saveBook(book);
   if (result.success) {
-    data.created_at = updateLastEdited(req);
+    result.data.created_at = updateLastEdited(req);
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
@@ -273,7 +273,7 @@ app.post("/api/saveChapter", requireLogin, async (req, res) => {
   const { chapter } = req.body;
   const result = await saveChapter(chapter);
   if (result.success) {
-    data.created_at = updateLastEdited(req);
+    result.data.created_at = updateLastEdited(req);
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
