@@ -104,6 +104,8 @@
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",
     "nodemon": "nodemon server.js",
+    "prof": "NODE_ENV=production node --prof server.js",
+    "profprocess": "node --prof-process isolate-0x118008000-31668-v8.log > processed.txt",
     "serve": "webpack serve",
     "test": "jest",
     "cypress": "cypress open",

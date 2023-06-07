@@ -42,6 +42,7 @@ module.exports = {
     register: "./login.tsx",
     mobile: "./mobile.tsx",
     404: "./empty.tsx",
+    sw: "./sw.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

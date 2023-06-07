@@ -1,16 +1,14 @@
 import {
   Bars3Icon,
   ChatBubbleLeftIcon,
-  ChatBubbleOvalLeftIcon,
   CheckCircleIcon,
+  CheckIcon,
   ChevronLeftIcon,
-  ChevronRightIcon,
   DocumentDuplicateIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
   MinusIcon,
   PencilIcon,
-  ScissorsIcon,
   SparklesIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
@@ -18,15 +16,15 @@ import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LibErrorBoundary from "./LibErrorBoundary";
+import LibraryContext from "./LibraryContext";
+import Tabs from "./Tabs";
 import * as t from "./Types";
-import * as fd from "./lib/fetchData";
 import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
+import * as fd from "./lib/fetchData";
+import { useColors } from "./lib/hooks";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-import Tabs from "./Tabs";
-import { useColors } from "./lib/hooks";
-import LibraryContext from "./LibraryContext";
 // import { AudioRecorder } from "react-audio-voice-recorder";
 export default function Nav({
   mobile,
@@ -189,9 +187,17 @@ export default function Nav({
               </NavButton>
             )}
 
-            {state.saved && (
+            {state.saved && !state.serviceWorkerRunning && (
               <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckCircleIcon
+                  className={`h-5 w-5 ${colors.highlightTextColor}`}
+                  aria-hidden="true"
+                />
+              </NavButton>
+            )}
+            {state.saved && state.serviceWorkerRunning && (
+              <NavButton color="nav" label="Saved" onClick={() => {}}>
+                <CheckIcon
                   className={`h-5 w-5 ${colors.highlightTextColor}`}
                   aria-hidden="true"
                 />
@@ -244,9 +250,17 @@ export default function Nav({
                 </NavButton>
               )}
 
-              {state.saved && (
+              {state.saved && !state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckCircleIcon
+                    className={`h-5 w-5 ${colors.highlightTextColor}`}
+                    aria-hidden="true"
+                  />
+                </NavButton>
+              )}
+              {state.saved && state.serviceWorkerRunning && (
+                <NavButton color="nav" label="Saved" onClick={() => {}}>
+                  <CheckIcon
                     className={`h-5 w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />

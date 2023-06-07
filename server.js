@@ -48,6 +48,7 @@ import {
   success,
   failure,
   getChaptersForBook,
+  getBookToCheckAccess,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
@@ -141,6 +142,9 @@ const csrf = (req, res, next) => {
 
 app.use(csrf);
 
+const bookAccessCache = {};
+const chapterAccessCache = {};
+
 // eslint-disable-next-line consistent-return
 const checkBookAccess = async (req, res, next) => {
   const c = req.cookies;
@@ -157,7 +161,20 @@ const checkBookAccess = async (req, res, next) => {
     return res.redirect("/404");
   }
 
-  const book = await getBook(bookid);
+  const { userid } = c;
+  if (!userid) {
+    console.log("no userid");
+    return res.redirect("/404");
+  }
+
+  const key = `${userid}-${bookid}`;
+  if (bookAccessCache[key]) {
+    console.log("bookAccessCache hit");
+    next();
+    return;
+  }
+
+  const book = await getBookToCheckAccess(bookid);
 
   if (!book) {
     console.log(`no book with id, ${bookid}`);
@@ -166,7 +183,8 @@ const checkBookAccess = async (req, res, next) => {
     console.log("no access to book");
     res.redirect("/404");
   } else {
-    res.locals.book = book;
+    bookAccessCache[key] = true;
+    res.locals.bookid = bookid;
     next();
   }
 };
@@ -187,6 +205,14 @@ const checkChapterAccess = async (req, res, next) => {
     console.log("no bookid or chapterid");
     res.redirect("/404");
   }
+  const { userid } = c;
+  const key = `${userid}-${bookid}-${chapterid}`;
+  if (chapterAccessCache[key]) {
+    console.log("chapterAccessCache hit");
+    next();
+    return;
+  }
+
   const chapter = await getChapter(chapterid);
 
   if (!chapter) {
@@ -196,12 +222,22 @@ const checkChapterAccess = async (req, res, next) => {
     console.log("chapter is not part of book", chapterid, bookid);
     res.redirect("/404");
   } else {
-    res.locals.chapter = chapter;
+    chapterAccessCache[key] = true;
+    res.locals.chapterid = chapterid;
     next();
   }
 };
 
-app.use(noCache);
+//app.use(noCache);
+
+const lastEditedCache = {};
+
+function updateLastEdited(req) {
+  const date = Date.now();
+  const userid = getUserId(req);
+  lastEditedCache[userid] = date;
+  return date;
+}
 
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);
@@ -226,6 +262,7 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 
   const result = await saveBook(book);
   if (result.success) {
+    data.created_at = updateLastEdited(req);
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
@@ -234,9 +271,9 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
   const { chapter } = req.body;
-
   const result = await saveChapter(chapter);
   if (result.success) {
+    data.created_at = updateLastEdited(req);
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
@@ -253,6 +290,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       userid,
     });
     await saveBook(book);
+    const created_at = updateLastEdited(req);
     res.send(book);
     // res.redirect(`/book/${bookid}`);
   }
@@ -332,6 +370,7 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   const chapter = makeNewChapter(text, title, bookid);
 
   await saveChapter(chapter);
+  const created_at = updateLastEdited(req);
 
   res.send(chapter);
   // res.status(200).end();
@@ -455,6 +494,7 @@ const render = (filename, _data) => {
     template = fileCache[filename];
   }
   const result = template(data);
+
   return result;
 };
 
@@ -576,8 +616,16 @@ app.get("/api/books", requireLogin, noCache, async (req, res) => {
     res.status(404).end();
   } else {
     const books = await getBooks(userid);
-    res.status(200).json({ books });
+
+    const lastEdited = updateLastEdited(req);
+    res.status(200).json({ books, lastEdited });
   }
+});
+
+app.get("/api/getLastEdited", requireLogin, noCache, async (req, res) => {
+  const lastEdited = lastEditedCache[req.cookies.userid];
+  console.log("lastEdited", lastEdited);
+  res.status(200).json({ lastEdited });
 });
 
 app.get("/api/bookTitles", requireLogin, noCache, async (req, res) => {
@@ -607,29 +655,10 @@ app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid } = req.body;
   await deleteBook(bookid);
-  res.status(200).end();
+  const created_at = updateLastEdited(req);
+  res.status(200).json({ created_at });
   // res.redirect("/");
 });
-
-app.get(
-  "/api/book/:bookid",
-  requireLogin,
-  checkBookAccess,
-  async (req, res) => {
-    const { bookid } = req.params;
-    try {
-      let { book } = res.locals;
-      // Should always be set by the `checkBookAccess` middleware
-      if (!book) {
-        book = await getBook(bookid);
-      }
-      res.status(200).json(book);
-    } catch (error) {
-      console.error("Error getting book:", error);
-      res.status(400).json({ error });
-    }
-  }
-);
 
 app.get(
   "/api/exportBook/:bookid/:title",
@@ -637,7 +666,7 @@ app.get(
   checkBookAccess,
   async (req, res) => {
     try {
-      let { book } = res.locals;
+      const book = await getBook(res.locals.bookid);
 
       // creating archives
       const zip = new AdmZip();
@@ -663,13 +692,9 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const { chapterid, title } = req.params;
+    const { title } = req.params;
     try {
-      let { chapter } = res.locals;
-      // Not needed if checkChapterAccess occurs
-      if (!chapter) {
-        chapter = await getChapter(chapterid);
-      }
+      const chapter = await getChapter(res.locals.chapterid);
 
       res.set("Content-Disposition", `attachment; filename="${title}"`);
 
@@ -687,13 +712,9 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const { chapterid } = req.params;
     try {
-      let { chapter } = res.locals;
-      // Not needed if checkChapterAccess occurs
-      if (!chapter) {
-        chapter = await getChapter(chapterid);
-      }
+      const chapter = await getChapter(res.locals.chapterid);
+
       res.status(200).json(chapter);
     } catch (error) {
       console.error("Error getting chapter:", error);
@@ -710,8 +731,9 @@ app.post(
   async (req, res) => {
     const { chapterid, bookid } = req.body;
     try {
-      const data = await deleteChapter(chapterid, bookid);
-      res.status(200).json(data);
+      await deleteChapter(chapterid, bookid);
+      const created_at = updateLastEdited(req);
+      res.status(200).json({ created_at });
     } catch (error) {
       console.error("Error deleting chapter:", error);
       res.status(400).json({ error });
@@ -727,8 +749,9 @@ app.post(
   async (req, res) => {
     const { chapterid } = req.body;
     try {
-      const data = await favoriteChapter(chapterid);
-      res.status(200).json(data);
+      await favoriteChapter(chapterid);
+      const created_at = updateLastEdited(req);
+      res.status(200).json({ created_at });
     } catch (error) {
       console.error("Error favoriting chapter:", error);
       res.status(400).json({ error });
@@ -743,8 +766,9 @@ app.post(
   async (req, res) => {
     const { bookid } = req.body;
     try {
-      const data = await favoriteBook(bookid);
-      res.status(200).json(data);
+      await favoriteBook(bookid);
+      const created_at = updateLastEdited(req);
+      res.status(200).json({ created_at });
     } catch (error) {
       console.error("Error favoriting book:", error);
       res.status(400).json({ error });
@@ -800,7 +824,8 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const { chapter } = res.locals;
+    const chapter = await getChapter(res.locals.chapterid);
+
     const user = await getUser(req);
     const embeddings = await getEmbeddings(
       user,
@@ -815,8 +840,8 @@ app.get(
   requireLogin,
   checkBookAccess,
   async (req, res) => {
-    const { book } = res.locals;
-    const chapters = await getChaptersForBook(book.bookid);
+    const book = await getBook(res.locals.bookid);
+    const chapters = book.chapters;
     const user = await getUser(req);
     const timestamp = Date.now();
     let promises = chapters
@@ -880,7 +905,7 @@ app.post(
   requireLogin,
   checkBookAccess,
   async (req, res) => {
-    const { book } = res.locals;
+    const book = await getBook(res.locals.bookid);
     const chapters = await getChaptersForBook(book.bookid, true);
     const user = await getUser(req);
     const { question } = req.body;

@@ -298,7 +298,8 @@ export default function Library({ mobile = false }) {
 
   useEffect(() => {
     const func = async () => {
-      await Promise.all([fetchBooks(), fetchSettings(), fetchBookTitles()]);
+      await Promise.all([fetchBooks(), fetchSettings()]);
+      //await Promise.all([fetchBooks(), fetchSettings(), fetchBookTitles()]);
     };
     func();
   }, []);

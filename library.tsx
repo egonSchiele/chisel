@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { Provider } from 'react-redux';
+import { Provider } from "react-redux";
 import App from "./src/App";
-import { store } from './src/store';
+import { store } from "./src/store";
 
 const domNode = document.getElementById("root");
 const root = ReactDOM.createRoot(domNode);
@@ -12,5 +12,28 @@ root.render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </Provider>,
+  </Provider>
 );
+
+const registerServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+      });
+      if (registration.installing) {
+        console.log("Service worker installing");
+      } else if (registration.waiting) {
+        console.log("Service worker installed");
+      } else if (registration.active) {
+        console.log("Service worker active");
+      }
+    } catch (error) {
+      console.error(`Registration failed with ${error}`);
+    }
+  }
+};
+
+// …
+
+registerServiceWorker();

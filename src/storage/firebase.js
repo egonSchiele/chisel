@@ -76,6 +76,15 @@ export const getBook = async (bookid) => {
   return book;
 };
 
+export const getBookToCheckAccess = async (bookid) => {
+  console.log("getting book");
+  console.log({ bookid });
+  const bookRef = db.collection("books").doc(bookid);
+  const bookObj = await bookRef.get();
+  const book = bookObj.data();
+  return book;
+};
+
 export const getChaptersForBook = async (bookid, includeEmbeddings = false) => {
   const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
 

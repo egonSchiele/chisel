@@ -23,6 +23,8 @@ export type State = {
   _temporaryFocusModeState?: string;
   _cachedPanelState?: PanelState;
   editHistory: EditHistory[];
+  online: boolean;
+  serviceWorkerRunning: boolean;
 };
 
 export type EditHistory = {

@@ -1,22 +1,6 @@
 import * as t from "../Types";
 import { getCsrfToken } from "../utils";
 
-export const fetchBook = async (bookid: string): Promise<t.Result> => {
-  if (!bookid) return t.error("No bookid");
-  const res = await fetch(`/api/book/${bookid}`, { credentials: "include" });
-  if (!res.ok) {
-    const text = await res.text();
-    return t.error(`Error fetching book: ${text}`);
-  }
-  const data: t.Book = await res.json();
-
-  if (!data) {
-    return t.error("Book not found");
-  }
-
-  return t.success(data);
-};
-
 export const fetchSettings = async () => {
   const res = await fetch(`/api/settings`, { credentials: "include" });
   if (!res.ok) {

@@ -77,6 +77,8 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     openTabs: [],
     activeTab: null,
     editHistory: [],
+    online: true,
+    serviceWorkerRunning: false,
   };
 };
 
@@ -88,9 +90,18 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
         credentials: "include",
         signal,
       });
-
-      const { books } = await res.json();
+      //console.log("got res", res);
+      const json = await res.json();
+      //console.log("got json", json);
+      const { books, deepEqual, serviceWorkerRunning } = json;
+      console.log("got books", books, deepEqual, serviceWorkerRunning);
       dispatch(librarySlice.actions.setBooks(books));
+      if (deepEqual === false) {
+        dispatch(librarySlice.actions.setError("cache books out of date"));
+      }
+      if (serviceWorkerRunning) {
+        dispatch(librarySlice.actions.setServiceWorkerRunning(true));
+      }
     }
   );
 
@@ -108,6 +119,9 @@ export const librarySlice = createSlice({
         });
       });
       state.books = action.payload;
+    },
+    setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
+      state.serviceWorkerRunning = action.payload;
     },
     setBooksLoaded(state: t.State, action: PayloadAction<boolean>) {
       state.booksLoaded = action.payload;
@@ -308,6 +322,7 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
+      // this detects if a chapter was moved to a different book
       const chapter = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapter) return;
