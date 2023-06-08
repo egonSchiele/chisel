@@ -1052,7 +1052,7 @@ async function getSuggestions(
   ];
 
   const huggingfaceModels = ["TheBloke/guanaco-65B-HF", "gpt2"];
-
+  const localAiModels = ["ggml-gpt4all-j"];
   let result;
 
   if (openAiModels.includes(model)) {
@@ -1077,6 +1077,16 @@ async function getSuggestions(
     );
   } else if (huggingfaceModels.includes(model)) {
     result = await usingHuggingFace(
+      user,
+      prompt,
+      max_tokens,
+      model,
+      num_suggestions,
+      _messages,
+      customKey
+    );
+  } else if (localAiModels.includes(model)) {
+    result = await usingLocalAi(
       user,
       prompt,
       max_tokens,
@@ -1135,6 +1145,54 @@ async function usingReplicate(
   const output = await replicate.run(model, { input });
   console.log(output);
   return success({ choices: [{ text: output.join("") }], usage: 0 });
+}
+
+async function usingLocalAi(
+  user,
+  prompt,
+  max_tokens = 500,
+  model = "ggml-gpt4all-j",
+  num_suggestions = 1,
+  _messages = null,
+  customKey
+) {
+  if (!user.admin) {
+    return failure("sorry, only admins can use localai models");
+  }
+
+  console.log("localai", settings.localAiEndpoint, prompt);
+  const input = {
+    model,
+    prompt,
+    temperature: 0.9,
+  };
+  const body = JSON.stringify(input);
+  console.log(body);
+  try {
+    const output = await fetch(settings.localAiEndpoint, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(output);
+
+    const json = await output.json();
+
+    console.log({ json });
+
+    if (json.error) {
+      return failure(json.error.message);
+    }
+
+    const choices = json.choices.map((choice) => ({
+      text: choice.message.content,
+    }));
+
+    return success({ choices, usage: 0 });
+  } catch (e) {
+    console.log(e);
+    return failure(e.message);
+  }
 }
 
 function sanitize(str) {

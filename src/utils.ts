@@ -123,6 +123,8 @@ export const fetchSuggestionsWrapper = async (
   setLoading(false);
 
   if (result.tag === "error") {
+    setLoading(false);
+    console.log("error", result.message);
     dispatch(librarySlice.actions.setError(result.message));
     return;
   }

@@ -205,6 +205,17 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
         dispatch(librarySlice.actions.toggleEditHistory());
       },
     },
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "debug"
+          ? "Close Debug"
+          : "Open Debug",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleDebug());
+      },
+    },
 
     {
       label:

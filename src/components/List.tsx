@@ -55,6 +55,7 @@ export default function List({
   close = null,
   open = null,
   onTitleClick = null,
+  showScrollbar = false,
 }: {
   title: string;
   items: any[];
@@ -65,11 +66,14 @@ export default function List({
   close?: (() => void) | null;
   open?: (() => void) | null;
   onTitleClick?: (() => void) | null;
+  showScrollbar?: boolean;
 }) {
   const colors = useColors();
   return (
     <div
-      className={`px-xs py-sm h-screen no-scrollbar dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${colors.background} ${colors.borderColor} ${className} `}
+      className={`px-xs py-sm h-screen  dark:[color-scheme:dark] overflow-y-auto overflow-x-hidden w-full ${
+        showScrollbar ? "overflow-scroll" : "no-scrollbar"
+      } ${colors.background} ${colors.borderColor} ${className} `}
       data-selector={`${selector}-list`}
     >
       <div

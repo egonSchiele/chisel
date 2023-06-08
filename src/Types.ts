@@ -25,6 +25,7 @@ export type State = {
   editHistory: EditHistory[];
   online: boolean;
   serviceWorkerRunning: boolean;
+  fromCache: boolean;
 };
 
 export type EditHistory = {
@@ -55,7 +56,8 @@ export type LeftActivePanel =
   | "prompts"
   | "blocks"
   | "outline"
-  | "editHistory";
+  | "editHistory"
+  | "debug";
 
 export type SelectedText = {
   index: number;

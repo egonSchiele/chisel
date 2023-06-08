@@ -119,6 +119,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
       >
         <option>gpt-3.5-turbo</option>
         {settings.admin && <option>vicuna-13b</option>}
+        {settings.admin && <option>ggml-gpt4all-j</option>}
         {settings.admin && <option>llama-7b</option>}
         {settings.admin && <option>stablelm-tuned-alpha-7b</option>}
         {settings.admin && <option>flan-t5-xl</option>}

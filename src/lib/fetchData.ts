@@ -54,8 +54,12 @@ export const fetchSuggestions = async (
   });
 
   if (!res.ok) {
-    const error = await res.json();
-    return t.error(error.error);
+    try {
+      const error = await res.json();
+      return t.error(error.error);
+    } catch (e) {
+      return t.error(`Error fetching suggestions: ${e}`);
+    }
   }
 
   const data = await res.json();

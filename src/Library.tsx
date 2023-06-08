@@ -49,6 +49,7 @@ import OutlineSidebar from "./OutlineSidebar";
 import FocusSidebar from "./FocusSidebar";
 import Tabs from "./Tabs";
 import EditHistorySidebar from "./EditHistorySidebar";
+import DebugSidebar from "./DebugSidebar";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -584,6 +585,10 @@ export default function Library({ mobile = false }) {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "editHistory";
 
+  const debugOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "debug";
+
   const outlineOpen =
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "outline";
@@ -814,6 +819,22 @@ export default function Library({ mobile = false }) {
                   className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
                 >
                   <EditHistorySidebar />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="Debug sidebar">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.leftSidebar.open}
+              className={` top-0 left-0`}
+            >
+              <SlideTransition show={debugOpen} direction="left">
+                <div
+                  className={`w-1/2 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                >
+                  <DebugSidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

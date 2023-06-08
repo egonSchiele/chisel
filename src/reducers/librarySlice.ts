@@ -79,6 +79,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     editHistory: [],
     online: true,
     serviceWorkerRunning: false,
+    fromCache: false,
   };
 };
 
@@ -93,7 +94,7 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
       //console.log("got res", res);
       const json = await res.json();
       //console.log("got json", json);
-      const { books, deepEqual, serviceWorkerRunning } = json;
+      const { books, deepEqual, serviceWorkerRunning, fromCache } = json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
       dispatch(librarySlice.actions.setBooks(books));
       if (deepEqual === false) {
@@ -101,6 +102,9 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
       }
       if (serviceWorkerRunning) {
         dispatch(librarySlice.actions.setServiceWorkerRunning(true));
+      }
+      if (fromCache) {
+        dispatch(librarySlice.actions.setFromCache(true));
       }
     }
   );
@@ -122,6 +126,9 @@ export const librarySlice = createSlice({
     },
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
       state.serviceWorkerRunning = action.payload;
+    },
+    setFromCache(state: t.State, action: PayloadAction<boolean>) {
+      state.fromCache = action.payload;
     },
     setBooksLoaded(state: t.State, action: PayloadAction<boolean>) {
       state.booksLoaded = action.payload;
@@ -500,6 +507,9 @@ export const librarySlice = createSlice({
     },
     toggleEditHistory(state: t.State) {
       toggleBase(state, "editHistory");
+    },
+    toggleDebug(state: t.State) {
+      toggleBase(state, "debug");
     },
 
     toggleRightSidebar(state: t.State) {

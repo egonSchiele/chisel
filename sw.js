@@ -214,11 +214,21 @@ async function getBooksFromCacheOrServer() {
     );
   } else if (cachedLastEdited < freshLastEdited) {
     console.warn("local copy is outdated, fetching from server");
+    const cache = await caches.open("v1");
+
+    // first, back up the cache data
+    cache.put(
+      "/api/books/backup",
+      new Response(JSON.stringify({ books: cachedBooks }))
+    );
+
     return fetchBooksFromServer();
   } else {
     console.warn("fetching local copy from cache!");
     const books = await fetchBooksFromCache();
-    return new Response(JSON.stringify({ books, serviceWorkerRunning: true }));
+    return new Response(
+      JSON.stringify({ books, serviceWorkerRunning: true, fromCache: true })
+    );
   }
 }
 
