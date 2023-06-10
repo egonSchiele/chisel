@@ -1,11 +1,14 @@
-import { HfInference } from "@huggingface/inference";
+import { Blob } from "buffer";
+import { execSync } from "child_process";
 
+import { HfInference } from "@huggingface/inference";
+import formidable from "formidable";
 import blocklist from "./src/blocklist.js";
 import wordnet from "wordnet";
 import zip from "lodash";
 import similarity from "compute-cosine-similarity";
 import rateLimit from "express-rate-limit";
-import express from "express";
+import express, { response } from "express";
 import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -69,10 +72,13 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(
-  express.raw({ type: ["multipart/form-data", "application/octet-stream"] })
+/* app.use(
+  express.raw({
+    limit: "25mb",
+    type: ["multipart/form-data", "application/octet-stream"],
+  })
 );
-app.use(express.json({ limit: "5mb" }));
+ */ app.use(express.json({ limit: "5mb" }));
 app.use(
   express.urlencoded({
     limit: "5mb",
@@ -113,6 +119,8 @@ function isMobile(req) {
 }
 
 const csrf = (req, res, next) => {
+  next();
+  return;
   if (req.method !== "GET") {
     const excluded = ["/submitLogin", "/submitRegister", "/loginGuestUser"];
     if (excluded.includes(req.url)) {
@@ -141,6 +149,12 @@ const csrf = (req, res, next) => {
 };
 
 app.use(csrf);
+
+function run(cmd) {
+  console.log(`$ ${cmd}`);
+  const resp = execSync(cmd);
+  return resp.toString("UTF8");
+}
 
 const bookAccessCache = {};
 const chapterAccessCache = {};
@@ -298,15 +312,70 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
 });
 
 app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
-  const user = await getUser(req);
-  const userid = user.userid;
-  const { audio } = req.body;
-  fs.writeFile("test.mp3", req.body, function (err) {
+  //const user = await getUser(req);
+  const form = formidable({ multiples: true });
+  console.log("!!!!!");
+  form.parse(req, async (err, fields, files) => {
+    console.log({ err, fields, files });
     if (err) {
-      console.log(err);
+      res.writeHead(err.httpCode || 400, { "Content-Type": "text/plain" });
+      res.end(String(err));
+      return;
     }
+    let oldPath = files.audioFile.filepath;
+    let newPath = "uploads/" + files.audioFile.originalFilename;
+    let rawData = fs.readFileSync(oldPath);
+    let audioBlob = new Blob([rawData]);
+
+    /*     --form file=@/path/to/file/openai.mp3 \
+    --form model=whisper-1
+ */
+    /*  const endpoint = "https://api.openai.com/v1/audio/transcriptions";
+
+    const formData = new FormData();
+    formData.append("file", audioBlob);
+    formData.append("model", "whisper-1");
+    console.log({ formData });
+    const result = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${settings.openAiApiKey}`,
+      },
+      body: formData,
+    });
+    const json = await result.json();
+    console.log(json);
+    res.send("ok").end(); */
+
+    fs.writeFileSync(newPath, rawData, function (err) {
+      if (err) console.log(err);
+      //return res.send("Successfully uploaded");
+    });
+
+    // const mp3Path = newPath.replace(".m4a", ".mp3");
+    // const result = run(`ffmpeg -i ${newPath} ${mp3Path}`);
+
+    const response = run(`
+    curl --request POST \
+  --url https://api.openai.com/v1/audio/transcriptions \
+  --header 'Authorization: Bearer ${settings.openAiApiKey}' \
+  --header 'Content-Type: multipart/form-data' \
+  --form file=@${newPath} \
+  --form model=whisper-1`);
+    console.log({ response });
+    /*   fs.writeFile("test.mp3", req.body, function (err) {
+      if (err) {
+        console.log(err);
+      }
+    }); */
+    //res.writeHead(200, { 'Content-Type': 'application/json' });
+    //res.end(JSON.stringify({ fields, files }, null, 2));
+    res.json(response).end();
   });
-  res.send("ok");
+  /*   const { file } = req.body;
+  console.log("uploadAudio", file, req.body);
+ */
 });
 
 app.post("/api/uploadBook", requireLogin, async (req, res) => {

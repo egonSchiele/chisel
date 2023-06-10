@@ -171,14 +171,18 @@ export async function uploadBook(chapters) {
   return t.success(book);
 }
 
-export async function uploadAudio(blob) {
+export async function uploadAudio(audioFile) {
   const formData = new FormData();
-  formData.append("blob", blob);
+  formData.append("audioFile", audioFile);
+  console.log("hi deom upload audio", audioFile);
   formData.append("csrfToken", getCsrfToken() as string);
 
   const res = await fetch("/api/uploadAudio", {
     method: "POST",
     headers: {
+      Accept: "*/*",
+
+      //"Content-Type": "multipart/form-data",
       /* "Content-Type": "application/json", */
     },
 
@@ -190,7 +194,9 @@ export async function uploadAudio(blob) {
     return t.error(`Error uploading audio: ${text}`);
   }
 
-  return t.success();
+  const data = await res.json();
+
+  return t.success(data);
 }
 
 export async function getEmbeddings(chapter) {

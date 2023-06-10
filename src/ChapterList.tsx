@@ -38,7 +38,7 @@ export default function ChapterList({
   mobile?: boolean;
 }) {
   const dispatch = useDispatch();
-  const [mode, setMode] = React.useState("chapters");
+
   const chapters = useSelector(getSelectedBookChapters) || [];
   const bookOptions = useSelector((state: RootState) =>
     sortBy(state.library.books, ["title"]).map((book) => ({
@@ -54,11 +54,12 @@ export default function ChapterList({
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
-  const { deleteChapter, saveChapter, newChapter } = useContext(
+  const { deleteChapter, saveChapter, newChapter, settings } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
 
   const uploadFileRef = React.useRef<HTMLInputElement>(null);
+  const uploadAudioRef = React.useRef<HTMLInputElement>(null);
   const colors = useColors();
   if (!loaded) {
     return (
@@ -90,6 +91,16 @@ export default function ChapterList({
     [...files].forEach(async (file, i) => {
       const text = await file.text();
       await newChapter(file.name, text);
+    });
+  }
+  function handleAudioUpload(x) {
+    const files = x.target.files;
+    [...files].forEach(async (file, i) => {
+      console.log(file);
+      const parsed = await fd.uploadAudio(file);
+      console.log(parsed);
+      //const text = await file.text();
+      //await newChapter(file.name, text);
     });
   }
 
@@ -358,6 +369,17 @@ export default function ChapterList({
     },
   ];
 
+  if (settings.admin) {
+    dropdownMenuItems.push({
+      label: "Import Audio",
+      icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        if (uploadAudioRef.current) uploadAudioRef.current.click();
+      },
+      className: buttonStyles,
+    });
+  }
+
   const leftMenuItem = {
     label: "Menu",
     icon: (
@@ -421,92 +443,38 @@ export default function ChapterList({
       onChange={handleUpload}
     />
   );
+  const uploadAudio = (
+    <input
+      type="file"
+      id="audioupload"
+      className="hidden"
+      key="audioupload"
+      ref={uploadAudioRef}
+      onChange={handleAudioUpload}
+    />
+  );
   let chapterCountTitle = `${chapters.length} chapters`;
   if (chapters.length === 1) {
     chapterCountTitle = "1 chapter";
   } else if (chapters.length === 0) {
     chapterCountTitle = "No chapters";
   }
-  if (mode === "chapters") {
-    return (
-      <>
-        <List
-          title={editing ? "Editing" : chapterCountTitle}
-          items={editing ? sublistDraggable() : [search, upload, ...sublist()]}
-          rightMenuItem={rightMenuItem}
-          leftMenuItem={leftMenuItem}
-          className={`${colors.background} border-r ${colors.borderColor}`}
-          selector="chapterlist"
-          onTitleClick={() => setMode("references")}
-          /*         swipeToClose="left"
-        close={closeSidebar}
- */
-        />
-      </>
-    );
-  }
-
-  const referenceBlocks: {
-    block: t.TextBlock;
-    index: number;
-    chapter: t.Chapter;
-  }[] = [];
-  chapters.forEach((chapter) => {
-    chapter.text.forEach((block, index) => {
-      if (block.reference) {
-        referenceBlocks.push({ block, index, chapter });
-      }
-    });
-  });
-
-  let referenceCountTitle = `${referenceBlocks.length} references`;
-  if (referenceBlocks.length === 1) {
-    referenceCountTitle = "1 reference";
-  } else if (referenceBlocks.length === 0) {
-    referenceCountTitle = "No references";
-  }
-
-  const { textindex } = useParams();
-  const referenceItems = referenceBlocks.map(({ block, index, chapter }, i) => {
-    let title = chapter.title || "(no title)";
-    if (chapter.status && chapter.status === "done") {
-      title = `✅ ${title}`;
-    } else if (chapter.status && chapter.status === "in-progress") {
-      title = `🚧 ${title}`;
-    }
-    const previewLength = 250;
-    return (
-      <li
-        key={i}
-        className={
-          !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
-        }
-      >
-        <ListItem
-          link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}/${index}`}
-          title={title}
-          content={`${block.text.substring(0, previewLength)}...`}
-          contentClassName="line-clamp-4"
-          selected={
-            chapter.chapterid === selectedChapterId &&
-            String(index) === textindex
-          }
-          selector="referencelist"
-        />
-      </li>
-    );
-  });
-
   return (
     <>
       <List
-        title={referenceCountTitle}
-        items={referenceItems}
-        leftMenuItem={null}
+        title={editing ? "Editing" : chapterCountTitle}
+        items={
+          editing
+            ? sublistDraggable()
+            : [search, upload, uploadAudio, ...sublist()]
+        }
         rightMenuItem={rightMenuItem}
+        leftMenuItem={leftMenuItem}
         className={`${colors.background} border-r ${colors.borderColor}`}
-        selector="referencelist"
-        onTitleClick={() => setMode("chapters")}
+        selector="chapterlist"
+        /*         swipeToClose="left"
+        close={closeSidebar}
+ */
       />
     </>
   );
