@@ -73,6 +73,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     viewMode: "default",
     launcherOpen: false,
     popupOpen: false,
+    helpOpen: false,
     popupData: null,
     openTabs: [],
     activeTab: null,
@@ -502,6 +503,9 @@ export const librarySlice = createSlice({
     toggleBlocks(state: t.State) {
       toggleBase(state, "blocks");
     },
+    toggleVersions(state: t.State) {
+      toggleBase(state, "versions");
+    },
     toggleOutline(state: t.State) {
       toggleBase(state, "outline");
     },
@@ -607,6 +611,9 @@ export const librarySlice = createSlice({
     showPopup(state, action: PayloadAction<t.PopupData>) {
       state.popupOpen = true;
       state.popupData = action.payload;
+    },
+    toggleHelp(state: t.State) {
+      state.helpOpen = !state.helpOpen;
     },
     noBookSelected(state: t.State) {
       state.selectedBookId = null;

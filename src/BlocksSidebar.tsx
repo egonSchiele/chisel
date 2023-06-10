@@ -4,8 +4,8 @@ import {
   Square2StackIcon,
 } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { getText } from "./reducers/librarySlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getText, librarySlice } from "./reducers/librarySlice";
 import { RootState } from "./store";
 
 import { Tab } from "@headlessui/react";
@@ -19,21 +19,34 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function BlockSidebar({ tabIndex = 0 }: { tabIndex?: number }) {
-  const [selectedIndex, setSelectedIndex] = useState(tabIndex);
+export default function BlockSidebar({}: {}) {
+  //const [selectedIndex, setSelectedIndex] = useState(tabIndex);
 
   const state = useSelector((state: RootState) => state.library.editor);
+  const tab = useSelector(
+    (state: RootState) => state.library.panels.leftSidebar.activePanel
+  );
+  let selectedIndex = 0;
+  if (tab === "versions") selectedIndex = 1;
+
   const index = state.activeTextIndex;
   const currentText = useSelector(getText(index));
   const colors = useColors();
+  const dispatch = useDispatch();
+  function setSelectedIndex(index: number) {
+    if (index === 0) {
+      dispatch(librarySlice.actions.toggleBlocks());
+    } else if (index === 1) {
+      dispatch(librarySlice.actions.toggleVersions());
+    }
+  }
+
   if (!currentText) return null;
   function getClassNames({ selected }) {
     const defaultClasses = "w-full py-1 text-sm font-medium text-center";
     return classNames(
       defaultClasses,
-      selected
-        ? "bg-gray-300 dark:bg-gray-700 hover:bg-gray-500 hover:text-white"
-        : "bg-dmSidebarSecondary hover:bg-gray-600"
+      selected ? `${colors.background}` : `${colors.selectedBackground}`
     );
   }
   return (

@@ -13,6 +13,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
+import { useColors } from "./lib/hooks";
 
 export default function VersionsSidebar() {
   const state: EditorState = useSelector(
@@ -24,7 +25,7 @@ export default function VersionsSidebar() {
   const currentText = currentChapter.text[index];
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const colors = useColors();
   const items = [];
 
   if (currentText.type === "embeddedText") {
@@ -79,6 +80,7 @@ export default function VersionsSidebar() {
       leftMenuItem={null}
       rightMenuItem={null}
       selector="versionsList"
+      className={`${colors.background} border-r ${colors.borderColor}`}
     />
   );
 }

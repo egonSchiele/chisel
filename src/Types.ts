@@ -16,6 +16,7 @@ export type State = {
   viewMode: ViewMode;
   launcherOpen: boolean;
   popupOpen: boolean;
+  helpOpen: boolean;
   popupData: PopupData | null;
   scrollTo?: number;
   openTabs: Tab[];
@@ -55,6 +56,7 @@ export type LeftActivePanel =
   | "filenavigator"
   | "prompts"
   | "blocks"
+  | "versions"
   | "outline"
   | "editHistory"
   | "debug";

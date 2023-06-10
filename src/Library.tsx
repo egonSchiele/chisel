@@ -50,6 +50,7 @@ import FocusSidebar from "./FocusSidebar";
 import Tabs from "./Tabs";
 import EditHistorySidebar from "./EditHistorySidebar";
 import DebugSidebar from "./DebugSidebar";
+import Help from "./Help";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -157,7 +158,10 @@ export default function Library({ mobile = false }) {
       onTextEditorSave(state, false);
     } else if (event.metaKey && event.shiftKey && event.code === "KeyO") {
       event.preventDefault();
-      dispatch(librarySlice.actions.openFileNavigator());
+      dispatch(librarySlice.actions.toggleFileNavigator());
+    } else if (event.metaKey && event.shiftKey && event.code === "KeyV") {
+      event.preventDefault();
+      dispatch(librarySlice.actions.toggleVersions());
     } else if (event.metaKey && event.shiftKey && event.code === "KeyT") {
       event.preventDefault();
       newChapter();
@@ -579,7 +583,8 @@ export default function Library({ mobile = false }) {
 
   const blocksOpen =
     state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "blocks";
+    (state.panels.leftSidebar.activePanel === "blocks" ||
+      state.panels.leftSidebar.activePanel === "versions");
 
   const editHistoryOpen =
     state.panels.leftSidebar.open &&
@@ -687,6 +692,11 @@ export default function Library({ mobile = false }) {
                 options={state.popupData.options}
                 onSubmit={state.popupData.onSubmit}
               />
+            </LibErrorBoundary>
+          )}
+          {state.helpOpen && (
+            <LibErrorBoundary component="help">
+              <Help />
             </LibErrorBoundary>
           )}
 

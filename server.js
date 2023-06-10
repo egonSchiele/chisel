@@ -236,6 +236,7 @@ function updateLastEdited(req) {
   const date = Date.now();
   const userid = getUserId(req);
   lastEditedCache[userid] = date;
+  console.log(lastEditedCache);
   return date;
 }
 

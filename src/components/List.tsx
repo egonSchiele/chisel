@@ -77,7 +77,7 @@ export default function List({
       data-selector={`${selector}-list`}
     >
       <div
-        className={`w-full h-5 flex border-b ${colors.borderColor} relative`}
+        className={`w-full h-7 flex pb-xs border-b ${colors.borderColor} relative`}
       >
         <div className="flex-grow items-center text-center absolute m-auto left-0 right-0">
           <h3

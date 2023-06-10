@@ -32,6 +32,7 @@ import {
   ArrowSmallLeftIcon,
   ArrowSmallRightIcon,
   ChatBubbleLeftIcon,
+  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
@@ -185,6 +186,18 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
     {
       label:
         state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "versions"
+          ? "Close Versions"
+          : "Open Versions",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleVersions());
+      },
+      tooltip: "Command+shift+v",
+    },
+    {
+      label:
+        state.panels.leftSidebar.open &&
         state.panels.leftSidebar.activePanel === "outline"
           ? "Close Outline"
           : "Open Outline",
@@ -296,7 +309,7 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
       sortBy(book.chapters, ["title"]).forEach((chapter, i) => {
         let label = chapter.title || "(No title)";
         label = `${label} (${book.title})`;
-        if (label.length > 30) label = label.slice(0, 30) + "...";
+        //if (label.length > 30) label = label.slice(0, 30) + "...";
         launchItems.push({
           label,
           onClick: () => {
@@ -734,6 +747,16 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
         });
       }
     });
+
+    if (!state.helpOpen) {
+      launchItems.push({
+        label: "Show help",
+        onClick: () => {
+          dispatch(librarySlice.actions.toggleHelp());
+        },
+        icon: <QuestionMarkCircleIcon className="h-4 w-4" aria-hidden="true" />,
+      });
+    }
   }
 
   function onChoose(item: t.MenuItem) {

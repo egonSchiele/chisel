@@ -328,7 +328,7 @@ export default function ChapterList({
 
   const newMenuItem = {
     label: "New Chapter",
-    icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+    icon: <PlusIcon className="w-5 h-5" />,
     onClick: () => newChapter("New chapter"),
     className: buttonStyles,
     showSpinner: true,

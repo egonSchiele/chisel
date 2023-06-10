@@ -62,12 +62,10 @@ export default function Nav({
       ></div>
     );
   }
-  const fromCache = state.fromCache;
+  const fromCache = true; //state.fromCache;
   return (
     <div
-      className={`h-9 w-screen absolute left-0 top-0 z-50 flex-grow ${
-        colors.navBackgroundColor
-      } align-middle ${fromCache && "border-t-2 border-blue-800"}`}
+      className={`h-9 w-screen absolute left-0 top-0 z-50 flex-grow ${colors.navBackgroundColor} align-middle `}
       id="nav"
     >
       <div className="h-full flex align-middle">
@@ -201,7 +199,9 @@ export default function Nav({
             {state.saved && state.serviceWorkerRunning && (
               <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckIcon
-                  className={`h-5 w-5 ${colors.highlightTextColor}`}
+                  className={`h-5 w-5  ${
+                    fromCache ? "text-green-500" : colors.highlightTextColor
+                  }`}
                   aria-hidden="true"
                 />
               </NavButton>
@@ -264,7 +264,9 @@ export default function Nav({
               {state.saved && state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckIcon
-                    className={`h-5 w-5 ${colors.highlightTextColor}`}
+                    className={`h-5 w-5  ${
+                      fromCache ? "text-green-500" : colors.highlightTextColor
+                    }`}
                     aria-hidden="true"
                   />
                 </NavButton>

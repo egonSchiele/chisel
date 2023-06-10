@@ -49,8 +49,15 @@ function Reveal({ label, toReveal }) {
       >
         {buttonLabel}
       </Button>
-      {show && <Button style="secondary" onClick={() =>   navigator.clipboard.writeText(toReveal)
-} className="mb-sm w-48">Copy to Clipboard</Button>}
+      {show && (
+        <Button
+          style="secondary"
+          onClick={() => navigator.clipboard.writeText(toReveal)}
+          className="mb-sm w-48"
+        >
+          Copy to Clipboard
+        </Button>
+      )}
       {show && <pre>{toReveal}</pre>}
     </div>
   );
@@ -93,7 +100,7 @@ const dataInCache = await cacheData();
 
 async function backupCacheData() {
   const cache = await caches.open("v1");
-  const cachedBookData = await cache.match(:"/api/books/backup");
+  const cachedBookData = await cache.match("/api/books/backup");
   if (!cachedBookData) {
     return null;
   }
@@ -123,11 +130,7 @@ export default function DebugSidebar() {
     line(`From cache? ${state.fromCache}`),
     line(`Last edited raw: ${pretty(lastEditedResponse)}`),
     line(`Last edited as timestamp: ${pretty(lastEditedTimestamp)}`),
-    <Reveal
-      label="Settings"
-      toReveal={pretty(settings)}
-      key="settings"
-    />,
+    <Reveal label="Settings" toReveal={pretty(settings)} key="settings" />,
     <Reveal label="State" toReveal={pretty(state)} key="state" />,
     <Reveal
       label={`Data in Cache ${dataInCache ? "" : "(none)"}`}
@@ -135,7 +138,7 @@ export default function DebugSidebar() {
       key="cacheData"
     />,
     <Reveal
-    label={`Backup Data in Cache ${backupDataInCache ? "" : "(none)"}`}
+      label={`Backup Data in Cache ${backupDataInCache ? "" : "(none)"}`}
       toReveal={pretty(backupDataInCache)}
       key="backupCacheData"
     />,

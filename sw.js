@@ -192,7 +192,7 @@ async function getBooksFromCacheOrServer() {
     return fetchBooksFromServer();
   }
 
-  const compare = true;
+  const compare = false;
 
   if (compare) {
     const res1 = await fetchBooksFromServer();

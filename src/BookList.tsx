@@ -190,7 +190,7 @@ export default function BookList({ cachedBooks = null }) {
 
   const newMenuItem = {
     label: "New Book",
-    icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+    icon: <PlusIcon className="w-5 h-5" />,
     onClick: () => newBook(),
     className: buttonStyles,
     showSpinner: true,

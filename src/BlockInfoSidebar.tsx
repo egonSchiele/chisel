@@ -184,7 +184,7 @@ export default function BlockInfoSidebar({}: {}) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const { settings } = useContext(LibraryContext) as t.LibraryContextType;
-
+  const colors = useColors();
   if (!currentText) return null;
 
   const listItems: any[] = [
@@ -322,6 +322,7 @@ export default function BlockInfoSidebar({}: {}) {
       items={listItems}
       leftMenuItem={null}
       rightMenuItem={null}
+      className={`${colors.background} border-r ${colors.borderColor}`}
       selector="blockInfoList"
     />
   );

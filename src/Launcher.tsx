@@ -40,6 +40,7 @@ export default function Launcher({
           }
         }
       }
+
       //if (matches > 0) {
       if (matches === b.length) {
         const frequency = autocompleteCache[item.label] || 0;
