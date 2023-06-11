@@ -119,10 +119,13 @@ function isMobile(req) {
 }
 
 const csrf = (req, res, next) => {
-  next();
-  return;
   if (req.method !== "GET") {
-    const excluded = ["/submitLogin", "/submitRegister", "/loginGuestUser"];
+    const excluded = [
+      "/submitLogin",
+      "/submitRegister",
+      "/loginGuestUser",
+      "/api/uploadAudio",
+    ];
     if (excluded.includes(req.url)) {
       next();
       return;
@@ -312,9 +315,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
 });
 
 app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
-  //const user = await getUser(req);
   const form = formidable({ multiples: true });
-  console.log("!!!!!");
   form.parse(req, async (err, fields, files) => {
     console.log({ err, fields, files });
     if (err) {
@@ -322,14 +323,25 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
       res.end(String(err));
       return;
     }
+
+    const c = req.cookies;
+    if (c.csrfToken !== fields.csrfToken) {
+      console.log("csrf token mismatch");
+      res
+        .status(400)
+        .send(
+          "Could not butter your uploaded parsnips. Try refreshing your browser."
+        )
+        .end();
+      return;
+    }
+
     let oldPath = files.audioFile.filepath;
     let newPath = "uploads/" + files.audioFile.originalFilename;
+    newPath = newPath.replaceAll(/ +/g, "_");
     let rawData = fs.readFileSync(oldPath);
     let audioBlob = new Blob([rawData]);
 
-    /*     --form file=@/path/to/file/openai.mp3 \
-    --form model=whisper-1
- */
     /*  const endpoint = "https://api.openai.com/v1/audio/transcriptions";
 
     const formData = new FormData();
@@ -350,11 +362,7 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
 
     fs.writeFileSync(newPath, rawData, function (err) {
       if (err) console.log(err);
-      //return res.send("Successfully uploaded");
     });
-
-    // const mp3Path = newPath.replace(".m4a", ".mp3");
-    // const result = run(`ffmpeg -i ${newPath} ${mp3Path}`);
 
     const response = run(`
     curl --request POST \
@@ -364,18 +372,8 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
   --form file=@${newPath} \
   --form model=whisper-1`);
     console.log({ response });
-    /*   fs.writeFile("test.mp3", req.body, function (err) {
-      if (err) {
-        console.log(err);
-      }
-    }); */
-    //res.writeHead(200, { 'Content-Type': 'application/json' });
-    //res.end(JSON.stringify({ fields, files }, null, 2));
     res.json(JSON.parse(response)).end();
   });
-  /*   const { file } = req.body;
-  console.log("uploadAudio", file, req.body);
- */
 });
 
 app.post("/api/uploadBook", requireLogin, async (req, res) => {

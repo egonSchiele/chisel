@@ -102,10 +102,10 @@ export default function ChapterList({
       if (response.tag === "success") {
         const { text } = response.payload;
         await newChapter(file.name, text);
+      } else {
+        console.log(response);
+        dispatch(librarySlice.actions.setError(response.message));
       }
-
-      //const text = await file.text();
-      //await newChapter(file.name, text);
     });
   }
 
