@@ -174,16 +174,13 @@ export async function uploadBook(chapters) {
 export async function uploadAudio(audioFile) {
   const formData = new FormData();
   formData.append("audioFile", audioFile);
-  console.log("hi deom upload audio", audioFile);
   formData.append("csrfToken", getCsrfToken() as string);
 
   const res = await fetch("/api/uploadAudio", {
     method: "POST",
     headers: {
       Accept: "*/*",
-
-      //"Content-Type": "multipart/form-data",
-      /* "Content-Type": "application/json", */
+      // let browser set multipart boundary by not setting that header
     },
 
     body: formData,

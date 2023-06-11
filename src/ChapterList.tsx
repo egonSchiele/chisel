@@ -96,7 +96,6 @@ export default function ChapterList({
   function handleAudioUpload(x) {
     const files = x.target.files;
     [...files].forEach(async (file, i) => {
-      console.log(file);
       const response = await fd.uploadAudio(file);
       console.log(response);
       if (response.tag === "success") {
@@ -445,6 +444,7 @@ export default function ChapterList({
       className="hidden"
       key="upload"
       ref={uploadFileRef}
+      multiple={true}
       onChange={handleUpload}
     />
   );
@@ -455,6 +455,7 @@ export default function ChapterList({
       className="hidden"
       key="audioupload"
       ref={uploadAudioRef}
+      multiple={true}
       onChange={handleAudioUpload}
     />
   );
