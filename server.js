@@ -371,7 +371,7 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     }); */
     //res.writeHead(200, { 'Content-Type': 'application/json' });
     //res.end(JSON.stringify({ fields, files }, null, 2));
-    res.json(response).end();
+    res.json(JSON.parse(response)).end();
   });
   /*   const { file } = req.body;
   console.log("uploadAudio", file, req.body);
