@@ -420,8 +420,11 @@ export default function Library({ mobile = false }) {
       chapter.suggestions = suggestions;
     }
 
-    addToWritingStreak(chapter);
-
+    try {
+      addToWritingStreak(chapter);
+    } catch (e) {
+      console.log("Error adding to writing streak", e);
+    }
     const result = await makeApiCall(fd.saveChapter, [chapter]);
 
     if (result.tag === "success") {

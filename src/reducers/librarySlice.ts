@@ -74,6 +74,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     launcherOpen: false,
     popupOpen: false,
     helpOpen: false,
+    recording: false,
     popupData: null,
     openTabs: [],
     activeTab: null,
@@ -130,6 +131,12 @@ export const librarySlice = createSlice({
     },
     setFromCache(state: t.State, action: PayloadAction<boolean>) {
       state.fromCache = action.payload;
+    },
+    startRecording(state: t.State) {
+      state.recording = true;
+    },
+    stopRecording(state: t.State) {
+      state.recording = false;
     },
     setBooksLoaded(state: t.State, action: PayloadAction<boolean>) {
       state.booksLoaded = action.payload;

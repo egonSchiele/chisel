@@ -1,3 +1,5 @@
+import { useReactMediaRecorder } from "react-media-recorder";
+
 import {
   Bars3Icon,
   ChatBubbleLeftIcon,
@@ -7,6 +9,7 @@ import {
   DocumentDuplicateIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
+  MicrophoneIcon,
   MinusIcon,
   PencilIcon,
   SparklesIcon,
@@ -41,18 +44,35 @@ export default function Nav({
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const colors = useColors();
-  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
+  const { settings, newChapter } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
 
-  const addAudioElement = async (blob) => {
+  const addAudioElement = async (blobUrl, blob) => {
     console.log("hi");
-    const res = await fd.uploadAudio(blob);
-    console.log(res);
+    console.log(blob);
+    //const buf = Buffer.from(new Uint8Array(blob));
+    const file = new File([blob], "recording.wav");
+
+    const response = await fd.uploadAudio(file);
+    console.log(response);
+    if (response.tag === "success") {
+      const { text } = response.payload;
+      await newChapter("test", text);
+    } else {
+      console.log(response);
+      dispatch(librarySlice.actions.setError(response.message));
+    }
+
     /* const url = URL.createObjectURL(blob);
     const audio = document.createElement("audio");
     audio.src = url;
     audio.controls = true;
     document.body.appendChild(audio); */
   };
+
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({ audio: true, onStop: addAudioElement });
 
   if (!loaded) {
     return (
@@ -261,6 +281,7 @@ export default function Nav({
                   />
                 </NavButton>
               )}
+
               {state.saved && state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckIcon
@@ -300,6 +321,36 @@ export default function Nav({
                 </NavButton>
               )}
 
+              {!state.recording && settings.admin && (
+                <NavButton
+                  color="nav"
+                  label="Record"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.startRecording());
+                    startRecording();
+                  }}
+                >
+                  <MicrophoneIcon className={`h-5 w-5`} aria-hidden="true" />
+                </NavButton>
+              )}
+
+              {state.recording && settings.admin && (
+                <NavButton
+                  color="nav"
+                  label="Record"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.stopRecording());
+                    stopRecording();
+                  }}
+                >
+                  <p>{status}</p>
+                  <MicrophoneIcon
+                    className={`h-5 w-5 ${colors.highlightTextColor}`}
+                    aria-hidden="true"
+                  />
+                </NavButton>
+              )}
+
               {!mobile && (
                 <>
                   <NavButton
@@ -311,8 +362,7 @@ export default function Nav({
                   >
                     <EyeIcon
                       className={`h-5 w-5 ${
-                        state.viewMode === "focus" &&
-                        "text-blue-700 dark:text-blue-400"
+                        state.viewMode === "focus" && colors.highlightTextColor
                       }`}
                       aria-hidden="true"
                     />

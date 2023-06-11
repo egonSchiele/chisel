@@ -17,6 +17,7 @@ export type State = {
   launcherOpen: boolean;
   popupOpen: boolean;
   helpOpen: boolean;
+  recording: boolean;
   popupData: PopupData | null;
   scrollTo?: number;
   openTabs: Tab[];

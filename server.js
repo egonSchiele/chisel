@@ -360,19 +360,35 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     console.log(json);
     res.send("ok").end(); */
 
+    run("mkdir -p uploads");
     fs.writeFileSync(newPath, rawData, function (err) {
       if (err) console.log(err);
     });
 
+    let mp3Path = newPath.replaceAll(".wav", ".mp3");
+    mp3Path = mp3Path.replaceAll(".m4a", ".mp3");
+
+    if (newPath !== mp3Path) {
+      const convert = run(`ffmpeg -y -i ${newPath} ${mp3Path}`);
+      console.log({ convert });
+    }
     const response = run(`
     curl --request POST \
   --url https://api.openai.com/v1/audio/transcriptions \
   --header 'Authorization: Bearer ${settings.openAiApiKey}' \
   --header 'Content-Type: multipart/form-data' \
-  --form file=@${newPath} \
+  --form file=@${mp3Path} \
   --form model=whisper-1`);
+    // run(`mv ${mp3Path} _trash.${mp3Path}`);
+    // run(`mv ${newPath} _trash.${newPath}`);
     console.log({ response });
-    res.json(JSON.parse(response)).end();
+    const json = JSON.parse(response);
+    if (json.error) {
+      console.log(json.error);
+      res.status(400).send(json.error.message).end();
+      return;
+    }
+    res.json(json).end();
   });
 });
 
