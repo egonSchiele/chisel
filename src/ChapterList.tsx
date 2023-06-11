@@ -69,20 +69,14 @@ export default function ChapterList({
     );
   }
 
-  async function _deleteChapter(chapterid: string) {
-    dispatch(librarySlice.actions.loading);
-    const res = await fetch(`/api/deleteChapter`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ bookid, chapterid, csrfToken: getCsrfToken() }),
+  function _deleteChapter(chapterid: string) {
+    dispatch(librarySlice.actions.loading());
+    fd.deleteChapter(bookid, chapterid).then((res) => {
+      dispatch(librarySlice.actions.loaded());
+      if (res.tag === "error") {
+        dispatch(librarySlice.actions.setError(res.message));
+      }
     });
-    dispatch(librarySlice.actions.loaded);
-    if (!res.ok) {
-      console.log(res.statusText);
-      return;
-    }
     deleteChapter(chapterid);
   }
 

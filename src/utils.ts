@@ -349,3 +349,11 @@ export function today(): t.Date {
 export function uniq(array: any[]): any[] {
   return [...new Set(array)];
 }
+
+export async function tryJson(res) {
+  try {
+    return await res.json();
+  } catch (e) {
+    return {};
+  }
+}

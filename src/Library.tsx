@@ -415,6 +415,7 @@ export default function Library({ mobile = false }) {
     _chapter: t.Chapter,
     suggestions: t.Suggestion[] | null = null
   ) {
+    console.log("Saving chapter", _chapter);
     let chapter: t.Chapter = { ..._chapter };
     if (suggestions !== null) {
       chapter.suggestions = suggestions;
@@ -425,16 +426,20 @@ export default function Library({ mobile = false }) {
     } catch (e) {
       console.log("Error adding to writing streak", e);
     }
-    const result = await makeApiCall(fd.saveChapter, [chapter]);
+    try {
+      const result = await makeApiCall(fd.saveChapter, [chapter]);
 
-    if (result.tag === "success") {
-      const data = result.payload;
-      chapter.created_at = data.created_at;
-      dispatch(librarySlice.actions.setSaved(true));
-      // Since we depend on a cache version of the selected book when picking a chapter
-      // we must also set the chapter on said cache whenever save occurs.
-      // This avoids the issue in which switching a chapter looses your last saved work.
-      dispatch(librarySlice.actions.updateChapter(chapter));
+      if (result.tag === "success") {
+        const data = result.payload;
+        chapter.created_at = data.created_at;
+        dispatch(librarySlice.actions.setSaved(true));
+        // Since we depend on a cache version of the selected book when picking a chapter
+        // we must also set the chapter on said cache whenever save occurs.
+        // This avoids the issue in which switching a chapter looses your last saved work.
+        dispatch(librarySlice.actions.updateChapter(chapter));
+      }
+    } catch (e) {
+      console.log("Error saving chapter", e);
     }
   }
 

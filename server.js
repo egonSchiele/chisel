@@ -292,6 +292,7 @@ app.post("/api/saveChapter", requireLogin, async (req, res) => {
   const result = await saveChapter(chapter);
   if (result.success) {
     result.data.created_at = updateLastEdited(req);
+    console.log("saveChapter", result.data);
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();

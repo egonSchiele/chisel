@@ -28,7 +28,6 @@ import * as fd from "./lib/fetchData";
 import { useColors } from "./lib/hooks";
 import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-// import { AudioRecorder } from "react-audio-voice-recorder";
 export default function Nav({
   mobile,
   bookid,
@@ -44,31 +43,24 @@ export default function Nav({
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const colors = useColors();
-  const { settings, newChapter } = useContext(
+  const { settings, newChapter, setLoading } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
 
   const addAudioElement = async (blobUrl, blob) => {
-    console.log("hi");
-    console.log(blob);
-    //const buf = Buffer.from(new Uint8Array(blob));
+    setLoading(true);
     const file = new File([blob], "recording.wav");
 
     const response = await fd.uploadAudio(file);
     console.log(response);
     if (response.tag === "success") {
       const { text } = response.payload;
-      await newChapter("test", text);
+      dispatch(librarySlice.actions.addToContents(text));
     } else {
       console.log(response);
       dispatch(librarySlice.actions.setError(response.message));
     }
-
-    /* const url = URL.createObjectURL(blob);
-    const audio = document.createElement("audio");
-    audio.src = url;
-    audio.controls = true;
-    document.body.appendChild(audio); */
+    setLoading(false);
   };
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -343,9 +335,9 @@ export default function Nav({
                     stopRecording();
                   }}
                 >
-                  <p>{status}</p>
+                  {/* <p className="w-36 text-sm">{status}</p> */}
                   <MicrophoneIcon
-                    className={`h-5 w-5 ${colors.highlightTextColor}`}
+                    className={`h-5 w-5 text-red-700`}
                     aria-hidden="true"
                   />
                 </NavButton>

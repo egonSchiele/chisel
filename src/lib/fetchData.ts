@@ -1,5 +1,5 @@
 import * as t from "../Types";
-import { getCsrfToken } from "../utils";
+import { getCsrfToken, tryJson } from "../utils";
 
 export const fetchSettings = async () => {
   const res = await fetch(`/api/settings`, { credentials: "include" });
@@ -94,6 +94,16 @@ export const newChapter = async (
 
 export async function deleteBook(bookid: string) {
   const res = await postWithCsrf(`/api/deleteBook`, { bookid });
+
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error deleting book: ${text}`);
+  }
+  return t.success();
+}
+
+export async function deleteChapter(bookid: string, chapterid: string) {
+  const res = await postWithCsrf(`/api/deleteChapter`, { bookid, chapterid });
 
   if (!res.ok) {
     const text = await res.text();
@@ -239,11 +249,15 @@ export async function saveToHistory(chapterid: string, text: string) {
 
 export async function saveChapter(chapter: t.Chapter) {
   const res = await postWithCsrf(`/api/saveChapter`, { chapter });
+  console.log(res);
   if (!res.ok) {
     const text = await res.text();
+    console.log({ text });
     return t.error(`Error saving chapter: ${text}`);
   }
-  const data = await res.json();
+  console.log("saved chapter, getting json");
+  const data = await tryJson(res);
+  console.log({ data });
   return t.success(data);
 }
 

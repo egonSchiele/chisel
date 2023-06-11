@@ -9055,14 +9055,6 @@ raw-body@2.5.1:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-react-audio-voice-recorder@^1.1.7:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/react-audio-voice-recorder/-/react-audio-voice-recorder-1.1.7.tgz#d3938ea749b845d2670b1e8f4ab798c09a00ff57"
-  integrity sha512-m4dWhd/HmJ5fMVFAOyBXJOASrpHA1l6/hsrQn0SA9DrD2sUMLPri3Bep7xDhWCFevTE/tFCPGcEXdfvIxZa22w==
-  dependencies:
-    react "^18.2.0"
-    react-dom "^18.2.0"
-
 react-beautiful-dnd@^13.1.1:
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.1.tgz#b0f3087a5840920abf8bb2325f1ffa46d8c4d0a2"

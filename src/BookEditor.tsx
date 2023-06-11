@@ -1,8 +1,9 @@
+import * as t from "./Types";
 import * as fd from "./lib/fetchData";
 import md5 from "md5";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
-import React from "react";
+import React, { useContext } from "react";
 import {
   getSelectedBook,
   getSelectedBookChapters,
@@ -17,6 +18,7 @@ import { getChapterText, isString } from "./utils";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { chapterToMarkdown } from "./serverUtils";
+import LibraryContext from "./LibraryContext";
 
 function Character({
   character,
@@ -78,6 +80,21 @@ function Character({
 
 function Chapter({ chapter, bookid }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { deleteChapter } = useContext(LibraryContext) as t.LibraryContextType;
+
+  function _deleteChapter() {
+    const chapterid = chapter.chapterid;
+    dispatch(librarySlice.actions.loading());
+    fd.deleteChapter(bookid, chapterid).then((res) => {
+      dispatch(librarySlice.actions.loaded());
+      if (res.tag === "error") {
+        dispatch(librarySlice.actions.setError(res.message));
+      }
+    });
+    deleteChapter(chapterid);
+  }
+
   return (
     <div
       className="flex flex-col my-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm cursor-pointer"
@@ -87,6 +104,9 @@ function Chapter({ chapter, bookid }) {
       <pre className="text-gray-800 dark:text-gray-300 font-sans">
         {getChapterText(chapter).slice(0, 250)}
       </pre>
+      <Button onClick={_deleteChapter} className="mt-sm w-20" style="secondary">
+        Delete
+      </Button>
     </div>
   );
 }
