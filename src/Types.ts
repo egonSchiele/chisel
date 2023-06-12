@@ -60,7 +60,8 @@ export type LeftActivePanel =
   | "versions"
   | "outline"
   | "editHistory"
-  | "debug";
+  | "debug"
+  | "search";
 
 export type SelectedText = {
   index: number;
@@ -340,6 +341,7 @@ export type Book = {
   style?: string;
   created_at?: number;
   lastTrainedAt?: number;
+  coverImageUrl?: string;
 };
 
 export type Character = {

@@ -284,6 +284,13 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    setCoverImageUrl(state: t.State, action) {
+      const book = getSelectedBook({ library: state });
+      if (!book) return;
+      book.coverImageUrl = action.payload;
+
+      state.saved = false;
+    },
     setBookSynopsis(state: t.State, action) {
       const book = getSelectedBook({ library: state });
       if (!book) return;
@@ -521,6 +528,9 @@ export const librarySlice = createSlice({
     },
     toggleDebug(state: t.State) {
       toggleBase(state, "debug");
+    },
+    toggleSearch(state: t.State) {
+      toggleBase(state, "search");
     },
 
     toggleRightSidebar(state: t.State) {

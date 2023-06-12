@@ -51,6 +51,7 @@ import Tabs from "./Tabs";
 import EditHistorySidebar from "./EditHistorySidebar";
 import DebugSidebar from "./DebugSidebar";
 import Help from "./Help";
+import SearchSidebar from "./SearchSidebar";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -199,7 +200,7 @@ export default function Library({ mobile = false }) {
       }
     } else if (event.metaKey && event.shiftKey && event.key === "p") {
       event.preventDefault();
-      dispatch(librarySlice.actions.toggleLauncher());
+      dispatch(librarySlice.actions.togglePrompts());
     } else if (event.metaKey && event.shiftKey && event.key === "d") {
       event.preventDefault();
       if (state.viewMode === "diff") {
@@ -228,14 +229,15 @@ export default function Library({ mobile = false }) {
       }
     } else if (event.shiftKey && event.metaKey && event.key === "f") {
       event.preventDefault();
-      if (state.viewMode === "focus") {
+      dispatch(librarySlice.actions.toggleSearch());
+      /*   if (state.viewMode === "focus") {
         dispatch(librarySlice.actions.setViewMode("default"));
       } else {
         dispatch(librarySlice.actions.setViewMode("focus"));
-      }
+      } */
     } else if (event.metaKey && event.key === "p") {
       event.preventDefault();
-      dispatch(librarySlice.actions.togglePrompts());
+      dispatch(librarySlice.actions.toggleLauncher());
     } else if (event.shiftKey && event.metaKey && event.key === "b") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleOutline());
@@ -602,6 +604,10 @@ export default function Library({ mobile = false }) {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "debug";
 
+  const searchOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "search";
+
   const outlineOpen =
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "outline";
@@ -853,6 +859,22 @@ export default function Library({ mobile = false }) {
                   className={`w-1/2 absolute top-0 left-0 h-screen overflow-auto mt-9`}
                 >
                   <DebugSidebar />
+                </div>
+              </SlideTransition>
+            </PanelPlaceholder>
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="Search sidebar">
+            <PanelPlaceholder
+              loaded={state.booksLoaded}
+              show={state.panels.leftSidebar.open}
+              className={` top-0 left-0`}
+            >
+              <SlideTransition show={searchOpen} direction="left">
+                <div
+                  className={`w-96 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                >
+                  <SearchSidebar />
                 </div>
               </SlideTransition>
             </PanelPlaceholder>

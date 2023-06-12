@@ -3,6 +3,9 @@ FROM --platform=linux/amd64 node:19
 
 WORKDIR /
 
+RUN apt-get update
+RUN apt-get install -y ffmpeg
+
 # Install dependencies based on the preferred package manager
 COPY . ./
 ENV NODE_ENV production

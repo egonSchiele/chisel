@@ -309,7 +309,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
       userid,
     });
     await saveBook(book);
-    const created_at = updateLastEdited(req);
+    book.created_at = updateLastEdited(req);
     res.send(book);
     // res.redirect(`/book/${bookid}`);
   }
