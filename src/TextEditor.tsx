@@ -50,6 +50,10 @@ SpanClass.blotName = "class";
 SpanClass.tagName = "div";
 Quill.register(SpanClass);
 
+let Block = Quill.import("blots/block");
+Block.tagName = "div";
+Quill.register(Block, true);
+
 Quill.register("modules/clipboard", PlainClipboard, true);
 
 const formats = [
@@ -578,6 +582,13 @@ function TextEditor({
   let font = settings.design ? settings.design.font : "sans-serif";
   font = font || "sans-serif";
   let fontClass = font === "serif" ? "serif" : "sansSerif";
+  let fontSize = settings.design?.fontSize || 18;
+  const fontSizeClass = {
+    16: "fontsize-16",
+    18: "fontsize-18",
+    20: "fontsize-20",
+    22: "fontsize-22",
+  }[fontSize];
   if (currentText.type === "code") fontClass = "font-mono";
   if (!isInView) return null;
   return (
@@ -607,14 +618,14 @@ function TextEditor({
                   }`}
                 />
               </div>
-              {<BlockMenu currentText={currentText} index={index} />}
+              {/* {<BlockMenu currentText={currentText} index={index} />}
               {hasVersions(currentText) && (
                 <VersionsMenu currentText={currentText} index={index} />
               )}
               {currentText.type === "code" && (
                 <CodeMenu currentText={currentText} index={index} />
               )}
-              {currentText.reference && <Tag letter="R" />}
+              {currentText.reference && <Tag letter="R" />} */}
               {currentText.hideInExport && (
                 <EyeSlashIcon className="w-5 h-5 text-gray-500" />
               )}
@@ -644,7 +655,7 @@ function TextEditor({
               <ReactQuill
                 ref={quillRef}
                 placeholder=""
-                className={`${fontClass}`}
+                className={`${fontClass} ${fontSizeClass}`}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
@@ -688,7 +699,7 @@ function TextEditor({
                 <ChevronRightIcon className="w-5 h-5 text-gray-500" />
               </div>
 
-              {currentText.reference && <Tag letter="R" />}
+              {/* {currentText.reference && <Tag letter="R" />} */}
               {currentText.hideInExport && (
                 <EyeSlashIcon className="mt-xs w-5 h-5 text-gray-500" />
               )}

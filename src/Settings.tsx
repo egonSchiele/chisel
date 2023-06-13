@@ -68,7 +68,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
     );
     dispatch(librarySlice.actions.setSettingsSaved(false));
   };
-  const handleDesignChange = (key: string, value: string) => {
+  const handleDesignChange = (key: string, value: string | number) => {
     setSettings(
       produce(settings, (draft) => {
         draft.design ||= {};
@@ -160,6 +160,20 @@ function Settings({ settings, setSettings, usage, onSave }) {
       >
         <option value="sans-serif">sans-serif</option>
         <option value="serif">serif</option>
+      </Select>
+
+      <Select
+        title="Font Size"
+        name="fontsize"
+        value={settings.design ? settings.design.fontSize : 18}
+        onChange={(e) =>
+          handleDesignChange("fontSize", parseInt(e.target.value))
+        }
+      >
+        <option value="16">16</option>
+        <option value="18">18</option>
+        <option value="20">20</option>
+        <option value="22">22</option>
       </Select>
 
       <Select
