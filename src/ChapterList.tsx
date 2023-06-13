@@ -40,6 +40,7 @@ export default function ChapterList({
   const dispatch = useDispatch();
 
   const chapters = useSelector(getSelectedBookChapters) || [];
+
   const bookOptions = useSelector((state: RootState) =>
     sortBy(state.library.books, ["title"]).map((book) => ({
       label: book.title,
@@ -170,7 +171,7 @@ export default function ChapterList({
 
         return (
           <li
-            key={text.id}
+            key={text.id || chapter.chapterid}
             className={
               !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
             }
@@ -459,15 +460,14 @@ export default function ChapterList({
   } else if (chapters.length === 0) {
     chapterCountTitle = "No chapters";
   }
+  const finalItems = editing
+    ? sublistDraggable()
+    : [search, upload, uploadAudio, ...sublist()];
   return (
     <>
       <List
         title={editing ? "Editing" : chapterCountTitle}
-        items={
-          editing
-            ? sublistDraggable()
-            : [search, upload, uploadAudio, ...sublist()]
-        }
+        items={finalItems}
         rightMenuItem={rightMenuItem}
         leftMenuItem={leftMenuItem}
         className={`${colors.background} border-r ${colors.borderColor}`}
