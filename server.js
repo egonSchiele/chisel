@@ -339,7 +339,7 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
 
     let oldPath = files.audioFile.filepath;
     let newPath = "uploads/" + files.audioFile.originalFilename;
-    newPath = newPath.replaceAll(/ +/g, "_");
+    newPath = newPath.replaceAll(/[^a-zA-Z1-9_.-]/g, "_");
     let rawData = fs.readFileSync(oldPath);
     let audioBlob = new Blob([rawData]);
 
@@ -583,8 +583,15 @@ const render = (filename, _data) => {
   return result;
 };
 
-function serveFile(filename, res) {
-  const token = nanoid();
+const csrfTokenCache = {};
+function serveFile(filename, res, userid) {
+  let token;
+  if (userid && csrfTokenCache[userid]) {
+    token = csrfTokenCache[userid];
+  } else {
+    token = nanoid();
+    if (userid) csrfTokenCache[userid] = token;
+  }
   res.cookie("csrfToken", token);
 
   const rendered = render(path.resolve(`./dist/${filename}`), {
@@ -594,19 +601,19 @@ function serveFile(filename, res) {
 }
 
 app.get("/login", async (req, res) => {
-  serveFile("login-base.html", res);
+  serveFile("login-base.html", res, null);
 });
 
 app.get("/register", async (req, res) => {
-  serveFile("login-base.html", res);
+  serveFile("login-base.html", res, null);
 });
 
 app.get("/login.html", async (req, res) => {
-  serveFile("login-base.html", res);
+  serveFile("login-base.html", res, null);
 });
 
 app.get("/register.html", async (req, res) => {
-  serveFile("login-base.html", res);
+  serveFile("login-base.html", res, null);
 });
 
 app.get(
@@ -615,10 +622,11 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
+    const userid = getUserId(req);
     if (isMobile(req)) {
-      serveFile("mobile.html", res);
+      serveFile("mobile.html", res, userid);
     } else {
-      serveFile("library.html", res);
+      serveFile("library.html", res, userid);
     }
   }
 );
@@ -628,27 +636,30 @@ app.get(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
+    const userid = getUserId(req);
     if (isMobile(req)) {
-      serveFile("mobile.html", res);
+      serveFile("mobile.html", res, userid);
     } else {
-      serveFile("library.html", res);
+      serveFile("library.html", res, userid);
     }
   }
 );
 
 app.get("/", requireLogin, async (req, res) => {
+  const userid = getUserId(req);
   if (isMobile(req)) {
-    serveFile("mobile.html", res);
+    serveFile("mobile.html", res, userid);
   } else {
-    serveFile("library.html", res);
+    serveFile("library.html", res, userid);
   }
 });
 
 app.get("/home.html", requireLogin, async (req, res) => {
+  const userid = getUserId(req);
   if (isMobile(req)) {
-    serveFile("mobile.html", res);
+    serveFile("mobile.html", res, userid);
   } else {
-    serveFile("library.html", res);
+    serveFile("library.html", res, userid);
   }
 });
 
@@ -726,15 +737,12 @@ app.get("/api/bookTitles", requireLogin, noCache, async (req, res) => {
 });
 
 app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
+  const userid = getUserId(req);
   if (isMobile(req)) {
-    serveFile("mobile.html", res);
+    serveFile("mobile.html", res, userid);
   } else {
-    serveFile("library.html", res);
+    serveFile("library.html", res, userid);
   }
-});
-
-app.get("/grid/:bookid", requireLogin, checkBookAccess, async (req, res) => {
-  serveFile("library.html", res);
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
@@ -882,7 +890,8 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
 });
 
 app.get("/admin", requireAdmin, async (req, res) => {
-  serveFile("admin.html", res);
+  const userid = getUserId(req);
+  serveFile("admin.html", res, userid);
 });
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   const data = await getUsers();
@@ -1377,7 +1386,7 @@ async function usingOpenAi(
   max_tokens = 500,
   model = "gpt-3.5-turbo",
   num_suggestions = 1,
-  _messages = null,
+  _messages = [],
   customKey
 ) {
   const chatModels = ["gpt-3.5-turbo"];
@@ -1395,9 +1404,9 @@ async function usingOpenAi(
     endpoint = "https://api.openai.com/v1/chat/completions";
 
     let messages = _messages;
-    if (messages === null || messages.length === 0) {
-      messages = [{ role: "user", content: prompt }];
-    }
+    if (messages === null) messages = [];
+    messages.push({ role: "user", content: prompt });
+
     reqBody = {
       messages,
       max_tokens,
