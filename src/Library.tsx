@@ -52,6 +52,8 @@ import EditHistorySidebar from "./EditHistorySidebar";
 import DebugSidebar from "./DebugSidebar";
 import Help from "./Help";
 import SearchSidebar from "./SearchSidebar";
+import LibraryDesktop from "./LibraryDesktop";
+import LibraryMobile from "./LibraryMobile";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -77,6 +79,7 @@ export default function Library({ mobile = false }) {
   }, [settings]);
 
   const { bookid, chapterid } = useParams();
+  console.log("bookid", bookid, "chapterid", chapterid);
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
 
   useEffect(() => {
@@ -313,10 +316,9 @@ export default function Library({ mobile = false }) {
 
   const navigate = useNavigate();
 
-  const onLauncherClose = useCallback(
-    () => dispatch(librarySlice.actions.toggleLauncher()),
-    []
-  );
+  const onLauncherClose = () => {
+    dispatch(librarySlice.actions.toggleLauncher());
+  };
 
   async function onTextEditorSave(state: t.State, shouldSaveToHistory = false) {
     const chapter = getSelectedChapter({ library: state });
@@ -559,6 +561,7 @@ export default function Library({ mobile = false }) {
     setSettings,
     usage,
     deleteChapter,
+    onTextEditorSave,
   };
 
   if (
@@ -583,60 +586,12 @@ export default function Library({ mobile = false }) {
     );
   }
 
-  const fileNavigatorOpen =
-    state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "filenavigator";
-
-  const promptsOpen =
-    state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "prompts";
-
-  const blocksOpen =
-    state.panels.leftSidebar.open &&
-    (state.panels.leftSidebar.activePanel === "blocks" ||
-      state.panels.leftSidebar.activePanel === "versions");
-
-  const editHistoryOpen =
-    state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "editHistory";
-
-  const debugOpen =
-    state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "debug";
-
-  const searchOpen =
-    state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "search";
-
-  const outlineOpen =
-    state.panels.leftSidebar.open &&
-    state.panels.leftSidebar.activePanel === "outline";
-
-  const rightSidebarOpen = !!(
-    state.panels.rightSidebar.open &&
-    state.panels.rightSidebar.activePanel !== "chat" &&
-    state.viewMode !== "focus" &&
-    currentChapter &&
-    !mobile
-  );
-
-  const chatOpen = !!(
-    state.panels.rightSidebar.open &&
-    state.panels.rightSidebar.activePanel === "chat" &&
-    state.viewMode !== "focus" &&
-    currentChapter &&
-    !mobile
-  );
-
   if (state.viewMode === "fullscreen" && currentChapter) {
     return (
       <div className="w-3/4 mx-auto flex-none h-screen overflow-auto">
         <LibraryContext.Provider value={libraryUtils}>
           {state.launcherOpen && (
-            <LibraryLauncher
-              onEditorSave={onEditorSave}
-              onLauncherClose={onLauncherClose}
-            />
+            <LibraryLauncher onLauncherClose={onLauncherClose} />
           )}
 
           <Sidebar
@@ -664,301 +619,8 @@ export default function Library({ mobile = false }) {
   return (
     <div className="h-screen w-full">
       <LibraryContext.Provider value={libraryUtils}>
-        {state.launcherOpen && (
-          <LibErrorBoundary component="launcher">
-            <LibraryLauncher
-              onEditorSave={onEditorSave}
-              onLauncherClose={onLauncherClose}
-            />
-          </LibErrorBoundary>
-        )}
-        {state.error && (
-          <div className="bg-red-700 p-2 text-white flex">
-            <p className="flex-grow">{state.error}</p>
-            <div
-              className="cursor-pointer flex-none"
-              onClick={() => dispatch(librarySlice.actions.clearError())}
-            >
-              <XMarkIcon className="w-5 h-5 my-auto" />
-            </div>
-          </div>
-        )}
-        {window.scrollY > 5 && (
-          <div
-            className={`fixed bottom-0 right-0 mr-4 mb-4 cursor-pointer text-gray-200 z-50 p-sm rounded-md active:scale-75 ${
-              state.error ? "bg-red-700" : "bg-blue-700"
-            }`}
-            onClick={() => {
-              window.scrollTo(0, 0);
-            }}
-          >
-            <ArrowUpIcon className="w-8 h-8" />
-            <p className="w-full text-center">{window.scrollY}</p>
-          </div>
-        )}
-
-        <div className="relative h-full w-full">
-          {state.popupOpen && state.popupData && (
-            <LibErrorBoundary component="popup">
-              <Popup
-                title={state.popupData.title}
-                inputValue={state.popupData.inputValue}
-                options={state.popupData.options}
-                onSubmit={state.popupData.onSubmit}
-              />
-            </LibErrorBoundary>
-          )}
-          {state.helpOpen && (
-            <LibErrorBoundary component="help">
-              <Help />
-            </LibErrorBoundary>
-          )}
-
-          {/*  nav */}
-          <LibErrorBoundary component="nav">
-            <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
-          </LibErrorBoundary>
-          {/* <LibErrorBoundary component="tabs">
-            <Tabs />
-          </LibErrorBoundary> */}
-          <div
-            className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
-            id="editor"
-          >
-            <div className="h-full w-full">
-              {!bookid && !currentChapter && (
-                <LibErrorBoundary component="home">
-                  <EditorPlaceholder loaded={state.booksLoaded}>
-                    <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                      <Home />
-                    </div>
-                  </EditorPlaceholder>
-                </LibErrorBoundary>
-              )}
-            </div>
-
-            <div className="h-full w-full">
-              {bookid && !currentChapter && (
-                <LibErrorBoundary component="front matter section">
-                  <EditorPlaceholder loaded={state.booksLoaded}>
-                    <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                      <BookEditor />
-                    </div>
-                  </EditorPlaceholder>
-                </LibErrorBoundary>
-              )}
-            </div>
-            {currentChapter && (
-              <LibErrorBoundary component="editor">
-                <EditorPlaceholder loaded={state.booksLoaded}>
-                  <div className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor pt-16 mb-60">
-                    <Editor settings={settings} />
-                  </div>
-                </EditorPlaceholder>
-              </LibErrorBoundary>
-            )}
-          </div>
-
-          <LibErrorBoundary component="book list">
-            <PanelPlaceholder
-              loaded={true}
-              show={state.panels.leftSidebar.open}
-              className="top-0 left-0"
-            >
-              <SlideTransition show={fileNavigatorOpen} direction="left">
-                <div
-                  className={`absolute top-0 left-0 h-full w-48 z-10 mt-9`}
-                  id="booklist"
-                >
-                  <BookList cachedBooks={cachedBooks} />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="chapter list">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={`top-0 left-48`}
-            >
-              <SlideTransition show={fileNavigatorOpen} direction="left">
-                <div className={`absolute top-0 left-48 w-48 h-full z-10 mt-9`}>
-                  <ChapterList selectedChapterId={chapterid || ""} />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="Prompts sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={` top-0 left-0`}
-            >
-              <SlideTransition show={promptsOpen} direction="left">
-                <div
-                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto  mt-9`}
-                >
-                  <PromptsSidebar
-                    closeSidebar={() =>
-                      dispatch(librarySlice.actions.closePrompts())
-                    }
-                    onLoad={() => {
-                      dispatch(librarySlice.actions.openRightSidebar());
-                      dispatch(
-                        librarySlice.actions.setActivePanel("suggestions")
-                      );
-                    }}
-                  />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="Blocks sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={` top-0 left-0`}
-            >
-              <SlideTransition show={blocksOpen} direction="left">
-                <div
-                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
-                >
-                  <BlocksSidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="Edit history sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={` top-0 left-0`}
-            >
-              <SlideTransition show={editHistoryOpen} direction="left">
-                <div
-                  className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
-                >
-                  <EditHistorySidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="Debug sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={` top-0 left-0`}
-            >
-              <SlideTransition show={debugOpen} direction="left">
-                <div
-                  className={`w-1/2 absolute top-0 left-0 h-screen overflow-auto mt-9`}
-                >
-                  <DebugSidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="Search sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={` top-0 left-0`}
-            >
-              <SlideTransition show={searchOpen} direction="left">
-                <div
-                  className={`w-96 absolute top-0 left-0 h-screen overflow-auto mt-9`}
-                >
-                  <SearchSidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="Outline sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.leftSidebar.open}
-              className={` top-0 left-0`}
-            >
-              <SlideTransition show={outlineOpen} direction="left">
-                <div
-                  className={`w-72 absolute top-0 left-0 h-screen overflow-auto mt-9`}
-                >
-                  <OutlineSidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.rightSidebar.open}
-              className="top-0 right-0"
-            >
-              <SlideTransition show={rightSidebarOpen} direction="right">
-                <div
-                  className={`absolute top-0 right-0 h-screen w-48 2xl:w-72 mt-9 z-10`}
-                >
-                  <Sidebar
-                    onSuggestionClick={addToContents}
-                    onHistoryClick={async (e, newText) => {
-                      await onTextEditorSave(state);
-                      dispatch(
-                        librarySlice.actions.restoreFromHistory({
-                          text: newText,
-                          metaKey: e.metaKey,
-                        })
-                      );
-                      dispatch(librarySlice.actions.setViewMode("default"));
-                    }}
-                    addToHistory={async () => {
-                      await onTextEditorSave(state, true);
-                    }}
-                    triggerHistoryRerender={triggerHistoryRerender}
-                  />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="chat">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.panels.rightSidebar.open}
-              className="top-0 right-0"
-            >
-              <SlideTransition show={chatOpen} direction="right">
-                <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
-                  <ChatSidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-
-          <LibErrorBoundary component="focus sidebar">
-            <PanelPlaceholder
-              loaded={state.booksLoaded}
-              show={state.viewMode === "focus"}
-              className="top-0 right-0"
-            >
-              <SlideTransition
-                show={state.viewMode === "focus"}
-                direction="right"
-              >
-                <div className={`absolute top-0 right-0 h-screen w-72 mt-9`}>
-                  <FocusSidebar />
-                </div>
-              </SlideTransition>
-            </PanelPlaceholder>
-          </LibErrorBoundary>
-        </div>
+        {mobile && <LibraryMobile />}
+        {!mobile && <LibraryDesktop />}
       </LibraryContext.Provider>
     </div>
   );
