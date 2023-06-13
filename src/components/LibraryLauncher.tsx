@@ -50,7 +50,7 @@ import { useNavigate } from "react-router-dom";
 import { languages } from "../lib/languages";
 import LibraryContext from "../LibraryContext";
 
-export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
+export default function LibraryLauncher({ onLauncherClose }) {
   const state: State = useSelector((state: RootState) => state.library);
   const currentBook = useSelector(getSelectedBook);
 
@@ -102,14 +102,6 @@ export default function LibraryLauncher({ onEditorSave, onLauncherClose }) {
   }
 
   const launchItems: MenuItem[] = [
-    {
-      label: "Save",
-      onClick: () => {
-        onEditorSave();
-      },
-      tooltip: "Command+s",
-      icon: <DocumentArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
-    },
     {
       label: "New Chapter",
       onClick: newChapter,

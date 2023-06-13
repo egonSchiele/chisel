@@ -56,7 +56,6 @@ export default function Tabs() {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  if (!currentChapter) return null;
   return (
     <div className="h-9 bg-gray-100 dark:bg-gray-700">
       <nav className="h-9 flex" aria-label="Tabs">
@@ -64,7 +63,7 @@ export default function Tabs() {
           <Tab
             key={tab.chapterid}
             tab={tab}
-            current={currentChapter.chapterid === tab.chapterid}
+            current={currentChapter?.chapterid === tab.chapterid}
           />
         ))}
       </nav>

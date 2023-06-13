@@ -249,15 +249,12 @@ export async function saveToHistory(chapterid: string, text: string) {
 
 export async function saveChapter(chapter: t.Chapter) {
   const res = await postWithCsrf(`/api/saveChapter`, { chapter });
-  console.log(res);
   if (!res.ok) {
     const text = await res.text();
-    console.log({ text });
     return t.error(`Error saving chapter: ${text}`);
   }
   console.log("saved chapter, getting json");
-  const data = await tryJson(res);
-  console.log({ data });
+  const data = await res.json();
   return t.success(data);
 }
 

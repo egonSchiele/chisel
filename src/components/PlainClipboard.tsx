@@ -20,7 +20,6 @@ export default class PlainClipboard extends Clipboard {
     if (clipboardEvent.defaultPrevented || !this.quill.isEnabled()) return;
     if (!clipboardEvent.clipboardData) return;
     const pastedData = clipboardEvent.clipboardData.getData("Text");
-    //console.log("pastedData", pastedData);
     clipboardEvent.preventDefault();
     const range = this.quill.getSelection();
     if (range.length > 0) {

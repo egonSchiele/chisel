@@ -473,6 +473,7 @@ export type LibraryContextType = {
   setSettings: (settings: UserSettings) => void;
   usage: Usage | null;
   deleteChapter: (deletedChapterid: string) => Promise<void>;
+  onTextEditorSave: (state: State, shouldSaveToHistory?: boolean) => void;
 };
 
 export type ChatHistory = {

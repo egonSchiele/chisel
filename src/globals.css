@@ -9,8 +9,7 @@
         margin: auto;
         justify-content: center; */
 
-    font-size: 18px !important;
-    line-height: 36px !important;
+
     font-smooth: 2em;
     -webkit-font-smoothing: subpixel-antialiased;    
     font-weight: 400;
@@ -22,6 +21,28 @@
     @apply text-editortext;
     @apply dark:text-dmeditortext;
   }
+
+  .fontsize-16 * {
+    font-size: 16px !important;
+    line-height: 32px !important;
+  }
+
+  .fontsize-18 * {
+    font-size: 18px !important;
+    line-height: 36px !important;
+  }
+
+  .fontsize-20 * {
+    font-size: 20px !important;
+    line-height: 36px !important;
+  }
+
+  .fontsize-22 * {
+    font-size: 22px !important;
+    line-height: 38px !important;
+  }
+
+ 
 
   .sansSerif {
     font-family: 'Promima sans', Roboto, 'Noto sans', 'Inter', sans-serif;
