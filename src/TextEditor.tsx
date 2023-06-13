@@ -1,6 +1,6 @@
 import highlightErrors from "./focusModeChecks";
 import { hedges } from "hedges";
-import { normalize, findSubarray, split } from "./utils";
+import { normalize, findSubarray, split, getFontSizeClass } from "./utils";
 import { fillers } from "fillers";
 import PlainClipboard from "./components/PlainClipboard";
 
@@ -583,12 +583,7 @@ function TextEditor({
   font = font || "sans-serif";
   let fontClass = font === "serif" ? "serif" : "sansSerif";
   let fontSize = settings.design?.fontSize || 18;
-  const fontSizeClass = {
-    16: "fontsize-16",
-    18: "fontsize-18",
-    20: "fontsize-20",
-    22: "fontsize-22",
-  }[fontSize];
+  const fontSizeClass = getFontSizeClass(fontSize);
   if (currentText.type === "code") fontClass = "font-mono";
   if (!isInView) return null;
   return (

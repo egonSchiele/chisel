@@ -14,7 +14,7 @@ import TextArea from "./components/TextArea";
 import { Book, Character } from "./Types";
 import Button from "./components/Button";
 import Input from "./components/Input";
-import { getChapterText, isString } from "./utils";
+import { getChapterText, getFontSizeClass, isString } from "./utils";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { chapterToMarkdown } from "./serverUtils";
@@ -410,6 +410,8 @@ export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
+  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
+
   const colors = useColors();
   let referenceBlocks = [];
   const chapterHashes = {};
@@ -445,6 +447,9 @@ export default function BookEditor({ className = "" }) {
   /* if (book.tag === "compost") {
     return <CompostBook />;
   } */
+  let fontSize = settings.design?.fontSize || 18;
+  const fontSizeClass = getFontSizeClass(fontSize);
+
   return (
     <div
       className={`flex h-screen overflow-auto w-full mx-auto pt-lg ${className}`}
@@ -467,7 +472,7 @@ export default function BookEditor({ className = "" }) {
             dispatch(librarySlice.actions.setBookSynopsis(value));
           }}
           title="Synopsis"
-          inputClassName="typography border-0 bg-editor text-editortext dark:bg-dmeditor dark:text-dmeditortext resize-none"
+          inputClassName={`typography border-0 bg-editor text-editortext dark:bg-dmeditor dark:text-dmeditortext resize-none ${fontSizeClass}`}
         />
 
         <CoverImage book={book} className="mt-lg" />

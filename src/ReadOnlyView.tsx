@@ -5,7 +5,7 @@ import MarkdownBlock from "./components/MarkdownBlock";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
-export default function ReadOnlyView({ textBlocks, fontClass }) {
+export default function ReadOnlyView({ textBlocks, fontClass, fontSizeClass }) {
   const state: t.State = useSelector((state: RootState) => state.library);
 
   return textBlocks.map((text: t.TextBlock, index) => {
@@ -40,7 +40,10 @@ export default function ReadOnlyView({ textBlocks, fontClass }) {
       }
     } else {
       return (
-        <pre key={index} className={`w-full typography ${fontClass}`}>
+        <pre
+          key={index}
+          className={`w-full typography ${fontClass} ${fontSizeClass}`}
+        >
           {text.text}
         </pre>
       );

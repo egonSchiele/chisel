@@ -357,3 +357,12 @@ export async function tryJson(res) {
     return {};
   }
 }
+
+export function getFontSizeClass(size: number | null) {
+  return {
+    16: "fontsize-16",
+    18: "fontsize-18",
+    20: "fontsize-20",
+    22: "fontsize-22",
+  }[size || 18];
+}
