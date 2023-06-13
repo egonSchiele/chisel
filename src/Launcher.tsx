@@ -32,6 +32,7 @@ export default function Launcher({
     filteredItems = items.map((item) => {
       const a = item.label.toLowerCase().split(" ");
       const b = query.toLowerCase().split(" ");
+
       let matches = 0;
       for (let i = 0; i < a.length; i++) {
         for (let j = 0; j < b.length; j++) {
@@ -41,8 +42,11 @@ export default function Launcher({
         }
       }
 
-      //if (matches > 0) {
-      if (matches === b.length) {
+      /*  if (item.label === "Convert title to title case") {
+        console.log({ a, b, matches });
+      } */
+
+      if (matches >= b.length) {
         const frequency = autocompleteCache[item.label] || 0;
         return { ...item, frequency, matchPercentage: matches / a.length };
       } else {
