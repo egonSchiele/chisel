@@ -1,27 +1,8 @@
-console.log("hi from service worker");
-
-/* const addResourcesToCache = async (resources) => {
-    const cache = await caches.open("v1");
-    await cache.addAll(resources);
-  };
-   */
 self.addEventListener("install", (event) => {
   console.log("[service worker] installed");
   self.skipWaiting();
-  /*  event.waitUntil(
-      addResourcesToCache([
-        "/",
-        "/index.html",
-        "/style.css",
-        "/app.js",
-        "/image-list.js",
-        "/star-wars-logo.jpg",
-        "/gallery/bountyHunters.jpg",
-        "/gallery/myLittleVader.jpg",
-        "/gallery/snowTroopers.jpg",
-      ])
-    ); */
 });
+
 const lastEditedRequest = new Request("/api/getLastEdited", {
   credentials: "include",
 });
@@ -233,31 +214,26 @@ async function getBooksFromCacheOrServer() {
 }
 
 async function saveChapter(request) {
-  const updated = await updateCacheWithChapter(request.clone());
-  const result = await fetch(request);
-  if (updated) {
-    if (result.ok) {
-      console.log("updated chapter on server");
-      const data = await result.json();
-      setLastEditedInCache(data.created_at);
-      return new Response(JSON.stringify(data));
-    }
-  }
-  return new Response(null);
+  return await saveBase(request, updateCacheWithChapter, "chapter");
 }
 
 async function saveBook(request) {
-  const updated = await updateCacheWithBook(request.clone());
+  return await saveBase(request, updateCacheWithBook, "book");
+}
+
+async function saveBase(request, updateFunc, type) {
+  const updated = await updateFunc(request.clone());
   const result = await fetch(request);
-  if (updated) {
-    if (result.ok) {
-      console.log("updated book on server");
-      const data = await result.json();
-      setLastEditedInCache(data.created_at);
-      return new Response(JSON.stringify(data));
-    }
+  if (result.ok) {
+    console.log("updated on server", type);
+    const data = await result.json();
+    setLastEditedInCache(data.created_at);
+    return new Response(JSON.stringify(data));
+  } else {
+    console.log("failed to update on server", type);
+    const text = await result.text();
+    return new Response(text);
   }
-  return new Response(null);
 }
 
 function clearCache() {
