@@ -110,6 +110,19 @@ async function backupCacheData() {
 
 const backupDataInCache = await backupCacheData();
 
+function ViewportSize() {
+  return (
+    <div className="text-sm mx-xs my-xs">
+      Viewport:
+      <span className="invisible sm:visible md:invisible">sm</span>
+      <span className="invisible md:visible lg:invisible">md</span>
+      <span className="invisible lg:visible xl:invisible">lg</span>
+      <span className="invisible xl:visible 2xl:invisible">xl</span>
+      <span className="invisible 2xl:visible">2xl and above</span>
+    </div>
+  );
+}
+
 export default function DebugSidebar() {
   const state: t.State = useSelector((state: RootState) => state.library);
 
@@ -130,6 +143,7 @@ export default function DebugSidebar() {
     line(`From cache? ${state.fromCache}`),
     line(`Last edited raw: ${pretty(lastEditedResponse)}`),
     line(`Last edited as timestamp: ${pretty(lastEditedTimestamp)}`),
+    <ViewportSize />,
     <Reveal label="Settings" toReveal={pretty(settings)} key="settings" />,
     <Reveal label="State" toReveal={pretty(state)} key="state" />,
     <Reveal
