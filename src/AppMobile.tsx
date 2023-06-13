@@ -16,8 +16,8 @@ export default function AppMobile() {
           path="/book/:bookid/chapter/:chapterid"
           element={<Library mobile={true} />}
         />
-        <Route path="/book/:bookid" element={<LibraryMobile />} />
-        <Route path="/" element={<LibraryMobile />} />
+        <Route path="/book/:bookid" element={<Library mobile={true} />} />
+        <Route path="/" element={<Library mobile={true} />} />
       </Routes>
     </div>
   );
