@@ -173,23 +173,21 @@ export default function Nav({
             </>
           )}
 
-          {/*           {state.panels.leftSidebar.open && !mobile && currentChapter && (
+          {mobile && bookid && !chapterid && (
             <NavButton
-            color="nav"
-              label="Close"
+              color="nav"
+              label="Open"
               onClick={() => {
-                dispatch(librarySlice.actions.closeFileNavigator());
-                dispatch(librarySlice.actions.closeFileNavigator());
+                navigate(`/`);
               }}
               className="p-0"
-              selector="close-lists-button"
+              selector="open-lists-button"
             >
-              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-              <p className="uppercase text-xs align-baseline">Close</p>
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
             </NavButton>
-          )} */}
+          )}
 
-          {mobile && (
+          {mobile && bookid && chapterid && (
             <NavButton
               color="nav"
               label="Open"
