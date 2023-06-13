@@ -473,7 +473,11 @@ export default function BookEditor({ className = "" }) {
         <CoverImage book={book} className="mt-lg" />
         <div className={`grid gap-md grid-cols-1 mt-lg`}>
           <div className="grid gap-sm grid-cols-1 ">
-            <Heading text="Chapters" />
+            <Heading
+              text={`${chapters.length} ${
+                chapters.length === 1 ? "Chapter" : "Chapters"
+              }`}
+            />
             {chapters &&
               chapters.map((chapter, i) => (
                 <Chapter
@@ -553,7 +557,11 @@ export default function BookEditor({ className = "" }) {
         </div>
 
         {referenceBlocks.length > 0 && (
-          <Heading text={`${referenceBlocks.length} pinned blocks`} />
+          <Heading
+            text={`${referenceBlocks.length} pinned ${
+              referenceBlocks.length === 1 ? "block" : "blocks"
+            }`}
+          />
         )}
 
         <div className="grid gap-md grid-cols-3 mt-lg mb-[50rem]">
