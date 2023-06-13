@@ -14,6 +14,7 @@ import {
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { useColors } from "./lib/hooks";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function VersionsSidebar() {
   const state: EditorState = useSelector(
@@ -37,6 +38,21 @@ export default function VersionsSidebar() {
     }
     sortBy(versions, ["text"]).forEach((version, i) => {
       const title = version.text.split("\n")[0].substring(0, 20);
+      let menuItems = [];
+      if (version.id !== null) {
+        menuItems.push({
+          label: "Delete",
+          /*           icon: <XMarkIcon />,
+           */ onClick: () => {
+            dispatch(
+              librarySlice.actions.deleteVersion({
+                index,
+                versionid: version.id,
+              })
+            );
+          },
+        });
+      }
       items.push(
         <ListItem
           key={i}
@@ -52,6 +68,7 @@ export default function VersionsSidebar() {
               );
             }
           }}
+          menuItems={menuItems}
         />
       );
     });

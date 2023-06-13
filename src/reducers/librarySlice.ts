@@ -838,6 +838,22 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
+    deleteVersion(
+      state: t.State,
+      action: PayloadAction<{ index: number; versionid: string }>
+    ) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const { index, versionid } = action.payload;
+      const block = chapter.text[index];
+      if (block.type === "embeddedText") return;
+      if (!block.versions) return;
+      saveToEditHistory(state, "delete version");
+      block.versions = block.versions.filter((v) => v.id !== versionid);
+      block.id = nanoid();
+
+      state.saved = false;
+    },
     deleteAllVersions(
       state: t.State,
       action: PayloadAction<{ index: number }>
