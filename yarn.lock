@@ -7534,6 +7534,11 @@ listr2@^3.8.3:
     through "^2.3.8"
     wrap-ansi "^7.0.0"
 
+llama-tokenizer-js@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/llama-tokenizer-js/-/llama-tokenizer-js-1.0.1.tgz#572b908af49e95a885e3c4ee9249eb26a817987e"
+  integrity sha512-gKWLLiHulp17++oQE9ziVsSONy/NKGuzX8NhPZiR731q3p7tCWv8JBssLQiOztvrQRa1f0TEsOPhQVXmuhJfOQ==
+
 loader-runner@^4.2.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-4.3.0.tgz#c1b4a163b99f614830353b16755e7149ac2314e1"

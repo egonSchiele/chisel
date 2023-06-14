@@ -1,3 +1,4 @@
+import llamaTokenizer from "llama-tokenizer-js";
 export function toMarkdown(block) {
   if (block.type === "markdown") {
     return block.text;
@@ -18,4 +19,16 @@ export function chapterToMarkdown(chapter, htmlTags = false) {
   } else {
     return markdown;
   }
+}
+
+export function countTokens(text) {
+  return llamaTokenizer.encode(text).length;
+}
+
+// return a substring of text that contains tokenCount tokens or less
+export function substringTokens(text, tokenCount) {
+  if (tokenCount <= 0) return "";
+  const tokens = llamaTokenizer.encode(text);
+  const sub = tokens.slice(0, tokenCount);
+  return llamaTokenizer.decode(sub);
 }

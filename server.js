@@ -56,7 +56,12 @@ import {
   getEmbeddingsForChapter,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
-import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
+import {
+  chapterToMarkdown,
+  toMarkdown,
+  countTokens,
+  substringTokens,
+} from "./src/serverUtils.js";
 import Replicate from "replicate";
 
 const replicate = new Replicate({
@@ -875,7 +880,7 @@ app.post(
 app.post("/api/suggestions", requireLogin, async (req, res) => {
   console.log({ body: req.body });
   const user = await getUser(req);
-  const prompt = req.body.prompt.substring(0, settings.maxPromptLength);
+  const prompt = substringTokens(req.body.prompt, settings.maxPromptLength);
   const suggestions = await getSuggestions(
     user,
     prompt,
@@ -1048,9 +1053,12 @@ app.post(
       .join("\n\n");
 
     let prompt = `Context: ${context}`;
-
-    prompt = prompt.substring(0, settings.maxPromptLength);
-    prompt += `\n\nQuestion: ${question}\n\nAnswer:`;
+    const qandaString = `\n\nQuestion: ${question}\n\nAnswer:`;
+    prompt = substringTokens(
+      prompt,
+      settings.maxPromptLength - countTokens(qandaString)
+    );
+    prompt += qandaString;
     const suggestions = await getSuggestions(user, prompt);
 
     if (suggestions.success) {
@@ -1157,7 +1165,7 @@ async function getSuggestions(
     }
   }
 
-  const prompt = _prompt.substring(0, settings.maxPromptLength);
+  const prompt = substringTokens(_prompt, settings.maxPromptLength);
   const max_tokens = Math.min(_max_tokens, settings.maxTokens);
   const num_suggestions = Math.min(_num_suggestions, settings.maxSuggestions);
 
@@ -1333,7 +1341,7 @@ async function getEmbeddings(user, _text) {
     return check;
   }
 
-  const input = _text.substring(0, settings.maxPromptLength);
+  const input = substringTokens(_text, settings.maxPromptLength);
 
   const endpoint = "https://api.openai.com/v1/embeddings";
   const reqBody = {
