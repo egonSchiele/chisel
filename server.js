@@ -52,11 +52,12 @@ import {
   failure,
   getChaptersForBook,
   getBookToCheckAccess,
+  saveEmbeddings,
+  getEmbeddingsForChapter,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
 import Replicate from "replicate";
-import { all } from "cypress/types/bluebird/index.js";
 
 const replicate = new Replicate({
   // get your token from https://replicate.com/account
@@ -937,9 +938,7 @@ app.get(
   checkBookAccess,
   async (req, res) => {
     const book = await getBook(res.locals.bookid);
-    const chapters = book.chapters.filter(
-      (chapter) => chapter.title === "Progress on tech editor feedback"
-    );
+    const chapters = book.chapters;
     const user = await getUser(req);
     const timestamp = Date.now();
     let promises = chapters
@@ -950,30 +949,25 @@ app.get(
         );
       })
       .map(async (chapter) => {
-        const blockPromises = chapter.text.map(async (block) => {
-          const blockEmbeddings = await getEmbeddings(user, block.text);
-          return blockEmbeddings;
-        });
-        const embeddings = await Promise.all(blockPromises);
+        const embeddings = await getEmbeddings(
+          user,
+          chapterToMarkdown(chapter)
+        );
         return { chapter, embeddings };
       });
     const allEmbeddings = await Promise.all(promises);
     promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
-      /*       console.log(JSON.stringify({ chapter, embeddings }, null, 2));
-       */ chapter.text.forEach((block, i) => {
-        if (embeddings[i].success) {
-          console.log("Got embeddings for block:", block, i, embeddings);
-          block.embeddings = embeddings[i].data;
-        } else {
-          block.embeddings = [];
-          console.log("Error getting embeddings for block:", block, i);
-        }
+      if (!embeddings.success) {
+        console.error("Error getting embeddings:", embeddings.message);
+        return;
+      }
+
+      await saveEmbeddings(chapter.chapterid, {
+        embeddings: embeddings.data,
+        created_at: timestamp,
       });
-
-      saveEmbeddings(chapter.chapterid, allEmbeddings);
-
-      chapter.embeddingsLastCalculatedAt = timestamp;
-      await saveChapter(chapter);
+      /* chapter.embeddingsLastCalculatedAt = timestamp;
+      await saveChapter(chapter); */
     });
 
     book.lastTrainedAt = timestamp;
@@ -1011,7 +1005,7 @@ app.post(
   checkBookAccess,
   async (req, res) => {
     const book = await getBook(res.locals.bookid);
-    const chapters = await getChaptersForBook(book.bookid, true);
+    const chapters = await getChaptersForBook(book.bookid);
     const user = await getUser(req);
     const { question } = req.body;
     const questionEmbeddings = await getEmbeddings(user, question);
@@ -1019,37 +1013,38 @@ app.post(
     // We will use that as context for GPT when asking our question
 
     const blocksAndSimilarityScores = [];
-    chapters.forEach((chapter) => {
-      chapter.text.forEach((block, i) => {
-        if (block.embeddings && block.embeddings.length > 0) {
-          const similarityScore = similarity(
-            questionEmbeddings.data,
-            block.embeddings
-          );
-          blocksAndSimilarityScores.push({
-            block,
-            chapter,
-            i,
-            similarityScore,
-          });
-        } else {
-          console.log("No embeddings for block:", block);
-        }
+    const promises = chapters.map(async (chapter) => {
+      const _embeddings = await getEmbeddingsForChapter(chapter.chapterid);
+      if (!_embeddings) {
+        console.log("No embeddings for chapter:", chapter.chapterid);
+        return;
+      }
+      const embeddings = _embeddings.embeddings;
+      if (embeddings.length === 0) {
+        console.error("Number of embeddings is zero");
+        return;
+      }
+      const similarityScore = similarity(questionEmbeddings.data, embeddings);
+      blocksAndSimilarityScores.push({
+        chapter,
+        similarityScore,
       });
     });
+
+    await Promise.all(promises);
 
     if (blocksAndSimilarityScores.length === 0) {
       res.status(400).json({ error: "No embeddings found for book" });
       return;
     }
 
-    const numBlocksToConsider = Math.min(50, blocksAndSimilarityScores.length);
+    const numBlocksToConsider = Math.min(3, blocksAndSimilarityScores.length);
     const mostSimilarBlocks = blocksAndSimilarityScores.sort(
       (a, b) => b.similarityScore - a.similarityScore
     );
     let context = mostSimilarBlocks
       .slice(0, numBlocksToConsider)
-      .map(({ block }) => block.text)
+      .map(({ chapter }) => chapterToMarkdown(chapter, false))
       .join("\n\n");
 
     let prompt = `Context: ${context}`;

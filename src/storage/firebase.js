@@ -85,7 +85,7 @@ export const getBookToCheckAccess = async (bookid) => {
   return book;
 };
 
-export const getChaptersForBook = async (bookid, includeEmbeddings = false) => {
+export const getChaptersForBook = async (bookid) => {
   const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
 
   const chapters = await chapterRef.get();
@@ -96,21 +96,7 @@ export const getChaptersForBook = async (bookid, includeEmbeddings = false) => {
   const allChapters = [];
   chapters.forEach((chapter) => {
     const chapterData = chapter.data();
-    // storing embeddings on the chapter is the old way
-    if (chapterData.embeddings) {
-      delete chapterData.embeddings;
-      chapter.embeddingsLastCalculatedAt = null;
-    }
-    if (includeEmbeddings) {
-      allChapters.push(chapterData);
-    } else {
-      if (chapterData.text && Array.isArray(chapterData.text)) {
-        chapterData.text.forEach((t) => {
-          t.embeddings = [];
-        });
-      }
-      allChapters.push(chapterData);
-    }
+    allChapters.push(chapterData);
   });
   return allChapters;
 };
@@ -219,9 +205,35 @@ export const getBooks = async (userid) => {
   return allBooks;
 };
 
+export const saveEmbeddings = async (chapterid, data) => {
+  console.log(`saving chapter embeddings ${chapterid}`);
+  console.log({ data });
+  const docRef = db.collection("embeddings").doc(chapterid);
+  try {
+    await docRef.set(data);
+    console.log("Successfully synced embeddings to Firestore");
+  } catch (error) {
+    console.error("Error syncing embeddings to Firestore:", error);
+    return failure("Error saving embeddings");
+  }
+  return success({ created_at: data.created_at });
+};
+
+export const getEmbeddingsForChapter = async (chapterid) => {
+  const docRef = db.collection("embeddings").doc(chapterid);
+  try {
+    const embeddings = await docRef.get();
+    if (embeddings.exists) {
+      return embeddings.data();
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const saveChapter = async (chapter) => {
   console.log(`saving chapter ${chapter.chapterid}`);
-  console.log(JSON.stringify(chapter, null, 2));
   if (!chapter) {
     return failure("no chapter to save");
   }
@@ -238,15 +250,6 @@ export const saveChapter = async (chapter) => {
 
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   try {
-    /* const doc = await docRef.get();
-    if (doc.exists) {
-      const data = doc.data();
-      if (data.created_at && data.created_at > chapter.created_at) {
-        return failure(
-          `Could not save, your copy of this chapter is older than the one in the database. Db: ${data.created_at}, your copy: ${chapter.created_at}. Please refresh to get the latest updates, then try again.`
-        );
-      }
-    } */
     chapter.created_at = Date.now();
 
     await docRef.set(chapter);
