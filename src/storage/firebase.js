@@ -221,7 +221,7 @@ export const getBooks = async (userid) => {
 
 export const saveChapter = async (chapter) => {
   console.log(`saving chapter ${chapter.chapterid}`);
-
+  console.log(JSON.stringify(chapter, null, 2));
   if (!chapter) {
     return failure("no chapter to save");
   }

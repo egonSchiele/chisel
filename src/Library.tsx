@@ -1,31 +1,17 @@
-import Home from "./Home";
-import ChatSidebar from "./ChatSidebar";
-import { ArrowUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import BookEditor from "./BookEditor";
-import BookList from "./BookList";
-import ChapterList from "./ChapterList";
 import DiffViewer from "./DiffViewer";
-import Editor from "./Editor";
-import FocusMode from "./FocusMode";
 import LibErrorBoundary from "./LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
-import Nav from "./Nav";
-import PromptsSidebar from "./PromptsSidebar";
+import LibraryDesktop from "./LibraryDesktop";
+import LibraryMobile from "./LibraryMobile";
 import Sidebar from "./Sidebar";
 import * as t from "./Types";
 import LibraryLauncher from "./components/LibraryLauncher";
-import Popup from "./components/Popup";
-import SlideTransition from "./components/SlideTransition";
 import "./globals.css";
 import * as fd from "./lib/fetchData";
-import { useColors, useKeyDown } from "./lib/hooks";
-import LoadingPlaceholder, {
-  EditorPlaceholder,
-  PanelPlaceholder,
-} from "./LoadingPlaceholder";
+import { useKeyDown } from "./lib/hooks";
 import {
   defaultSettings,
   fetchBooksThunk,
@@ -40,20 +26,9 @@ import {
   getCsrfToken,
   saveTextToHistory,
   today,
-  uniq,
   useInterval,
   useLocalStorage,
 } from "./utils";
-import BlocksSidebar from "./BlocksSidebar";
-import OutlineSidebar from "./OutlineSidebar";
-import FocusSidebar from "./FocusSidebar";
-import Tabs from "./Tabs";
-import EditHistorySidebar from "./EditHistorySidebar";
-import DebugSidebar from "./DebugSidebar";
-import Help from "./Help";
-import SearchSidebar from "./SearchSidebar";
-import LibraryDesktop from "./LibraryDesktop";
-import LibraryMobile from "./LibraryMobile";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);

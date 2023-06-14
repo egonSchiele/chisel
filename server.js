@@ -56,6 +56,7 @@ import {
 import settings from "./settings.js";
 import { chapterToMarkdown, toMarkdown } from "./src/serverUtils.js";
 import Replicate from "replicate";
+import { all } from "cypress/types/bluebird/index.js";
 
 const replicate = new Replicate({
   // get your token from https://replicate.com/account
@@ -936,7 +937,9 @@ app.get(
   checkBookAccess,
   async (req, res) => {
     const book = await getBook(res.locals.bookid);
-    const chapters = book.chapters;
+    const chapters = book.chapters.filter(
+      (chapter) => chapter.title === "Progress on tech editor feedback"
+    );
     const user = await getUser(req);
     const timestamp = Date.now();
     let promises = chapters
@@ -956,11 +959,18 @@ app.get(
       });
     const allEmbeddings = await Promise.all(promises);
     promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
-      chapter.text.forEach((block, i) => {
+      /*       console.log(JSON.stringify({ chapter, embeddings }, null, 2));
+       */ chapter.text.forEach((block, i) => {
         if (embeddings[i].success) {
+          console.log("Got embeddings for block:", block, i, embeddings);
           block.embeddings = embeddings[i].data;
+        } else {
+          block.embeddings = [];
+          console.log("Error getting embeddings for block:", block, i);
         }
       });
+
+      saveEmbeddings(chapter.chapterid, allEmbeddings);
 
       chapter.embeddingsLastCalculatedAt = timestamp;
       await saveChapter(chapter);
@@ -1008,8 +1018,7 @@ app.post(
     // Use cosine similarity to find the most similar chapter.
     // We will use that as context for GPT when asking our question
 
-    let max = 0;
-    let mostSimilarBlock;
+    const blocksAndSimilarityScores = [];
     chapters.forEach((chapter) => {
       chapter.text.forEach((block, i) => {
         if (block.embeddings && block.embeddings.length > 0) {
@@ -1017,22 +1026,33 @@ app.post(
             questionEmbeddings.data,
             block.embeddings
           );
-          if (similarityScore > max) {
-            max = similarityScore;
-            mostSimilarBlock = { block, chapter, i };
-          }
+          blocksAndSimilarityScores.push({
+            block,
+            chapter,
+            i,
+            similarityScore,
+          });
         } else {
           console.log("No embeddings for block:", block);
         }
       });
     });
 
-    if (!mostSimilarBlock) {
+    if (blocksAndSimilarityScores.length === 0) {
       res.status(400).json({ error: "No embeddings found for book" });
       return;
     }
 
-    let prompt = `Context: ${mostSimilarBlock.block.text}`;
+    const numBlocksToConsider = Math.min(50, blocksAndSimilarityScores.length);
+    const mostSimilarBlocks = blocksAndSimilarityScores.sort(
+      (a, b) => b.similarityScore - a.similarityScore
+    );
+    let context = mostSimilarBlocks
+      .slice(0, numBlocksToConsider)
+      .map(({ block }) => block.text)
+      .join("\n\n");
+
+    let prompt = `Context: ${context}`;
 
     prompt = prompt.substring(0, settings.maxPromptLength);
     prompt += `\n\nQuestion: ${question}\n\nAnswer:`;
@@ -1042,8 +1062,10 @@ app.post(
       const answer = suggestions.data.choices[0].text;
       res.status(200).json({
         answer,
-        chapterid: mostSimilarBlock.chapter.chapterid,
-        blockIndex: mostSimilarBlock.i,
+        /* chapterid: mostSimilarBlock.chapter.chapterid,
+        blockIndex: mostSimilarBlock.i, */
+        chapterid: null,
+        blockIndex: null,
       });
     } else {
       res.status(400).json({ error: suggestions.error });

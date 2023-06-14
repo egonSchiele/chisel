@@ -154,23 +154,25 @@ export default function Nav({
               >
                 <Bars3Icon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
-
-              <NavButton
-                color="nav"
-                label="Search"
-                onClick={() => {
-                  dispatch(librarySlice.actions.toggleSearch());
-                }}
-                className="p-0"
-                selector="search-button"
-                selected={
-                  state.panels.leftSidebar.open &&
-                  state.panels.leftSidebar.activePanel === "search"
-                }
-              >
-                <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
-              </NavButton>
             </>
+          )}
+
+          {!mobile && chapterid && (
+            <NavButton
+              color="nav"
+              label="Search"
+              onClick={() => {
+                dispatch(librarySlice.actions.toggleSearch());
+              }}
+              className="p-0"
+              selector="search-button"
+              selected={
+                state.panels.leftSidebar.open &&
+                state.panels.leftSidebar.activePanel === "search"
+              }
+            >
+              <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
+            </NavButton>
           )}
 
           {mobile && bookid && !chapterid && (
