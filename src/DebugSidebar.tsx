@@ -110,6 +110,13 @@ async function backupCacheData() {
 
 const backupDataInCache = await backupCacheData();
 
+function clearCache() {
+  console.log("clearing cache");
+  caches.keys().then(function (names) {
+    for (let name of names) caches.delete(name);
+  });
+}
+
 function ViewportSize() {
   return (
     <div className="text-sm mx-xs my-xs">
@@ -156,6 +163,9 @@ export default function DebugSidebar() {
       toReveal={pretty(backupDataInCache)}
       key="backupCacheData"
     />,
+    <Button style="primary" onClick={() => clearCache()} key="clearCache">
+      Clear Cache
+    </Button>,
   ];
 
   return (

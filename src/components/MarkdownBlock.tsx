@@ -1,3 +1,4 @@
+import * as t from "../Types";
 import React, { useContext } from "react";
 import { marked } from "marked";
 import * as DOMPurify from "dompurify";

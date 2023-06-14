@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import * as t from "./Types";
 import CodeBlock from "./components/CodeBlock";
 import MarkdownBlock from "./components/MarkdownBlock";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
-export default function ReadOnlyView({ textBlocks, fontClass, fontSizeClass }) {
+import LibraryContext from "./LibraryContext";
+import { getFontSizeClass } from "./utils";
+export default function ReadOnlyView({ textBlocks, fontClass }) {
   const state: t.State = useSelector((state: RootState) => state.library);
+  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
+  let fontSize = settings.design?.fontSize || 18;
+  const fontSizeClass = getFontSizeClass(fontSize);
 
   return textBlocks.map((text: t.TextBlock, index) => {
     if (text.type === "code") {

@@ -187,6 +187,7 @@ const checkBookAccess = async (req, res, next) => {
   const key = `${userid}-${bookid}`;
   if (bookAccessCache[key]) {
     console.log("bookAccessCache hit");
+    res.locals.bookid = bookid;
     next();
     return;
   }
@@ -1020,9 +1021,16 @@ app.post(
             max = similarityScore;
             mostSimilarBlock = { block, chapter, i };
           }
+        } else {
+          console.log("No embeddings for block:", block);
         }
       });
     });
+
+    if (!mostSimilarBlock) {
+      res.status(400).json({ error: "No embeddings found for book" });
+      return;
+    }
 
     let prompt = `Context: ${mostSimilarBlock.block.text}`;
 

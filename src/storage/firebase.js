@@ -96,6 +96,11 @@ export const getChaptersForBook = async (bookid, includeEmbeddings = false) => {
   const allChapters = [];
   chapters.forEach((chapter) => {
     const chapterData = chapter.data();
+    // storing embeddings on the chapter is the old way
+    if (chapterData.embeddings) {
+      delete chapterData.embeddings;
+      chapter.embeddingsLastCalculatedAt = null;
+    }
     if (includeEmbeddings) {
       allChapters.push(chapterData);
     } else {
@@ -261,7 +266,12 @@ export const getChapter = async (chapterid) => {
   if (!chapter.exists) {
     return null;
   }
-  return chapter.data();
+  const data = chapter.data();
+  if (data.embeddings) {
+    delete data.embeddings;
+    data.embeddingsLastCalculatedAt = null;
+  }
+  return data;
 };
 
 export const deleteChapter = async (chapterid, bookid) => {

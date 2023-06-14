@@ -1,98 +1,85 @@
-import React, { useContext, useEffect } from "react";
+import {
+  Bars3Icon,
+  ComputerDesktopIcon,
+  InformationCircleIcon,
+  MagnifyingGlassIcon,
+  Square2StackIcon,
+} from "@heroicons/react/24/outline";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import * as t from "./Types";
-import { LibraryContextType } from "./Types";
-import Input from "./components/Input";
-import List from "./components/List";
-import ListItem from "./components/ListItem";
-
-import LibraryContext from "./LibraryContext";
-import { useColors } from "./lib/hooks";
+import { getText, librarySlice } from "./reducers/librarySlice";
 import { RootState } from "./store";
-import { getChapterText } from "./utils";
 
-function SearchResult({ book, chapter, index }) {
-  return (
-    <div className="flex flex-row justify-between items-center my-sm">
-      <div className="flex flex-col">
-        <Link to={`/book/${book.bookid}/chapter/${chapter.chapterid}`}>
-          <div className="text-sm">
-            {book.title}/{chapter.title}
-          </div>
-        </Link>
-      </div>
-    </div>
-  );
+import { Tab } from "@headlessui/react";
+import BlockActionsSidebar from "./BlockActionsSidebar";
+import BlockInfoSidebar from "./BlockInfoSidebar";
+import OutlineSidebar from "./OutlineSidebar";
+import VersionsSidebar from "./VersionsSidebar";
+import { useColors } from "./lib/hooks";
+import SimpleSearchSidebar from "./SimpleSearchSidebar";
+import AskAQuestionSidebar from "./AskAQuestionSidebar";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
 }
 
-export default function SearchSidebar() {
-  const books: t.Book[] = useSelector(
-    (state: RootState) => state.library.books
-  );
+export default function SearchSidebar({}: {}) {
+  //const [selectedIndex, setSelectedIndex] = useState(tabIndex);
 
+  const state = useSelector((state: RootState) => state.library.editor);
+  const index = state.activeTextIndex;
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { settings } = useContext(LibraryContext) as LibraryContextType;
+  const currentText = useSelector(getText(index));
   const colors = useColors();
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const searchRef = React.useRef(null);
 
-  useEffect(() => {
-    if (searchRef.current) {
-      searchRef.current.focus();
-    }
-  }, [searchRef]);
-
-  const line = (book, chapter) => (
-    <ListItem
-      title={`${book.title}/${chapter.title}`}
-      key={chapter.chapterid}
-      link={`/book/${book.bookid}/chapter/${chapter.chapterid}`}
-      className="w-full"
-      selected={false}
-    />
+  /*  const tab = useSelector(
+    (state: RootState) => state.library.panels.leftSidebar.activePanel
   );
+  let selectedIndex = 0;
+  if (tab === "versions") selectedIndex = 1;
 
-  const pretty = (obj) => JSON.stringify(obj, null, 2);
+  function setSelectedIndex(index: number) {
+    if (index === 0) {
+      dispatch(librarySlice.actions.toggleBlocks());
+    } else if (index === 1) {
+      dispatch(librarySlice.actions.toggleVersions());
+    }
+  } */
 
-  const items: any[] = [
-    <Input
-      name="search"
-      title="Search"
-      key="search"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      ref={searchRef}
-    />,
-  ];
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const results = [];
-  if (searchTerm.length > 0) {
-    books.forEach((book) => {
-      book.chapters.forEach((chapter) => {
-        if (
-          getChapterText(chapter, true)
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          chapter.title.toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-          results.push(line(book, chapter));
-        }
-      });
-    });
+  if (!currentText) return null;
+  function getClassNames({ selected }) {
+    const defaultClasses = "w-full py-1 text-sm font-medium text-center";
+    return classNames(
+      defaultClasses,
+      selected ? `${colors.background}` : `${colors.selectedBackground}`
+    );
   }
-  items.push(...results);
-
   return (
-    <List
-      title="Search"
-      items={items}
-      leftMenuItem={null}
-      rightMenuItem={null}
-      className="border-r w-full"
-      selector="searchList"
-      showScrollbar={true}
-    />
+    <div className="w-full px-0">
+      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+        <Tab.List className={`flex border-r ${colors.borderColor}`}>
+          <Tab className={getClassNames}>
+            <MagnifyingGlassIcon
+              className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+            />
+          </Tab>
+          <Tab className={getClassNames}>
+            <ComputerDesktopIcon
+              className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+            />
+          </Tab>
+        </Tab.List>
+        <Tab.Panels className="">
+          <Tab.Panel>
+            <SimpleSearchSidebar />
+          </Tab.Panel>
+          <Tab.Panel>
+            <AskAQuestionSidebar />
+          </Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
+    </div>
   );
 }
