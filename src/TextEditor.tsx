@@ -1,6 +1,12 @@
 import highlightErrors from "./focusModeChecks";
 import { hedges } from "hedges";
-import { normalize, findSubarray, split, getFontSizeClass } from "./utils";
+import {
+  normalize,
+  findSubarray,
+  split,
+  getFontSizeClass,
+  isTextishBlock,
+} from "./utils";
 import { fillers } from "fillers";
 import PlainClipboard from "./components/PlainClipboard";
 
@@ -215,6 +221,7 @@ function TextEditor({
   }, [activeTextIndex, open]);
 
   function highlightForFocusMode() {
+    if (!isTextishBlock(currentText)) return;
     if (viewMode !== "focus") return;
     // @ts-ignore
     if (!quillRef.current || !quillRef.current.getEditor) return;
@@ -238,6 +245,7 @@ function TextEditor({
   }
 
   function formatMarkdown() {
+    if (!isTextishBlock(currentText)) return;
     // @ts-ignore
     if (!quillRef.current || !quillRef.current.getEditor) return;
     // @ts-ignore
@@ -582,9 +590,10 @@ function TextEditor({
   let font = settings.design ? settings.design.font : "sans-serif";
   font = font || "sans-serif";
   let fontClass = font === "serif" ? "serif" : "sansSerif";
+  if (currentText.type === "code") fontClass = "font-mono";
+
   let fontSize = settings.design?.fontSize || 18;
   const fontSizeClass = getFontSizeClass(fontSize);
-  if (currentText.type === "code") fontClass = "font-mono";
   if (!isInView) return null;
   return (
     <div className="">

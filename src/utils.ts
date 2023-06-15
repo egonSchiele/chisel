@@ -366,3 +366,7 @@ export function getFontSizeClass(size: number | null) {
     22: "fontsize-22",
   }[size || 18];
 }
+
+export function isTextishBlock(block: t.TextBlock) {
+  return block.type === "markdown" || block.type === "plain";
+}

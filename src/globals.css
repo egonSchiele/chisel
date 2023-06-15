@@ -4,12 +4,7 @@
 
 @layer components {
   .ql-editor, .typography {
-    /* font-family: 'Georgia', serif; */
-    /* display: flex;
-        margin: auto;
-        justify-content: center; */
-
-
+    font-family: inherit;
     font-smooth: 2em;
     -webkit-font-smoothing: subpixel-antialiased;    
     font-weight: 400;
@@ -20,6 +15,26 @@
     hyphens: auto;
     @apply text-editortext;
     @apply dark:text-dmeditortext;
+  }
+
+  .fontsize-16.font-mono * {
+    font-size: 16px !important;
+    line-height: 24px !important;
+  }
+
+  .fontsize-18.font-mono * {
+    font-size: 18px !important;
+    line-height: 26px !important;
+  }
+
+  .fontsize-20.font-mono * {
+    font-size: 20px !important;
+    line-height: 28px !important;
+  }
+
+  .fontsize-22.font-mono * {
+    font-size: 22px !important;
+    line-height: 30px !important;
   }
 
   .fontsize-16 * {

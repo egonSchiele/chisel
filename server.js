@@ -293,10 +293,10 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
     clientsToUpdate[userid].forEach((connection) => {
       if (connection.clientid !== clientidOfWriter) {
         console.log("sending book update to client", connection.clientid);
-        connection.res.write("event: bookUpdate\n"); // added these
+        connection.res.write("event: bookUpdate\n");
         connection.res.write(`data: ${JSON.stringify({ book })}`);
         connection.res.write("\n\n");
-        connection.res.flush(); // terminates SSE session
+        connection.res.flush();
       } else {
         console.log("not sending update to client", connection.clientid);
       }
@@ -322,10 +322,10 @@ app.post("/api/saveChapter", requireLogin, async (req, res) => {
     clientsToUpdate[userid].forEach((connection) => {
       if (connection.clientid !== clientidOfWriter) {
         console.log("sending chapter update to client", connection.clientid);
-        connection.res.write("event: chapterUpdate\n"); // added these
+        connection.res.write("event: chapterUpdate\n");
         connection.res.write(`data: ${JSON.stringify({ chapter })}`);
         connection.res.write("\n\n");
-        connection.res.flush(); // terminates SSE session
+        connection.res.flush();
       } else {
         console.log("not sending update to client", connection.clientid);
       }
