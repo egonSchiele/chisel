@@ -247,8 +247,14 @@ export async function saveToHistory(chapterid: string, text: string) {
   return t.success();
 }
 
-export async function saveChapter(chapter: t.Chapter) {
-  const res = await postWithCsrf(`/api/saveChapter`, { chapter });
+export async function saveChapter(
+  chapter: t.Chapter,
+  clientidOfWriter: string
+) {
+  const res = await postWithCsrf(`/api/saveChapter`, {
+    chapter,
+    clientidOfWriter,
+  });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error saving chapter: ${text}`);
@@ -258,8 +264,8 @@ export async function saveChapter(chapter: t.Chapter) {
   return t.success(data);
 }
 
-export async function saveBook(book: t.Book) {
-  const res = await postWithCsrf(`/api/saveBook`, { book });
+export async function saveBook(book: t.Book, clientidOfWriter: string) {
+  const res = await postWithCsrf(`/api/saveBook`, { book, clientidOfWriter });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error saving book: ${text}`);

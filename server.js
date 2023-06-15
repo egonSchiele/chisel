@@ -110,6 +110,8 @@ const apiLimiter = rateLimit({
 app.use("/api", apiLimiter);
 app.use("/loginGuestUser", apiLimiter);
 
+const clientsToUpdate = {};
+
 const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
   res.setHeader(
@@ -173,7 +175,6 @@ const chapterAccessCache = {};
 const checkBookAccess = async (req, res, next) => {
   const c = req.cookies;
 
-  console.log("checkBookAccess", req.params);
   let bookid;
   if (req.body) {
     bookid = req.body.bookid;
@@ -193,7 +194,6 @@ const checkBookAccess = async (req, res, next) => {
 
   const key = `${userid}-${bookid}`;
   if (bookAccessCache[key]) {
-    console.log("bookAccessCache hit");
     res.locals.bookid = bookid;
     next();
     return;
@@ -233,7 +233,7 @@ const checkChapterAccess = async (req, res, next) => {
   const { userid } = c;
   const key = `${userid}-${bookid}-${chapterid}`;
   if (chapterAccessCache[key]) {
-    console.log("chapterAccessCache hit");
+    res.locals.chapterid = chapterid;
     next();
     return;
   }
@@ -284,7 +284,24 @@ app.get("/logout", async (req, res) => {
 });
 
 app.post("/api/saveBook", requireLogin, async (req, res) => {
-  const { book } = req.body;
+  const { book, clientidOfWriter } = req.body;
+  const userid = getUserId(req);
+  if (clientsToUpdate[userid]) {
+    console.log(
+      `${clientsToUpdate[userid].length} clients to update for user ${userid}`
+    );
+    clientsToUpdate[userid].forEach((connection) => {
+      if (connection.clientid !== clientidOfWriter) {
+        console.log("sending book update to client", connection.clientid);
+        connection.res.write("event: bookUpdate\n"); // added these
+        connection.res.write(`data: ${JSON.stringify({ book })}`);
+        connection.res.write("\n\n");
+        connection.res.flush(); // terminates SSE session
+      } else {
+        console.log("not sending update to client", connection.clientid);
+      }
+    });
+  }
 
   const result = await saveBook(book);
   if (result.success) {
@@ -296,11 +313,29 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 });
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
-  const { chapter } = req.body;
+  const { chapter, clientidOfWriter } = req.body;
+  const userid = getUserId(req);
+  if (clientsToUpdate[userid]) {
+    console.log(
+      `${clientsToUpdate[userid].length} clients to update for user ${userid}`
+    );
+    clientsToUpdate[userid].forEach((connection) => {
+      if (connection.clientid !== clientidOfWriter) {
+        console.log("sending chapter update to client", connection.clientid);
+        connection.res.write("event: chapterUpdate\n"); // added these
+        connection.res.write(`data: ${JSON.stringify({ chapter })}`);
+        connection.res.write("\n\n");
+        connection.res.flush(); // terminates SSE session
+      } else {
+        console.log("not sending update to client", connection.clientid);
+      }
+    });
+  }
+
   const result = await saveChapter(chapter);
   if (result.success) {
     result.data.created_at = updateLastEdited(req);
-    console.log("saveChapter", result.data);
+
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
@@ -934,6 +969,46 @@ app.get(
       chapterToMarkdown(chapter, false)
     );
     res.status(200).json({ embeddings });
+  }
+);
+
+function disconnectClient(userid, clientid) {
+  console.log("Disconnecting client", { userid, clientid });
+  if (clientsToUpdate[userid]) {
+    clientsToUpdate[userid] = clientsToUpdate[userid].filter(
+      (c) => c.clientid !== clientid
+    );
+  }
+}
+
+app.get(
+  "/api/sseUpdates/:clientid/:bookid/:chapterid",
+  requireLogin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders(); // flush the headers to establish SSE with client
+    const userid = getUserId(req);
+    const clientid = req.params.clientid;
+    const newConnection = { clientid, res };
+    console.log("New connection", { userid, clientid });
+    if (clientsToUpdate[userid]) {
+      clientsToUpdate[userid].push(newConnection);
+    } else {
+      clientsToUpdate[userid] = [newConnection];
+    }
+
+    res.on("close", function () {
+      disconnectClient(userid, clientid);
+    });
+
+    res.on("end", function () {
+      disconnectClient(userid, clientid);
+    });
   }
 );
 

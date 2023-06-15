@@ -39,7 +39,7 @@ export default function Library({ mobile = false }) {
   const activeTab = useSelector((state: RootState) => state.library.activeTab);
   const openTabs = useSelector((state: RootState) => state.library.openTabs);
   const currentText = currentChapter?.text || [];
-
+  const clientid = useSelector((state: RootState) => state.library.clientid);
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
   const [usage, setUsage] = useState<t.Usage | null>(null);
@@ -56,6 +56,32 @@ export default function Library({ mobile = false }) {
   const { bookid, chapterid } = useParams();
   console.log("bookid", bookid, "chapterid", chapterid);
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
+
+  useEffect(() => {
+    if (bookid && chapterid) {
+      const eventSourceUrl = `/api/sseUpdates/${clientid}/${bookid}/${chapterid}`;
+      console.log("eventSourceUrl", eventSourceUrl);
+      const eventSource = new EventSource(eventSourceUrl, {
+        withCredentials: true,
+      });
+      eventSource.addEventListener("chapterUpdate", (e) => {
+        //console.log("chapterUpdate", e);
+
+        const data = JSON.parse(e.data);
+        dispatch(librarySlice.actions.updateChapterSSE(data.chapter));
+      });
+      eventSource.addEventListener("bookUpdate", (e) => {
+        //console.log("bookUpdate", e);
+
+        const data = JSON.parse(e.data);
+        dispatch(librarySlice.actions.updateBookSSE(data.book));
+      });
+      return () => {
+        // console.log("closing event source");
+        eventSource.close();
+      };
+    }
+  }, [bookid, chapterid]);
 
   useEffect(() => {
     if (chapterid && state.booksLoaded) {
@@ -406,7 +432,7 @@ export default function Library({ mobile = false }) {
       console.log("Error adding to writing streak", e);
     }
     try {
-      const result = await makeApiCall(fd.saveChapter, [chapter]);
+      const result = await makeApiCall(fd.saveChapter, [chapter, clientid]);
 
       if (result.tag === "success") {
         const data = result.payload;
@@ -496,7 +522,7 @@ export default function Library({ mobile = false }) {
 
     bookNoChapters.chapters = [];
 
-    const result = await makeApiCall(fd.saveBook, [bookNoChapters]);
+    const result = await makeApiCall(fd.saveBook, [bookNoChapters, clientid]);
 
     if (result.tag === "success") {
       const data = result.payload;

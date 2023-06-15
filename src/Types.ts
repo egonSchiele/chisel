@@ -28,6 +28,7 @@ export type State = {
   online: boolean;
   serviceWorkerRunning: boolean;
   fromCache: boolean;
+  clientid: string;
 };
 
 export type EditHistory = {

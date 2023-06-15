@@ -24,8 +24,6 @@ export function failure(message) {
 }
 
 export const saveBook = async (book) => {
-  console.log(`saving book ${book.bookid}`);
-
   if (!book) {
     console.log("no book to save");
     return;
@@ -49,7 +47,6 @@ export const saveBook = async (book) => {
     }
 
     await docRef.set(book);
-    console.log("Successfully synced book to Firestore");
   } catch (error) {
     console.error("Error syncing book to Firestore:", error);
     return failure("Error saving book");
@@ -58,8 +55,6 @@ export const saveBook = async (book) => {
 };
 
 export const getBook = async (bookid) => {
-  console.log("getting book");
-  console.log({ bookid });
   const bookRef = db.collection("books").doc(bookid);
 
   const [bookObj, chapters] = await Promise.all([
@@ -77,8 +72,6 @@ export const getBook = async (bookid) => {
 };
 
 export const getBookToCheckAccess = async (bookid) => {
-  console.log("getting book");
-  console.log({ bookid });
   const bookRef = db.collection("books").doc(bookid);
   const bookObj = await bookRef.get();
   const book = bookObj.data();
@@ -102,9 +95,6 @@ export const getChaptersForBook = async (bookid) => {
 };
 
 export const deleteBook = async (bookid) => {
-  console.log("deleting book");
-  console.log({ bookid });
-
   const chapters = await db
     .collection("chapters")
     .where("bookid", "==", bookid)
@@ -133,8 +123,6 @@ function asArray(snapshot) {
 }
 
 export const getBookTitles = async (userid) => {
-  console.log("getting book titles");
-
   const _books = await db
     .collection("books")
     .where("userid", "==", userid)
@@ -148,8 +136,6 @@ export const getBookTitles = async (userid) => {
 };
 
 export const getBooks = async (userid) => {
-  console.log("getting books");
-
   const books = await db
     .collection("books")
     .where("userid", "==", userid)
@@ -172,10 +158,6 @@ export const getBooks = async (userid) => {
     allBooks.push(book);
   });
   await Promise.all(promises);
-  console.log(
-    "allBooks",
-    allBooks.map((book) => book.bookid)
-  );
 
   const compost = allBooks.find((book) => book.tag === "compost");
   if (!compost) {
@@ -206,12 +188,9 @@ export const getBooks = async (userid) => {
 };
 
 export const saveEmbeddings = async (chapterid, data) => {
-  console.log(`saving chapter embeddings ${chapterid}`);
-  console.log({ data });
   const docRef = db.collection("embeddings").doc(chapterid);
   try {
     await docRef.set(data);
-    console.log("Successfully synced embeddings to Firestore");
   } catch (error) {
     console.error("Error syncing embeddings to Firestore:", error);
     return failure("Error saving embeddings");
@@ -233,7 +212,6 @@ export const getEmbeddingsForChapter = async (chapterid) => {
 };
 
 export const saveChapter = async (chapter) => {
-  console.log(`saving chapter ${chapter.chapterid}`);
   if (!chapter) {
     return failure("no chapter to save");
   }
@@ -253,7 +231,6 @@ export const saveChapter = async (chapter) => {
     chapter.created_at = Date.now();
 
     await docRef.set(chapter);
-    console.log("Successfully synced chapter to Firestore");
   } catch (error) {
     console.error("Error syncing chapter to Firestore:", error);
     return failure("Error saving chapter");
@@ -262,8 +239,6 @@ export const saveChapter = async (chapter) => {
 };
 
 export const getChapter = async (chapterid) => {
-  console.log("getting chapter");
-  console.log({ chapterid });
   const docRef = db.collection("chapters").doc(chapterid);
   const chapter = await docRef.get();
   if (!chapter.exists) {
@@ -278,8 +253,6 @@ export const getChapter = async (chapterid) => {
 };
 
 export const deleteChapter = async (chapterid, bookid) => {
-  console.log("getting chapter");
-  console.log({ chapterid });
   await db.collection("chapters").doc(chapterid).delete();
   const book = await getBook(bookid);
   if (!book) {

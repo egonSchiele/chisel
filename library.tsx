@@ -34,6 +34,4 @@ const registerServiceWorker = async () => {
   }
 };
 
-// …
-
 registerServiceWorker();

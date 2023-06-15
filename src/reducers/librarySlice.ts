@@ -82,6 +82,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     online: true,
     serviceWorkerRunning: false,
     fromCache: false,
+    clientid: nanoid(),
   };
 };
 
@@ -342,6 +343,37 @@ export const librarySlice = createSlice({
         chapter.embeddingsLastCalculatedAt = action.payload;
       });
       state.saved = false;
+    },
+    updateChapterSSE(state: t.State, action: PayloadAction<t.Chapter>) {
+      const chapter = action.payload;
+      const book = getSelectedBook({ library: state });
+      if (!book || !chapter) return;
+      book.chapters = book.chapters.map((c) => {
+        if (c.chapterid === chapter.chapterid) {
+          return chapter;
+        }
+
+        return c;
+      });
+      //state.saved = false;
+      state.editor._pushTextToEditor = nanoid();
+    },
+    updateBookSSE(state: t.State, action: PayloadAction<t.Book>) {
+      const book = action.payload;
+      if (!book) return;
+      state.books = state.books.map((b) => {
+        if (b.bookid === book.bookid) {
+          return {
+            ...book,
+            chapters: b.chapters,
+            chapterOrder: b.chapterOrder,
+          };
+        }
+
+        return b;
+      });
+      //state.saved = false;
+      //state.editor._pushTextToEditor = nanoid();
     },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {
       // this detects if a chapter was moved to a different book
