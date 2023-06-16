@@ -1,6 +1,6 @@
 import { Blob } from "buffer";
 import { execSync } from "child_process";
-
+import secondaryBlocklist from "./secondaryBlocklist.js";
 import { HfInference } from "@huggingface/inference";
 import formidable from "formidable";
 import blocklist from "./src/blocklist.js";
@@ -1258,6 +1258,14 @@ async function getSuggestions(
   const huggingfaceModels = ["TheBloke/guanaco-65B-HF", "gpt2"];
   const localAiModels = ["ggml-gpt4all-j"];
   let result;
+
+  for (const index in secondaryBlocklist) {
+    const term = secondaryBlocklist[index];
+    if (prompt.toLowerCase().includes(term.toLowerCase())) {
+      console.log("failing early, prompt:", prompt);
+      return failure("fetch failed");
+    }
+  }
 
   if (openAiModels.includes(model)) {
     result = await usingOpenAi(

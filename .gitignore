@@ -12,3 +12,4 @@ yarn.lock
 tmp/*
 yarn-error.log
 .idea/
+secondaryBlocklist.js
