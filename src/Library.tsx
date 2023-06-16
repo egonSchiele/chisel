@@ -84,6 +84,12 @@ export default function Library({ mobile = false }) {
   }, [bookid, chapterid]);
 
   useEffect(() => {
+    console.log(
+      "in useEffect",
+      chapterid,
+      state.selectedBookId,
+      state.booksLoaded
+    );
     if (chapterid && state.booksLoaded) {
       dispatch(librarySlice.actions.newTab({ chapterid }));
       dispatch(librarySlice.actions.setChapter(chapterid));

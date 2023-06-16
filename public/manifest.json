@@ -2,7 +2,8 @@
   "name": "Chisel Editor", 
   "short_name": "Chisel", 
   "start_url": "https://chiseleditor.com", 
-  "display": "standalone", 
+  "background_color": "rgb(17,24,39)",
+  "display": "fullscreen", 
   "icons": [{ 
     "src": "images/logo.png", 
     "sizes": "512x512", 
