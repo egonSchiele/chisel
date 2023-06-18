@@ -25,6 +25,7 @@ import {
   ArrowSmallLeftIcon,
   ArrowSmallRightIcon,
 } from "@heroicons/react/24/outline";
+import TodoListBlock from "./TodoListBlock";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -228,6 +229,15 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           if (text.type === "embeddedText") {
             return (
               <EmbeddedTextBlock
+                chapterid={currentChapterId}
+                text={text}
+                index={index}
+                key={key}
+              />
+            );
+          } else if (text.type === "todoList") {
+            return (
+              <TodoListBlock
                 chapterid={currentChapterId}
                 text={text}
                 index={index}

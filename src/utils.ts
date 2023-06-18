@@ -235,7 +235,11 @@ export function getChapterText(
 
 export function saveTextToHistory(chapter: t.Chapter): string {
   const texts = chapter.text.map((text: t.TextBlock) => {
-    if (text.type === "plain" || text.type === "markdown") {
+    if (
+      text.type === "plain" ||
+      text.type === "markdown" ||
+      text.type === "todoList"
+    ) {
       const { type, open, reference, versions, diffWith, caption } = text;
       const jsonFrontMatter = JSON.stringify({
         type,
@@ -308,6 +312,15 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.chapterid,
         frontMatter.textindex,
         frontMatter.caption
+      );
+    } else if (frontMatter.type === "todoList") {
+      return t.todoListBlockFromData(
+        blockText,
+        frontMatter.open,
+        frontMatter.reference,
+        frontMatter.caption,
+        frontMatter.versions,
+        frontMatter.diffWith
       );
     } else {
       return t.markdownBlockFromData(

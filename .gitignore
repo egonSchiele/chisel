@@ -13,3 +13,4 @@ tmp/*
 yarn-error.log
 .idea/
 secondaryBlocklist.js
+instantBlocklist.js

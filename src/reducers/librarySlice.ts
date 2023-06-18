@@ -217,9 +217,10 @@ export const librarySlice = createSlice({
     },
     setText(state: t.State, action: PayloadAction<t.NewTextForBlock>) {
       const { index, text } = action.payload;
-
+      console.log("setText", index, text);
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
+      console.log(chapter.text);
       const block = chapter.text[index];
       if (!block) {
         console.error("No block found for index", index, chapter.chapterid);

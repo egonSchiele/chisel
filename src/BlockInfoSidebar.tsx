@@ -129,6 +129,7 @@ function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
     { type: "markdown", label: "Markdown" },
     { type: "code", label: "Code" },
     { type: "embeddedText", label: "Embedded Text" },
+    { type: "todoList", label: "Todo List" },
   ];
   return (
     <RadioGroup
@@ -138,12 +139,6 @@ function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
       label="Type"
       options={options}
     />
-    /*  <RadioGroup.Label className="settings_label">Type</RadioGroup.Label>
-      {option("plain", "Plain")}
-      {option("markdown", "Markdown")}
-      {option("code", "Code")}
-      {option("embeddedText", "Embedded Text")}
-    </RadioGroup> */
   );
 }
 

@@ -1,6 +1,7 @@
 import { Blob } from "buffer";
 import { execSync } from "child_process";
 import secondaryBlocklist from "./secondaryBlocklist.js";
+import instantBlocklist from "./instantBlocklist.js";
 import { HfInference } from "@huggingface/inference";
 import formidable from "formidable";
 import blocklist from "./src/blocklist.js";
@@ -1259,8 +1260,8 @@ async function getSuggestions(
   const localAiModels = ["ggml-gpt4all-j"];
   let result;
 
-  for (const index in secondaryBlocklist) {
-    const term = secondaryBlocklist[index];
+  for (const index in instantBlocklist) {
+    const term = instantBlocklist[index];
     if (prompt.toLowerCase().includes(term.toLowerCase())) {
       console.log("failing early, prompt:", prompt);
       return failure("fetch failed");
@@ -1411,7 +1412,10 @@ function sanitize(str) {
   return str
     .split(" ")
     .map((word) => {
-      if (blocklist.includes(word.toLowerCase())) {
+      if (
+        blocklist.includes(word.toLowerCase()) ||
+        secondaryBlocklist.includes(word.toLowerCase())
+      ) {
         return "****";
       } else {
         return word;

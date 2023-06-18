@@ -154,6 +154,9 @@ export type PlainTextBlock = BaseBlock & {
 export type MarkdownBlock = BaseBlock & {
   type: "markdown";
 };
+export type TodoListBlock = BaseBlock & {
+  type: "todoList";
+};
 
 export type CodeBlock = BaseBlock & {
   type: "code";
@@ -173,8 +176,19 @@ export type EmbeddedTextBlock = {
   caption?: string;
 };
 
-export const blockTypes = ["plain", "markdown", "code", "embeddedText"];
-export type BlockType = "plain" | "markdown" | "code" | "embeddedText";
+export const blockTypes = [
+  "plain",
+  "markdown",
+  "code",
+  "embeddedText",
+  "todoList",
+];
+export type BlockType =
+  | "plain"
+  | "markdown"
+  | "code"
+  | "embeddedText"
+  | "todoList";
 
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
@@ -182,6 +196,16 @@ export function plainTextBlock(text: string): PlainTextBlock {
 export function markdownBlock(text: string): MarkdownBlock {
   return {
     type: "markdown",
+    open: true,
+    id: nanoid(),
+    text,
+    reference: false,
+    versions: [],
+  };
+}
+export function todoListBlock(text: string): TodoListBlock {
+  return {
+    type: "todoList",
     open: true,
     id: nanoid(),
     text,
@@ -241,6 +265,26 @@ export function markdownBlockFromData(
   };
 }
 
+export function todoListBlockFromData(
+  text: string,
+  open: boolean,
+  reference: boolean,
+  caption?: string,
+  versions?: Version[],
+  diffWith?: string | null
+): TodoListBlock {
+  return {
+    type: "todoList",
+    open,
+    id: nanoid(),
+    text,
+    reference,
+    caption,
+    versions,
+    diffWith,
+  };
+}
+
 export function codeBlockFromData(
   text: string,
   open: boolean,
@@ -287,6 +331,7 @@ export function embeddedTextBlockFromData(
 export type TextBlock =
   | PlainTextBlock
   | MarkdownBlock
+  | TodoListBlock
   | CodeBlock
   | EmbeddedTextBlock;
 

@@ -1,6 +1,7 @@
 import { useReactMediaRecorder } from "react-media-recorder";
 
 import {
+  ArchiveBoxIcon,
   Bars3Icon,
   ChatBubbleLeftIcon,
   CheckCircleIcon,
@@ -27,7 +28,11 @@ import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
 import * as fd from "./lib/fetchData";
 import { useColors } from "./lib/hooks";
-import { getSelectedChapter, librarySlice } from "./reducers/librarySlice";
+import {
+  getSelectedChapter,
+  getText,
+  librarySlice,
+} from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 export default function Nav({
   mobile,
@@ -42,6 +47,12 @@ export default function Nav({
   const loaded = state.booksLoaded;
   const currentChapter = getSelectedChapter({ library: state });
   const dispatch = useDispatch<AppDispatch>();
+  const activeTextIndex = useSelector(
+    (state: RootState) => state.library.editor.activeTextIndex
+  );
+
+  const currentText = useSelector(getText(activeTextIndex));
+
   const navigate = useNavigate();
   const colors = useColors();
   const { settings, newChapter, setLoading } = useContext(
@@ -155,6 +166,47 @@ export default function Nav({
                 <Bars3Icon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
             </>
+          )}
+
+          {mobile && currentText && currentText.type !== "todoList" && (
+            <NavButton
+              color="nav"
+              label="todoList"
+              onClick={() => {
+                dispatch(
+                  librarySlice.actions.setBlockType({
+                    index: activeTextIndex,
+                    type: "todoList",
+                  })
+                );
+              }}
+              className="p-0"
+              selector="todoList"
+            >
+              <ArchiveBoxIcon className="h-5 w-5 " aria-hidden="true" />
+            </NavButton>
+          )}
+
+          {mobile && currentText && currentText.type === "todoList" && (
+            <NavButton
+              color="nav"
+              label="todoList"
+              onClick={() => {
+                dispatch(
+                  librarySlice.actions.setBlockType({
+                    index: activeTextIndex,
+                    type: "markdown",
+                  })
+                );
+              }}
+              className="p-0"
+              selector="todoList"
+            >
+              <ArchiveBoxIcon
+                className="h-5 w-5 text-blue-400"
+                aria-hidden="true"
+              />
+            </NavButton>
           )}
 
           {!mobile && chapterid && (
