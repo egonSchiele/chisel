@@ -64,6 +64,7 @@ import {
   substringTokens,
 } from "./src/serverUtils.js";
 import Replicate from "replicate";
+import { textToSpeech } from "./src/speech/polly.js";
 
 const replicate = new Replicate({
   // get your token from https://replicate.com/account
@@ -724,6 +725,27 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
     res.status(200).json({ settings, usage: user.usage });
   }
 });
+
+app.post(
+  "/textToSpeech/book/:bookid/chapter/:chapterid",
+  requireAdmin,
+  checkBookAccess,
+  checkChapterAccess,
+  async (req, res) => {
+    const chapter = await getChapter(res.locals.chapterid);
+    const text = chapter.text.map((block) => block.text).join("\n");
+    const filename = "test.mp3";
+    await textToSpeech(text, filename, res);
+    console.log("piping");
+    const data = fs.readFileSync(filename);
+    res.writeHead(200, {
+      "Content-Type": "audio/mpeg",
+      "Content-disposition": "inline;filename=" + filename,
+      "Content-Length": data.length,
+    });
+    res.end(data);
+  }
+);
 
 app.post("/api/settings", requireLogin, async (req, res) => {
   const { settings } = req.body;

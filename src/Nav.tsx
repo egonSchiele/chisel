@@ -14,12 +14,13 @@ import {
   MicrophoneIcon,
   MinusIcon,
   PencilIcon,
+  PlayIcon,
   SparklesIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LibErrorBoundary from "./LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
 import Tabs from "./Tabs";
@@ -34,6 +35,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
+import { textToSpeech } from "@huggingface/inference";
 export default function Nav({
   mobile,
   bookid,
@@ -58,6 +60,11 @@ export default function Nav({
   const { settings, newChapter, setLoading } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
+
+  async function textToSpeech() {
+    if (!bookid || !chapterid) return;
+    await fd.textToSpeech(bookid, chapterid);
+  }
 
   const addAudioElement = async (blobUrl, blob) => {
     setLoading(true);
@@ -469,6 +476,19 @@ export default function Nav({
                       aria-hidden="true"
                     />
                   </NavButton>
+
+                  {settings.admin && (
+                    <NavButton
+                      color="nav"
+                      label="Chat"
+                      onClick={() => {
+                        textToSpeech();
+                      }}
+                      selector="chat-button"
+                    >
+                      <PlayIcon className="h-5 w-5" aria-hidden="true" />
+                    </NavButton>
+                  )}
 
                   {/* {settings.admin && (
                     <AudioRecorder

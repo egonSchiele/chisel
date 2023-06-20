@@ -273,3 +273,18 @@ export async function saveBook(book: t.Book, clientidOfWriter: string) {
   const data = await res.json();
   return t.success(data);
 }
+
+export async function textToSpeech(bookid: string, chapterid: string) {
+  const res = await postWithCsrf(
+    `/textToSpeech/book/${bookid}/chapter/${chapterid}`,
+    {}
+  );
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error saving book: ${text}`);
+  }
+  const data = await res.blob();
+  const objectURL = URL.createObjectURL(data);
+  window.open(objectURL, "_blank");
+  return t.success(data);
+}

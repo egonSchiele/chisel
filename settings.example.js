@@ -2,6 +2,8 @@ export default {
   openAiApiKey: "",
   replicateApiKey: "",
   huggingFaceApiKey: "",
+  awsAccessKeyId: "",
+  awsSecretAccessKey: "",
   localAiEndpoint: "",
   maxMonthlyTokens: 100000,
   maxMonthlyGuestTokens: 50000,
