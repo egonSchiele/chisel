@@ -476,32 +476,19 @@ export default function Nav({
                       aria-hidden="true"
                     />
                   </NavButton>
-
-                  {settings.admin && (
-                    <NavButton
-                      color="nav"
-                      label="Chat"
-                      onClick={() => {
-                        textToSpeech();
-                      }}
-                      selector="chat-button"
-                    >
-                      <PlayIcon className="h-5 w-5" aria-hidden="true" />
-                    </NavButton>
-                  )}
-
-                  {/* {settings.admin && (
-                    <AudioRecorder
-                      onRecordingComplete={addAudioElement}
-                      audioTrackConstraints={{
-                        noiseSuppression: true,
-                        echoCancellation: true,
-                      }}
-                      downloadOnSavePress={true}
-                      downloadFileExtension="mp3"
-                    />
-                  )} */}
                 </>
+              )}
+              {settings.admin && (
+                <NavButton
+                  color="nav"
+                  label="Text to speech"
+                  onClick={() => {
+                    textToSpeech();
+                  }}
+                  selector="texttospeech-button"
+                >
+                  <PlayIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
               )}
             </div>
           </LibErrorBoundary>
