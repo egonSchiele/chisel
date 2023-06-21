@@ -427,7 +427,7 @@ function CoverImage({
     <div className={` ${className}`}>
       <img
         src={book.coverImageUrl}
-        className="object-cover h-full col-span-2 mb-sm"
+        className="object-cover h-full col-span-2 mb-sm mx-auto"
         loading="lazy"
       />
       <div className="w-full flex justify-end">
