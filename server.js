@@ -738,7 +738,10 @@ app.post(
   checkChapterAccess,
   async (req, res) => {
     const chapter = await getChapter(res.locals.chapterid);
-    const text = chapter.text.map((block) => block.text).join("\n");
+    const text = chapter.text
+      .filter((b) => !b.hideInExport)
+      .map((block) => block.text)
+      .join("\n");
 
     const filename = "test.mp3";
     const task_id = await textToSpeechLong(text, filename, res);
@@ -755,23 +758,34 @@ app.post(
 );
 
 app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {
-  const { task_id } = req.params;
-  const status = await getTaskStatus(task_id);
-  if (status.success) {
-    const s3key = status.data.s3key;
-    const data = await getFromS3(s3key);
-    if (data.Body) {
-      res.status(200);
-      const stream = data.Body;
-      stream.pipe(res);
+  try {
+    const { task_id } = req.params;
+    const status = await getTaskStatus(task_id);
+    if (status.success) {
+      const s3key = status.data.s3key;
+      const data = await getFromS3(s3key);
+      if (data) {
+        /*     res.status(200);
+        const stream = data.Body;
+        stream.pipe(res); */
+        res.writeHead(200, {
+          "Content-Type": "audio/mpeg",
+          "Content-disposition": "inline;filename=chiselaudio.mp3",
+          "Content-Length": data.length,
+        });
+        res.end(data);
+      } else {
+        res
+          .status(400)
+          .send("no data for " + s3key)
+          .end();
+      }
     } else {
-      res
-        .status(400)
-        .send("no data.Body for " + s3key)
-        .end();
+      res.status(400).send(status.message).end();
     }
-  } else {
-    res.status(400).send(status.message).end();
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message).end();
   }
 });
 

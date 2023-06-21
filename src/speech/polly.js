@@ -17,12 +17,13 @@ import { failure, success } from "../storage/firebase.js";
 
 const region = "us-west-2";
 const bucket = settings.awsBucket;
+const credentials = {
+  accessKeyId: settings.awsAccessKeyId,
+  secretAccessKey: settings.awsSecretAccessKey,
+};
 const polly = new PollyClient({
   region,
-  credentials: {
-    accessKeyId: settings.awsAccessKeyId,
-    secretAccessKey: settings.awsSecretAccessKey,
-  },
+  credentials,
 });
 
 export async function textToSpeech(_text, outputFileName, res) {
@@ -108,12 +109,29 @@ export const getFromS3 = async (s3key) => {
     Key: s3key,
   };
   try {
-    const s3 = new S3Client({ region: "us-west-2" });
+    const s3 = new S3Client({ region, credentials });
     const data = await s3.send(new GetObjectCommand(params));
-    return data;
+
+    return await streamToString(data.Body);
   } catch (error) {
     console.log("error getting from s3", params);
     console.log(error);
     return Promise.reject("oops");
   }
 };
+
+export async function streamToString(stream) {
+  return await new Promise((resolve, reject) => {
+    try {
+      const chunks = [];
+      stream.on("data", (chunk) => chunks.push(chunk));
+      stream.on("error", reject);
+      stream.on("end", () => {
+        resolve(Buffer.concat(chunks));
+      });
+    } catch (error) {
+      console.log({ error });
+      return Promise.reject("streamToString failed");
+    }
+  });
+}
