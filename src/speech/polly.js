@@ -8,8 +8,15 @@ import {
   StartSpeechSynthesisTaskCommand,
   GetSpeechSynthesisTaskCommand,
 } from "@aws-sdk/client-polly";
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
+import { failure, success } from "../storage/firebase.js";
 
 const region = "us-west-2";
+const bucket = settings.awsBucket;
 const polly = new PollyClient({
   region,
   credentials: {
@@ -18,7 +25,8 @@ const polly = new PollyClient({
   },
 });
 
-export async function textToSpeech(text, outputFileName, res) {
+export async function textToSpeech(_text, outputFileName, res) {
+  const text = _text.substring(0, 3000);
   const command = new SynthesizeSpeechCommand({
     OutputFormat: "mp3",
     Text: text,
@@ -45,3 +53,67 @@ export async function textToSpeech(text, outputFileName, res) {
     console.error("Error occurred while converting text to speech:", err);
   }
 }
+
+export async function textToSpeechLong(text, outputFileName, res) {
+  const text_type = "text";
+  // title.gsub(" ", "_")
+  const key = nanoid();
+
+  var params = {
+    OutputFormat: "mp3",
+    OutputS3BucketName: bucket,
+    Text: text,
+    TextType: text_type,
+    VoiceId: "Joanna",
+  };
+
+  let resp = null;
+  try {
+    resp = await polly.send(new StartSpeechSynthesisTaskCommand(params));
+    console.log("Success, audio task started in " + params.OutputS3BucketName);
+  } catch (err) {
+    console.log("Error putting object", err);
+  }
+
+  const task_id = resp.SynthesisTask.TaskId;
+  console.log("task_id is " + task_id);
+  return success(task_id);
+}
+
+export async function getTaskStatus(task_id) {
+  const task = await polly.send(
+    new GetSpeechSynthesisTaskCommand({ TaskId: task_id })
+  );
+  const task_status = task.SynthesisTask.TaskStatus;
+  if (task_status == "completed") {
+    console.log("synthesized.");
+    const uri = task.SynthesisTask.OutputUri;
+    const parts = uri.split("/");
+    const s3key = parts[parts.length - 1];
+    console.log("s3key is " + s3key);
+    return success({ s3key });
+    //console.log("downloading from s3...");
+
+    //done = true;
+  } else if (task_status == "failed") {
+    console.log(`converting ${title} failed:`);
+    return failure(task.SynthesisTask.TaskStatusReason);
+  }
+  return failure(`Status: ${task_status}`);
+}
+
+export const getFromS3 = async (s3key) => {
+  const params = {
+    Bucket: settings.awsBucket,
+    Key: s3key,
+  };
+  try {
+    const s3 = new S3Client({ region: "us-west-2" });
+    const data = await s3.send(new GetObjectCommand(params));
+    return data;
+  } catch (error) {
+    console.log("error getting from s3", params);
+    console.log(error);
+    return Promise.reject("oops");
+  }
+};

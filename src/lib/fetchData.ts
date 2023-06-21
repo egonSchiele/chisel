@@ -283,8 +283,24 @@ export async function textToSpeech(bookid: string, chapterid: string) {
     const text = await res.text();
     return t.error(`Error saving book: ${text}`);
   }
-  const data = await res.blob();
+  const data = await res.json();
+  if (data.success) {
+    return t.success(data.task_id);
+  }
+  return t.error(data.error);
+  /*   const data = await res.blob();
   const objectURL = URL.createObjectURL(data);
-  window.open(objectURL, "_blank");
+  window.open(objectURL, "_blank"); */
+  /*   return t.success(data);
+   */
+}
+
+export async function getSpeechTaskStatus(task_id: string) {
+  const res = await fetch(`/textToSpeech/task/${task_id}`);
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error getting speech task: ${text}`);
+  }
+  const data = await res.json();
   return t.success(data);
 }

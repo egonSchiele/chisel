@@ -64,7 +64,12 @@ import {
   substringTokens,
 } from "./src/serverUtils.js";
 import Replicate from "replicate";
-import { textToSpeech } from "./src/speech/polly.js";
+import {
+  textToSpeech,
+  textToSpeechLong,
+  getTaskStatus,
+  getFromS3,
+} from "./src/speech/polly.js";
 
 const replicate = new Replicate({
   // get your token from https://replicate.com/account
@@ -734,18 +739,41 @@ app.post(
   async (req, res) => {
     const chapter = await getChapter(res.locals.chapterid);
     const text = chapter.text.map((block) => block.text).join("\n");
+
     const filename = "test.mp3";
-    await textToSpeech(text, filename, res);
-    console.log("piping");
+    const task_id = await textToSpeechLong(text, filename, res);
+    res.json({ success: true, task_id });
+    /* console.log("piping");
     const data = fs.readFileSync(filename);
     res.writeHead(200, {
       "Content-Type": "audio/mpeg",
       "Content-disposition": "inline;filename=" + filename,
       "Content-Length": data.length,
     });
-    res.end(data);
+    res.end(data); */
   }
 );
+
+app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {
+  const { task_id } = req.params;
+  const status = await getTaskStatus(task_id);
+  if (status.success) {
+    const s3key = status.data.s3key;
+    const data = await getFromS3(s3key);
+    if (data.Body) {
+      res.status(200);
+      const stream = data.Body;
+      stream.pipe(res);
+    } else {
+      res
+        .status(400)
+        .send("no data.Body for " + s3key)
+        .end();
+    }
+  } else {
+    res.status(400).send(status.message).end();
+  }
+});
 
 app.post("/api/settings", requireLogin, async (req, res) => {
   const { settings } = req.body;

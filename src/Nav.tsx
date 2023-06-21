@@ -13,6 +13,7 @@ import {
   MagnifyingGlassIcon,
   MicrophoneIcon,
   MinusIcon,
+  MusicalNoteIcon,
   PencilIcon,
   PlayIcon,
   SparklesIcon,
@@ -52,6 +53,7 @@ export default function Nav({
   const activeTextIndex = useSelector(
     (state: RootState) => state.library.editor.activeTextIndex
   );
+  const [speechTaskURL, setSpeechTaskURL] = React.useState<string>("");
 
   const currentText = useSelector(getText(activeTextIndex));
 
@@ -63,7 +65,15 @@ export default function Nav({
 
   async function textToSpeech() {
     if (!bookid || !chapterid) return;
-    await fd.textToSpeech(bookid, chapterid);
+    const res = await fd.textToSpeech(bookid, chapterid);
+    console.log({ res });
+    if (res.tag === "success") {
+      const url = `/textToSpeech/task/${res.payload.data}`;
+      setSpeechTaskURL(url);
+      window.open(url, "_blank");
+    } else {
+      dispatch(librarySlice.actions.setError(res.message));
+    }
   }
 
   const addAudioElement = async (blobUrl, blob) => {
@@ -488,6 +498,18 @@ export default function Nav({
                   selector="texttospeech-button"
                 >
                   <PlayIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
+              {settings.admin && speechTaskURL !== "" && (
+                <NavButton
+                  color="nav"
+                  label="Text to speech"
+                  onClick={() => {
+                    window.open(speechTaskURL);
+                  }}
+                  selector="texttospeech-button"
+                >
+                  <MusicalNoteIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
               )}
             </div>
