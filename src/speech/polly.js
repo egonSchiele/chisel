@@ -102,36 +102,3 @@ export async function getTaskStatus(task_id) {
   }
   return failure(`Status: ${task_status}`);
 }
-
-export const getFromS3 = async (s3key) => {
-  const params = {
-    Bucket: settings.awsBucket,
-    Key: s3key,
-  };
-  try {
-    const s3 = new S3Client({ region, credentials });
-    const data = await s3.send(new GetObjectCommand(params));
-
-    return await streamToString(data.Body);
-  } catch (error) {
-    console.log("error getting from s3", params);
-    console.log(error);
-    return Promise.reject("oops");
-  }
-};
-
-export async function streamToString(stream) {
-  return await new Promise((resolve, reject) => {
-    try {
-      const chunks = [];
-      stream.on("data", (chunk) => chunks.push(chunk));
-      stream.on("error", reject);
-      stream.on("end", () => {
-        resolve(Buffer.concat(chunks));
-      });
-    } catch (error) {
-      console.log({ error });
-      return Promise.reject("streamToString failed");
-    }
-  });
-}

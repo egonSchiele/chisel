@@ -37,6 +37,19 @@ function Character({
 }) {
   const [editing, setEditing] = React.useState(false);
 
+  async function handleUpload(x) {
+    const files = x.target.files;
+    [...files].forEach(async (file, i) => {
+      const res = await fd.upload(file);
+      if (res.tag === "success") {
+        const { s3key } = res.payload;
+        const imageUrl = "/image/" + s3key;
+
+        onImageUrlChange(imageUrl);
+      }
+    });
+  }
+
   if (!editing) {
     return (
       <div className="">
@@ -49,7 +62,7 @@ function Character({
           />
         )}
         <h3 className="text-xl font-semibold my-sm w-full text-center">
-          {character.name}
+          {character.name || "Unnamed Character"}
         </h3>
         <p className="text-lg font-sans w-full">{character.description}</p>
         <Button
@@ -94,6 +107,14 @@ function Character({
         value={character.imageUrl}
         onChange={(e) => onImageUrlChange(e.target.value)}
         selector={`character-${character.name}-imageUrl`}
+      />
+
+      <input
+        type="file"
+        id="imgupload"
+        key="upload"
+        multiple={false}
+        onChange={handleUpload}
       />
 
       <Button
@@ -334,6 +355,23 @@ function CoverImage({
   const dispatch = useDispatch();
   const [url, setUrl] = React.useState(book.coverImageUrl);
   const [editing, setEditing] = React.useState(false);
+
+  async function handleUpload(x) {
+    const files = x.target.files;
+    [...files].forEach(async (file, i) => {
+      const res = await fd.upload(file);
+      console.log({ res });
+      if (res.tag === "success") {
+        const { s3key } = res.payload;
+        const imageUrl = "/image/" + s3key;
+        setUrl(imageUrl);
+        console.log({ imageUrl });
+        dispatch(librarySlice.actions.setCoverImageUrl(imageUrl));
+        setEditing(false);
+      }
+    });
+  }
+
   if (!book.coverImageUrl && !editing) {
     return (
       <div className={`flex h-min justify-center align-middle ${className}`}>
@@ -373,6 +411,13 @@ function CoverImage({
           >
             Cancel
           </Button>
+          <input
+            type="file"
+            id="imgupload"
+            key="upload"
+            multiple={false}
+            onChange={handleUpload}
+          />
         </div>
       </div>
     );

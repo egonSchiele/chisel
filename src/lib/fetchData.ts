@@ -206,6 +206,31 @@ export async function uploadAudio(audioFile) {
   return t.success(data);
 }
 
+export async function upload(fileToUpload) {
+  const formData = new FormData();
+  formData.append("fileToUpload", fileToUpload);
+  formData.append("csrfToken", getCsrfToken() as string);
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      Accept: "*/*",
+      // let browser set multipart boundary by not setting that header
+    },
+
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error uploading: ${text}`);
+  }
+
+  const data = await res.json();
+
+  return t.success(data);
+}
+
 export async function getEmbeddings(chapter) {
   const res = await fetch(
     `/api/getEmbeddings/${chapter.bookid}/${chapter.chapterid}`

@@ -68,8 +68,9 @@ import {
   textToSpeech,
   textToSpeechLong,
   getTaskStatus,
-  getFromS3,
 } from "./src/speech/polly.js";
+
+import { getFromS3, uploadToS3 } from "./src/storage/s3.js";
 
 const replicate = new Replicate({
   // get your token from https://replicate.com/account
@@ -141,6 +142,7 @@ const csrf = (req, res, next) => {
       "/submitRegister",
       "/loginGuestUser",
       "/api/uploadAudio",
+      "/api/upload",
     ];
     if (excluded.includes(req.url)) {
       next();
@@ -393,24 +395,6 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     let rawData = fs.readFileSync(oldPath);
     let audioBlob = new Blob([rawData]);
 
-    /*  const endpoint = "https://api.openai.com/v1/audio/transcriptions";
-
-    const formData = new FormData();
-    formData.append("file", audioBlob);
-    formData.append("model", "whisper-1");
-    console.log({ formData });
-    const result = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${settings.openAiApiKey}`,
-      },
-      body: formData,
-    });
-    const json = await result.json();
-    console.log(json);
-    res.send("ok").end(); */
-
     run("mkdir -p uploads");
     fs.writeFileSync(newPath, rawData, function (err) {
       if (err) console.log(err);
@@ -441,6 +425,58 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     }
     res.json(json).end();
   });
+});
+
+app.post("/api/upload", requireAdmin, async (req, res) => {
+  const form = formidable({ multiples: true });
+  form.parse(req, async (err, fields, files) => {
+    console.log({ err, fields, files });
+    if (err) {
+      res.writeHead(err.httpCode || 400, { "Content-Type": "text/plain" });
+      res.end(String(err));
+      return;
+    }
+
+    const c = req.cookies;
+    if (c.csrfToken !== fields.csrfToken) {
+      console.log("csrf token mismatch");
+      res
+        .status(400)
+        .send(
+          "Could not butter your uploaded parsnips. Try refreshing your browser."
+        )
+        .end();
+      return;
+    }
+
+    let oldPath = files.fileToUpload.filepath;
+    let rawData = fs.readFileSync(oldPath);
+    //let audioBlob = new Blob([rawData]);
+
+    const s3key = nanoid();
+    const result = await uploadToS3(s3key, rawData);
+    if (result.success) {
+      res.send({ s3key });
+    } else {
+      res.status(400).send(result.message).end();
+    }
+  });
+});
+
+app.get("/image/:s3key", requireAdmin, async (req, res) => {
+  const { s3key } = req.params;
+  const data = await getFromS3(s3key);
+  if (data.success) {
+    res.writeHead(200, {
+      "Content-Type": "image/png",
+      /*       "Content-disposition": "inline;filename=chiselaudio.mp3",
+      "Content-Length": data.data.length,
+ */
+    });
+    res.end(data.data);
+  } else {
+    res.status(400).send(data.message).end();
+  }
 });
 
 app.post("/api/uploadBook", requireLogin, async (req, res) => {
@@ -764,21 +800,18 @@ app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {
     if (status.success) {
       const s3key = status.data.s3key;
       const data = await getFromS3(s3key);
-      if (data) {
+      if (data.success) {
         /*     res.status(200);
         const stream = data.Body;
         stream.pipe(res); */
         res.writeHead(200, {
           "Content-Type": "audio/mpeg",
           "Content-disposition": "inline;filename=chiselaudio.mp3",
-          "Content-Length": data.length,
+          "Content-Length": data.data.length,
         });
-        res.end(data);
+        res.end(data.data);
       } else {
-        res
-          .status(400)
-          .send("no data for " + s3key)
-          .end();
+        res.status(400).send(data.message).end();
       }
     } else {
       res.status(400).send(status.message).end();
