@@ -427,7 +427,7 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
   });
 });
 
-app.post("/api/upload", requireAdmin, async (req, res) => {
+app.post("/api/upload", requireLogin, async (req, res) => {
   const form = formidable({ multiples: true });
   form.parse(req, async (err, fields, files) => {
     console.log({ err, fields, files });
@@ -463,7 +463,7 @@ app.post("/api/upload", requireAdmin, async (req, res) => {
   });
 });
 
-app.get("/image/:s3key", requireAdmin, async (req, res) => {
+app.get("/image/:s3key", requireLogin, async (req, res) => {
   const { s3key } = req.params;
   const data = await getFromS3(s3key);
   if (data.success) {

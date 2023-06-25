@@ -1363,6 +1363,10 @@ export const getSelectedBookChapters = (
 
   const { chapters } = book;
 
+  if (book.tag === "compost") {
+    return sortBy(chapters, ["created_at"]).reverse();
+  }
+
   if (book.chapterOrder.length > 0) {
     const sortedChapters: t.Chapter[] = [];
     book.chapterOrder.forEach((id) => {
@@ -1370,13 +1374,14 @@ export const getSelectedBookChapters = (
       if (chapter) sortedChapters.push(chapter);
     });
     const sortedByCreated = sortBy(chapters, ["created_at"]);
-
     sortedByCreated.forEach((chapter) => {
-      if (!sortedChapters.includes(chapter)) sortedChapters.push(chapter);
+      if (!sortedChapters.includes(chapter)) {
+        sortedChapters.push(chapter);
+      }
     });
     return sortedChapters;
   }
-  return chapters;
+  return sortBy(chapters, ["created_at"]);
 };
 
 export const getNextChapter = (state: RootState): t.Chapter | null => {
