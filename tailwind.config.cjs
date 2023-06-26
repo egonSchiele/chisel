@@ -91,6 +91,7 @@ module.exports = {
         md: "2rem",
         lg: "3rem",
         xl: "4rem",
+        108: "27rem",
       },
       width: {
         history: "800px",

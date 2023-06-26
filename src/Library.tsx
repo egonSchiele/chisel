@@ -65,13 +65,14 @@ export default function Library({ mobile = false }) {
         withCredentials: true,
       });
       eventSource.addEventListener("chapterUpdate", (e) => {
-        //console.log("chapterUpdate", e);
+        console.warn("chapterUpdate", e);
 
         const data = JSON.parse(e.data);
+        console.log({ data });
         dispatch(librarySlice.actions.updateChapterSSE(data.chapter));
       });
       eventSource.addEventListener("bookUpdate", (e) => {
-        //console.log("bookUpdate", e);
+        console.log("bookUpdate", e);
 
         const data = JSON.parse(e.data);
         dispatch(librarySlice.actions.updateBookSSE(data.book));

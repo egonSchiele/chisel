@@ -299,11 +299,14 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
     console.log(
       `${clientsToUpdate[userid].length} clients to update for user ${userid}`
     );
+    console.log("saveBook event from id", clientidOfWriter);
     clientsToUpdate[userid].forEach((connection) => {
       if (connection.clientid !== clientidOfWriter) {
         console.log("sending book update to client", connection.clientid);
         connection.res.write("event: bookUpdate\n");
-        connection.res.write(`data: ${JSON.stringify({ book })}`);
+        connection.res.write(
+          `data: ${JSON.stringify({ book, clientid: connection.clientid })}`
+        );
         connection.res.write("\n\n");
         connection.res.flush();
       } else {
@@ -328,11 +331,14 @@ app.post("/api/saveChapter", requireLogin, async (req, res) => {
     console.log(
       `${clientsToUpdate[userid].length} clients to update for user ${userid}`
     );
+    console.log("saveBook event from id", clientidOfWriter);
     clientsToUpdate[userid].forEach((connection) => {
       if (connection.clientid !== clientidOfWriter) {
         console.log("sending chapter update to client", connection.clientid);
         connection.res.write("event: chapterUpdate\n");
-        connection.res.write(`data: ${JSON.stringify({ chapter })}`);
+        connection.res.write(
+          `data: ${JSON.stringify({ chapter, clientid: connection.clientid })}`
+        );
         connection.res.write("\n\n");
         connection.res.flush();
       } else {

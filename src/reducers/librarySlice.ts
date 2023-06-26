@@ -356,7 +356,7 @@ export const librarySlice = createSlice({
 
         return c;
       });
-      //state.saved = false;
+      state.saved = true;
       state.editor._pushTextToEditor = nanoid();
     },
     updateBookSSE(state: t.State, action: PayloadAction<t.Book>) {
@@ -373,7 +373,7 @@ export const librarySlice = createSlice({
 
         return b;
       });
-      //state.saved = false;
+      state.saved = true;
       //state.editor._pushTextToEditor = nanoid();
     },
     updateChapter(state: t.State, action: PayloadAction<t.Chapter>) {

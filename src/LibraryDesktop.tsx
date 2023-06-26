@@ -201,7 +201,7 @@ export default function LibraryDesktop() {
             {bookid && !currentChapter && (
               <LibErrorBoundary component="front matter section">
                 <EditorPlaceholder loaded={state.booksLoaded}>
-                  <div className="h-full w-full absolute top-0 left-96 bg-editor dark:bg-dmeditor pt-16 mb-60">
+                  <div className="h-full w-full absolute top-0 left-108 bg-editor dark:bg-dmeditor pt-16 mb-60">
                     <BookEditor />
                   </div>
                 </EditorPlaceholder>
@@ -243,7 +243,7 @@ export default function LibraryDesktop() {
             className={`top-0 left-48`}
           >
             <SlideTransition show={fileNavigatorOpen} direction="left">
-              <div className={`absolute top-0 left-48 w-48 h-full z-10 mt-9`}>
+              <div className={`absolute top-0 left-48 w-60 h-full z-10 mt-9`}>
                 <ChapterList selectedChapterId={chapterid || ""} />
               </div>
             </SlideTransition>
