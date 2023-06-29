@@ -92,7 +92,12 @@ export default function Library({ mobile = false }) {
       state.booksLoaded
     );
     if (chapterid && state.booksLoaded) {
-      dispatch(librarySlice.actions.newTab({ chapterid }));
+      dispatch(
+        librarySlice.actions.newTab({
+          chapterid,
+          textIndex: editor.activeTextIndex,
+        })
+      );
       dispatch(librarySlice.actions.setChapter(chapterid));
       dispatch(librarySlice.actions.closeLeftSidebar());
       //dispatch(librarySlice.actions.toggleOutline());

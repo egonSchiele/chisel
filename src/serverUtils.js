@@ -12,8 +12,9 @@ export function toMarkdown(block) {
 
 export function chapterToMarkdown(chapter, htmlTags = false) {
   const markdown = chapter.text
+    .filter((block) => !block.hideInExport)
     .map((block) => toMarkdown(block))
-    .join("\n---\n");
+    .join("\n");
   if (htmlTags) {
     return `<pre>${markdown}</pre>`;
   } else {

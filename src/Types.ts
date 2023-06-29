@@ -39,6 +39,7 @@ export type EditHistory = {
 
 export type Tab = {
   chapterid: string;
+  textIndex?: number;
 };
 
 export type TabStateInfo = {
@@ -46,6 +47,7 @@ export type TabStateInfo = {
   chapterid: string;
   bookid: string;
   bookTitle: string;
+  textIndex?: number;
 };
 
 export type ActivePanel =

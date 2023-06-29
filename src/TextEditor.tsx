@@ -221,6 +221,7 @@ function TextEditor({
   }, [activeTextIndex, open]);
 
   function highlightForFocusMode() {
+    return;
     if (!isTextishBlock(currentText)) return;
     if (viewMode !== "focus") return;
     // @ts-ignore
@@ -276,6 +277,7 @@ function TextEditor({
   }
 
   function clearFocusModeHighlights() {
+    return;
     // @ts-ignore
     if (!quillRef.current || !quillRef.current.getEditor) return;
     // @ts-ignore
@@ -316,6 +318,8 @@ function TextEditor({
     // @ts-ignore
     const editor = quillRef.current.getEditor();
     editor.focus();
+
+    dispatch(librarySlice.actions.updateTab({ chapterid, textIndex: index }));
   };
   const handleTextChange = (value) => {
     if (!quillRef.current) return;

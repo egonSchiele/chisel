@@ -22,15 +22,17 @@ function Tab({ tab, current }: { tab: t.TabStateInfo; current: boolean }) {
     : `border-transparent ${colors.secondaryTextColor} hover:border-gray-300 hover:text-gray-200`;
   let title = tab.title || "Untitled";
   //title = title.substring(0, 30);
+  let link = `/book/${tab.bookid}/chapter/${tab.chapterid}`;
+  if (tab.textIndex !== undefined) {
+    link += `/${tab.textIndex}`;
+  }
+  //console.log("tab", tab, "link", link);
   return (
     <div
       className={`h-9 border-b-4 px-1 text-center text-sm flex flex-auto overflow-hidden font-medium cursor-pointer ${colors.itemHover} line-clamp-1 ${currentCss} max-w-md`}
     >
       <div className="flex">
-        <Link
-          to={`/book/${tab.bookid}/chapter/${tab.chapterid}`}
-          className="h-9 text-center flex-grow"
-        >
+        <Link to={link} className="h-9 text-center flex-grow">
           <div className="tab-title h-9 text-center pt-xs">{title}</div>
         </Link>
         <XMarkIcon

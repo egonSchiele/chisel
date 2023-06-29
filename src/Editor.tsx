@@ -29,6 +29,7 @@ import TodoListBlock from "./TodoListBlock";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
+
   const currentChapterTextLength = useSelector(getSelectedChapterTextLength);
   const currentText = useSelector((state: RootState) => {
     const chapter = getSelectedChapter(state);
@@ -58,39 +59,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   }
   useKeyboardScroll(readonlyDiv, 400, scrollCallback);
 
-  /*  function updateIndicatorPosition() {
-    console.log("updateIndicatorPositionEDITOR");
-    if (!editDiv.current) return;
-    console.log("scrolling");
-    console.log(editDiv.current.scrollTop);
-    console.log(editDiv.current.scrollHeight);
-    console.log(editDiv.current.scrollX);
-    console.log(editDiv.current.scrollY);
-    const scrollTop = editDiv.current.scrollTop;
-    const scrollHeight = editDiv.current.scrollHeight;
-    const clientHeight = editDiv.current.clientHeight;
-    const widthRatio = clientHeight / scrollHeight;
-    const indicatorWidth = widthRatio * 100;
-    console.log({ indicatorWidth }, "%");
-       indicator.style.width = indicatorWidth + "%";
-    indicator.style.left =
-      (scrollTop / (scrollHeight - clientHeight)) * 100 + "%"; 
-  }
-
-  useEffect(() => {
-    if (editDiv.current) {
-      editDiv.current.addEventListener("scroll", updateIndicatorPosition);
-      return () => {
-        if (editDiv.current) {
-          editDiv.current.removeEventListener(
-            "scroll",
-            updateIndicatorPosition
-          );
-        }
-      };
-    }
-  }, [editDiv.current]); */
-
   useEffect(() => {
     if (scrollTo && editDiv.current) {
       // console.log("scrolling to", scrollTo);
@@ -105,14 +73,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     }
   }, [scrollTo, editDiv.current]);
 
-  /*   useEffect(() => {
-    if (editDiv.current) {
-      editDiv.current.addEventListener("scroll", (event) => {
-        console.log("scroll", editDiv.current.scrollTop);
-      });
-    }
-  }, [editDiv.current]);
- */
   useKeyDown((event) => {
     if (event.ctrlKey && event.code === "KeyF") {
       if (editDiv.current) {

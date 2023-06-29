@@ -31,9 +31,9 @@ export default function OutlineSidebar() {
       label = text.text;
     }
     label = label.substring(0, 40);
-    let selectedCss = text.open
-      ? "text-gray-900 dark:text-gray-300"
-      : "text-gray-700 dark:text-gray-500";
+    let selectedCss = text.hideInExport
+      ? "text-gray-700 dark:text-gray-500"
+      : "text-gray-900 dark:text-gray-300";
     if (i === index) {
       selectedCss = "bg-gray-200 dark:bg-gray-700 dark:text-gray-200";
     }

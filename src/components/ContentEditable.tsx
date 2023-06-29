@@ -19,6 +19,7 @@ export default function ContentEditable({
   };
 
   const handleSubmit = () => {
+    console.log("handleSubmit");
     onSubmit(content);
   };
 
@@ -42,11 +43,13 @@ export default function ContentEditable({
 
   const onKeyDown = (evt) => {
     if ((evt.metaKey && evt.code === "KeyS") || evt.key === "Enter") {
-      evt.preventDefault();
-      console.log("submitting", content);
-      onSubmit(content);
-      if (nextFocus) {
-        nextFocus();
+      if (document.activeElement === div.current) {
+        evt.preventDefault();
+        console.warn("submitting", content);
+        onSubmit(content);
+        if (nextFocus) {
+          nextFocus();
+        }
       }
     }
   };

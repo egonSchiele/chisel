@@ -154,7 +154,11 @@ export const getBooks = async (userid) => {
       book.chapterOrder = book.chapterTitles.map((c) => c.chapterid);
       delete book.chapterTitles;
     }
+    const oldLength = book.chapterOrder.length;
     book.chapterOrder = _.uniq(book.chapterOrder);
+    if (oldLength !== book.chapterOrder.length) {
+      console.log("duplicate chapters found for book", book.bookid, book.title);
+    }
     allBooks.push(book);
   });
   await Promise.all(promises);

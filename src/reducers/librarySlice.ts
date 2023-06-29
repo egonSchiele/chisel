@@ -266,9 +266,10 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     setTitle(state: t.State, action) {
-      const chapter = getSelectedChapter({ library: state });
+      const { chapterid, title } = action.payload;
+      const chapter = getChapter(chapterid)({ library: state });
       if (!chapter) return;
-      chapter.title = action.payload;
+      chapter.title = title;
 
       state.saved = false;
     },
@@ -1160,8 +1161,19 @@ export const librarySlice = createSlice({
         state.activeTab = index;
         return;
       }
+
       state.openTabs.push(action.payload);
       state.activeTab = state.openTabs.length - 1;
+    },
+    updateTab(state: t.State, action: PayloadAction<t.Tab>) {
+      const index = state.openTabs.findIndex(
+        (tab) => tab.chapterid === action.payload.chapterid
+      );
+      if (index === -1) {
+        state.activeTab = index;
+        return;
+      }
+      state.openTabs[index] = action.payload;
     },
     prevTab(state: t.State) {
       if (state.activeTab === 0) {
@@ -1305,6 +1317,7 @@ export const getSelectedChapter = (state: RootState): t.Chapter | null => {
 
 export const getSelectedChapterTitle = (state: RootState): string | null => {
   const chapter = getSelectedChapter(state);
+
   if (!chapter) return null;
 
   return chapter.title;
@@ -1436,6 +1449,7 @@ export const getOpenTabs = (state: RootState): t.TabStateInfo[] => {
       title: chapter.title,
       bookid: chapter.bookid,
       bookTitle: book.title,
+      textIndex: tab.textIndex,
     };
   });
   return tabs.filter((tab) => tab !== null);
