@@ -406,14 +406,12 @@ export default function ChapterList({
   }
 
   if (editing) {
-    rightMenuItem = [
-      {
-        label: "Done",
-        icon: <p>Done</p>,
-        onClick: () => setEditing(false),
-        className: buttonStyles,
-      },
-    ];
+    rightMenuItem = {
+      label: "Done",
+      icon: <p>Done</p>,
+      onClick: () => setEditing(false),
+      className: buttonStyles,
+    };
   }
   const search = (
     <Input

@@ -268,7 +268,10 @@ export const librarySlice = createSlice({
     setTitle(state: t.State, action) {
       const { chapterid, title } = action.payload;
       const chapter = getChapter(chapterid)({ library: state });
-      if (!chapter) return;
+      if (!chapter) {
+        console.error("No chapter found for id", chapterid);
+        return;
+      }
       chapter.title = title;
 
       state.saved = false;
