@@ -44,3 +44,9 @@ document.addEventListener("copy", function (e) {
   clipdata.setData("text/html", text_only);
   e.preventDefault();
 });
+
+window.addEventListener("scroll", (e) => {
+  console.log("stop scrolling");
+  e.preventDefault();
+  window.scroll(0, 0);
+});
