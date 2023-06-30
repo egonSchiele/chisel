@@ -50,3 +50,5 @@ window.addEventListener("scroll", (e) => {
   e.preventDefault();
   window.scroll(0, 0);
 });
+
+window.addEventListener("focus", (e) => window.location.reload());

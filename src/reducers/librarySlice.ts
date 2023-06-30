@@ -76,8 +76,8 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     helpOpen: false,
     recording: false,
     popupData: null,
-    openTabs: [],
-    activeTab: null,
+    openTabs: localStorageOrDefault("openTabs", []),
+    activeTab: localStorageOrDefault("activeTab", null),
     editHistory: [],
     online: true,
     serviceWorkerRunning: false,
@@ -1162,21 +1162,25 @@ export const librarySlice = createSlice({
       );
       if (index !== -1) {
         state.activeTab = index;
+        localStorage.setItem("activeTab", index.toString());
         return;
       }
 
       state.openTabs.push(action.payload);
+      localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
+
       state.activeTab = state.openTabs.length - 1;
+      localStorage.setItem("activeTab", state.activeTab.toString());
     },
     updateTab(state: t.State, action: PayloadAction<t.Tab>) {
       const index = state.openTabs.findIndex(
         (tab) => tab.chapterid === action.payload.chapterid
       );
       if (index === -1) {
-        state.activeTab = index;
         return;
       }
       state.openTabs[index] = action.payload;
+      localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
     },
     prevTab(state: t.State) {
       if (state.activeTab === 0) {
@@ -1184,7 +1188,7 @@ export const librarySlice = createSlice({
       } else {
         state.activeTab -= 1;
       }
-      //state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+      localStorage.setItem("activeTab", state.activeTab.toString());
     },
     nextTab(state: t.State) {
       if (state.activeTab === state.openTabs.length - 1) {
@@ -1192,7 +1196,7 @@ export const librarySlice = createSlice({
       } else {
         state.activeTab += 1;
       }
-      //state.selectedChapterId = state.openTabs[state.activeTab].chapterid;
+      localStorage.setItem("activeTab", state.activeTab.toString());
     },
     closeTab(state: t.State, action: PayloadAction<string | null>) {
       let index = 0;
@@ -1220,6 +1224,8 @@ export const librarySlice = createSlice({
       if (index !== -1) {
         state.openTabs.splice(index, 1);
       }
+      localStorage.setItem("activeTab", state.activeTab.toString());
+      localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
     },
     goToTab(state: t.State, action: PayloadAction<string>) {
       const index = state.openTabs.findIndex(
@@ -1228,6 +1234,7 @@ export const librarySlice = createSlice({
       if (index !== -1) {
         state.activeTab = index;
       }
+      localStorage.setItem("activeTab", state.activeTab.toString());
     },
     togglePinToHome(state: t.State) {
       const chapter = getSelectedChapter({ library: state });
