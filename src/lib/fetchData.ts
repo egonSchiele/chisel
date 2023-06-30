@@ -322,7 +322,7 @@ export async function getSpeechTaskStatus(task_id: string) {
   console.log("contentType", contentType);
   if (contentType === "audio/mpeg") {
     const data = await res.blob();
-    return t.success({ type: "audio", audio: data });
+    return t.success({ type: "audio", data });
   } else {
     const data = await res.json();
     return t.success({ type: "status", status: data.status });

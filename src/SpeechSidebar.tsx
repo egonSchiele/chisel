@@ -28,6 +28,7 @@ export default function SpeechSidebar() {
   const [speechTaskID, setSpeechTaskID] = React.useState<string>("");
   const [speechTaskStatus, setSpeechTaskStatus] = React.useState<string>("");
   const [fullChapter, setFullChapter] = React.useState<boolean>(false);
+  const [audioBlob, setAudioBlob] = React.useState<Blob | null>(null);
   if (!currentChapter) return null;
 
   async function textToSpeech(text) {
@@ -53,6 +54,7 @@ export default function SpeechSidebar() {
             setSpeechTaskStatus(res.payload.status);
           } else if (res.payload.type === "audio") {
             setSpeechTaskStatus("Done");
+            setAudioBlob(res.payload.data);
           }
         } else {
           dispatch(librarySlice.actions.setError(res.message));
@@ -92,6 +94,13 @@ export default function SpeechSidebar() {
   ];
 
   if (speechTaskStatus === "Done") {
+    items.push(
+      <audio
+        controls
+        className="w-full my-xs"
+        src={URL.createObjectURL(audioBlob)}
+      ></audio>
+    );
     const url = `/textToSpeech/task/${speechTaskID}`;
     items.push(
       <Button
