@@ -773,22 +773,13 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
   }
 });
 
-app.post(
-  "/textToSpeech/book/:bookid/chapter/:chapterid",
-  requireAdmin,
-  checkBookAccess,
-  checkChapterAccess,
-  async (req, res) => {
-    const chapter = await getChapter(res.locals.chapterid);
-    const text = chapter.text
-      .filter((b) => !b.hideInExport)
-      .map((block) => block.text)
-      .join("\n");
+app.post("/api/textToSpeechLong", requireAdmin, async (req, res) => {
+  const { chapterid, text } = req.body;
 
-    const filename = "test.mp3";
-    const task_id = await textToSpeechLong(text, filename, res);
-    res.json({ success: true, task_id });
-    /* console.log("piping");
+  const filename = "test.mp3";
+  const task_id = await textToSpeechLong(text, filename, res);
+  res.json({ success: true, task_id });
+  /* console.log("piping");
     const data = fs.readFileSync(filename);
     res.writeHead(200, {
       "Content-Type": "audio/mpeg",
@@ -796,8 +787,7 @@ app.post(
       "Content-Length": data.length,
     });
     res.end(data); */
-  }
-);
+});
 
 app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {
   try {
@@ -820,7 +810,7 @@ app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {
         res.status(400).send(data.message).end();
       }
     } else {
-      res.status(400).send(status.message).end();
+      res.status(200).json(status.message).end();
     }
   } catch (e) {
     console.log(e);

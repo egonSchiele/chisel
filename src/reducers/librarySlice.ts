@@ -656,6 +656,23 @@ export const librarySlice = createSlice({
         String(state.panels.rightSidebar.open)
       );
     },
+    toggleSpeech(state: t.State) {
+      state.viewMode = "default";
+      if (
+        state.panels.rightSidebar.open &&
+        state.panels.rightSidebar.activePanel === "speech"
+      ) {
+        state.panels.rightSidebar.open = false;
+      } else {
+        state.panels.rightSidebar.activePanel = "speech";
+        state.panels.rightSidebar.open = true;
+        localStorage.setItem("activePanel", "speech");
+      }
+      localStorage.setItem(
+        "rightSidebarOpen",
+        String(state.panels.rightSidebar.open)
+      );
+    },
     toggleLauncher(state: t.State) {
       state.launcherOpen = !state.launcherOpen;
     },

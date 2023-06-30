@@ -20,6 +20,7 @@ import {
 import { AppDispatch, RootState } from "./store";
 import ChatSidebar from "./ChatSidebar";
 import SlideTransition from "./components/SlideTransition";
+import SpeechSidebar from "./SpeechSidebar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -37,6 +38,12 @@ export default function LibraryDesktop() {
   const chatOpen = !!(
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel === "chat" &&
+    state.viewMode !== "focus" &&
+    currentChapter
+  );
+  const speechOpen = !!(
+    state.panels.rightSidebar.open &&
+    state.panels.rightSidebar.activePanel === "speech" &&
     state.viewMode !== "focus" &&
     currentChapter
   );
@@ -107,6 +114,14 @@ export default function LibraryDesktop() {
             {chatOpen && (
               <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
                 <ChatSidebar />
+              </div>
+            )}
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="speech">
+            {speechOpen && (
+              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+                <SpeechSidebar />
               </div>
             )}
           </LibErrorBoundary>

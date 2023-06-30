@@ -55,7 +55,9 @@ export type ActivePanel =
   | "suggestions"
   | "settings"
   | "history"
-  | "chat";
+  | "chat"
+  | "speech";
+
 export type LeftActivePanel =
   | "filenavigator"
   | "prompts"

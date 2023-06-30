@@ -100,5 +100,5 @@ export async function getTaskStatus(task_id) {
     console.log(`converting ${title} failed:`);
     return failure(task.SynthesisTask.TaskStatusReason);
   }
-  return failure(`Status: ${task_status}`);
+  return failure({ status: task_status });
 }

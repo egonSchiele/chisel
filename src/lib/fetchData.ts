@@ -299,25 +299,17 @@ export async function saveBook(book: t.Book, clientidOfWriter: string) {
   return t.success(data);
 }
 
-export async function textToSpeech(bookid: string, chapterid: string) {
-  const res = await postWithCsrf(
-    `/textToSpeech/book/${bookid}/chapter/${chapterid}`,
-    {}
-  );
+export async function textToSpeechLong(chapterid: string, text: string) {
+  const res = await postWithCsrf(`/api/textToSpeechLong`, { chapterid, text });
   if (!res.ok) {
     const text = await res.text();
-    return t.error(`Error saving book: ${text}`);
+    return t.error(`Error with textToSpeechLong: ${text}`);
   }
   const data = await res.json();
   if (data.success) {
     return t.success(data.task_id);
   }
   return t.error(data.error);
-  /*   const data = await res.blob();
-  const objectURL = URL.createObjectURL(data);
-  window.open(objectURL, "_blank"); */
-  /*   return t.success(data);
-   */
 }
 
 export async function getSpeechTaskStatus(task_id: string) {
@@ -326,6 +318,13 @@ export async function getSpeechTaskStatus(task_id: string) {
     const text = await res.text();
     return t.error(`Error getting speech task: ${text}`);
   }
-  const data = await res.json();
-  return t.success(data);
+  const contentType = res.headers.get("Content-Type");
+  console.log("contentType", contentType);
+  if (contentType === "audio/mpeg") {
+    const data = await res.blob();
+    return t.success({ type: "audio", audio: data });
+  } else {
+    const data = await res.json();
+    return t.success({ type: "status", status: data.status });
+  }
 }
