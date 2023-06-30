@@ -775,9 +775,9 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
 
 app.post("/api/textToSpeechLong", requireAdmin, async (req, res) => {
   const { chapterid, text } = req.body;
-
+  const truncatedText = text.substring(0, 100_000);
   const filename = "test.mp3";
-  const task_id = await textToSpeechLong(text, filename, res);
+  const task_id = await textToSpeechLong(truncatedText, filename, res);
   res.json({ success: true, task_id });
   /* console.log("piping");
     const data = fs.readFileSync(filename);
@@ -787,6 +787,21 @@ app.post("/api/textToSpeechLong", requireAdmin, async (req, res) => {
       "Content-Length": data.length,
     });
     res.end(data); */
+});
+
+app.post("/api/textToSpeech", requireAdmin, async (req, res) => {
+  const { text } = req.body;
+  const truncatedText = text.substring(0, 3000);
+  const filename = "test.mp3";
+  await textToSpeech(truncatedText, filename, res);
+  console.log("piping");
+  const data = fs.readFileSync(filename);
+  res.writeHead(200, {
+    "Content-Type": "audio/mpeg",
+    "Content-disposition": "inline;filename=" + filename,
+    "Content-Length": data.length,
+  });
+  res.end(data);
 });
 
 app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {

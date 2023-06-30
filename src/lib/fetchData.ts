@@ -312,6 +312,16 @@ export async function textToSpeechLong(chapterid: string, text: string) {
   return t.error(data.error);
 }
 
+export async function textToSpeech(chapterid: string, text: string) {
+  const res = await postWithCsrf(`/api/textToSpeech`, { chapterid, text });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error with textToSpeech: ${text}`);
+  }
+  const data = await res.blob();
+  return t.success({ type: "audio", data });
+}
+
 export async function getSpeechTaskStatus(task_id: string) {
   const res = await fetch(`/textToSpeech/task/${task_id}`);
   if (!res.ok) {

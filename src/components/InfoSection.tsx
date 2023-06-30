@@ -24,6 +24,7 @@ export default function InfoSection({ text, showSyllables = false }) {
   const syllable_count = showSyllables ? countSyllables(text.trim()) : 0;
   return (
     <div className="text-sm xl:text-md">
+      <Line text={text.length} subtext="characters" />
       <Line text={word_count} subtext="words" />
       {showSyllables && <Line text={syllable_count} subtext="syllables" />}
       <Line
