@@ -121,8 +121,7 @@ export default function LibraryDesktop() {
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel === "chat" &&
     state.viewMode !== "focus" &&
-    currentChapter &&
-    !mobile
+    currentChapter
   );
 
   return (

@@ -18,6 +18,8 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
+import ChatSidebar from "./ChatSidebar";
+import SlideTransition from "./components/SlideTransition";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -32,7 +34,12 @@ export default function LibraryDesktop() {
   ) as t.LibraryContextType;
 
   const mobile = true;
-
+  const chatOpen = !!(
+    state.panels.rightSidebar.open &&
+    state.panels.rightSidebar.activePanel === "chat" &&
+    state.viewMode !== "focus" &&
+    currentChapter
+  );
   return (
     <>
       {state.error && (
@@ -96,6 +103,13 @@ export default function LibraryDesktop() {
               </div>
             </LibErrorBoundary>
           )}
+          <LibErrorBoundary component="chat">
+            {chatOpen && (
+              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+                <ChatSidebar />
+              </div>
+            )}
+          </LibErrorBoundary>
         </div>
       </div>
     </>

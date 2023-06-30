@@ -473,21 +473,18 @@ export default function Nav({
                       aria-hidden="true"
                     />
                   </NavButton>
-                  <NavButton
-                    color="nav"
-                    label="Chat"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.toggleChat());
-                    }}
-                    selector="chat-button"
-                  >
-                    <ChatBubbleLeftIcon
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    />
-                  </NavButton>
                 </>
               )}
+              <NavButton
+                color="nav"
+                label="Chat"
+                onClick={() => {
+                  dispatch(librarySlice.actions.toggleChat());
+                }}
+                selector="chat-button"
+              >
+                <ChatBubbleLeftIcon className="h-5 w-5" aria-hidden="true" />
+              </NavButton>
               {settings.admin && (
                 <NavButton
                   color="nav"
