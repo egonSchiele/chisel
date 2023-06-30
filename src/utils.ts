@@ -383,3 +383,7 @@ export function getFontSizeClass(size: number | null) {
 export function isTextishBlock(block: t.TextBlock) {
   return block.type === "markdown" || block.type === "plain";
 }
+
+export function round(num: number): number {
+  return Math.round((num + Number.EPSILON) * 100) / 100;
+}

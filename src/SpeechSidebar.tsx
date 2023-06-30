@@ -172,7 +172,12 @@ export default function SpeechSidebar() {
     : currentChapter.text[index].text;
 
   const items = [
-    <InfoSection text={textToConvert} showSyllables={false} key="info" />,
+    <InfoSection
+      text={textToConvert}
+      showSyllables={false}
+      showPollyCost={true}
+      key="info"
+    />,
     <Switch
       label="Full chapter"
       enabled={fullChapter}

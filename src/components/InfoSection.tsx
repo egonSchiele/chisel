@@ -4,6 +4,7 @@ import { syllable } from "syllable";
 import { RootState } from "../store";
 import { getCharacters } from "../reducers/librarySlice";
 import readingTime from "reading-time/lib/reading-time";
+import { round } from "../utils";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -19,9 +20,14 @@ function Line({ text, subtext }) {
     </p>
   );
 }
-export default function InfoSection({ text, showSyllables = false }) {
+export default function InfoSection({
+  text,
+  showSyllables = false,
+  showPollyCost = false,
+}) {
   const word_count = text.trim().split(/\s+/).length;
   const syllable_count = showSyllables ? countSyllables(text.trim()) : 0;
+  const pollyCharacterCost = 4.0 / 1_000_000.0;
   return (
     <div className="text-sm xl:text-md">
       <Line text={text.length} subtext="characters" />
@@ -33,6 +39,12 @@ export default function InfoSection({ text, showSyllables = false }) {
       />
 
       <Line text={readingTime(text).text} subtext="" />
+      {showPollyCost && (
+        <Line
+          text={`$${text.length * pollyCharacterCost}`}
+          subtext="smackers"
+        />
+      )}
 
       {/*  <p>
           {syllable_count} <span className="text-gray-400">syllables</span>
