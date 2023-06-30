@@ -312,7 +312,7 @@ export async function textToSpeechLong(chapterid: string, text: string) {
   return t.error(data.error);
 }
 
-export async function textToSpeech(chapterid: string, text: string) {
+export async function textToSpeechShort(chapterid: string, text: string) {
   const res = await postWithCsrf(`/api/textToSpeech`, { chapterid, text });
   if (!res.ok) {
     const text = await res.text();
@@ -322,8 +322,8 @@ export async function textToSpeech(chapterid: string, text: string) {
   return t.success({ type: "audio", data });
 }
 
-export async function getSpeechTaskStatus(task_id: string) {
-  const res = await fetch(`/textToSpeech/task/${task_id}`);
+export async function getSpeechTaskStatus(chapterid: string, task_id: string) {
+  const res = await fetch(`/api/textToSpeech/task/${chapterid}/${task_id}`);
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error getting speech task: ${text}`);
@@ -337,4 +337,28 @@ export async function getSpeechTaskStatus(task_id: string) {
     const data = await res.json();
     return t.success({ type: "status", status: data.status });
   }
+}
+
+export async function getTextToSpeechData(chapterid: string) {
+  const res = await fetch(`/api/textToSpeechData/${chapterid}`);
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error getting speech data: ${text}`);
+  }
+  const data = await res.json();
+  return t.success(data);
+}
+
+export async function getTextToSpeechAudio(s3key: string) {
+  const res = await fetch(`/api/textToSpeech/${s3key}`);
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error getting speech audio: ${text}`);
+  }
+  const data = await res.blob();
+  return t.success({ type: "audio", data });
+}
+
+export function getAudioURL(s3key: string) {
+  return `/api/textToSpeech/${s3key}#t=00:00:05`;
 }

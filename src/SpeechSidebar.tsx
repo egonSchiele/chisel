@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LibraryContext from "./LibraryContext";
@@ -28,6 +28,67 @@ const POLLY_SYNC_LIMIT_MESSAGE = `Your text is longer than ${POLLY_SYNC_LIMIT} c
 
 const POLLY_ASYNC_LIMIT_MESSAGE = `Your text is longer than ${POLLY_ASYNC_LIMIT} characters, so it will be truncated.`;
 
+type AudioData = {
+  userid: string;
+  s3key: string;
+  created_at: string;
+};
+function PriorAudio({ chapterid }) {
+  const [audioData, setAudioData] = useState<AudioData | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [savedTime, setSavedTime] = useState<number>(0);
+
+  const audioRef = React.useRef<HTMLAudioElement>(null);
+  const localStorageKey = `audioPaused-${chapterid}`;
+  useEffect(() => {
+    const func = async () => {
+      const res = await fd.getTextToSpeechData(chapterid);
+      if (res.tag === "success") {
+        setAudioData(res.payload);
+        const blobResult = await fd.getTextToSpeechAudio(res.payload.s3key);
+        if (blobResult.tag === "success") {
+          setAudioBlob(blobResult.payload.data);
+        }
+      }
+    };
+    const savedTime_ = localStorage.getItem(localStorageKey);
+    if (savedTime_) {
+      setSavedTime(parseFloat(savedTime_));
+    }
+    func();
+  }, [chapterid]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      console.warn("adding event listener");
+      function saveCurrentTime(e) {
+        console.log("pause", e);
+        localStorage.setItem(localStorageKey, e.target.currentTime);
+      }
+      audioRef.current.addEventListener("pause", saveCurrentTime);
+      audioRef.current.addEventListener("seeked", saveCurrentTime);
+      return () => {
+        audioRef.current?.removeEventListener("pause", saveCurrentTime);
+        audioRef.current?.removeEventListener("seeked", saveCurrentTime);
+      };
+    }
+  }, [audioRef, audioBlob]);
+  if (!audioData || !audioBlob) return <p>No audio found.</p>;
+  return (
+    <div className="flex flex-col items-center my-sm">
+      <audio
+        className="w-full"
+        controls
+        src={`${URL.createObjectURL(audioBlob)}#t=${savedTime}`}
+        ref={audioRef}
+      />
+      <p className="text-sm text-gray-500 my-xs">
+        Created at {new Date(audioData.created_at).toLocaleString()}
+      </p>
+    </div>
+  );
+}
+
 export default function SpeechSidebar() {
   const state = useSelector((state: RootState) => state.library.editor);
   const currentBook = useSelector(getSelectedBook);
@@ -54,7 +115,7 @@ export default function SpeechSidebar() {
   async function textToSpeechShort(text) {
     setSpeechTaskStatus("Sending");
     setLoading(true);
-    const res = await fd.textToSpeech(currentChapter.chapterid, text);
+    const res = await fd.textToSpeechShort(currentChapter.chapterid, text);
     setLoading(false);
     if (res.tag === "success") {
       setAudioBlob(res.payload.data);
@@ -83,7 +144,10 @@ export default function SpeechSidebar() {
     const func = async () => {
       if (speechTaskID && !audioBlob) {
         setLoading(true);
-        const res = await fd.getSpeechTaskStatus(speechTaskID);
+        const res = await fd.getSpeechTaskStatus(
+          currentChapter.chapterid,
+          speechTaskID
+        );
         setLoading(false);
         if (res.tag === "success") {
           if (res.payload.type === "status") {
@@ -98,7 +162,7 @@ export default function SpeechSidebar() {
       }
     };
     func();
-  }, 4000);
+  }, 1000);
 
   const textToConvert = fullChapter
     ? currentChapter.text
@@ -178,6 +242,13 @@ export default function SpeechSidebar() {
       </Button>
     );
   }
+
+  items.push(
+    <div className="mt-md mb-xs" key="priorAudio">
+      <label className="settings_label mt-sm">Prior Audio</label>
+      <PriorAudio chapterid={currentChapter.chapterid} />
+    </div>
+  );
 
   const spinner = {
     label: "Loading",

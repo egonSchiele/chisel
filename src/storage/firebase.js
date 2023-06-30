@@ -413,3 +413,27 @@ export const deleteBooks = async (userid) => {
     await batch.commit();
   }
 };
+
+export const saveSpeech = async (chapterid, data) => {
+  const docRef = db.collection("speech").doc(chapterid);
+  try {
+    await docRef.set(data);
+  } catch (error) {
+    console.error("Error syncing embeddings to Firestore:", error);
+    return failure("Error saving embeddings");
+  }
+  return success({ created_at: data.created_at });
+};
+
+export const getSpeech = async (chapterid) => {
+  const docRef = db.collection("speech").doc(chapterid);
+  try {
+    const speech = await docRef.get();
+    if (speech.exists) {
+      return speech.data();
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};

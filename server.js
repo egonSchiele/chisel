@@ -55,6 +55,8 @@ import {
   getBookToCheckAccess,
   saveEmbeddings,
   getEmbeddingsForChapter,
+  saveSpeech,
+  getSpeech,
 } from "./src/storage/firebase.js";
 import settings from "./settings.js";
 import {
@@ -804,32 +806,64 @@ app.post("/api/textToSpeech", requireAdmin, async (req, res) => {
   res.end(data);
 });
 
-app.get("/textToSpeech/task/:task_id", requireAdmin, async (req, res) => {
-  try {
-    const { task_id } = req.params;
-    const status = await getTaskStatus(task_id);
-    if (status.success) {
-      const s3key = status.data.s3key;
-      const data = await getFromS3(s3key);
-      if (data.success) {
-        /*     res.status(200);
-        const stream = data.Body;
-        stream.pipe(res); */
-        res.writeHead(200, {
-          "Content-Type": "audio/mpeg",
-          "Content-disposition": "inline;filename=chiselaudio.mp3",
-          "Content-Length": data.data.length,
-        });
-        res.end(data.data);
+app.get(
+  "/api/textToSpeech/task/:chapterid/:task_id",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const { chapterid, task_id } = req.params;
+      const userid = getUserId(req);
+      const status = await getTaskStatus(task_id);
+      if (status.success) {
+        const s3key = status.data.s3key;
+        const data = await getFromS3(s3key);
+        if (data.success) {
+          const created_at = Date.now();
+          await saveSpeech(chapterid, { s3key, userid, created_at });
+
+          // return audio
+          res.writeHead(200, {
+            "Content-Type": "audio/mpeg",
+            "Content-disposition": "inline;filename=chiselaudio.mp3",
+            "Content-Length": data.data.length,
+          });
+          res.end(data.data);
+        } else {
+          res.status(400).send(data.message).end();
+        }
       } else {
-        res.status(400).send(data.message).end();
+        res.status(200).json(status.message).end();
       }
-    } else {
-      res.status(200).json(status.message).end();
+    } catch (e) {
+      console.log(e);
+      res.status(400).send(e.message).end();
     }
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e.message).end();
+  }
+);
+
+app.get("/api/textToSpeechData/:chapterid", requireAdmin, async (req, res) => {
+  const { chapterid } = req.params;
+  const userid = getUserId(req);
+  const data = await getSpeech(chapterid);
+  if (data && data.userid === userid) {
+    return res.status(200).json(data);
+  }
+
+  res.status(403).send("no access").end();
+});
+
+app.get("/api/textToSpeech/:s3key", requireAdmin, async (req, res) => {
+  const { s3key } = req.params;
+  const data = await getFromS3(s3key);
+  if (data.success) {
+    res.writeHead(200, {
+      "Content-Type": "audio/mpeg",
+      "Content-disposition": "inline;filename=chiselaudio.mp3",
+      "Content-Length": data.data.length,
+    });
+    res.end(data.data);
+  } else {
+    res.status(400).send(data.message).end();
   }
 });
 
