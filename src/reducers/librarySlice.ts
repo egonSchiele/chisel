@@ -117,14 +117,14 @@ export const librarySlice = createSlice({
   initialState: initialState(null) as t.State,
   reducers: {
     setBooks(state: t.State, action: PayloadAction<t.Book[]>) {
-      const books = action.payload;
+      /* const books = action.payload;
       books.forEach((book) => {
         book.chapters.forEach((chapter) => {
           if (isString(chapter.text)) {
             chapter.text = parseText(chapter.text as unknown as string);
           }
         });
-      });
+      }); */
       state.books = action.payload;
     },
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
@@ -387,16 +387,12 @@ export const librarySlice = createSlice({
       if (!book || !chapter) return;
 
       let bookidChanged = false;
-      book.chapters = book.chapters.map((c) => {
+      book.chapters.forEach((c) => {
         if (c.chapterid === chapter.chapterid) {
           if (c.bookid !== chapter.bookid) {
             bookidChanged = true;
           }
-
-          return chapter;
         }
-
-        return c;
       });
       if (bookidChanged) {
         book.chapterOrder = book.chapterOrder.filter(

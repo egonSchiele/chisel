@@ -22,14 +22,6 @@ async function deleteBook(bookid: string, onDelete) {
   onDelete(bookid);
 }
 
-async function favoriteBook(bookid: string) {
-  const res = await fd.favoriteBook(bookid);
-  if (res.tag === "error") {
-    console.log(res.message);
-    return;
-  }
-}
-
 const buttonStyles = ""; //"bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 

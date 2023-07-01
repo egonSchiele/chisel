@@ -112,16 +112,6 @@ export async function deleteChapter(bookid: string, chapterid: string) {
   return t.success();
 }
 
-export async function favoriteBook(bookid: string) {
-  const res = await postWithCsrf(`/api/favoriteBook`, { bookid });
-
-  if (!res.ok) {
-    const text = await res.text();
-    return t.error(`Error favoriting book: ${text}`);
-  }
-  return t.success();
-}
-
 export async function newBook() {
   const res = await postWithCsrf(`/api/newBook`, {});
   if (!res.ok) {

@@ -217,7 +217,6 @@ export const getUser = async (req) => {
 
 export const saveUser = async (user) => {
   console.log("saving user");
-  console.log({ user });
   if (!user) {
     console.log("no user to save");
     return false;
@@ -244,7 +243,6 @@ const getUserWithEmail = async (email) => {
   const db = getFirestore();
   const userRef = db.collection("users").where("email", "==", _email);
   const user = await userRef.get();
-  console.log({ user });
   if (user.empty) {
     return null;
   }

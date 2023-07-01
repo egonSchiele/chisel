@@ -41,8 +41,6 @@ import {
   getBookTitles,
   saveChapter,
   deleteChapter,
-  favoriteChapter,
-  favoriteBook,
   getChapter,
   saveToHistory,
   getHistory,
@@ -73,7 +71,7 @@ import {
 } from "./src/speech/polly.js";
 
 import { getFromS3, uploadToS3 } from "./src/storage/s3.js";
-
+import * as SE from "./src/storage/storageEngine.js";
 const replicate = new Replicate({
   // get your token from https://replicate.com/account
   auth: settings.replicateApiKey,
@@ -119,8 +117,6 @@ const apiLimiter = rateLimit({
 // Apply the rate limiting middleware to API calls only
 app.use("/api", apiLimiter);
 app.use("/loginGuestUser", apiLimiter);
-
-const clientsToUpdate = {};
 
 const noCache = (req, res, next) => {
   // res.setHeader("Surrogate-Control", "no-store");
@@ -266,16 +262,6 @@ const checkChapterAccess = async (req, res, next) => {
 
 //app.use(noCache);
 
-const lastEditedCache = {};
-
-function updateLastEdited(req) {
-  const date = Date.now();
-  const userid = getUserId(req);
-  lastEditedCache[userid] = date;
-  console.log(lastEditedCache);
-  return date;
-}
-
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);
 });
@@ -295,84 +281,36 @@ app.get("/logout", async (req, res) => {
 });
 
 app.post("/api/saveBook", requireLogin, async (req, res) => {
-  const { book, clientidOfWriter } = req.body;
-  const userid = getUserId(req);
-  if (clientsToUpdate[userid]) {
-    console.log(
-      `${clientsToUpdate[userid].length} clients to update for user ${userid}`
-    );
-    console.log("saveBook event from id", clientidOfWriter);
-    clientsToUpdate[userid].forEach((connection) => {
-      if (connection.clientid !== clientidOfWriter) {
-        console.log("sending book update to client", connection.clientid);
-        connection.res.write("event: bookUpdate\n");
-        connection.res.write(
-          `data: ${JSON.stringify({ book, clientid: connection.clientid })}`
-        );
-        connection.res.write("\n\n");
-        connection.res.flush();
-      } else {
-        console.log("not sending update to client", connection.clientid);
-      }
-    });
-  }
-
-  const result = await saveBook(book);
-  if (result.success) {
-    result.data.created_at = updateLastEdited(req);
-    res.status(200).json(result.data);
-  } else {
-    res.status(400).send(result.message).end();
-  }
+  const { book } = req.body;
+  const updateData = {
+    eventName: "bookUpdate",
+    data: { book },
+  };
+  await SE.save(req, res, updateData, async () => {
+    return await saveBook(book);
+  });
 });
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
-  const { chapter, clientidOfWriter } = req.body;
-  const userid = getUserId(req);
-  if (clientsToUpdate[userid]) {
-    console.log(
-      `${clientsToUpdate[userid].length} clients to update for user ${userid}`
-    );
-    console.log("saveBook event from id", clientidOfWriter);
-    clientsToUpdate[userid].forEach((connection) => {
-      if (connection.clientid !== clientidOfWriter) {
-        console.log("sending chapter update to client", connection.clientid);
-        connection.res.write("event: chapterUpdate\n");
-        connection.res.write(
-          `data: ${JSON.stringify({ chapter, clientid: connection.clientid })}`
-        );
-        connection.res.write("\n\n");
-        connection.res.flush();
-      } else {
-        console.log("not sending update to client", connection.clientid);
-      }
-    });
-  }
-
-  const result = await saveChapter(chapter);
-  if (result.success) {
-    result.data.created_at = updateLastEdited(req);
-
-    res.status(200).json(result.data);
-  } else {
-    res.status(400).send(result.message).end();
-  }
+  const { chapter } = req.body;
+  const updateData = {
+    eventName: "chapterUpdate",
+    data: { chapter },
+  };
+  await SE.save(req, res, updateData, async () => {
+    return await saveChapter(chapter);
+  });
 });
 
 app.post("/api/newBook", requireLogin, async (req, res) => {
-  const userid = getUserId(req);
-  if (!userid) {
-    console.log("no userid");
-    res.status(404).end();
-  } else {
+  SE.save(req, res, null, async () => {
+    const userid = getUserId(req);
     const book = makeNewBook({
       userid,
     });
     await saveBook(book);
-    book.created_at = updateLastEdited(req);
-    res.send(book);
-    // res.redirect(`/book/${bookid}`);
-  }
+    return success(book);
+  });
 });
 
 app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
@@ -542,17 +480,13 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
 });
 
 app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
-  const userid = getUserId(req);
-
-  const { bookid, title, text } = req.body;
-
-  const chapter = makeNewChapter(text, title, bookid);
-
-  await saveChapter(chapter);
-  const created_at = updateLastEdited(req);
-
-  res.send(chapter);
-  // res.status(200).end();
+  await SE.save(req, res, null, async () => {
+    const userid = getUserId(req);
+    const { bookid, title, text } = req.body;
+    const chapter = makeNewChapter(text, title, bookid);
+    await saveChapter(chapter);
+    return success(chapter);
+  });
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
@@ -687,7 +621,7 @@ function serveFile(filename, res, userid) {
     if (userid) csrfTokenCache[userid] = token;
   }
   res.cookie("csrfToken", token);
-
+  console.log(`serving ${filename}`);
   const rendered = render(path.resolve(`./dist/${filename}`), {
     csrfToken: token,
   });
@@ -762,8 +696,6 @@ app.get("/404", async (req, res) => {
 });
 
 app.get("/api/settings", requireLogin, noCache, async (req, res) => {
-  console.log("getting settings");
-
   const user = await getUser(req);
   if (!user) {
     console.log("no user");
@@ -893,20 +825,17 @@ app.post("/api/settings", requireLogin, async (req, res) => {
 
 app.get("/api/books", requireLogin, noCache, async (req, res) => {
   const userid = getUserId(req);
-  if (!userid) {
-    console.log("no userid");
-    res.status(404).end();
-  } else {
-    const books = await getBooks(userid);
-
-    const lastEdited = updateLastEdited(req);
-    res.status(200).json({ books, lastEdited });
-  }
+  const books = await getBooks(userid);
+  const lastEdited = SE.updateLastEdited(req);
+  res.status(200).json({ books, lastEdited });
 });
 
 app.get("/api/getLastEdited", requireLogin, noCache, async (req, res) => {
-  const lastEdited = lastEditedCache[req.cookies.userid];
-  console.log("lastEdited", lastEdited);
+  const lastEdited = SE.getLastEdited(req.cookies.userid);
+  const prettyDate = lastEdited
+    ? new Date(lastEdited).toLocaleString()
+    : "never";
+  console.log("userid", req.cookies.userid, "lastEdited", prettyDate);
   res.status(200).json({ lastEdited });
 });
 
@@ -932,11 +861,11 @@ app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
-  const { bookid } = req.body;
-  await deleteBook(bookid);
-  const created_at = updateLastEdited(req);
-  res.status(200).json({ created_at });
-  // res.redirect("/");
+  // TODO update logic
+  SE.save(req, res, null, async () => {
+    const { bookid } = req.body;
+    return await deleteBook(bookid);
+  });
 });
 
 app.get(
@@ -1008,50 +937,10 @@ app.post(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const { chapterid, bookid } = req.body;
-    try {
-      await deleteChapter(chapterid, bookid);
-      const created_at = updateLastEdited(req);
-      res.status(200).json({ created_at });
-    } catch (error) {
-      console.error("Error deleting chapter:", error);
-      res.status(400).json({ error });
-    }
-  }
-);
-
-app.post(
-  "/api/favoriteChapter",
-  requireLogin,
-  checkBookAccess,
-  checkChapterAccess,
-  async (req, res) => {
-    const { chapterid } = req.body;
-    try {
-      await favoriteChapter(chapterid);
-      const created_at = updateLastEdited(req);
-      res.status(200).json({ created_at });
-    } catch (error) {
-      console.error("Error favoriting chapter:", error);
-      res.status(400).json({ error });
-    }
-  }
-);
-
-app.post(
-  "/api/favoriteBook",
-  requireLogin,
-  checkBookAccess,
-  async (req, res) => {
-    const { bookid } = req.body;
-    try {
-      await favoriteBook(bookid);
-      const created_at = updateLastEdited(req);
-      res.status(200).json({ created_at });
-    } catch (error) {
-      console.error("Error favoriting book:", error);
-      res.status(400).json({ error });
-    }
+    SE.save(req, res, null, async () => {
+      const { chapterid, bookid } = req.body;
+      return await deleteChapter(chapterid, bookid);
+    });
   }
 );
 
@@ -1115,45 +1004,14 @@ app.get(
   }
 );
 
-function disconnectClient(userid, clientid) {
-  console.log("Disconnecting client", { userid, clientid });
-  if (clientsToUpdate[userid]) {
-    clientsToUpdate[userid] = clientsToUpdate[userid].filter(
-      (c) => c.clientid !== clientid
-    );
-  }
-}
-
 app.get(
   "/api/sseUpdates/:clientid/:bookid/:chapterid",
   requireLogin,
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Connection", "keep-alive");
-    res.setHeader("X-Accel-Buffering", "no");
-
-    res.flushHeaders(); // flush the headers to establish SSE with client
     const userid = getUserId(req);
-    const clientid = req.params.clientid;
-    const newConnection = { clientid, res };
-    console.log("New connection", { userid, clientid });
-    if (clientsToUpdate[userid]) {
-      clientsToUpdate[userid].push(newConnection);
-    } else {
-      clientsToUpdate[userid] = [newConnection];
-    }
-
-    res.on("close", function () {
-      disconnectClient(userid, clientid);
-    });
-
-    res.on("end", function () {
-      disconnectClient(userid, clientid);
-    });
+    SE.connectClient(userid, req, res);
   }
 );
 

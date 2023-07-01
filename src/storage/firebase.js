@@ -26,7 +26,7 @@ export function failure(message) {
 export const saveBook = async (book) => {
   if (!book) {
     console.log("no book to save");
-    return;
+    return failure("No book to save");
   }
 
   const docRef = db.collection("books").doc(book.bookid);
@@ -112,6 +112,7 @@ export const deleteBook = async (bookid) => {
 
   const docRef = db.collection("books").doc(bookid);
   await docRef.delete();
+  return success({});
 };
 
 function asArray(snapshot) {
@@ -261,7 +262,7 @@ export const deleteChapter = async (chapterid, bookid) => {
   const book = await getBook(bookid);
   if (!book) {
     console.log("no book to update");
-    return;
+    return failure("no book to update");
   }
   if (!book.chapterOrder) {
     if (book.chapterTitles) {
@@ -274,37 +275,7 @@ export const deleteChapter = async (chapterid, bookid) => {
       (_chapterid) => _chapterid !== chapterid
     );
   }
-  await saveBook(book);
-};
-
-export const favoriteChapter = async (chapterid) => {
-  const chapter = await getChapter(chapterid);
-  if (!chapter) {
-    console.log("no chapter to favorite");
-    return;
-  }
-  if (!chapter.favorite) {
-    chapter.favorite = true;
-  } else {
-    chapter.favorite = !chapter.favorite;
-  }
-
-  await saveChapter(chapter);
-};
-
-export const favoriteBook = async (bookid) => {
-  const book = await getBook(bookid);
-  if (!book) {
-    console.log("no book to favorite");
-    return;
-  }
-  if (!book.favorite) {
-    book.favorite = true;
-  } else {
-    book.favorite = !book.favorite;
-  }
-
-  await saveBook(book);
+  return await saveBook(book);
 };
 
 export const getHistory = async (chapterid) => {

@@ -224,16 +224,16 @@ async function saveBook(request) {
 async function saveBase(request, updateFunc, type) {
   const updated = await updateFunc(request.clone());
   const result = await fetch(request);
+  const clone = result.clone();
+  console.log("result", result, result.ok);
   if (result.ok) {
     console.log("updated on server", type);
     const data = await result.json();
     setLastEditedInCache(data.created_at);
-    return new Response(JSON.stringify(data));
   } else {
     console.log("failed to update on server", type);
-    const text = await result.text();
-    return new Response(text);
   }
+  return clone;
 }
 
 function clearCache() {
