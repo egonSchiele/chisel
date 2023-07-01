@@ -1244,6 +1244,12 @@ export const librarySlice = createSlice({
       localStorage.setItem("activeTab", state.activeTab.toString());
       localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
     },
+    closeAllTabs(state: t.State) {
+      state.openTabs = [];
+      state.activeTab = null;
+      localStorage.setItem("activeTab", null);
+      localStorage.setItem("openTabs", "[]");
+    },
     goToTab(state: t.State, action: PayloadAction<string>) {
       const index = state.openTabs.findIndex(
         (tab) => tab.chapterid === action.payload

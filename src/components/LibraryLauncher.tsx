@@ -751,6 +751,15 @@ export default function LibraryLauncher({ onLauncherClose }) {
     }
   }
 
+  launchItems.push({
+    label: "Close All Tabs",
+    onClick: () => {
+      dispatch(librarySlice.actions.closeAllTabs());
+      navigate("/");
+    },
+    icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+  });
+
   function onChoose(item: t.MenuItem) {
     const label = item.label;
     const cache = settings.autocompleteCache || {};

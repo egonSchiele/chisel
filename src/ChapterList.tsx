@@ -19,7 +19,7 @@ import Button from "./components/Button";
 import ListMenu from "./components/ListMenu";
 import ListItem from "./components/ListItem";
 import Popup from "./components/Popup";
-import { getChapterText, getCsrfToken } from "./utils";
+import { getChapterText, getCsrfToken, useLocalStorage } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 import Input from "./components/Input";
 import { RootState } from "./store";
@@ -27,8 +27,11 @@ import sortBy from "lodash/sortBy";
 import { nanoid } from "nanoid";
 import LibraryContext from "./LibraryContext";
 import { useColors } from "./lib/hooks";
+import Select from "./components/Select";
 
 // import Draggable from "react-draggable";
+
+type SortType = "alphabetical" | "manual";
 
 export default function ChapterList({
   selectedChapterId,
@@ -52,6 +55,10 @@ export default function ChapterList({
   );
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
   const [editing, setEditing] = React.useState(false);
+  const [sortType, setSortType] = useLocalStorage<SortType>(
+    "chapterListSort",
+    "manual"
+  );
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
@@ -62,6 +69,12 @@ export default function ChapterList({
   const uploadFileRef = React.useRef<HTMLInputElement>(null);
   const uploadAudioRef = React.useRef<HTMLInputElement>(null);
   const colors = useColors();
+
+  let sortedChapters = chapters;
+  if (sortType === "alphabetical") {
+    sortedChapters = sortBy(chapters, ["title"]);
+  }
+
   if (!loaded) {
     return (
       <div
@@ -105,12 +118,13 @@ export default function ChapterList({
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
-    const ids = chapters.map((chapter) => chapter.chapterid);
+    const ids = sortedChapters.map((chapter) => chapter.chapterid);
 
     const [removed] = ids.splice(result.source.index, 1);
     ids.splice(result.destination.index, 0, removed);
 
     dispatch(librarySlice.actions.setChapterOrder(ids));
+    setSortType("manual");
   };
 
   const sublist = () => {
@@ -190,7 +204,7 @@ export default function ChapterList({
   };
 
   const sublistAll = () => {
-    return chapters.map((chapter, index) => {
+    return sortedChapters.map((chapter, index) => {
       let title = chapter.title || "(no title)";
       if (chapter.status && chapter.status === "done") {
         title = `✅ ${title}`;
@@ -300,7 +314,7 @@ export default function ChapterList({
         <Droppable droppableId="droppable">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {chapters.map((chapter, index) => (
+              {sortedChapters.map((chapter, index) => (
                 <Draggable
                   key={chapter.chapterid}
                   draggableId={chapter.chapterid}
@@ -430,6 +444,18 @@ export default function ChapterList({
     />
   );
 
+  const selectSort = (
+    <Select
+      key="sort"
+      name="sort"
+      value={sortType}
+      onChange={(e) => setSortType(e.target.value)}
+    >
+      <option value="manual">Manual</option>
+      <option value="alphabetical">Alphabetical</option>
+    </Select>
+  );
+
   const upload = (
     <input
       type="file"
@@ -460,7 +486,7 @@ export default function ChapterList({
   }
   const finalItems = editing
     ? sublistDraggable()
-    : [search, upload, uploadAudio, ...sublist()];
+    : [selectSort, upload, uploadAudio, ...sublist()];
   return (
     <>
       <List

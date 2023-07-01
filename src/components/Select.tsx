@@ -1,21 +1,23 @@
 import React from "react";
 
 export default function Select({
-  title,
   name,
   value,
   onChange,
+  title = null,
   className = "",
   children,
 }) {
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="block text-sm font-light leading-6 text-text dark:text-dmtext uppercase"
-      >
-        {title}
-      </label>
+      {title && (
+        <label
+          htmlFor={name}
+          className="block text-sm font-light leading-6 text-text dark:text-dmtext uppercase"
+        >
+          {title}
+        </label>
+      )}
       <select
         id={name}
         name={name}

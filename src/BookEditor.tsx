@@ -21,6 +21,22 @@ import { chapterToMarkdown } from "./serverUtils";
 import LibraryContext from "./LibraryContext";
 import QuillTextArea from "./components/QuillTextArea";
 import { useColors } from "./lib/hooks";
+import readingTime from "reading-time/lib/reading-time";
+
+function BookInfo({ book }: { book: Book }) {
+  const text = book.chapters
+    .map((chapter) => getChapterText(chapter))
+    .join("\n\n");
+
+  const word_count = text.trim().split(/\s+/).length;
+  return (
+    <div className="my-sm flex flex-col text-sm xl:text-md text-gray-400 w-full text-center">
+      <p>
+        {word_count} words, {readingTime(text).text}
+      </p>
+    </div>
+  );
+}
 
 function Character({
   character,
@@ -510,6 +526,7 @@ export default function BookEditor({ className = "" }) {
           nextFocus={() => {}}
           selector="book-editor-title"
         />
+
         <QuillTextArea
           bookid={book.bookid}
           value={book.synopsis || ""}
@@ -521,6 +538,7 @@ export default function BookEditor({ className = "" }) {
         />
 
         <CoverImage book={book} className="mt-lg" />
+        <BookInfo book={book} />
         <div className={`grid gap-md grid-cols-1 mt-lg`}>
           <div className="grid gap-sm grid-cols-1 ">
             <Heading
