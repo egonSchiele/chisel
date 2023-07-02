@@ -281,13 +281,13 @@ app.get("/logout", async (req, res) => {
 });
 
 app.post("/api/saveBook", requireLogin, async (req, res) => {
-  const { book } = req.body;
+  const { book, lastHeardFromServer } = req.body;
   const updateData = {
     eventName: "bookUpdate",
     data: { book },
   };
   await SE.save(req, res, updateData, async () => {
-    return await saveBook(book);
+    return await saveBook(book, lastHeardFromServer);
   });
 });
 
@@ -308,7 +308,7 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
     const book = makeNewBook({
       userid,
     });
-    await saveBook(book);
+    await saveBook(book, null);
     return success(book);
   });
 });
@@ -475,7 +475,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
   } else {
     book.synopsis = suggestions.message;
   }
-  await saveBook(book);
+  await saveBook(book, null);
   res.send(book);
 });
 
@@ -1054,7 +1054,8 @@ app.get(
     });
 
     book.lastTrainedAt = timestamp;
-    await Promise.all([...promises, saveBook(book)]);
+    // TODO pass lastHeardFromServer here
+    await Promise.all([...promises, saveBook(book, null)]);
 
     res.status(200).json({ lastTrainedAt: timestamp });
   }

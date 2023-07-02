@@ -23,7 +23,7 @@ export function failure(message) {
   return { success: false, message };
 }
 
-export const saveBook = async (book) => {
+export const saveBook = async (book, lastHeardFromServer) => {
   if (!book) {
     console.log("no book to save");
     return failure("No book to save");
@@ -31,15 +31,19 @@ export const saveBook = async (book) => {
 
   const docRef = db.collection("books").doc(book.bookid);
   try {
-    /* const doc = await docRef.get();
+    const doc = await docRef.get();
     if (doc.exists) {
       const data = doc.data();
-      if (data.created_at && data.created_at > book.created_at) {
+      if (data.created_at && data.created_at > lastHeardFromServer) {
         return failure(
-          `Could not save, your copy of this book is older than the one in the database. Db: ${data.created_at}, your copy: ${book.created_at}. Please refresh to get the latest updates, then try again.`
+          `Could not save, your copy of this book is older than the one in the database. Db: ${new Date(
+            data.created_at
+          ).toLocaleString()}, your copy: ${new Date(
+            lastHeardFromServer
+          ).toLocaleString()}. Please refresh to get the latest updates, then try again.`
         );
       }
-    } */
+    }
     book.created_at = Date.now();
 
     if (book.chapterOrder) {
@@ -182,7 +186,7 @@ export const getBooks = async (userid) => {
       compostBook.bookid
     );
     await saveChapter(compostChapter, null);
-    await saveBook(compostBook);
+    await saveBook(compostBook, null);
 
     compostBook.chapters = [compostChapter];
     compostBook.chapterOrder = [compostChapter.chapterid];
@@ -238,7 +242,11 @@ export const saveChapter = async (chapter, lastHeardFromServer) => {
       const data = doc.data();
       if (data.created_at && data.created_at > lastHeardFromServer) {
         return failure(
-          `Could not save, your copy of this chapter is older than the one in the database. Db: ${data.created_at}, your copy: ${lastHeardFromServer}. Please refresh to get the latest updates, then try again.`
+          `Could not save, your copy of this chapter is older than the one in the database. Db: ${new Date(
+            data.created_at
+          ).toLocaleString()}, your copy: ${new Date(
+            lastHeardFromServer
+          ).toLocaleString()}. Please refresh to get the latest updates, then try again.`
         );
       }
     }
@@ -267,6 +275,7 @@ export const getChapter = async (chapterid) => {
   return data;
 };
 
+// TODO lastHeardFromServer for delete actions?
 export const deleteChapter = async (chapterid, bookid) => {
   await db.collection("chapters").doc(chapterid).delete();
   const book = await getBook(bookid);
@@ -285,7 +294,7 @@ export const deleteChapter = async (chapterid, bookid) => {
       (_chapterid) => _chapterid !== chapterid
     );
   }
-  return await saveBook(book);
+  return await saveBook(book, null);
 };
 
 export const getHistory = async (chapterid) => {

@@ -553,7 +553,11 @@ export default function Library({ mobile = false }) {
 
     bookNoChapters.chapters = [];
 
-    const result = await makeApiCall(fd.saveBook, [bookNoChapters, clientid]);
+    const result = await makeApiCall(fd.saveBook, [
+      bookNoChapters,
+      clientid,
+      state.lastHeardFromServer,
+    ]);
 
     if (result.tag === "success") {
       const data = result.payload;

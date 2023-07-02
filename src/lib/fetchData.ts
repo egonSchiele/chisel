@@ -281,8 +281,16 @@ export async function saveChapter(
   return t.success(data);
 }
 
-export async function saveBook(book: t.Book, clientidOfWriter: string) {
-  const res = await postWithCsrf(`/api/saveBook`, { book, clientidOfWriter });
+export async function saveBook(
+  book: t.Book,
+  clientidOfWriter: string,
+  lastHeardFromServer: number
+) {
+  const res = await postWithCsrf(`/api/saveBook`, {
+    book,
+    clientidOfWriter,
+    lastHeardFromServer,
+  });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error saving book: ${text}`);
