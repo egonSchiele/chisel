@@ -1,5 +1,5 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import BookList from "./BookList";
@@ -33,6 +33,10 @@ export default function LibraryDesktop() {
   const { settings, newCompostNote } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
+
+  useEffect(() => {
+    dispatch(librarySlice.actions.closeRightSidebar());
+  }, []);
 
   const mobile = true;
   const chatOpen = !!(

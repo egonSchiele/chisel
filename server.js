@@ -129,6 +129,11 @@ const noCache = (req, res, next) => {
   next();
 };
 
+const allowAutoplay = (req, res, next) => {
+  res.setHeader("Permissions-Policy", "autoplay=(self)");
+  next();
+};
+
 function isMobile(req) {
   return browser(req.headers["user-agent"]).mobile;
 }
@@ -261,6 +266,7 @@ const checkChapterAccess = async (req, res, next) => {
 };
 
 //app.use(noCache);
+app.use(allowAutoplay);
 
 app.post("/submitLogin", async (req, res) => {
   await submitLogin(req, res);

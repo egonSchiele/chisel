@@ -37,6 +37,9 @@ function PriorAudio({ chapterid }) {
   const [audioData, setAudioData] = useState<AudioData | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [savedTime, setSavedTime] = useState<number>(0);
+  const [status, setStatus] = useState<"loading" | "error" | "success">(
+    "loading"
+  );
 
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const localStorageKey = `audioPaused-${chapterid}`;
@@ -48,7 +51,10 @@ function PriorAudio({ chapterid }) {
         const blobResult = await fd.getTextToSpeechAudio(res.payload.s3key);
         if (blobResult.tag === "success") {
           setAudioBlob(blobResult.payload.data);
+          setStatus("success");
         }
+      } else {
+        setStatus("error");
       }
     };
     const savedTime_ = localStorage.getItem(localStorageKey);
@@ -60,9 +66,7 @@ function PriorAudio({ chapterid }) {
 
   useEffect(() => {
     if (audioRef.current) {
-      console.warn("adding event listener");
       function saveCurrentTime(e) {
-        console.log("pause", e);
         localStorage.setItem(localStorageKey, e.target.currentTime);
       }
       audioRef.current.addEventListener("pause", saveCurrentTime);
@@ -73,13 +77,15 @@ function PriorAudio({ chapterid }) {
       };
     }
   }, [audioRef, audioBlob]);
-  if (!audioData || !audioBlob) return <p>No audio found.</p>;
+  if (status === "loading") return <Spinner />;
+  if (status === "error") return <p>No audio found</p>;
   return (
     <div className="flex flex-col items-center my-sm">
       <audio
         className="w-full"
         controls
-        src={`${URL.createObjectURL(audioBlob)}`}
+        preload="metadata"
+        src={`${URL.createObjectURL(audioBlob)}#t=${savedTime}`}
         ref={audioRef}
       />
       <p className="text-sm text-gray-500 my-xs">
@@ -229,6 +235,7 @@ export default function SpeechSidebar() {
     items.push(
       <audio
         controls
+        autoPlay={true}
         className="w-full my-xs"
         src={URL.createObjectURL(audioBlob)}
       ></audio>
