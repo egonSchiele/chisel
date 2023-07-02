@@ -69,10 +69,8 @@ async function fetchBooksFromCache() {
   return data.books;
 }
 
-async function updateCacheWithChapter(request) {
-  const books = await fetchBooksFromCache();
-  if (!books) return;
-  const { chapter } = await request.json();
+async function updateCacheWithChapter(books, data) {
+  const { chapter } = data;
   const book = books.find((book) => book.bookid === chapter.bookid);
   if (!book) {
     console.warn("book not found", books, chapter);
@@ -86,16 +84,11 @@ async function updateCacheWithChapter(request) {
     return false;
   }
   book.chapters[chapterIndex] = chapter;
-  const cache = await caches.open("v1");
-  cache.put(booksRequest, new Response(JSON.stringify({ books: books })));
-  console.log("updated cache with chapter", chapter);
-  return true;
+  return books;
 }
 
-async function updateCacheWithBook(request) {
-  const books = await fetchBooksFromCache();
-  if (!books) return;
-  const { book } = await request.json();
+async function updateCacheWithBook(books, data) {
+  const { book } = data;
   const bookIndex = books.findIndex((b) => b.bookid === book.bookid);
   if (bookIndex === -1) {
     console.warn("book not found", books, book);
@@ -104,10 +97,7 @@ async function updateCacheWithBook(request) {
   const bookChapters = books[bookIndex].chapters;
   book.chapters = bookChapters;
   books[bookIndex] = book;
-  const cache = await caches.open("v1");
-  cache.put(booksRequest, new Response(JSON.stringify({ books: books })));
-  console.log("updated cache with book", book);
-  return true;
+  return books;
 }
 
 function deepEqual(obj1, obj2) {
@@ -225,26 +215,88 @@ async function getBooksFromCacheOrServer() {
 }
 
 async function saveChapter(request) {
-  return await saveBase(request, updateCacheWithChapter, "chapter");
+  return await saveBase("saveChapter", request, updateCacheWithChapter);
 }
 
 async function saveBook(request) {
-  return await saveBase(request, updateCacheWithBook, "book");
+  return await saveBase("saveBook", request, updateCacheWithBook);
 }
 
-async function saveBase(request, updateFunc, type) {
-  const updated = await updateFunc(request.clone());
-  const result = await fetch(request);
-  const clone = result.clone();
-  console.log("result", result, result.ok);
-  if (result.ok) {
-    console.log("updated on server", type);
-    const data = await result.json();
-    setLastEditedInCache(data.lastHeardFromServer);
+async function newChapter(request) {
+  return await saveBase("newChapter", request, (books, reqData, chapter) => {
+    const { bookid } = reqData;
+    const book = books.find((b) => b.bookid === bookid);
+    if (!book) {
+      console.warn("book not found for newChapter", bookid);
+      return false;
+    }
+    book.chapters.push(chapter);
+    book.chapterOrder.push(chapter.chapterid);
+    return books;
+  });
+}
+
+async function newBook(request) {
+  return await saveBase("newBook", request, (books, _, book) => {
+    books.push(book);
+    return books;
+  });
+}
+
+async function deleteChapter(request) {
+  return await saveBase("deleteChapter", request, (books, reqData, _) => {
+    const { chapterid, bookid } = reqData;
+
+    const book = books.find((b) => b.bookid === bookid);
+    if (!book) {
+      console.warn("book not found for deleteChapter", bookid, chapterid);
+      return false;
+    }
+    book.chapters = book.chapters.filter((c) => c.chapterid !== chapterid);
+    book.chapterOrder = book.chapterOrder.filter((c) => c !== chapterid);
+    return books;
+  });
+}
+
+async function deleteBook(request) {
+  return await saveBase("deleteBook", request, (books, reqData, _) => {
+    return books.filter((b) => b.bookid !== reqData.bookid);
+  });
+}
+
+async function saveBase(type, request, updateFunc) {
+  const requestClone = request.clone();
+
+  const response = await fetch(request);
+  const responseClone = response.clone();
+  if (responseClone.ok) {
+    const booksFromCache = await fetchBooksFromCache();
+    if (booksFromCache) {
+      const requestData = await requestClone.json();
+      const responseData = await responseClone.json();
+      const updatedBooks = await updateFunc(
+        booksFromCache,
+        requestData,
+        responseData
+      );
+      if (updatedBooks) {
+        const cache = await caches.open("v1");
+        cache.put(
+          booksRequest,
+          new Response(JSON.stringify({ books: updatedBooks }))
+        );
+        setLastEditedInCache(responseData.lastHeardFromServer);
+        console.log("updated cache", type);
+      } else {
+        console.log("something went wrong updating the cache");
+      }
+    } else {
+      console.log("no books in cache, can't update", type);
+    }
   } else {
     console.log("failed to update on server", type);
   }
-  return clone;
+  return response;
 }
 
 function clearCache() {
@@ -252,6 +304,7 @@ function clearCache() {
   caches.keys().then(function (names) {
     for (let name of names) caches.delete(name);
   });
+  localStorage.clear();
 }
 
 self.addEventListener("fetch", async (event) => {
@@ -264,6 +317,18 @@ self.addEventListener("fetch", async (event) => {
   } else if (event.request.url.endsWith("/api/saveBook")) {
     console.log("save book", event.request);
     event.respondWith(saveBook(event.request));
+  } else if (event.request.url.endsWith("/api/newChapter")) {
+    console.log("new chapter", event.request);
+    event.respondWith(newChapter(event.request));
+  } else if (event.request.url.endsWith("/api/newBook")) {
+    console.log("new book", event.request);
+    event.respondWith(newBook(event.request));
+  } else if (event.request.url.endsWith("/api/deleteChapter")) {
+    console.log("delete chapter", event.request);
+    event.respondWith(deleteChapter(event.request));
+  } else if (event.request.url.endsWith("/api/deleteBook")) {
+    console.log("delete book", event.request);
+    event.respondWith(deleteBook(event.request));
   } else if (event.request.url.endsWith("/logout")) {
     clearCache();
   }

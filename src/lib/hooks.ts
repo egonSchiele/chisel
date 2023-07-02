@@ -211,7 +211,6 @@ export function useSSEUpdates() {
   return useEffect(() => {
     if (clientid) {
       const eventSourceUrl = `/api/sseUpdates`;
-      console.log("eventSourceUrl", eventSourceUrl);
       const eventSource = new EventSource(eventSourceUrl, {
         withCredentials: true,
       });

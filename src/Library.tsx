@@ -55,16 +55,9 @@ export default function Library({ mobile = false }) {
   }, [settings]);
 
   const { bookid, chapterid } = useParams();
-  console.log("bookid", bookid, "chapterid", chapterid);
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
 
   useEffect(() => {
-    console.log(
-      "in useEffect",
-      chapterid,
-      state.selectedBookId,
-      state.booksLoaded
-    );
     if (chapterid && state.booksLoaded) {
       dispatch(
         librarySlice.actions.newTab({

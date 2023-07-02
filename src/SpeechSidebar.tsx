@@ -45,15 +45,20 @@ function PriorAudio({ chapterid }) {
   const localStorageKey = `audioPaused-${chapterid}`;
   useEffect(() => {
     const func = async () => {
-      const res = await fd.getTextToSpeechData(chapterid);
-      if (res.tag === "success") {
-        setAudioData(res.payload);
-        const blobResult = await fd.getTextToSpeechAudio(res.payload.s3key);
-        if (blobResult.tag === "success") {
-          setAudioBlob(blobResult.payload.data);
-          setStatus("success");
+      try {
+        const res = await fd.getTextToSpeechData(chapterid);
+        if (res.tag === "success") {
+          setAudioData(res.payload);
+          const blobResult = await fd.getTextToSpeechAudio(res.payload.s3key);
+          if (blobResult.tag === "success") {
+            setAudioBlob(blobResult.payload.data);
+            setStatus("success");
+          }
+        } else {
+          setStatus("error");
         }
-      } else {
+      } catch (e) {
+        console.log(e);
         setStatus("error");
       }
     };

@@ -641,6 +641,7 @@ const render = (filename, _data) => {
 const csrfTokenCache = {};
 function serveFile(filename, res, userid) {
   let token;
+
   if (userid && csrfTokenCache[userid]) {
     token = csrfTokenCache[userid];
   } else {
