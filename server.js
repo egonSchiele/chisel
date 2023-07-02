@@ -965,7 +965,9 @@ app.post(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    const { chapterid, bookid, lastHeardFromServer } = req.body;
+    const { chapterid, bookid } = req.body;
+    const lastHeardFromServer = req.cookies.lastHeardFromServer;
+
     const updateData = {
       eventName: "chapterDelete",
       data: { chapterid },
