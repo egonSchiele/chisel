@@ -152,16 +152,13 @@ function Character({
 function Chapter({ chapter, bookid, index }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const lastHeardFromServer: number = useSelector(
-    (state: RootState) => state.library.lastHeardFromServer
-  );
 
   const { deleteChapter } = useContext(LibraryContext) as t.LibraryContextType;
   const colors = useColors();
   function _deleteChapter() {
     const chapterid = chapter.chapterid;
     dispatch(librarySlice.actions.loading());
-    fd.deleteChapter(bookid, chapterid, lastHeardFromServer).then((res) => {
+    fd.deleteChapter(bookid, chapterid).then((res) => {
       dispatch(librarySlice.actions.loaded());
       if (res.tag === "error") {
         dispatch(librarySlice.actions.setError(res.message));

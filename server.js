@@ -287,7 +287,9 @@ app.get("/logout", async (req, res) => {
 });
 
 app.post("/api/saveBook", requireLogin, async (req, res) => {
-  const { book, lastHeardFromServer } = req.body;
+  const { book } = req.body;
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
+
   const updateData = {
     eventName: "bookUpdate",
     data: { book },
@@ -298,7 +300,8 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 });
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
-  const { chapter, lastHeardFromServer } = req.body;
+  const { chapter } = req.body;
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
   const updateData = {
     eventName: "chapterUpdate",
     data: { chapter },
@@ -502,7 +505,7 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   const chapter = makeNewChapter(text, title, bookid);
   const updateData = {
     eventName: "chapterCreate",
-    data: { chapter },
+    data: { chapter, bookid },
   };
   await SE.save(req, res, updateData, async () => {
     await saveChapter(chapter, null);
@@ -882,8 +885,8 @@ app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
-  const { bookid, lastHeardFromServer } = req.body;
-
+  const { bookid } = req.body;
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
   const updateData = {
     eventName: "bookDelete",
     data: { bookid },
@@ -1033,16 +1036,10 @@ app.get(
   }
 );
 
-app.get(
-  "/api/sseUpdates/:clientid/:bookid/:chapterid",
-  requireLogin,
-  checkBookAccess,
-  checkChapterAccess,
-  async (req, res) => {
-    const userid = getUserId(req);
-    SE.connectClient(userid, req, res);
-  }
-);
+app.get("/api/sseUpdates", requireLogin, async (req, res) => {
+  const userid = getUserId(req);
+  SE.connectClient(userid, req, res);
+});
 
 app.get(
   "/api/trainOnBook/:bookid",
@@ -1083,8 +1080,8 @@ app.get(
     });
 
     book.lastTrainedAt = timestamp;
-    // TODO pass lastHeardFromServer here
-    await Promise.all([...promises, saveBook(book, null)]);
+    const lastHeardFromServer = req.cookies.lastHeardFromServer;
+    await Promise.all([...promises, saveBook(book, lastHeardFromServer)]);
 
     res.status(200).json({ lastTrainedAt: timestamp });
   }

@@ -11,7 +11,7 @@ import * as t from "./Types";
 import LibraryLauncher from "./components/LibraryLauncher";
 import "./globals.css";
 import * as fd from "./lib/fetchData";
-import { useKeyDown } from "./lib/hooks";
+import { useKeyDown, useSSEUpdates } from "./lib/hooks";
 import {
   defaultSettings,
   fetchBooksThunk,
@@ -25,10 +25,12 @@ import { AppDispatch, RootState } from "./store";
 import {
   getCsrfToken,
   saveTextToHistory,
+  setCookie,
   today,
   useInterval,
   useLocalStorage,
 } from "./utils";
+import { nanoid } from "nanoid";
 
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -39,7 +41,6 @@ export default function Library({ mobile = false }) {
   const activeTab = useSelector((state: RootState) => state.library.activeTab);
   const openTabs = useSelector((state: RootState) => state.library.openTabs);
   const currentText = currentChapter?.text || [];
-  const clientid = useSelector((state: RootState) => state.library.clientid);
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
   const [usage, setUsage] = useState<t.Usage | null>(null);
@@ -56,38 +57,6 @@ export default function Library({ mobile = false }) {
   const { bookid, chapterid } = useParams();
   console.log("bookid", bookid, "chapterid", chapterid);
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
-
-  useEffect(() => {
-    if (bookid && chapterid) {
-      const eventSourceUrl = `/api/sseUpdates/${clientid}/${bookid}/${chapterid}`;
-      console.log("eventSourceUrl", eventSourceUrl);
-      const eventSource = new EventSource(eventSourceUrl, {
-        withCredentials: true,
-      });
-      eventSource.addEventListener("chapterUpdate", (e) => {
-        console.warn("chapterUpdate", e);
-
-        const { chapter, lastHeardFromServer } = JSON.parse(e.data);
-        dispatch(librarySlice.actions.updateChapterSSE(chapter));
-        dispatch(
-          librarySlice.actions.setLastHeardFromServer(lastHeardFromServer)
-        );
-      });
-      eventSource.addEventListener("bookUpdate", (e) => {
-        console.log("bookUpdate", e);
-
-        const { book, lastHeardFromServer } = JSON.parse(e.data);
-        dispatch(librarySlice.actions.updateBookSSE(book));
-        dispatch(
-          librarySlice.actions.setLastHeardFromServer(lastHeardFromServer)
-        );
-      });
-      return () => {
-        // console.log("closing event source");
-        eventSource.close();
-      };
-    }
-  }, [bookid, chapterid]);
 
   useEffect(() => {
     console.log(
@@ -169,6 +138,8 @@ export default function Library({ mobile = false }) {
       dispatch(librarySlice.actions.openFileNavigator());
     }
   }, [state.selectedBookId, chapterid]);
+
+  useSSEUpdates();
 
   useKeyDown(async (event) => {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
@@ -329,6 +300,7 @@ export default function Library({ mobile = false }) {
       await Promise.all([fetchBooks(), fetchSettings()]);
       //await Promise.all([fetchBooks(), fetchSettings(), fetchBookTitles()]);
     };
+    setCookie("clientid", nanoid(), 1);
     func();
   }, []);
 
@@ -394,7 +366,7 @@ export default function Library({ mobile = false }) {
     const result = await makeApiCall(fd.newChapter, [theBookid, title, text]);
     if (result.tag === "success") {
       const chapter = result.payload;
-      dispatch(librarySlice.actions.addChapter({ chapter, bookid: theBookid }));
+      dispatch(librarySlice.actions.newChapter({ chapter, bookid: theBookid }));
       navigate(`/book/${theBookid}/chapter/${chapter.chapterid}`, {});
     }
   }
@@ -411,7 +383,7 @@ export default function Library({ mobile = false }) {
       dispatch(librarySlice.actions.setError(res.message));
     } else {
       const book = res.payload;
-      dispatch(librarySlice.actions.addBook(book));
+      dispatch(librarySlice.actions.newBook(book));
     }
   }
 
@@ -449,11 +421,7 @@ export default function Library({ mobile = false }) {
       console.log("Error adding to writing streak", e);
     }
     try {
-      const result = await makeApiCall(fd.saveChapter, [
-        chapter,
-        clientid,
-        state.lastHeardFromServer,
-      ]);
+      const result = await makeApiCall(fd.saveChapter, [chapter]);
 
       if (result.tag === "success") {
         const data = result.payload;
@@ -467,11 +435,6 @@ export default function Library({ mobile = false }) {
             chapterid: chapter.chapterid,
             created_at: data.lastHeardFromServer,
           })
-        );
-        dispatch(
-          librarySlice.actions.updateLastHeardFromServer(
-            data.lastHeardFromServer
-          )
         );
       }
     } catch (e) {
@@ -553,11 +516,7 @@ export default function Library({ mobile = false }) {
 
     bookNoChapters.chapters = [];
 
-    const result = await makeApiCall(fd.saveBook, [
-      bookNoChapters,
-      clientid,
-      state.lastHeardFromServer,
-    ]);
+    const result = await makeApiCall(fd.saveBook, [bookNoChapters]);
 
     if (result.tag === "success") {
       const data = result.payload;
@@ -573,9 +532,6 @@ export default function Library({ mobile = false }) {
           bookid: bookNoChapters.bookid,
           created_at: data.lastHeardFromServer,
         })
-      );
-      dispatch(
-        librarySlice.actions.setLastHeardFromServer(data.lastHeardFromServer)
       );
     }
   }

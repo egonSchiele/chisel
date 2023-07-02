@@ -1,6 +1,11 @@
 import { useContext, useEffect } from "react";
 import LibraryContext from "../LibraryContext";
 import * as t from "../Types";
+import { librarySlice } from "../reducers/librarySlice";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store";
+import { useParams } from "react-router-dom";
+import { getCookie, setCookie } from "../utils";
 
 export const useKeyboardScroll = (htmlRef, speed = 400, callback = null) => {
   const handleKeyDown = async (event) => {
@@ -188,3 +193,56 @@ export function lightColors() {
   };
 }
  */
+
+export function useSSEUpdates() {
+  const clientid = getCookie("clientid");
+  const dispatch = useDispatch();
+
+  function listen(eventName, eventSource, func) {
+    eventSource.addEventListener(eventName, (e) => {
+      console.warn("sse update:", eventName, e);
+
+      const data = JSON.parse(e.data);
+      func(data);
+      setCookie("lastHeardFromServer", data.lastHeardFromServer, 14);
+    });
+  }
+
+  return useEffect(() => {
+    if (clientid) {
+      const eventSourceUrl = `/api/sseUpdates`;
+      console.log("eventSourceUrl", eventSourceUrl);
+      const eventSource = new EventSource(eventSourceUrl, {
+        withCredentials: true,
+      });
+      listen("chapterUpdate", eventSource, (data) => {
+        const { chapter } = data;
+        dispatch(librarySlice.actions.updateChapterSSE(chapter));
+      });
+      listen("bookUpdate", eventSource, (data) => {
+        const { book } = data;
+        dispatch(librarySlice.actions.updateBookSSE(book));
+      });
+      listen("chapterDelete", eventSource, (data) => {
+        const { chapterid } = data;
+        //dispatch(librarySlice.actions.deleteChapterSSE(chapterid));
+      });
+      listen("bookDelete", eventSource, (data) => {
+        const { bookid } = data;
+        //dispatch(librarySlice.actions.deleteBookSSE(bookid));
+      });
+      listen("chapterCreate", eventSource, (data) => {
+        const { chapter, bookid } = data;
+        dispatch(librarySlice.actions.newChapter({ chapter, bookid }));
+      });
+      listen("bookCreate", eventSource, (data) => {
+        const { book } = data;
+        dispatch(librarySlice.actions.newBook(book));
+      });
+      return () => {
+        // console.log("closing event source");
+        eventSource.close();
+      };
+    }
+  }, [clientid]);
+}

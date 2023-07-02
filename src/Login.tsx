@@ -2,6 +2,7 @@ import React from "react";
 import Auth from "./Auth";
 import { Routes, Route } from "react-router-dom";
 import Library from "./Library";
+import { setCookie } from "./utils";
 
 function AuthApp() {
   const [error, setError] = React.useState(null);
@@ -28,8 +29,8 @@ function AuthApp() {
       setError(null);
       const { userid, token } = json;
 
-      document.cookie = `userid=${userid}`;
-      document.cookie = `token=${token}`;
+      setCookie("userid", userid, 14);
+      setCookie("token", token, 14);
       window.location.href = "/";
     }
   }

@@ -92,10 +92,9 @@ export const newChapter = async (
   return t.success(data);
 };
 
-export async function deleteBook(bookid: string, lastHeardFromServer: number) {
+export async function deleteBook(bookid: string) {
   const res = await postWithCsrf(`/api/deleteBook`, {
     bookid,
-    lastHeardFromServer,
   });
 
   if (!res.ok) {
@@ -105,15 +104,10 @@ export async function deleteBook(bookid: string, lastHeardFromServer: number) {
   return t.success();
 }
 
-export async function deleteChapter(
-  bookid: string,
-  chapterid: string,
-  lastHeardFromServer: number
-) {
+export async function deleteChapter(bookid: string, chapterid: string) {
   const res = await postWithCsrf(`/api/deleteChapter`, {
     bookid,
     chapterid,
-    lastHeardFromServer,
   });
 
   if (!res.ok) {
@@ -273,15 +267,9 @@ export async function saveToHistory(chapterid: string, text: string) {
   return t.success();
 }
 
-export async function saveChapter(
-  chapter: t.Chapter,
-  clientidOfWriter: string,
-  lastHeardFromServer: number
-) {
+export async function saveChapter(chapter: t.Chapter) {
   const res = await postWithCsrf(`/api/saveChapter`, {
     chapter,
-    clientidOfWriter,
-    lastHeardFromServer,
   });
   if (!res.ok) {
     const text = await res.text();
@@ -292,15 +280,9 @@ export async function saveChapter(
   return t.success(data);
 }
 
-export async function saveBook(
-  book: t.Book,
-  clientidOfWriter: string,
-  lastHeardFromServer: number
-) {
+export async function saveBook(book: t.Book) {
   const res = await postWithCsrf(`/api/saveBook`, {
     book,
-    clientidOfWriter,
-    lastHeardFromServer,
   });
   if (!res.ok) {
     const text = await res.text();

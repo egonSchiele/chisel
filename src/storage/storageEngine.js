@@ -20,7 +20,7 @@ export function getLastEdited(userid) {
 // 3. Edits the created at timestamp to send back to the client and in the last edited cache on the server. And
 // 4. Updates other clients if updateData is given.
 export async function save(req, res, updateData, saveFunc) {
-  const { clientidOfWriter } = req.body;
+  const clientidOfWriter = req.cookies.clientid;
   const userid = getUserId(req);
   const lastHeardFromServer = Date.now();
   if (updateData) {
@@ -34,6 +34,7 @@ export async function save(req, res, updateData, saveFunc) {
   if (result.success) {
     updateLastEdited(req, lastHeardFromServer);
     result.data.lastHeardFromServer = lastHeardFromServer;
+    res.cookie("lastHeardFromServer", lastHeardFromServer);
     res.status(200).json(result.data);
   } else {
     res.status(400).send(result.message).end();
@@ -41,6 +42,10 @@ export async function save(req, res, updateData, saveFunc) {
 }
 
 export function updateClients(userid, clientidOfWriter, eventName, _data) {
+  console.log({ clientsToUpdate });
+  if (!clientidOfWriter) {
+    console.warn("No clientidOfWriter given for", eventName);
+  }
   if (clientsToUpdate[userid] && clientsToUpdate[userid].length > 1) {
     console.log(
       `${clientsToUpdate[userid].length} clients to update for user ${userid}`
@@ -63,6 +68,13 @@ export function updateClients(userid, clientidOfWriter, eventName, _data) {
         console.log("not sending update to client", connection.clientid);
       }
     });
+  } else {
+    console.log(
+      "No clients to update for user",
+      userid,
+      "length",
+      clientsToUpdate[userid].length
+    );
   }
 }
 
@@ -76,7 +88,7 @@ export function connectClient(userid, req, res) {
   // flush the headers to establish SSE with client
   // needs to be done if using compression
   res.flushHeaders();
-  const clientid = req.params.clientid;
+  const clientid = req.cookies.clientid;
   const newConnection = { clientid, res };
   console.log("New connection", { userid, clientid });
   if (clientsToUpdate[userid]) {

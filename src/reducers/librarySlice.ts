@@ -82,8 +82,6 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     online: true,
     serviceWorkerRunning: false,
     fromCache: false,
-    clientid: nanoid(),
-    lastHeardFromServer: null,
   };
 };
 
@@ -102,7 +100,7 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
         json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
       dispatch(librarySlice.actions.setBooks(books));
-      dispatch(librarySlice.actions.setLastHeardFromServer(lastEdited));
+
       if (deepEqual === false) {
         dispatch(librarySlice.actions.setError("cache books out of date"));
       }
@@ -130,9 +128,7 @@ export const librarySlice = createSlice({
       }); */
       state.books = action.payload;
     },
-    setLastHeardFromServer(state: t.State, action: PayloadAction<number>) {
-      state.lastHeardFromServer = action.payload;
-    },
+
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
       state.serviceWorkerRunning = action.payload;
     },
@@ -148,7 +144,7 @@ export const librarySlice = createSlice({
     setBooksLoaded(state: t.State, action: PayloadAction<boolean>) {
       state.booksLoaded = action.payload;
     },
-    addBook(state: t.State, action: PayloadAction<t.Book>) {
+    newBook(state: t.State, action: PayloadAction<t.Book>) {
       state.books.push(action.payload);
     },
     setBook(state: t.State, action: PayloadAction<string | null>) {
@@ -184,7 +180,7 @@ export const librarySlice = createSlice({
         (chapter) => chapter.chapterid !== chapterid
       );
     },
-    addChapter(
+    newChapter(
       state: t.State,
       action: PayloadAction<{ chapter: t.Chapter; bookid: string }>
     ) {

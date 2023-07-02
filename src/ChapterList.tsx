@@ -54,9 +54,7 @@ export default function ChapterList({
     (state: RootState) => state.library.selectedBookId
   );
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
-  const lastHeardFromServer: number = useSelector(
-    (state: RootState) => state.library.lastHeardFromServer
-  );
+
   const [editing, setEditing] = React.useState(false);
   const [sortType, setSortType] = useLocalStorage<SortType>(
     "chapterListSort",
@@ -88,7 +86,7 @@ export default function ChapterList({
 
   function _deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading());
-    fd.deleteChapter(bookid, chapterid, lastHeardFromServer).then((res) => {
+    fd.deleteChapter(bookid, chapterid).then((res) => {
       dispatch(librarySlice.actions.loaded());
       if (res.tag === "error") {
         dispatch(librarySlice.actions.setError(res.message));
@@ -273,7 +271,7 @@ export default function ChapterList({
     newChapter.title = `${newChapter.title} (copy)`;
     await saveChapter(newChapter);
     dispatch(
-      librarySlice.actions.addChapter({
+      librarySlice.actions.newChapter({
         chapter: newChapter,
         bookid: chapter.bookid,
       })
