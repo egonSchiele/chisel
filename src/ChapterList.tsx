@@ -213,7 +213,15 @@ export default function ChapterList({
         title = `🚧 ${title}`;
       }
       const previewLength = mobile ? 100 : 50;
+      let content = chapter.text.map((t) => t.text).join(". ");
 
+      if (content.length > previewLength) {
+        content = content.substring(0, previewLength) + "...";
+      }
+
+      if (content.trim().length === 0) {
+        content = "(no text)";
+      }
       const menuItems: t.MenuItem[] = [
         {
           label: "Delete",
@@ -253,10 +261,7 @@ export default function ChapterList({
           <ListItem
             link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
             title={title}
-            content={`${chapter.text
-              .map((t) => t.text)
-              .join(". ")
-              .substring(0, previewLength)}...`}
+            content={content}
             selected={chapter.chapterid === selectedChapterId}
             selector="chapterlist"
             menuItems={menuItems}

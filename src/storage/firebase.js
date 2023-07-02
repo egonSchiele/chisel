@@ -317,7 +317,7 @@ export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
           (_chapterid) => _chapterid !== chapterid
         );
       }
-      return await saveBook(book, null);
+      return await saveBook(book, lastHeardFromServer);
     }
   );
 };

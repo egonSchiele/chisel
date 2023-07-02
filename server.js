@@ -321,8 +321,9 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
     eventName: "bookCreate",
     data: { book },
   };
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
   SE.save(req, res, updateData, async () => {
-    await saveBook(book, null);
+    await saveBook(book, lastHeardFromServer);
     return success(book);
   });
 });
@@ -443,13 +444,14 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
   const user = await getUser(req);
   const userid = user.userid;
   const chapters = req.body.chapters;
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
 
   const book = makeNewBook({
     userid,
   });
   const promises = chapters.map(async (chapter) => {
     const newChapter = makeNewChapter(chapter.text, chapter.title, book.bookid);
-    await saveChapter(newChapter, null);
+    await saveChapter(newChapter, lastHeardFromServer);
     book.chapters.push(newChapter);
   });
   await Promise.all(promises);
@@ -495,20 +497,21 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
     data: { book },
   };
   SE.save(req, res, updateData, async () => {
-    await saveBook(book, null);
+    await saveBook(book, lastHeardFromServer);
     return success(book);
   });
 });
 
 app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid, title, text } = req.body;
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
   const chapter = makeNewChapter(text, title, bookid);
   const updateData = {
     eventName: "chapterCreate",
     data: { chapter, bookid },
   };
   await SE.save(req, res, updateData, async () => {
-    await saveChapter(chapter, null);
+    await saveChapter(chapter, lastHeardFromServer);
     return success(chapter);
   });
 });
@@ -966,6 +969,7 @@ app.post(
   checkChapterAccess,
   async (req, res) => {
     const { chapterid, bookid } = req.body;
+    console.log("cookies", req.cookies);
     const lastHeardFromServer = req.cookies.lastHeardFromServer;
 
     const updateData = {
