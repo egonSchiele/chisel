@@ -303,11 +303,16 @@ app.post("/api/saveChapter", requireLogin, async (req, res) => {
 });
 
 app.post("/api/newBook", requireLogin, async (req, res) => {
-  SE.save(req, res, null, async () => {
-    const userid = getUserId(req);
-    const book = makeNewBook({
-      userid,
-    });
+  const userid = getUserId(req);
+  const book = makeNewBook({
+    userid,
+  });
+
+  const updateData = {
+    eventName: "bookCreate",
+    data: { book },
+  };
+  SE.save(req, res, updateData, async () => {
     await saveBook(book, null);
     return success(book);
   });
@@ -475,15 +480,25 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
   } else {
     book.synopsis = suggestions.message;
   }
-  await saveBook(book, null);
-  res.send(book);
+
+  const updateData = {
+    eventName: "bookCreate",
+    data: { book },
+  };
+  SE.save(req, res, updateData, async () => {
+    await saveBook(book, null);
+    return success(book);
+  });
 });
 
 app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
-  await SE.save(req, res, null, async () => {
-    const userid = getUserId(req);
-    const { bookid, title, text } = req.body;
-    const chapter = makeNewChapter(text, title, bookid);
+  const { bookid, title, text } = req.body;
+  const chapter = makeNewChapter(text, title, bookid);
+  const updateData = {
+    eventName: "chapterCreate",
+    data: { chapter },
+  };
+  await SE.save(req, res, updateData, async () => {
     await saveChapter(chapter, null);
     return success(chapter);
   });
@@ -861,10 +876,14 @@ app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
 });
 
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
-  // TODO update logic
-  SE.save(req, res, null, async () => {
-    const { bookid } = req.body;
-    return await deleteBook(bookid);
+  const { bookid, lastHeardFromServer } = req.body;
+
+  const updateData = {
+    eventName: "bookDelete",
+    data: { bookid },
+  };
+  SE.save(req, res, updateData, async () => {
+    return await deleteBook(bookid, lastHeardFromServer);
   });
 });
 
@@ -937,9 +956,13 @@ app.post(
   checkBookAccess,
   checkChapterAccess,
   async (req, res) => {
-    SE.save(req, res, null, async () => {
-      const { chapterid, bookid } = req.body;
-      return await deleteChapter(chapterid, bookid);
+    const { chapterid, bookid, lastHeardFromServer } = req.body;
+    const updateData = {
+      eventName: "chapterDelete",
+      data: { chapterid },
+    };
+    SE.save(req, res, updateData, async () => {
+      return await deleteChapter(chapterid, bookid, lastHeardFromServer);
     });
   }
 );

@@ -27,6 +27,8 @@ export async function save(req, res, updateData, saveFunc) {
     const data = { ...updateData.data };
     data.lastHeardFromServer = lastHeardFromServer;
     updateClients(userid, clientidOfWriter, updateData.eventName, data);
+  } else {
+    console.warn("No update data given for", saveFunc);
   }
   const result = await saveFunc();
   if (result.success) {

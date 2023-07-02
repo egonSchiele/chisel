@@ -13,8 +13,8 @@ import { RootState } from "./store";
 import { LibraryContextType } from "./Types";
 import { useColors } from "./lib/hooks";
 
-async function deleteBook(bookid: string, onDelete) {
-  const res = await fd.deleteBook(bookid);
+async function deleteBook(bookid: string, lastHeardFromServer, onDelete) {
+  const res = await fd.deleteBook(bookid, lastHeardFromServer);
   if (res.tag === "error") {
     console.log(res.message);
     return;
@@ -30,6 +30,9 @@ export default function BookList({ cachedBooks = null }) {
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
   const selectedBookId = useSelector(
     (state: RootState) => state.library.selectedBookId
+  );
+  const lastHeardFromServer = useSelector(
+    (state: RootState) => state.library.lastHeardFromServer
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -112,7 +115,10 @@ export default function BookList({ cachedBooks = null }) {
 
   function bookListItem(book, tag: string | null = null) {
     const menuItems = [
-      { label: "Delete", onClick: () => deleteBook(book.bookid, onDelete) },
+      {
+        label: "Delete",
+        onClick: () => deleteBook(book.bookid, lastHeardFromServer, onDelete),
+      },
       { label: "Rename", onClick: () => startRenameBook(book) },
       {
         label: "Export",

@@ -79,7 +79,7 @@ function PriorAudio({ chapterid }) {
       <audio
         className="w-full"
         controls
-        src={`${URL.createObjectURL(audioBlob)}#t=${savedTime}`}
+        src={`${URL.createObjectURL(audioBlob)}`}
         ref={audioRef}
       />
       <p className="text-sm text-gray-500 my-xs">

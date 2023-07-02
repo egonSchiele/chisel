@@ -92,25 +92,32 @@ export const getChaptersForBook = async (bookid) => {
   return allChapters;
 };
 
-export const deleteBook = async (bookid) => {
-  const chapters = await db
-    .collection("chapters")
-    .where("bookid", "==", bookid)
-    .get();
-
-  if (chapters.empty) {
-    console.log("No chapters found to delete.");
-  } else {
-    const batch = db.batch();
-    chapters.docs.forEach((doc) => {
-      batch.delete(doc.ref);
-    });
-    await batch.commit();
-  }
-
+export const deleteBook = async (bookid, lastHeardFromServer) => {
   const docRef = db.collection("books").doc(bookid);
-  await docRef.delete();
-  return success({});
+  return await checkForOutdatedUpdate(
+    "chapter",
+    lastHeardFromServer,
+    docRef,
+    async () => {
+      const chapters = await db
+        .collection("chapters")
+        .where("bookid", "==", bookid)
+        .get();
+
+      if (chapters.empty) {
+        console.log("No chapters found to delete.");
+      } else {
+        const batch = db.batch();
+        chapters.docs.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+        await batch.commit();
+      }
+
+      await docRef.delete();
+      return success({});
+    }
+  );
 };
 
 function asArray(snapshot) {
@@ -219,6 +226,13 @@ async function checkForOutdatedUpdate(type, lastHeardFromServer, docRef, func) {
   const FUDGE_FACTOR = 1000;
   if (doc.exists) {
     const data = doc.data();
+    if (lastHeardFromServer === null) {
+      console.log("failure saving", type, "no lastHeardFromServer");
+      return failure(
+        `Error saving ${type}, no lastHeardFromServer. Please report this bug.`
+      );
+    }
+
     if (
       data.created_at &&
       data.created_at > lastHeardFromServer + FUDGE_FACTOR
@@ -285,25 +299,27 @@ export const getChapter = async (chapterid) => {
 };
 
 // TODO lastHeardFromServer for delete actions?
-export const deleteChapter = async (chapterid, bookid) => {
-  await db.collection("chapters").doc(chapterid).delete();
-  const book = await getBook(bookid);
-  if (!book) {
-    console.log("no book to update");
-    return failure("no book to update");
-  }
-  if (!book.chapterOrder) {
-    if (book.chapterTitles) {
-      book.chapterOrder = book.chapterTitles.map((c) => c.chapterid);
-      delete book.chapterTitles;
+export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
+  const docRef = db.collection("chapters").doc(chapterid);
+  return await checkForOutdatedUpdate(
+    "chapter",
+    lastHeardFromServer,
+    docRef,
+    async () => {
+      await docRef.delete();
+      const book = await getBook(bookid);
+      if (!book) {
+        console.log("no book to update");
+        return failure("no book to update");
+      }
+      if (book.chapterOrder) {
+        book.chapterOrder = book.chapterOrder.filter(
+          (_chapterid) => _chapterid !== chapterid
+        );
+      }
+      return await saveBook(book, null);
     }
-  }
-  if (book.chapterOrder) {
-    book.chapterOrder = book.chapterOrder.filter(
-      (_chapterid) => _chapterid !== chapterid
-    );
-  }
-  return await saveBook(book, null);
+  );
 };
 
 export const getHistory = async (chapterid) => {

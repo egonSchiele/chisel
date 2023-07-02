@@ -92,8 +92,11 @@ export const newChapter = async (
   return t.success(data);
 };
 
-export async function deleteBook(bookid: string) {
-  const res = await postWithCsrf(`/api/deleteBook`, { bookid });
+export async function deleteBook(bookid: string, lastHeardFromServer: number) {
+  const res = await postWithCsrf(`/api/deleteBook`, {
+    bookid,
+    lastHeardFromServer,
+  });
 
   if (!res.ok) {
     const text = await res.text();
@@ -102,8 +105,16 @@ export async function deleteBook(bookid: string) {
   return t.success();
 }
 
-export async function deleteChapter(bookid: string, chapterid: string) {
-  const res = await postWithCsrf(`/api/deleteChapter`, { bookid, chapterid });
+export async function deleteChapter(
+  bookid: string,
+  chapterid: string,
+  lastHeardFromServer: number
+) {
+  const res = await postWithCsrf(`/api/deleteChapter`, {
+    bookid,
+    chapterid,
+    lastHeardFromServer,
+  });
 
   if (!res.ok) {
     const text = await res.text();
