@@ -248,12 +248,15 @@ export default function SpeechSidebar() {
     );
   }
 
-  items.push(
-    <div className="mt-md mb-xs" key="priorAudio">
-      <label className="settings_label mt-sm">Prior Audio</label>
-      <PriorAudio chapterid={currentChapter.chapterid} />
-    </div>
-  );
+  // no prior audio if you're kicking off a new job
+  if (speechTaskStatus === "") {
+    items.push(
+      <div className="mt-md mb-xs" key="priorAudio">
+        <label className="settings_label mt-sm">Prior Audio</label>
+        <PriorAudio chapterid={currentChapter.chapterid} />
+      </div>
+    );
+  }
 
   const spinner = {
     label: "Loading",

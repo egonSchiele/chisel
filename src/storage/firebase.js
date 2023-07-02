@@ -30,32 +30,26 @@ export const saveBook = async (book, lastHeardFromServer) => {
   }
 
   const docRef = db.collection("books").doc(book.bookid);
-  try {
-    const doc = await docRef.get();
-    if (doc.exists) {
-      const data = doc.data();
-      if (data.created_at && data.created_at > lastHeardFromServer) {
-        return failure(
-          `Could not save, your copy of this book is older than the one in the database. Db: ${new Date(
-            data.created_at
-          ).toLocaleString()}, your copy: ${new Date(
-            lastHeardFromServer
-          ).toLocaleString()}. Please refresh to get the latest updates, then try again.`
-        );
+  return await checkForOutdatedUpdate(
+    "book",
+    lastHeardFromServer,
+    docRef,
+    async () => {
+      try {
+        book.created_at = Date.now();
+
+        if (book.chapterOrder) {
+          book.chapterOrder = _.uniq(book.chapterOrder);
+        }
+
+        await docRef.set(book);
+      } catch (error) {
+        console.error("Error syncing book to Firestore:", error);
+        return failure("Error saving book");
       }
+      return success({});
     }
-    book.created_at = Date.now();
-
-    if (book.chapterOrder) {
-      book.chapterOrder = _.uniq(book.chapterOrder);
-    }
-
-    await docRef.set(book);
-  } catch (error) {
-    console.error("Error syncing book to Firestore:", error);
-    return failure("Error saving book");
-  }
-  return success({});
+  );
 };
 
 export const getBook = async (bookid) => {
@@ -220,6 +214,28 @@ export const getEmbeddingsForChapter = async (chapterid) => {
   }
 };
 
+async function checkForOutdatedUpdate(type, lastHeardFromServer, docRef, func) {
+  const doc = await docRef.get();
+  const FUDGE_FACTOR = 1000;
+  if (doc.exists) {
+    const data = doc.data();
+    if (
+      data.created_at &&
+      data.created_at > lastHeardFromServer + FUDGE_FACTOR
+    ) {
+      console.log("failure saving", type, data.created_at, lastHeardFromServer);
+      return failure(
+        `Could not save, your copy of this ${type} is older than the one in the database. Db: ${new Date(
+          data.created_at
+        ).toLocaleString()}, your copy: ${new Date(
+          lastHeardFromServer
+        ).toLocaleString()}. Please refresh to get the latest updates, then try again.`
+      );
+    }
+  }
+  return await func();
+}
+
 export const saveChapter = async (chapter, lastHeardFromServer) => {
   if (!chapter) {
     return failure("no chapter to save");
@@ -236,29 +252,22 @@ export const saveChapter = async (chapter, lastHeardFromServer) => {
   }
 
   const docRef = db.collection("chapters").doc(chapter.chapterid);
-  try {
-    const doc = await docRef.get();
-    if (doc.exists) {
-      const data = doc.data();
-      if (data.created_at && data.created_at > lastHeardFromServer) {
-        return failure(
-          `Could not save, your copy of this chapter is older than the one in the database. Db: ${new Date(
-            data.created_at
-          ).toLocaleString()}, your copy: ${new Date(
-            lastHeardFromServer
-          ).toLocaleString()}. Please refresh to get the latest updates, then try again.`
-        );
+  return await checkForOutdatedUpdate(
+    "chapter",
+    lastHeardFromServer,
+    docRef,
+    async () => {
+      try {
+        chapter.created_at = Date.now();
+
+        await docRef.set(chapter);
+      } catch (error) {
+        console.error("Error syncing chapter to Firestore:", error);
+        return failure("Error saving chapter");
       }
+      return success({});
     }
-
-    chapter.created_at = Date.now();
-
-    await docRef.set(chapter);
-  } catch (error) {
-    console.error("Error syncing chapter to Firestore:", error);
-    return failure("Error saving chapter");
-  }
-  return success({});
+  );
 };
 
 export const getChapter = async (chapterid) => {
