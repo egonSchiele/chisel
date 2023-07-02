@@ -32,7 +32,11 @@ async function fetchBooksFromServer() {
   cache.put(booksRequest, new Response(JSON.stringify({ books: books.books })));
   setLastEditedInCache(books.lastEdited);
   return new Response(
-    JSON.stringify({ books: books.books, serviceWorkerRunning: true })
+    JSON.stringify({
+      books: books.books,
+      lastEdited: books.lastEdited,
+      serviceWorkerRunning: true,
+    })
   );
 }
 
@@ -189,6 +193,7 @@ async function getBooksFromCacheOrServer() {
     return new Response(
       JSON.stringify({
         books: server,
+        lastEdited: json.lastEdited,
         deepEqual: equal,
         serviceWorkerRunning: true,
       })
@@ -207,8 +212,14 @@ async function getBooksFromCacheOrServer() {
   } else {
     console.warn("fetching local copy from cache!");
     const books = await fetchBooksFromCache();
+    const lastEdited = await lastEditedFromCache();
     return new Response(
-      JSON.stringify({ books, serviceWorkerRunning: true, fromCache: true })
+      JSON.stringify({
+        books,
+        lastEdited,
+        serviceWorkerRunning: true,
+        fromCache: true,
+      })
     );
   }
 }
@@ -229,7 +240,7 @@ async function saveBase(request, updateFunc, type) {
   if (result.ok) {
     console.log("updated on server", type);
     const data = await result.json();
-    setLastEditedInCache(data.created_at);
+    setLastEditedInCache(data.lastHeardFromServer);
   } else {
     console.log("failed to update on server", type);
   }

@@ -67,15 +67,20 @@ export default function Library({ mobile = false }) {
       eventSource.addEventListener("chapterUpdate", (e) => {
         console.warn("chapterUpdate", e);
 
-        const data = JSON.parse(e.data);
-        console.log({ data });
-        dispatch(librarySlice.actions.updateChapterSSE(data.chapter));
+        const { chapter, lastHeardFromServer } = JSON.parse(e.data);
+        dispatch(librarySlice.actions.updateChapterSSE(chapter));
+        dispatch(
+          librarySlice.actions.setLastHeardFromServer(lastHeardFromServer)
+        );
       });
       eventSource.addEventListener("bookUpdate", (e) => {
         console.log("bookUpdate", e);
 
-        const data = JSON.parse(e.data);
-        dispatch(librarySlice.actions.updateBookSSE(data.book));
+        const { book, lastHeardFromServer } = JSON.parse(e.data);
+        dispatch(librarySlice.actions.updateBookSSE(book));
+        dispatch(
+          librarySlice.actions.setLastHeardFromServer(lastHeardFromServer)
+        );
       });
       return () => {
         // console.log("closing event source");
@@ -444,16 +449,30 @@ export default function Library({ mobile = false }) {
       console.log("Error adding to writing streak", e);
     }
     try {
-      const result = await makeApiCall(fd.saveChapter, [chapter, clientid]);
+      const result = await makeApiCall(fd.saveChapter, [
+        chapter,
+        clientid,
+        state.lastHeardFromServer,
+      ]);
 
       if (result.tag === "success") {
         const data = result.payload;
-        chapter.created_at = data.created_at;
+        chapter.created_at = data.lastHeardFromServer;
         dispatch(librarySlice.actions.setSaved(true));
         // Since we depend on a cache version of the selected book when picking a chapter
         // we must also set the chapter on said cache whenever save occurs.
-        // This avoids the issue in which switching a chapter looses your last saved work.
-        dispatch(librarySlice.actions.updateChapter(chapter));
+        // This avoids the issue in which switching a chapter loses your last saved work.
+        dispatch(
+          librarySlice.actions.updateTimestampForChapter({
+            chapterid: chapter.chapterid,
+            created_at: data.lastHeardFromServer,
+          })
+        );
+        dispatch(
+          librarySlice.actions.updateLastHeardFromServer(
+            data.lastHeardFromServer
+          )
+        );
       }
     } catch (e) {
       console.log("Error saving chapter", e);
@@ -545,7 +564,15 @@ export default function Library({ mobile = false }) {
       // If we include the chapters here, it will overwrite the updates from saveChapter.
       bookNoChapters.created_at = data.created_at;
       dispatch(librarySlice.actions.setSaved(true));
-      dispatch(librarySlice.actions.updateBook(bookNoChapters));
+      dispatch(
+        librarySlice.actions.updateTimestampForBook({
+          bookid: bookNoChapters.bookid,
+          created_at: data.lastHeardFromServer,
+        })
+      );
+      dispatch(
+        librarySlice.actions.setLastHeardFromServer(data.lastHeardFromServer)
+      );
     }
   }
 

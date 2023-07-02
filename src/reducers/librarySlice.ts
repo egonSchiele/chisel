@@ -83,6 +83,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     serviceWorkerRunning: false,
     fromCache: false,
     clientid: nanoid(),
+    lastHeardFromServer: null,
   };
 };
 
@@ -97,9 +98,11 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
       //console.log("got res", res);
       const json = await res.json();
       //console.log("got json", json);
-      const { books, deepEqual, serviceWorkerRunning, fromCache } = json;
+      const { books, lastEdited, deepEqual, serviceWorkerRunning, fromCache } =
+        json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
       dispatch(librarySlice.actions.setBooks(books));
+      dispatch(librarySlice.actions.setLastHeardFromServer(lastEdited));
       if (deepEqual === false) {
         dispatch(librarySlice.actions.setError("cache books out of date"));
       }
@@ -126,6 +129,9 @@ export const librarySlice = createSlice({
         });
       }); */
       state.books = action.payload;
+    },
+    setLastHeardFromServer(state: t.State, action: PayloadAction<number>) {
+      state.lastHeardFromServer = action.payload;
     },
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
       state.serviceWorkerRunning = action.payload;
@@ -362,6 +368,35 @@ export const librarySlice = createSlice({
       });
       state.saved = true;
       state.editor._pushTextToEditor = nanoid();
+    },
+    updateTimestampForChapter(
+      state: t.State,
+      action: PayloadAction<{ chapterid: string; created_at: number }>
+    ) {
+      const { chapterid, created_at } = action.payload;
+      const book = getSelectedBook({ library: state });
+      if (!book || !chapterid) return;
+      book.chapters = book.chapters.map((chapter) => {
+        if (chapter.chapterid === chapterid) {
+          return { ...chapter, created_at };
+        }
+        return chapter;
+      });
+      state.saved = true;
+    },
+    updateTimestampForBook(
+      state: t.State,
+      action: PayloadAction<{ bookid: string; created_at: number }>
+    ) {
+      const { bookid, created_at } = action.payload;
+
+      state.books = state.books.map((book) => {
+        if (book.bookid === bookid) {
+          return { ...book, created_at };
+        }
+        return book;
+      });
+      state.saved = true;
     },
     updateBookSSE(state: t.State, action: PayloadAction<t.Book>) {
       const book = action.payload;

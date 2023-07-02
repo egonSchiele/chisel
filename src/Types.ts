@@ -29,6 +29,7 @@ export type State = {
   serviceWorkerRunning: boolean;
   fromCache: boolean;
   clientid: string;
+  lastHeardFromServer: number | null;
 };
 
 export type EditHistory = {

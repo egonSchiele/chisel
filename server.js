@@ -292,13 +292,13 @@ app.post("/api/saveBook", requireLogin, async (req, res) => {
 });
 
 app.post("/api/saveChapter", requireLogin, async (req, res) => {
-  const { chapter } = req.body;
+  const { chapter, lastHeardFromServer } = req.body;
   const updateData = {
     eventName: "chapterUpdate",
     data: { chapter },
   };
   await SE.save(req, res, updateData, async () => {
-    return await saveChapter(chapter);
+    return await saveChapter(chapter, lastHeardFromServer);
   });
 });
 
@@ -435,7 +435,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
   });
   const promises = chapters.map(async (chapter) => {
     const newChapter = makeNewChapter(chapter.text, chapter.title, book.bookid);
-    await saveChapter(newChapter);
+    await saveChapter(newChapter, null);
     book.chapters.push(newChapter);
   });
   await Promise.all(promises);
@@ -484,7 +484,7 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
     const userid = getUserId(req);
     const { bookid, title, text } = req.body;
     const chapter = makeNewChapter(text, title, bookid);
-    await saveChapter(chapter);
+    await saveChapter(chapter, null);
     return success(chapter);
   });
 });

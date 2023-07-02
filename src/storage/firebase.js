@@ -51,7 +51,7 @@ export const saveBook = async (book) => {
     console.error("Error syncing book to Firestore:", error);
     return failure("Error saving book");
   }
-  return success({ created_at: book.created_at });
+  return success({});
 };
 
 export const getBook = async (bookid) => {
@@ -181,7 +181,7 @@ export const getBooks = async (userid) => {
       compostTitle,
       compostBook.bookid
     );
-    await saveChapter(compostChapter);
+    await saveChapter(compostChapter, null);
     await saveBook(compostBook);
 
     compostBook.chapters = [compostChapter];
@@ -216,7 +216,7 @@ export const getEmbeddingsForChapter = async (chapterid) => {
   }
 };
 
-export const saveChapter = async (chapter) => {
+export const saveChapter = async (chapter, lastHeardFromServer) => {
   if (!chapter) {
     return failure("no chapter to save");
   }
@@ -233,6 +233,16 @@ export const saveChapter = async (chapter) => {
 
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   try {
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.created_at && data.created_at > lastHeardFromServer) {
+        return failure(
+          `Could not save, your copy of this chapter is older than the one in the database. Db: ${data.created_at}, your copy: ${lastHeardFromServer}. Please refresh to get the latest updates, then try again.`
+        );
+      }
+    }
+
     chapter.created_at = Date.now();
 
     await docRef.set(chapter);
@@ -240,7 +250,7 @@ export const saveChapter = async (chapter) => {
     console.error("Error syncing chapter to Firestore:", error);
     return failure("Error saving chapter");
   }
-  return success({ created_at: chapter.created_at });
+  return success({});
 };
 
 export const getChapter = async (chapterid) => {

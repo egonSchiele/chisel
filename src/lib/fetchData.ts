@@ -264,11 +264,13 @@ export async function saveToHistory(chapterid: string, text: string) {
 
 export async function saveChapter(
   chapter: t.Chapter,
-  clientidOfWriter: string
+  clientidOfWriter: string,
+  lastHeardFromServer: number
 ) {
   const res = await postWithCsrf(`/api/saveChapter`, {
     chapter,
     clientidOfWriter,
+    lastHeardFromServer,
   });
   if (!res.ok) {
     const text = await res.text();
