@@ -16,7 +16,7 @@ import { useColors } from "./lib/hooks";
 import { Square2StackIcon } from "@heroicons/react/24/outline";
 import * as fd from "./lib/fetchData";
 import Switch from "./components/Switch";
-import { isTextishBlock, useInterval } from "./utils";
+import { isTextishBlock, prettySeconds, useInterval } from "./utils";
 import InfoSection from "./components/InfoSection";
 import Spinner from "./components/Spinner";
 import { set } from "cypress/types/lodash";
@@ -34,6 +34,8 @@ type AudioData = {
   created_at: string;
 };
 function PriorAudio({ chapterid }) {
+  const { mobile } = useContext(LibraryContext) as t.LibraryContextType;
+
   const [audioData, setAudioData] = useState<AudioData | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [savedTime, setSavedTime] = useState<number>(0);
@@ -84,18 +86,27 @@ function PriorAudio({ chapterid }) {
   }, [audioRef, audioBlob]);
   if (status === "loading") return <Spinner />;
   if (status === "error") return <p>No audio found</p>;
+  let audioSrc = URL.createObjectURL(audioBlob);
+  if (!mobile) {
+    audioSrc += `#t=${savedTime}`;
+  }
   return (
     <div className="flex flex-col items-center my-sm">
       <audio
         className="w-full"
         controls
         preload="metadata"
-        src={`${URL.createObjectURL(audioBlob)}#t=${savedTime}`}
+        src={audioSrc}
         ref={audioRef}
       />
       <p className="text-sm text-gray-500 my-xs">
         Created at {new Date(audioData.created_at).toLocaleString()}
       </p>
+      {savedTime > 0 && (
+        <p className="text-sm text-gray-500 mb-xs">
+          Last position: {prettySeconds(savedTime)}
+        </p>
+      )}
     </div>
   );
 }

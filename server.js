@@ -648,10 +648,12 @@ function serveFile(filename, res, userid) {
     token = nanoid();
     if (userid) csrfTokenCache[userid] = token;
   }
+  const lastEdited = SE.getLastEdited(userid);
   res.cookie("csrfToken", token);
   console.log(`serving ${filename}`);
   const rendered = render(path.resolve(`./dist/${filename}`), {
     csrfToken: token,
+    lastEdited,
   });
   res.send(rendered).end();
 }

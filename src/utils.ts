@@ -410,3 +410,14 @@ export function getCookie(name) {
 export function eraseCookie(name) {
   document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 }
+
+export function prettySeconds(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds - hours * 3600) / 60);
+  const secondsLeft = Math.floor(seconds - hours * 3600 - minutes * 60);
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0) parts.push(`${minutes}m`);
+  if (secondsLeft > 0) parts.push(`${secondsLeft}s`);
+  return parts.join(" ");
+}
