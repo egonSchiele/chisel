@@ -13,7 +13,11 @@ import {
 } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { useColors } from "./lib/hooks";
-import { Square2StackIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Square2StackIcon,
+} from "@heroicons/react/24/outline";
 import * as fd from "./lib/fetchData";
 import Switch from "./components/Switch";
 import { isTextishBlock, prettySeconds, useInterval } from "./utils";
@@ -193,7 +197,15 @@ export default function SpeechSidebar() {
         .join("\n")
     : currentChapter.text[index].text;
 
+  let preview = textToConvert.substring(0, 100);
+  if (preview.length < textToConvert.length) {
+    preview += "...";
+  }
+
   const items = [
+    <p key="preview" className={`text-sm py-xs ${colors.secondaryTextColor}`}>
+      "{preview}"
+    </p>,
     <InfoSection
       text={textToConvert}
       showSyllables={false}
@@ -254,6 +266,7 @@ export default function SpeechSidebar() {
         autoPlay={true}
         className="w-full my-xs"
         src={URL.createObjectURL(audioBlob)}
+        key="audio"
       ></audio>
     );
     const url = `/textToSpeech/task/${speechTaskID}`;
@@ -287,12 +300,34 @@ export default function SpeechSidebar() {
     onClick: () => {},
   };
 
+  let leftMenuItem = null;
+  if (index > 0) {
+    leftMenuItem = {
+      label: "Previous",
+      icon: <ChevronLeftIcon className="w-5 h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.gotoPreviousOpenBlock());
+      },
+    };
+  }
+
+  let rightMenuItem = null;
+  if (index < currentChapter.text.length - 1) {
+    rightMenuItem = {
+      label: "Next",
+      icon: <ChevronRightIcon className="w-5 h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.gotoNextOpenBlock());
+      },
+    };
+  }
+
   return (
     <List
       title="Speech"
       items={items}
-      leftMenuItem={loading ? spinner : null}
-      rightMenuItem={null}
+      leftMenuItem={loading ? spinner : leftMenuItem}
+      rightMenuItem={rightMenuItem}
       selector="speechList"
     />
   );
