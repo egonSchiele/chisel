@@ -43,16 +43,18 @@ function Character({
   onNameChange,
   onDescChange,
   onImageUrlChange,
+  onAliasesChange,
   onDelete,
 }: {
   character: Character;
   onNameChange: (newName: string) => void;
   onDescChange: (newDesc: string) => void;
   onImageUrlChange: (newImageUrl: string) => void;
+  onAliasesChange: (newAliases: string) => void;
   onDelete: () => void;
 }) {
   const [editing, setEditing] = React.useState(false);
-
+  const colors = useColors();
   async function handleUpload(x) {
     const files = x.target.files;
     [...files].forEach(async (file, i) => {
@@ -80,6 +82,13 @@ function Character({
         <h3 className="text-xl font-semibold my-sm w-full text-center">
           {character.name || "Unnamed Character"}
         </h3>
+        {character.aliases && character.aliases.trim() !== "" && (
+          <p
+            className={`text-md font-sans w-full ${colors.secondaryTextColor}`}
+          >
+            Also known as: {character.aliases}
+          </p>
+        )}
         <p className="text-lg font-sans w-full">{character.description}</p>
         <Button
           onClick={() => setEditing(true)}
@@ -107,6 +116,13 @@ function Character({
         value={character.name}
         onChange={(e) => onNameChange(e.target.value)}
         selector={`character-${character.name}-name`}
+      />
+      <Input
+        name="aliases"
+        title="aliases"
+        value={character.aliases}
+        onChange={(e) => onAliasesChange(e.target.value)}
+        selector={`character-${character.aliases}-aliases`}
       />
       <TextArea
         name="description"
@@ -599,6 +615,14 @@ export default function BookEditor({ className = "" }) {
                     librarySlice.actions.editCharacter({
                       index: i,
                       character: { ...character, name: newName },
+                    })
+                  )
+                }
+                onAliasesChange={(newAliases) =>
+                  dispatch(
+                    librarySlice.actions.editCharacter({
+                      index: i,
+                      character: { ...character, aliases: newAliases },
                     })
                   )
                 }

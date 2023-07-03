@@ -27,26 +27,44 @@ function CharacterInfo() {
   const characters = useSelector(getCharacters);
   if (!characters) return null;
   if (editor && editor.selectedText && editor.selectedText.contents) {
-    const character = characters.find(
-      (character) =>
-        character.name.toLowerCase() ===
-        editor.selectedText.contents.toLowerCase()
+    const selectedCharacters = [];
+    characters.forEach((character) => {
+      const namesToCheck = [character.name.toLowerCase()];
+      if (character.aliases) {
+        namesToCheck.push(
+          ...character.aliases.split(",").map((a) => a.trim().toLowerCase())
+        );
+      }
+      for (let i = 0; i < namesToCheck.length; i++) {
+        const name = namesToCheck[i];
+        if (editor.selectedText.contents.toLowerCase().includes(name)) {
+          selectedCharacters.push(character);
+          break;
+        }
+      }
+    });
+    return (
+      <>
+        {selectedCharacters.map((character) => {
+          return (
+            <div
+              key={character.name}
+              className="mt-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm"
+            >
+              {character.imageUrl && character.imageUrl.trim() !== "" && (
+                <img
+                  src={character.imageUrl}
+                  alt={character.name}
+                  className="rounded-full mx-auto mb-sm"
+                />
+              )}
+              <p className="text-lg font-semibold">{character.name}</p>
+              <p className="text-sm">{character.description}</p>
+            </div>
+          );
+        })}
+      </>
     );
-    if (character) {
-      return (
-        <div className="mt-sm bg-gray-200 dark:bg-gray-700 rounded-md p-sm">
-          {character.imageUrl && character.imageUrl.trim() !== "" && (
-            <img
-              src={character.imageUrl}
-              alt={character.name}
-              className="rounded-full mx-auto mb-sm"
-            />
-          )}
-          <p className="text-lg font-semibold">{character.name}</p>
-          <p className="text-sm">{character.description}</p>
-        </div>
-      );
-    }
   }
   return null;
 }

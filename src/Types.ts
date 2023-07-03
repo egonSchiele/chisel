@@ -395,6 +395,7 @@ export type Book = {
 
 export type Character = {
   name: string;
+  aliases?: string;
   description: string;
   imageUrl: string;
 };
