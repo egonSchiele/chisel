@@ -108,10 +108,28 @@ export const deleteBook = async (bookid, lastHeardFromServer) => {
         console.log("No chapters found to delete.");
       } else {
         const batch = db.batch();
-        chapters.docs.forEach((doc) => {
-          batch.delete(doc.ref);
+        const promises = chapters.docs.map(async (doc) => {
+          const chapterDocRef = doc.ref;
+          const chapter = await chapterDocRef.get();
+          if (chapter.exists) {
+            const data = chapter.data();
+            const deletedDocRef = db
+              .collection("deletedChapters")
+              .doc(data.chapterid);
+            await deletedDocRef.set(data);
+          }
+
+          batch.delete(chapterDocRef);
         });
+        await Promise.all(promises);
         await batch.commit();
+      }
+
+      const book = await docRef.get();
+      if (book.exists) {
+        const data = book.data();
+        const deletedDocRef = db.collection("deletedBooks").doc(data.bookid);
+        await deletedDocRef.set(data);
       }
 
       await docRef.delete();
@@ -306,7 +324,20 @@ export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
     lastHeardFromServer,
     docRef,
     async () => {
+      // soft delete
+      const chapter = await docRef.get();
+      if (chapter.exists) {
+        const data = chapter.data();
+        const deletedDocRef = db
+          .collection("deletedChapters")
+          .doc(data.chapterid);
+        await deletedDocRef.set(data);
+      }
+
+      // delete
       await docRef.delete();
+
+      // remove from chapter order
       const book = await getBook(bookid);
       if (!book) {
         console.log("no book to update");
