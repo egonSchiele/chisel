@@ -86,13 +86,13 @@ export default function ChapterList({
 
   function _deleteChapter(chapterid: string) {
     dispatch(librarySlice.actions.loading());
+    deleteChapter(chapterid);
     fd.deleteChapter(bookid, chapterid).then((res) => {
       dispatch(librarySlice.actions.loaded());
       if (res.tag === "error") {
         dispatch(librarySlice.actions.setError(res.message));
       }
     });
-    deleteChapter(chapterid);
   }
 
   function handleUpload(x) {

@@ -224,11 +224,11 @@ export function useSSEUpdates() {
       });
       listen("chapterDelete", eventSource, (data) => {
         const { chapterid } = data;
-        //dispatch(librarySlice.actions.deleteChapterSSE(chapterid));
+        dispatch(librarySlice.actions.deleteChapter(chapterid));
       });
       listen("bookDelete", eventSource, (data) => {
         const { bookid } = data;
-        //dispatch(librarySlice.actions.deleteBookSSE(bookid));
+        dispatch(librarySlice.actions.deleteBook(bookid));
       });
       listen("chapterCreate", eventSource, (data) => {
         const { chapter, bookid } = data;

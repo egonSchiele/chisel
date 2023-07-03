@@ -14,12 +14,12 @@ import { LibraryContextType } from "./Types";
 import { useColors } from "./lib/hooks";
 
 async function deleteBook(bookid: string, onDelete) {
+  onDelete(bookid);
   const res = await fd.deleteBook(bookid);
   if (res.tag === "error") {
     console.log(res.message);
     return;
   }
-  onDelete(bookid);
 }
 
 const buttonStyles = ""; //"bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
