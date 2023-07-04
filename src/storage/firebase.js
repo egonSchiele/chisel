@@ -239,8 +239,14 @@ export const getEmbeddingsForChapter = async (chapterid) => {
   }
 };
 
-async function checkForOutdatedUpdate(type, lastHeardFromServer, docRef, func) {
+async function checkForOutdatedUpdate(
+  type,
+  _lastHeardFromServer,
+  docRef,
+  func
+) {
   const doc = await docRef.get();
+  const lastHeardFromServer = parseInt(_lastHeardFromServer);
   const FUDGE_FACTOR = 1000;
   if (doc.exists) {
     const data = doc.data();

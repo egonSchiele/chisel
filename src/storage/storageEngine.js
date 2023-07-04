@@ -69,12 +69,6 @@ export function updateClients(userid, clientidOfWriter, eventName, _data) {
       }
     });
   } else {
-    console.log(
-      "No clients to update for user",
-      userid,
-      "length",
-      clientsToUpdate[userid].length
-    );
   }
 }
 
