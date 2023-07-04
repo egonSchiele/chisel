@@ -21,6 +21,7 @@ import { AppDispatch, RootState } from "./store";
 import ChatSidebar from "./ChatSidebar";
 import SlideTransition from "./components/SlideTransition";
 import SpeechSidebar from "./SpeechSidebar";
+import OutlineSidebar from "./OutlineSidebar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -51,6 +52,12 @@ export default function LibraryDesktop() {
     state.viewMode !== "focus" &&
     currentChapter
   );
+
+  const outlineOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "outline" &&
+    currentChapter;
+
   return (
     <>
       {state.error && (
@@ -66,7 +73,6 @@ export default function LibraryDesktop() {
       )}
 
       <div className="relative h-full w-full">
-        {/*  nav */}
         <LibErrorBoundary component="nav">
           <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
         </LibErrorBoundary>
@@ -88,7 +94,7 @@ export default function LibraryDesktop() {
         <div className="flex h-screen">
           {!bookid && (
             <LibErrorBoundary component="book list">
-              <div className="h-screen overflow-auto w-full relative pb-safe ">
+              <div className="h-screen overflow-auto w-full relative pb-safe mt-9">
                 <BookList />
                 {compostBookId && (
                   <Button
@@ -106,7 +112,7 @@ export default function LibraryDesktop() {
           )}
           {bookid && !chapterid && (
             <LibErrorBoundary component="chapter list">
-              <div className="w-full h-screen overflow-auto">
+              <div className="w-full h-screen overflow-auto mt-9">
                 <ChapterList
                   selectedChapterId={chapterid || ""}
                   mobile={true}
@@ -116,7 +122,7 @@ export default function LibraryDesktop() {
           )}
           <LibErrorBoundary component="chat">
             {chatOpen && (
-              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+              <div className={`absolute top-0 right-0 h-screen w-full mt-9`}>
                 <ChatSidebar />
               </div>
             )}
@@ -124,8 +130,18 @@ export default function LibraryDesktop() {
 
           <LibErrorBoundary component="speech">
             {speechOpen && (
-              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+              <div className={`absolute top-0 right-0 h-screen w-full mt-9`}>
                 <SpeechSidebar />
+              </div>
+            )}
+          </LibErrorBoundary>
+
+          <LibErrorBoundary component="Outline sidebar">
+            {outlineOpen && (
+              <div
+                className={`w-full absolute top-0 left-0 h-screen overflow-auto mt-9`}
+              >
+                <OutlineSidebar />
               </div>
             )}
           </LibErrorBoundary>

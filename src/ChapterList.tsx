@@ -415,7 +415,7 @@ export default function ChapterList({
 
   let rightMenuItem: any = bookid && newMenuItem; //, dropdownMenu];
 
-  if (mobile) {
+  /*   if (mobile) {
     rightMenuItem = {
       label: "Back",
       icon: <p>Back</p>,
@@ -423,7 +423,7 @@ export default function ChapterList({
       className: buttonStyles,
       animate: true,
     };
-  }
+  } */
 
   if (editing) {
     rightMenuItem = {

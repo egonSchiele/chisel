@@ -151,23 +151,35 @@ export default function Nav({
               >
                 <TableCellsIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
-
-              <NavButton
-                color="nav"
-                label="Outline"
-                onClick={() => {
-                  dispatch(librarySlice.actions.toggleOutline());
-                }}
-                className="p-0"
-                selector="outline-button"
-                selected={
-                  state.panels.leftSidebar.open &&
-                  state.panels.leftSidebar.activePanel === "outline"
-                }
-              >
-                <Bars3Icon className="h-5 w-5" aria-hidden="true" />
-              </NavButton>
             </>
+          )}
+
+          {mobile && bookid && !chapterid && (
+            <NavButton
+              color="nav"
+              label="Open"
+              onClick={() => {
+                navigate(`/`);
+              }}
+              className="p-0"
+              selector="open-lists-button"
+            >
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+            </NavButton>
+          )}
+
+          {mobile && bookid && chapterid && (
+            <NavButton
+              color="nav"
+              label="Open"
+              onClick={() => {
+                navigate(`/book/${state.selectedBookId}`);
+              }}
+              className="p-0"
+              selector="open-lists-button"
+            >
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+            </NavButton>
           )}
 
           {mobile && currentText && currentText.type !== "todoList" && (
@@ -211,6 +223,24 @@ export default function Nav({
             </NavButton>
           )}
 
+          {currentChapter && (
+            <NavButton
+              color="nav"
+              label="Outline"
+              onClick={() => {
+                dispatch(librarySlice.actions.toggleOutline());
+              }}
+              className="p-0"
+              selector="outline-button"
+              selected={
+                state.panels.leftSidebar.open &&
+                state.panels.leftSidebar.activePanel === "outline"
+              }
+            >
+              <Bars3Icon className="h-5 w-5" aria-hidden="true" />
+            </NavButton>
+          )}
+
           {!mobile && chapterid && (
             <NavButton
               color="nav"
@@ -228,39 +258,13 @@ export default function Nav({
               <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
             </NavButton>
           )}
-
-          {mobile && bookid && !chapterid && (
-            <NavButton
-              color="nav"
-              label="Open"
-              onClick={() => {
-                navigate(`/`);
-              }}
-              className="p-0"
-              selector="open-lists-button"
-            >
-              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-            </NavButton>
-          )}
-
-          {mobile && bookid && chapterid && (
-            <NavButton
-              color="nav"
-              label="Open"
-              onClick={() => {
-                navigate(`/book/${state.selectedBookId}`);
-              }}
-              className="p-0"
-              selector="open-lists-button"
-            >
-              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-            </NavButton>
-          )}
         </div>
 
-        <div className="flex-grow w-[calc(100%-50rem)] overflow-x-scroll no-scrollbar">
-          <Tabs />
-        </div>
+        {!mobile && (
+          <div className="flex-grow w-[calc(100%-50rem)] overflow-x-scroll no-scrollbar">
+            <Tabs />
+          </div>
+        )}
 
         {/* book editor nav */}
         {bookid && !chapterid && (
