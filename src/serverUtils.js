@@ -43,7 +43,7 @@ export function substringTokens(text, tokenCount) {
   return llamaTokenizer.decode(sub);
 }
 
-export async function checkForOutdatedUpdate(
+export async function checkForStaleUpdate(
   type,
   _lastHeardFromServer,
   docRef,

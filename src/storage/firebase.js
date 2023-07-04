@@ -1,4 +1,4 @@
-import { checkForOutdatedUpdate } from "../serverUtils.js";
+import { checkForStaleUpdate } from "../serverUtils.js";
 import _ from "lodash";
 import { nanoid } from "nanoid";
 import { getFirestore } from "firebase-admin/firestore";
@@ -31,7 +31,7 @@ export const saveBook = async (book, lastHeardFromServer) => {
   }
 
   const docRef = db.collection("books").doc(book.bookid);
-  return await checkForOutdatedUpdate(
+  return await checkForStaleUpdate(
     "book",
     book.created_at,
     docRef,
@@ -95,7 +95,7 @@ export const getChaptersForBook = async (bookid) => {
 
 export const deleteBook = async (bookid, lastHeardFromServer) => {
   const docRef = db.collection("books").doc(bookid);
-  return await checkForOutdatedUpdate(
+  return await checkForStaleUpdate(
     "book",
     lastHeardFromServer,
     docRef,
@@ -256,7 +256,7 @@ export const saveChapter = async (chapter, lastHeardFromServer) => {
   }
 
   const docRef = db.collection("chapters").doc(chapter.chapterid);
-  return await checkForOutdatedUpdate(
+  return await checkForStaleUpdate(
     "chapter",
     chapter.created_at,
     docRef,
@@ -291,7 +291,7 @@ export const getChapter = async (chapterid) => {
 // TODO lastHeardFromServer for delete actions?
 export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
   const docRef = db.collection("chapters").doc(chapterid);
-  return await checkForOutdatedUpdate(
+  return await checkForStaleUpdate(
     "chapter",
     chapter.created_at,
     docRef,

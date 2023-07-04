@@ -1,4 +1,4 @@
-import { checkForOutdatedUpdate } from "../serverUtils.js";
+import { checkForStaleUpdate } from "../serverUtils.js";
 import { success, failure } from "../storage/firebase.js";
 import { getFirestore } from "firebase-admin/firestore";
 import { nanoid } from "nanoid";
@@ -228,7 +228,7 @@ export const saveUser = async (user, lastHeardFromServer) => {
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
 
-  return await checkForOutdatedUpdate(
+  return await checkForStaleUpdate(
     "user",
     lastHeardFromServer,
     docRef,
