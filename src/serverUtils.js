@@ -1,4 +1,13 @@
 import llamaTokenizer from "llama-tokenizer-js";
+
+export function success(data = {}) {
+  return { success: true, data };
+}
+
+export function failure(message) {
+  return { success: false, message };
+}
+
 export function toMarkdown(block) {
   if (block.type === "markdown") {
     return block.text;

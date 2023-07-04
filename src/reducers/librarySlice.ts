@@ -99,6 +99,12 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
       const { books, lastEdited, deepEqual, serviceWorkerRunning, fromCache } =
         json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
+      books.forEach((book) => {
+        book.chapters.forEach((chapter) => {
+          chapter.created_at = lastEdited;
+        });
+        book.created_at = lastEdited;
+      });
       dispatch(librarySlice.actions.setBooks(books));
 
       if (deepEqual === false) {

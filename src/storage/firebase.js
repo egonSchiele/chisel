@@ -33,7 +33,7 @@ export const saveBook = async (book, lastHeardFromServer) => {
   const docRef = db.collection("books").doc(book.bookid);
   return await checkForOutdatedUpdate(
     "book",
-    lastHeardFromServer,
+    book.created_at,
     docRef,
     async () => {
       try {
@@ -96,7 +96,7 @@ export const getChaptersForBook = async (bookid) => {
 export const deleteBook = async (bookid, lastHeardFromServer) => {
   const docRef = db.collection("books").doc(bookid);
   return await checkForOutdatedUpdate(
-    "chapter",
+    "book",
     lastHeardFromServer,
     docRef,
     async () => {
@@ -258,7 +258,7 @@ export const saveChapter = async (chapter, lastHeardFromServer) => {
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   return await checkForOutdatedUpdate(
     "chapter",
-    lastHeardFromServer,
+    chapter.created_at,
     docRef,
     async () => {
       try {
@@ -293,7 +293,7 @@ export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
   const docRef = db.collection("chapters").doc(chapterid);
   return await checkForOutdatedUpdate(
     "chapter",
-    lastHeardFromServer,
+    chapter.created_at,
     docRef,
     async () => {
       // soft delete
