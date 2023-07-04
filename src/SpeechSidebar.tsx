@@ -263,7 +263,6 @@ export default function SpeechSidebar() {
     items.push(
       <audio
         controls
-        autoPlay={true}
         className="w-full my-xs"
         src={URL.createObjectURL(audioBlob)}
         key="audio"
