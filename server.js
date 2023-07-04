@@ -842,11 +842,11 @@ app.post("/api/settings", requireLogin, async (req, res) => {
       console.log("no user");
       res.status(404).end();
     } else {
-      /*       const updateData = {
-        eventName: "bookDelete",
-        data: { bookid },
+      const updateData = {
+        eventName: "settingsUpdate",
+        data: { settings },
       };
- */ SE.save(req, res, null, async () => {
+      SE.save(req, res, updateData, async () => {
         user.settings = settings;
         return await saveUser(user, lastHeardFromServer);
       });

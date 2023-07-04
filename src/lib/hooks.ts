@@ -194,7 +194,7 @@ export function lightColors() {
 }
  */
 
-export function useSSEUpdates() {
+export function useSSEUpdates(setSettings) {
   const clientid = getCookie("clientid");
   const dispatch = useDispatch();
 
@@ -221,6 +221,10 @@ export function useSSEUpdates() {
       listen("bookUpdate", eventSource, (data) => {
         const { book } = data;
         dispatch(librarySlice.actions.updateBookSSE(book));
+      });
+      listen("settingsUpdate", eventSource, (data) => {
+        const { settings } = data;
+        setSettings(settings);
       });
       listen("chapterDelete", eventSource, (data) => {
         const { chapterid } = data;

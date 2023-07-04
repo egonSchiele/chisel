@@ -132,7 +132,7 @@ export default function Library({ mobile = false }) {
     }
   }, [state.selectedBookId, chapterid]);
 
-  useSSEUpdates();
+  useSSEUpdates(setSettings);
 
   useKeyDown(async (event) => {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
