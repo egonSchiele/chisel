@@ -3,9 +3,13 @@ import * as toolkitRaw from "@reduxjs/toolkit";
 import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
+  decryptChapter,
+  decryptMessage,
+  encryptMessage,
   hasVersions,
   isString,
   localStorageOrDefault,
+  maybeDecrypt,
   parseText,
   restoreBlockFromHistory,
   strSplice,
@@ -82,6 +86,8 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     online: true,
     serviceWorkerRunning: false,
     fromCache: false,
+    hasBeenDecrypted: false,
+    _triggerSaveAll: false,
   };
 };
 
@@ -134,6 +140,12 @@ export const librarySlice = createSlice({
     },
     setFromCache(state: t.State, action: PayloadAction<boolean>) {
       state.fromCache = action.payload;
+    },
+    setHasBeenDecrypted(state: t.State, action: PayloadAction<boolean>) {
+      state.hasBeenDecrypted = action.payload;
+    },
+    setTriggerSaveAll(state: t.State, action: PayloadAction<boolean>) {
+      state._triggerSaveAll = action.payload;
     },
     startRecording(state: t.State) {
       state.recording = true;
@@ -708,6 +720,7 @@ export const librarySlice = createSlice({
     },
     showPopup(state, action: PayloadAction<t.PopupData>) {
       state.popupOpen = true;
+      console.log("showPopup", action.payload);
       state.popupData = action.payload;
     },
     toggleHelp(state: t.State) {
@@ -1304,6 +1317,77 @@ export const librarySlice = createSlice({
       state.editor._pushTextToEditor = nanoid();
       state.saved = false;
     },
+    /* encryptBooks(state: t.State, action: PayloadAction<{ password: string }>) {
+      const { password } = action.payload;
+      state.books = state.books.map((book) => {
+        const updatedBook = { ...book };
+        updatedBook.chapters = updatedBook.chapters.map((chapter) => {
+          const updatedChapter = { ...chapter };
+          updatedChapter.text = chapter.text.map((block) => {
+            try {
+              const encrypted = encryptMessage(block.text, password);
+              const newBlock = { ...block, text: encrypted };
+              return newBlock;
+            } catch (e) {
+              console.log("error in encrypt");
+              console.log(e);
+              return block;
+            }
+          });
+          return updatedChapter;
+        });
+        return updatedBook;
+      });
+      state.editor._pushTextToEditor = nanoid();
+      state.hasBeenDecrypted = true;
+      state._triggerSaveAll = true;
+    }, */
+    decryptBooks(state: t.State, action: PayloadAction<{ password: string }>) {
+      const { password } = action.payload;
+      let decryptFailed = false;
+      let decryptFailedChapter = null;
+      state.books = state.books.map((book) => {
+        const updatedBook = { ...book };
+        updatedBook.chapters = updatedBook.chapters.map((chapter) => {
+          const result = decryptChapter(chapter, password);
+          if (result.decryptFailed) {
+            decryptFailed = true;
+            decryptFailedChapter = result.updatedChapter;
+          }
+          return result.updatedChapter;
+        });
+
+        updatedBook.title = maybeDecrypt(updatedBook.title, password);
+        updatedBook.synopsis = maybeDecrypt(updatedBook.synopsis, password);
+        if (updatedBook.characters) {
+          updatedBook.characters = updatedBook.characters.map((character) => {
+            const newCharacter = { ...character };
+            newCharacter.name = maybeDecrypt(newCharacter.name, password);
+            newCharacter.aliases = maybeDecrypt(newCharacter.aliases, password);
+            newCharacter.imageUrl = maybeDecrypt(
+              newCharacter.imageUrl,
+              password
+            );
+            newCharacter.description = maybeDecrypt(
+              newCharacter.description,
+              password
+            );
+            return newCharacter;
+          });
+        }
+
+        return updatedBook;
+      });
+
+      if (decryptFailed) {
+        state.error = `Failed to decrypt chapter ${decryptFailedChapter?.title}`;
+        localStorage.removeItem("encryptionPassword");
+        //return;
+      }
+      state.editor._pushTextToEditor = nanoid();
+      state.hasBeenDecrypted = true;
+      state._triggerSaveAll = true;
+    },
   },
   /* setTab(
     state: t.State,
@@ -1379,7 +1463,7 @@ export const getSelectedChapterTitle = (state: RootState): string | null => {
   const chapter = getSelectedChapter(state);
 
   if (!chapter) return null;
-
+  if (!state.library.hasBeenDecrypted) return null;
   return chapter.title;
 };
 

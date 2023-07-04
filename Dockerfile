@@ -7,7 +7,7 @@ WORKDIR /
 # RUN apt-get install -y ffmpeg
 
 RUN apk update
-RUN apk add ffmpeg git
+RUN apk add ffmpeg git curl
 RUN rm -rf /var/cache/apk/*
 # Install dependencies based on the preferred package manager
 COPY . ./

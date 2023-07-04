@@ -21,6 +21,7 @@ import { AppDispatch, RootState } from "./store";
 import ChatSidebar from "./ChatSidebar";
 import SlideTransition from "./components/SlideTransition";
 import SpeechSidebar from "./SpeechSidebar";
+import Popup from "./components/Popup";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -51,6 +52,31 @@ export default function LibraryDesktop() {
     state.viewMode !== "focus" &&
     currentChapter
   );
+
+  if (state.booksLoaded && settings.encrypted && !state.hasBeenDecrypted) {
+    return (
+      <>
+        <Popup
+          title={`Please enter your password to decrypt your books. ${state.error}`}
+          inputValue={""}
+          onSubmit={(password) => {
+            localStorage.setItem(
+              "encryptionPassword",
+              JSON.stringify({ password })
+            );
+            dispatch(
+              librarySlice.actions.decryptBooks({
+                password,
+              })
+            );
+          }}
+          cancelable={false}
+          opaqueBackground={true}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       {state.error && (

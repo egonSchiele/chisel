@@ -23,6 +23,7 @@ import {
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import {
+  encryptMessage,
   getCsrfToken,
   saveTextToHistory,
   setCookie,
@@ -43,6 +44,7 @@ export default function Library({ mobile = false }) {
   const currentText = currentChapter?.text || [];
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
+  const [settingsLoaded, setSettingsLoaded] = useState<boolean>(false);
   const [usage, setUsage] = useState<t.Usage | null>(null);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
 
@@ -132,7 +134,68 @@ export default function Library({ mobile = false }) {
     }
   }, [state.selectedBookId, chapterid]);
 
-  useSSEUpdates();
+  async function saveAllBooks() {
+    setLoading(true);
+    const books = state.books;
+    console.log("Saving all books", { books });
+    books.map(async (book) => {
+      const promises = book.chapters.map(async (chapter) => {
+        await saveChapter(chapter);
+      });
+      await Promise.all([...promises, await saveBook(book)]);
+    });
+    await saveSettings();
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    if (state._triggerSaveAll) {
+      saveAllBooks();
+      dispatch(librarySlice.actions.setTriggerSaveAll(false));
+    }
+  }, [state._triggerSaveAll]);
+
+  useEffect(() => {
+    if (state.booksLoaded && settingsLoaded) {
+      if (settings.encrypted) {
+        const stored = JSON.parse(localStorage.getItem("encryptionPassword"));
+        const encryptionPassword = stored?.password || null;
+        console.log({ encryptionPassword });
+        if (encryptionPassword === null) {
+          // prompt for password
+          /* dispatch(
+            librarySlice.actions.showPopup({
+              title: "Please enter your password to decrypt your books.",
+              inputValue: "",
+              cancelable: false,
+              opaqueBackground: true,
+              onSubmit: (password) => {
+                localStorage.setItem(
+                  "encryptionPassword",
+                  JSON.stringify({ password })
+                );
+                dispatch(
+                  librarySlice.actions.decryptBooks({
+                    password,
+                  })
+                );
+              },
+            })
+          ); */
+        } else {
+          dispatch(
+            librarySlice.actions.decryptBooks({
+              password: encryptionPassword,
+            })
+          );
+        }
+      } else {
+        dispatch(librarySlice.actions.setHasBeenDecrypted(true));
+      }
+    }
+  }, [state.booksLoaded, settingsLoaded]);
+
+  useSSEUpdates(settings.encrypted);
 
   useKeyDown(async (event) => {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
@@ -254,6 +317,7 @@ export default function Library({ mobile = false }) {
 
       setSettings(result.payload.settings);
       setUsage(result.payload.usage);
+      setSettingsLoaded(true);
     } else {
       dispatch(librarySlice.actions.setError(result.message));
     }
@@ -398,15 +462,60 @@ export default function Library({ mobile = false }) {
     }
   }
 
+  function maybeEncrypt(func) {
+    if (settings.encrypted) {
+      const stored = JSON.parse(localStorage.getItem("encryptionPassword"));
+      const password = stored?.password || null;
+      if (password) {
+        func(password);
+      }
+    }
+  }
+
   async function saveChapter(
     _chapter: t.Chapter,
     suggestions: t.Suggestion[] | null = null
   ) {
     console.log("Saving chapter", _chapter);
+
+    if (!state.hasBeenDecrypted) {
+      dispatch(
+        librarySlice.actions.setError(
+          `Refusing to save a chapter till it's been decrypted: ${_chapter.title}`
+        )
+      );
+      return;
+    }
+
     let chapter: t.Chapter = { ..._chapter };
     if (suggestions !== null) {
       chapter.suggestions = suggestions;
     }
+
+    maybeEncrypt((password) => {
+      chapter.text = chapter.text.map((block) => {
+        const newText = encryptMessage(block.text, password);
+        if (block.text.length > 0 && newText.length === 0) {
+          console.log("Error encrypting text", block, newText);
+          throw new Error("Error encrypting text");
+        }
+
+        const newBlock: t.TextBlock = { ...block, text: newText };
+        if (block.caption) {
+          newBlock.caption = encryptMessage(block.caption, password);
+        }
+        if (newBlock.type !== "embeddedText" && newBlock.versions) {
+          newBlock.versions = newBlock.versions.map((version) => {
+            return {
+              ...version,
+              text: encryptMessage(version.text, password),
+            };
+          });
+        }
+        return newBlock;
+      });
+      chapter.title = encryptMessage(chapter.title, password);
+    });
 
     try {
       addToWritingStreak(chapter);
@@ -508,6 +617,27 @@ export default function Library({ mobile = false }) {
     let bookNoChapters = { ...book };
 
     bookNoChapters.chapters = [];
+
+    maybeEncrypt((password) => {
+      bookNoChapters.title = encryptMessage(bookNoChapters.title, password);
+      if (bookNoChapters.synopsis) {
+        bookNoChapters.synopsis = encryptMessage(
+          bookNoChapters.synopsis,
+          password
+        );
+      }
+
+      if (bookNoChapters.characters) {
+        bookNoChapters.characters = bookNoChapters.characters.map((c) => {
+          return {
+            name: encryptMessage(c.name, password),
+            aliases: encryptMessage(c.aliases, password),
+            description: encryptMessage(c.description, password),
+            imageUrl: encryptMessage(c.imageUrl, password),
+          };
+        });
+      }
+    });
 
     const result = await makeApiCall(fd.saveBook, [bookNoChapters]);
 

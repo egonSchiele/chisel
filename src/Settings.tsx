@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
 import { produce } from "immer";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import * as t from "./Types";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import Select from "./components/Select";
-import * as t from "./Types";
+import Switch from "./components/Switch";
 import TextArea from "./components/TextArea";
-import { getCsrfToken } from "./utils";
 import { librarySlice } from "./reducers/librarySlice";
-import { AppDispatch } from "./store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "./store";
+import { useLocalStorage } from "./utils";
 
 function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
   return (
@@ -47,8 +48,27 @@ function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
   );
 }
 
+function Header({ children }) {
+  return (
+    <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
+      {children}
+    </h4>
+  );
+}
+
 function Settings({ settings, setSettings, usage, onSave }) {
   const dispatch = useDispatch<AppDispatch>();
+  const books: t.Book[] = useSelector(
+    (state: RootState) => state.library.books
+  );
+  const [encryptionPassword, setEncryptionPassword] = useLocalStorage(
+    "encryptionPassword",
+    { password: "" }
+  );
+  const [encryptionChanged, setEncryptionChanged] = useState(false);
+  const [isEncrypted, setIsEncrypted] = useState(settings.encrypted);
+  const [editPassword, setEditPassword] = useState(false);
+
   const handleChange = (key: keyof t.UserSettings, value: any) => {
     setSettings(
       produce(settings, (draft) => {
@@ -107,8 +127,19 @@ function Settings({ settings, setSettings, usage, onSave }) {
     totalUsage = tokens.total.prompt + tokens.total.completion;
   }
 
+  async function confirmEncrypt() {
+    handleChange("encrypted", true);
+    dispatch(librarySlice.actions.setTriggerSaveAll(true));
+  }
+
+  async function confirmDecrypt() {
+    handleChange("encrypted", false);
+    dispatch(librarySlice.actions.setTriggerSaveAll(true));
+  }
+
   return (
     <form className="grid grid-cols-1 gap-y-sm pb-12">
+      <Header>API Settings</Header>
       <Select
         title="Model"
         name="model"
@@ -151,7 +182,102 @@ function Settings({ settings, setSettings, usage, onSave }) {
         value={settings.customKey}
         onChange={(e) => handleChange("customKey", e.target.value)}
       />
+      <Header>Encryption</Header>
+      <Switch
+        label="Encrypt?"
+        enabled={isEncrypted}
+        setEnabled={(enabled) => {
+          setEncryptionChanged(true);
+          setEditPassword(true);
+          setIsEncrypted(enabled);
+        }}
+        divClassName="mt-0"
+      />
+      {isEncrypted && !editPassword && (
+        <Button
+          size="small"
+          onClick={() => {
+            setEditPassword(true);
+          }}
+          style="primary"
+          rounded
+          className="mt-0 w-full"
+          selector={`editPasswordButton`}
+        >
+          Edit Password
+        </Button>
+      )}
+      {isEncrypted && editPassword && (
+        <>
+          {" "}
+          <Input
+            title="Password"
+            name="encryptionPassword"
+            type="password"
+            value={encryptionPassword?.password || ""}
+            onChange={(e) =>
+              setEncryptionPassword({ password: e.target.value })
+            }
+            className="my-0"
+          />
+          <Button
+            size="small"
+            onClick={() => {
+              setEditPassword(false);
+            }}
+            style="secondary"
+            rounded
+            className="mt-0 w-full"
+            selector={`editPasswordDoneButton`}
+          >
+            Done
+          </Button>
+        </>
+      )}
+      {encryptionChanged && isEncrypted && (
+        <>
+          <p className="text-xs text-gray-500">
+            Please enter the password above and then click confirm encryption to
+            encrypt all of your books. Remember, if you lose the password, we
+            will not be able to help you recover your data!
+          </p>
+          <Button
+            size="small"
+            onClick={() => {
+              confirmEncrypt();
+              setEncryptionChanged(false);
+            }}
+            style="secondary"
+            rounded
+            className="mt-0 w-full dark:bg-gray-700 dark:border-gray-700 shadow-none"
+            selector={`confirmEncryptButton`}
+          >
+            Confirm Encryption
+          </Button>
+        </>
+      )}
 
+      {encryptionChanged && !isEncrypted && (
+        <>
+          <p className="text-xs text-gray-500">
+            Please confirm by clicking the button below
+          </p>
+          <Button
+            size="small"
+            onClick={() => {
+              confirmDecrypt();
+              setEncryptionChanged(false);
+            }}
+            style="secondary"
+            rounded
+            className="mt-0 w-full dark:bg-gray-700 dark:border-gray-700 shadow-none"
+            selector={`confirmEncryptButton`}
+          >
+            Confirm Decryption
+          </Button>
+        </>
+      )}
+      <Header>UX</Header>
       <Select
         title="Font"
         name="font"
@@ -192,9 +318,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
 
       {usage && (
         <div>
-          <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
-            Usage
-          </h4>
+          <Header>Usage</Header>
           <p className="text-sm text-gray-700 dark:text-gray-300">
             <span className="uppercase ">Monthly:</span> {monthlyUsage} tokens
           </p>
@@ -204,9 +328,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
         </div>
       )}
       <div>
-        <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs mt-sm">
-          Prompts
-        </h4>
+        <Header>Prompts</Header>
         {settings.prompts.map((prompt, i) => (
           <Prompt
             key={i}

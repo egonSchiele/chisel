@@ -5,7 +5,7 @@ import { librarySlice } from "../reducers/librarySlice";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { useParams } from "react-router-dom";
-import { getCookie, setCookie } from "../utils";
+import { decryptChapter, getCookie, setCookie } from "../utils";
 
 export const useKeyboardScroll = (htmlRef, speed = 400, callback = null) => {
   const handleKeyDown = async (event) => {
@@ -194,9 +194,11 @@ export function lightColors() {
 }
  */
 
-export function useSSEUpdates() {
+export function useSSEUpdates(encrypted) {
   const clientid = getCookie("clientid");
   const dispatch = useDispatch();
+  const stored = JSON.parse(localStorage.getItem("encryptionPassword"));
+  const password = stored?.password || null;
 
   function listen(eventName, eventSource, func) {
     eventSource.addEventListener(eventName, (e) => {
@@ -215,7 +217,10 @@ export function useSSEUpdates() {
         withCredentials: true,
       });
       listen("chapterUpdate", eventSource, (data) => {
-        const { chapter } = data;
+        let { chapter } = data;
+        if (encrypted) {
+          chapter = decryptChapter(chapter, password);
+        }
         dispatch(librarySlice.actions.updateChapterSSE(chapter));
       });
       listen("bookUpdate", eventSource, (data) => {
@@ -243,5 +248,5 @@ export function useSSEUpdates() {
         eventSource.close();
       };
     }
-  }, [clientid]);
+  }, [clientid, encrypted]);
 }

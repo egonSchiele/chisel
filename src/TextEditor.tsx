@@ -140,6 +140,9 @@ function TextEditor({
   const activeTextIndex = useSelector(
     (state: RootState) => state.library.editor.activeTextIndex
   );
+  const hasBeenDecrypted = useSelector(
+    (state: RootState) => state.library.hasBeenDecrypted
+  );
 
   const viewMode: t.ViewMode = useSelector(
     (state: RootState) => state.library.viewMode
@@ -162,13 +165,14 @@ function TextEditor({
 
   useEffect(() => {
     if (!quillRef.current) return;
+    if (!hasBeenDecrypted) return;
     // @ts-ignore
     const editor = quillRef.current.getEditor();
     // TODO
     editor.setText(currentText.text.trim());
     highlightForFocusMode();
     formatMarkdown();
-  }, [quillRef.current, chapterid, _pushTextToEditor]);
+  }, [quillRef.current, chapterid, _pushTextToEditor, hasBeenDecrypted]);
 
   useEffect(() => {
     if (viewMode === "focus") {

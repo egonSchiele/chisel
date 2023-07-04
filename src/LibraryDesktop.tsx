@@ -132,6 +132,30 @@ export default function LibraryDesktop() {
     currentChapter
   );
 
+  if (state.booksLoaded && settings.encrypted && !state.hasBeenDecrypted) {
+    return (
+      <>
+        <Popup
+          title={`Please enter your password to decrypt your books. ${state.error}`}
+          inputValue={""}
+          onSubmit={(password) => {
+            localStorage.setItem(
+              "encryptionPassword",
+              JSON.stringify({ password })
+            );
+            dispatch(
+              librarySlice.actions.decryptBooks({
+                password,
+              })
+            );
+          }}
+          cancelable={false}
+          opaqueBackground={true}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       {state.launcherOpen && (
@@ -172,6 +196,12 @@ export default function LibraryDesktop() {
               inputValue={state.popupData.inputValue}
               options={state.popupData.options}
               onSubmit={state.popupData.onSubmit}
+              cancelable={
+                state.popupData.hasOwnProperty("cancelable")
+                  ? state.popupData.cancelable
+                  : true
+              }
+              opaqueBackground={state.popupData.opaqueBackground || false}
             />
           </LibErrorBoundary>
         )}

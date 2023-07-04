@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import React, { useRef, useEffect, useState, SetStateAction } from "react";
 
 import * as fd from "./lib/fetchData";
@@ -189,7 +190,7 @@ export function parseText(text: string): t.TextBlock[] {
   }
 }
 
-export function isString(x): boolean {
+export function isString(x: any): boolean {
   return typeof x === "string" || x instanceof String;
 }
 
@@ -202,7 +203,9 @@ export function strSplice(
   return str.slice(0, index) + (add || "") + str.slice(index + count);
 }
 
-export function useTraceUpdate(props) {
+export function useTraceUpdate(
+  props: { [s: string]: unknown } | ArrayLike<unknown>
+) {
   const prev = useRef(props);
   useEffect(() => {
     const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
@@ -337,7 +340,7 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
   }
 }
 
-export function isTruthy(x) {
+export function isTruthy(x: any) {
   return !!x;
 }
 
@@ -346,7 +349,7 @@ export function hasVersions(block: t.TextBlock) {
   return block.versions && block.versions.length > 0;
 }
 
-export function capitalize(string) {
+export function capitalize(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -363,7 +366,7 @@ export function uniq(array: any[]): any[] {
   return [...new Set(array)];
 }
 
-export async function tryJson(res) {
+export async function tryJson(res: { json: () => any }) {
   try {
     return await res.json();
   } catch (e) {
@@ -388,7 +391,7 @@ export function round(num: number): number {
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
-export function setCookie(name, value, days) {
+export function setCookie(name: string, value: string, days: number) {
   var expires = "";
   if (days) {
     var date = new Date();
@@ -397,7 +400,7 @@ export function setCookie(name, value, days) {
   }
   document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
-export function getCookie(name) {
+export function getCookie(name: string) {
   var nameEQ = name + "=";
   var ca = document.cookie.split(";");
   for (var i = 0; i < ca.length; i++) {
@@ -407,7 +410,7 @@ export function getCookie(name) {
   }
   return null;
 }
-export function eraseCookie(name) {
+export function eraseCookie(name: string) {
   document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 }
 
@@ -420,4 +423,81 @@ export function prettySeconds(seconds: number) {
   if (minutes > 0) parts.push(`${minutes}m`);
   if (secondsLeft > 0) parts.push(`${secondsLeft}s`);
   return parts.join(" ");
+}
+
+function str2ab(str: string) {
+  try {
+    const buf = new ArrayBuffer(str.length);
+    const bufView = new Uint8Array(buf);
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+      bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+  } catch (e) {
+    console.log("error in str2ab");
+    console.log(e);
+    console.log(e.message);
+    console.log(e.stack);
+  }
+}
+
+export function encryptMessage(message: string, password: string) {
+  console.log("encrypting", { message, password });
+  return CryptoJS.AES.encrypt(message, password).toString();
+}
+
+export function decryptMessage(message: string, password: string) {
+  console.log("decrypting", { message, password });
+
+  var bytes = CryptoJS.AES.decrypt(message, password);
+  const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+  console.log({ decrypted });
+  return decrypted;
+}
+
+export function maybeDecrypt(message, password) {
+  const decrypted = decryptMessage(message, password);
+  if (decrypted.length > 0) {
+    return decrypted;
+  } else {
+    return message;
+  }
+}
+
+export function decryptChapter(
+  chapter: t.Chapter,
+  password: string
+): { decryptFailed: boolean; updatedChapter: t.Chapter } {
+  const updatedChapter = { ...chapter };
+  let decryptFailed = false;
+  if (updatedChapter.isDecrypted) return { decryptFailed, updatedChapter };
+  updatedChapter.text = chapter.text.map((block) => {
+    try {
+      const decrypted = decryptMessage(block.text, password);
+      if (block.text.length > 0 && decrypted.length === 0) {
+        console.log(block.text, decrypted, password);
+        throw new Error("decryption failed");
+      }
+      const newBlock = { ...block, text: decrypted };
+      if (newBlock.caption) {
+        newBlock.caption = maybeDecrypt(newBlock.caption, password);
+      }
+      if (newBlock.type !== "embeddedText" && newBlock.versions) {
+        newBlock.versions = newBlock.versions.map((version) => {
+          const newVersion = { ...version };
+          newVersion.text = maybeDecrypt(newVersion.text, password);
+          return newVersion;
+        });
+      }
+      return newBlock;
+    } catch (e) {
+      console.log("error in decrypt");
+      console.log(e);
+      decryptFailed = true;
+      return block;
+    }
+  });
+
+  updatedChapter.title = maybeDecrypt(updatedChapter.title, password);
+  return { decryptFailed, updatedChapter };
 }

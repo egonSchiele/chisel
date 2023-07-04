@@ -10,6 +10,7 @@ import {
   DocumentDuplicateIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
+  LockClosedIcon,
   MagnifyingGlassIcon,
   MicrophoneIcon,
   MinusIcon,
@@ -480,6 +481,16 @@ export default function Nav({
                   selector="texttospeech-button"
                 >
                   <PlayIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
+              {settings.encrypted && (
+                <NavButton
+                  color="nav"
+                  label="Encrypted"
+                  onClick={() => {}}
+                  selector="encrypted-icon"
+                >
+                  <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
                 </NavButton>
               )}
             </div>

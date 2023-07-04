@@ -269,6 +269,11 @@ async function checkForOutdatedUpdate(type, lastHeardFromServer, docRef, func) {
 }
 
 export const saveChapter = async (chapter, lastHeardFromServer) => {
+  console.log(
+    "saving chapter",
+    { chapter },
+    chapter.text.map((t) => t.text)
+  );
   if (!chapter) {
     return failure("no chapter to save");
   }
@@ -436,6 +441,7 @@ export function makeNewChapter(text, title, bookid, data = {}) {
     pos: { x: 0, y: 0 },
     suggestions: [],
     favorite: false,
+    isDecrypted: true,
     ...data,
   };
   return chapter;

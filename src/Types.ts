@@ -24,10 +24,12 @@ export type State = {
   activeTab: number | null;
   _temporaryFocusModeState?: string;
   _cachedPanelState?: PanelState;
+  _triggerSaveAll: boolean;
   editHistory: EditHistory[];
   online: boolean;
   serviceWorkerRunning: boolean;
   fromCache: boolean;
+  hasBeenDecrypted: boolean;
 };
 
 export type EditHistory = {
@@ -96,6 +98,8 @@ export type PopupData = {
   inputValue: string;
   options?: SelectOption[];
   onSubmit: (value: string) => void;
+  cancelable?: boolean;
+  opaqueBackground?: boolean;
 };
 
 export type ViewMode =
@@ -361,6 +365,7 @@ export type Chapter = {
   embeddingsLastCalculatedAt?: number;
   writingStreak?: Date[];
   pinToHome?: boolean;
+  isDecrypted?: boolean;
 };
 
 export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done";
@@ -427,6 +432,7 @@ export type UserSettings = {
   design?: DesignPreferences | null;
   admin?: boolean;
   autocompleteCache?: { [key: string]: number };
+  encrypted?: boolean;
 };
 
 export type DesignPreferences = {
