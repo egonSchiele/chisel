@@ -99,7 +99,7 @@ export default function LibraryDesktop() {
                 {compostBookId && (
                   <Button
                     onClick={() => newCompostNote()}
-                    className="absolute bottom-md right-md"
+                    className="absolute bottom-xl right-md"
                     style="secondary"
                     size="large"
                     rounded={true}

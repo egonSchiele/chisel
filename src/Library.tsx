@@ -565,6 +565,7 @@ export default function Library({ mobile = false }) {
     deleteChapter,
     onTextEditorSave,
     mobile,
+    fetchBooks,
   };
 
   if (

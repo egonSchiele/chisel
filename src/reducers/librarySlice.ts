@@ -245,6 +245,11 @@ export const librarySlice = createSlice({
       chapter.status = action.payload;
       state.saved = false;
     },
+    triggerEditorUpdate(state: t.State) {
+      // TODO: this doesn't work! why
+      state.editor._pushTextToEditor = nanoid();
+    },
+
     pushTextToEditor(state: t.State, action: PayloadAction<t.NewTextForBlock>) {
       const { index, text } = action.payload;
       state.editor._pushTextToEditor = text;

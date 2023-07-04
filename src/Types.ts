@@ -526,6 +526,7 @@ export type LibraryContextType = {
   deleteChapter: (deletedChapterid: string) => Promise<void>;
   onTextEditorSave: (state: State, shouldSaveToHistory?: boolean) => void;
   mobile: boolean;
+  fetchBooks: () => Promise<void>;
 };
 
 export type ChatHistory = {

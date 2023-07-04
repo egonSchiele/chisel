@@ -2,6 +2,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 
 import {
   ArchiveBoxIcon,
+  ArrowPathIcon,
   Bars3Icon,
   ChatBubbleLeftIcon,
   CheckCircleIcon,
@@ -57,7 +58,7 @@ export default function Nav({
 
   const navigate = useNavigate();
   const colors = useColors();
-  const { settings, newChapter, setLoading } = useContext(
+  const { settings, newChapter, setLoading, fetchBooks } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
 
@@ -484,6 +485,19 @@ export default function Nav({
                   selector="texttospeech-button"
                 >
                   <PlayIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
+
+              {mobile && (
+                <NavButton
+                  color="nav"
+                  label="Reload"
+                  onClick={async () => {
+                    await fetchBooks();
+                    dispatch(librarySlice.actions.triggerEditorUpdate());
+                  }}
+                >
+                  <ArrowPathIcon className={`h-5 w-5 `} aria-hidden="true" />
                 </NavButton>
               )}
             </div>
