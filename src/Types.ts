@@ -427,6 +427,7 @@ export type UserSettings = {
   design?: DesignPreferences | null;
   admin?: boolean;
   autocompleteCache?: { [key: string]: number };
+  created_at?: number;
 };
 
 export type DesignPreferences = {

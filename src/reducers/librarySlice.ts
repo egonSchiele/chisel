@@ -99,13 +99,10 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
       const { books, lastEdited, deepEqual, serviceWorkerRunning, fromCache } =
         json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
-      books.forEach((book) => {
-        book.chapters.forEach((chapter) => {
-          chapter.created_at = lastEdited;
-        });
-        book.created_at = lastEdited;
-      });
-      dispatch(librarySlice.actions.setBooks(books));
+
+      dispatch(
+        librarySlice.actions.setBooks({ books, created_at: lastEdited })
+      );
 
       if (deepEqual === false) {
         dispatch(librarySlice.actions.setError("cache books out of date"));
@@ -123,16 +120,19 @@ export const librarySlice = createSlice({
   name: "library",
   initialState: initialState(null) as t.State,
   reducers: {
-    setBooks(state: t.State, action: PayloadAction<t.Book[]>) {
-      /* const books = action.payload;
+    setBooks(
+      state: t.State,
+      action: PayloadAction<{ books: t.Book[]; created_at: number }>
+    ) {
+      const { books, created_at } = action.payload;
+
       books.forEach((book) => {
         book.chapters.forEach((chapter) => {
-          if (isString(chapter.text)) {
-            chapter.text = parseText(chapter.text as unknown as string);
-          }
+          chapter.created_at = created_at;
         });
-      }); */
-      state.books = action.payload;
+        book.created_at = created_at;
+      });
+      state.books = books;
     },
 
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
@@ -161,8 +161,11 @@ export const librarySlice = createSlice({
       const bookid = action.payload;
       state.books = state.books.filter((book) => book.bookid !== bookid);
     },
-    updateBook(state: t.State, action: PayloadAction<t.Book>) {
-      const book = action.payload;
+    updateBook(
+      state: t.State,
+      action: PayloadAction<{ book: t.Book; created_at: number }>
+    ) {
+      const { book, created_at } = action.payload;
       if (!book) return;
 
       state.books = state.books.map((b) => {
@@ -172,7 +175,7 @@ export const librarySlice = createSlice({
           // saveChapter updates the chapter in the redux store.
           // If we include the chapters here, it will overwrite the updates from saveChapter.
 
-          return { ...book, chapters: b.chapters };
+          return { ...book, chapters: b.chapters, created_at };
         }
         return b;
       });
@@ -357,13 +360,16 @@ export const librarySlice = createSlice({
       });
       state.saved = false;
     },
-    updateChapterSSE(state: t.State, action: PayloadAction<t.Chapter>) {
-      const chapter = action.payload;
+    updateChapterSSE(
+      state: t.State,
+      action: PayloadAction<{ chapter: t.Chapter; created_at: number }>
+    ) {
+      const { chapter, created_at } = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapter) return;
       book.chapters = book.chapters.map((c) => {
         if (c.chapterid === chapter.chapterid) {
-          return chapter;
+          return { ...chapter, created_at };
         }
 
         return c;
@@ -400,13 +406,17 @@ export const librarySlice = createSlice({
       });
       state.saved = true;
     },
-    updateBookSSE(state: t.State, action: PayloadAction<t.Book>) {
-      const book = action.payload;
+    updateBookSSE(
+      state: t.State,
+      action: PayloadAction<{ book: t.Book; created_at: number }>
+    ) {
+      const { book, created_at } = action.payload;
       if (!book) return;
       state.books = state.books.map((b) => {
         if (b.bookid === book.bookid) {
           return {
             ...book,
+            created_at,
             chapters: b.chapters,
             chapterOrder: b.chapterOrder,
           };

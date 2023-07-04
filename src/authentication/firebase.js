@@ -224,16 +224,16 @@ export const saveUser = async (user, lastHeardFromServer) => {
     return false;
   }
 
-  user.created_at = Date.now();
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
 
   return await checkForStaleUpdate(
     "user",
-    lastHeardFromServer,
+    user.created_at,
     docRef,
     async () => {
       try {
+        user.created_at = Date.now();
         await docRef.set(user);
         console.log("Successfully synced user to Firestore");
         return success({ settings: user.settings });

@@ -439,13 +439,22 @@ export default function Library({ mobile = false }) {
     const _settings = { ...settings };
     _settings.customKey = null;
     console.log("Saving settings", _settings);
-    await fetch("/api/settings", {
+    const result = await fetch("/api/settings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ settings: _settings, csrfToken: getCsrfToken() }),
     });
+    if (result.ok) {
+      const data = await result.json();
+      console.log("Settings saved", data);
+      setSettings((settings) => {
+        return { ...settings, created_at: data.lastHeardFromServer };
+      });
+    } else {
+      dispatch(librarySlice.actions.setError("Error saving settings"));
+    }
     dispatch(librarySlice.actions.setSettingsSaved(true));
   }
 

@@ -203,6 +203,7 @@ export function useSSEUpdates(setSettings) {
       console.warn("sse update:", eventName, e);
 
       const data = JSON.parse(e.data);
+      data.created_at = data.lastHeardFromServer;
       func(data);
       setCookie("lastHeardFromServer", data.lastHeardFromServer, 14);
     });
@@ -215,15 +216,18 @@ export function useSSEUpdates(setSettings) {
         withCredentials: true,
       });
       listen("chapterUpdate", eventSource, (data) => {
-        const { chapter } = data;
-        dispatch(librarySlice.actions.updateChapterSSE(chapter));
+        const { chapter, created_at } = data;
+        dispatch(
+          librarySlice.actions.updateChapterSSE({ chapter, created_at })
+        );
       });
       listen("bookUpdate", eventSource, (data) => {
-        const { book } = data;
-        dispatch(librarySlice.actions.updateBookSSE(book));
+        const { book, created_at } = data;
+        dispatch(librarySlice.actions.updateBookSSE({ book, created_at }));
       });
       listen("settingsUpdate", eventSource, (data) => {
         const { settings } = data;
+        settings.created_at = data.created_at;
         setSettings(settings);
       });
       listen("chapterDelete", eventSource, (data) => {
