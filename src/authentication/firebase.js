@@ -1,3 +1,5 @@
+import { checkForOutdatedUpdate } from "../serverUtils.js";
+import { success, failure } from "../storage/firebase.js";
 import { getFirestore } from "firebase-admin/firestore";
 import { nanoid } from "nanoid";
 
@@ -215,7 +217,7 @@ export const getUser = async (req) => {
   return user;
 };
 
-export const saveUser = async (user) => {
+export const saveUser = async (user, lastHeardFromServer) => {
   console.log("saving user");
   if (!user) {
     console.log("no user to save");
@@ -225,14 +227,22 @@ export const saveUser = async (user) => {
   user.created_at = Date.now();
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
-  try {
-    await docRef.set(user);
-    console.log("Successfully synced user to Firestore");
-    return true;
-  } catch (error) {
-    console.error("Error syncing user to Firestore:", error);
-    return false;
-  }
+
+  return await checkForOutdatedUpdate(
+    "user",
+    lastHeardFromServer,
+    docRef,
+    async () => {
+      try {
+        await docRef.set(user);
+        console.log("Successfully synced user to Firestore");
+        return success({ settings: user.settings });
+      } catch (error) {
+        console.error("Error syncing user to Firestore:", error);
+        return failure();
+      }
+    }
+  );
 };
 
 const getUserWithEmail = async (email) => {
@@ -361,7 +371,7 @@ export const resetMonthlyTokenCounts = async () => {
 
     data.usage.openai_api.tokens.month.prompt = 0;
     data.usage.openai_api.tokens.month.completion = 0;
-    saveUser(data);
+    saveUser(data, Date.now());
   });
 
   console.log(">>", userData);

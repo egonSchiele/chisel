@@ -831,6 +831,7 @@ app.get("/api/textToSpeech/:s3key", requireAdmin, async (req, res) => {
 
 app.post("/api/settings", requireLogin, async (req, res) => {
   const { settings } = req.body;
+  const lastHeardFromServer = req.cookies.lastHeardFromServer;
   console.log("saving settings", settings);
   if (!settings) {
     console.log("no settings");
@@ -841,14 +842,14 @@ app.post("/api/settings", requireLogin, async (req, res) => {
       console.log("no user");
       res.status(404).end();
     } else {
-      user.settings = settings;
-      const result = await saveUser(user);
-      if (!result) {
-        console.log("error saving user");
-        res.status(500).end();
-      } else {
-        res.status(200).json({ settings: user.settings });
-      }
+      /*       const updateData = {
+        eventName: "bookDelete",
+        data: { bookid },
+      };
+ */ SE.save(req, res, null, async () => {
+        user.settings = settings;
+        return await saveUser(user, lastHeardFromServer);
+      });
     }
   }
 });
@@ -1261,7 +1262,8 @@ async function updateUsage(user, usage) {
   user.usage.openai_api.tokens.total.prompt += usage.prompt_tokens || 0;
   user.usage.openai_api.tokens.total.completion += usage.completion_tokens || 0;
 
-  await saveUser(user);
+  // TODO use real lastHeardFromServer time here
+  await saveUser(user, Date.now());
 }
 
 async function getSuggestions(

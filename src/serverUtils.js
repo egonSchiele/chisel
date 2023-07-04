@@ -33,3 +33,47 @@ export function substringTokens(text, tokenCount) {
   const sub = tokens.slice(0, tokenCount);
   return llamaTokenizer.decode(sub);
 }
+
+export async function checkForOutdatedUpdate(
+  type,
+  _lastHeardFromServer,
+  docRef,
+  func
+) {
+  const doc = await docRef.get();
+  const lastHeardFromServer = parseInt(_lastHeardFromServer);
+  const FUDGE_FACTOR = 1000;
+  if (doc.exists) {
+    const data = doc.data();
+    if (lastHeardFromServer === null) {
+      console.log("failure saving", type, "no lastHeardFromServer");
+      return failure(
+        `Error saving ${type}, no lastHeardFromServer. Please report this bug.`
+      );
+    }
+
+    console.log(
+      "saving",
+      type,
+      data.created_at,
+      lastHeardFromServer,
+      new Date(data.created_at).toLocaleString(),
+      new Date(lastHeardFromServer + FUDGE_FACTOR).toLocaleString()
+    );
+
+    if (
+      data.created_at &&
+      data.created_at > lastHeardFromServer + FUDGE_FACTOR
+    ) {
+      console.log("failure saving", type, data.created_at, lastHeardFromServer);
+      return failure(
+        `Could not save, your copy of this ${type} is older than the one in the database. Db: ${new Date(
+          data.created_at
+        ).toLocaleString()}, your copy: ${new Date(
+          lastHeardFromServer
+        ).toLocaleString()}. Please refresh to get the latest updates, then try again.`
+      );
+    }
+  }
+  return await func();
+}
