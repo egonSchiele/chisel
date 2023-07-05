@@ -421,3 +421,7 @@ export function prettySeconds(seconds: number) {
   if (secondsLeft > 0) parts.push(`${secondsLeft}s`);
   return parts.join(" ");
 }
+
+export function prettyDate(timestamp: number) {
+  return new Date(timestamp).toLocaleString();
+}

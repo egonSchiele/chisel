@@ -86,3 +86,7 @@ export async function checkForStaleUpdate(
   }
   return await func();
 }
+
+export function prettyDate(timestamp) {
+  return new Date(timestamp).toLocaleString();
+}

@@ -133,6 +133,7 @@ export const librarySlice = createSlice({
         book.created_at = created_at;
       });
       state.books = books;
+      state.editor._pushTextToEditor = nanoid();
     },
 
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
@@ -316,6 +317,8 @@ export const librarySlice = createSlice({
     setBookSynopsis(state: t.State, action) {
       const book = getSelectedBook({ library: state });
       if (!book) return;
+      // guards against unnecessary save when bookeditor loads
+      if (book.synopsis === action.payload) return;
       book.synopsis = action.payload;
 
       state.saved = false;

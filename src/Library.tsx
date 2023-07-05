@@ -82,6 +82,14 @@ export default function Library({ mobile = false }) {
           tag: book.tag,
         }))
       );
+
+      async function checkStale() {
+        await checkIfStale();
+      }
+      window.addEventListener("focus", checkStale);
+      return () => {
+        window.removeEventListener("focus", checkStale);
+      };
     }
   }, [state.booksLoaded]);
 
@@ -433,6 +441,18 @@ export default function Library({ mobile = false }) {
     } catch (e) {
       console.log("Error saving chapter", e);
     }
+  }
+
+  async function checkIfStale() {
+    const result = await fd.checkIfStale();
+    if (result.tag === "error") {
+      console.log("Error checking if stale", result.message);
+      return false;
+    } else if (result.payload.stale) {
+      dispatch(librarySlice.actions.setError(result.payload.message));
+      return true;
+    }
+    return false;
   }
 
   async function saveSettings() {

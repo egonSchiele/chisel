@@ -857,7 +857,13 @@ app.post("/api/settings", requireLogin, async (req, res) => {
 app.get("/api/books", requireLogin, noCache, async (req, res) => {
   const userid = getUserId(req);
   const books = await getBooks(userid);
-  const lastEdited = SE.updateLastEdited(req);
+
+  // this isn't an edit, so don't update lastEdited
+  // unless necessary
+  let lastEdited = SE.getLastEdited(userid);
+  if (!lastEdited) {
+    lastEdited = SE.updateLastEdited(req);
+  }
   res.cookie("lastHeardFromServer", lastEdited);
   res.status(200).json({ books, lastEdited });
 });

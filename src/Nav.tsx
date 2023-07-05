@@ -493,8 +493,9 @@ export default function Nav({
                   color="nav"
                   label="Reload"
                   onClick={async () => {
+                    setLoading(true);
                     await fetchBooks();
-                    dispatch(librarySlice.actions.triggerEditorUpdate());
+                    setLoading(false);
                   }}
                 >
                   <ArrowPathIcon className={`h-5 w-5 `} aria-hidden="true" />

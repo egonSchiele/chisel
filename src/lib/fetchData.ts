@@ -1,5 +1,7 @@
 import * as t from "../Types";
-import { getCsrfToken, tryJson } from "../utils";
+import { getCookie, getCsrfToken, prettyDate, tryJson } from "../utils";
+
+const FUDGE_FACTOR = 1000 * 10; // 10 seconds
 
 export const fetchSettings = async () => {
   const res = await fetch(`/api/settings`, { credentials: "include" });
@@ -13,6 +15,43 @@ export const fetchSettings = async () => {
     return t.error("Settings not found");
   }
   return t.success(data);
+};
+
+export const checkIfStale = async () => {
+  const _lastHeardFromServer = getCookie("lastHeardFromServer");
+  if (_lastHeardFromServer === null) {
+    return t.error("no lastHeardFromServer found");
+  }
+  const lastHeardFromServer = parseInt(_lastHeardFromServer);
+  const res = await fetch(`/api/getLastEdited`, { credentials: "include" });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error fetching last edited: ${text}`);
+  }
+  const data = await res.json();
+
+  const { lastEdited } = data;
+
+  if (lastEdited === null) {
+    return t.success({
+      stale: true,
+      message:
+        "Your content may be stale. We advise a good old fashioned refresh.",
+    });
+  }
+
+  const lastEditedInt = parseInt(lastEdited);
+
+  if (lastEditedInt > lastHeardFromServer + FUDGE_FACTOR) {
+    return t.success({
+      stale: true,
+      message: `Your content is stale. Please refresh. You last talked to the server at ${prettyDate(
+        lastHeardFromServer
+      )}, but the server has content from ${prettyDate(lastEditedInt)} now.`,
+    });
+  }
+
+  return t.success({ stale: false });
 };
 
 export const fetchBookTitles = async () => {
