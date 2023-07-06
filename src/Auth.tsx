@@ -23,7 +23,8 @@ export default function Auth({
         </h2>
         <p className="text-center text-gray-700 dark:text-gray-300 mt-sm">
           Chisel is still in Beta! Please back up your work frequently,
-          functionality may break or change.
+          functionality may break or change. Starting 7/10, you'll need your own
+          key to use Chisel.
         </p>
       </div>
 
