@@ -30,6 +30,7 @@ export type State = {
   online: boolean;
   serviceWorkerRunning: boolean;
   fromCache: boolean;
+  _triggerSaveAll: boolean;
 };
 
 export type Notification = {

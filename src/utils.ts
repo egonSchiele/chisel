@@ -502,6 +502,7 @@ export function traverse(someVal, func, someKey = null) {
 
 export function encryptObject(obj, password) {
   const exclude = ["id", "chapterid", "bookid", "userid", "tag"];
+
   return traverse(obj, (key, value) => {
     if (exclude.includes(key)) return value;
     if (typeof value !== "string") return value;

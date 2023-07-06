@@ -89,6 +89,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     online: true,
     serviceWorkerRunning: false,
     fromCache: false,
+    _triggerSaveAll: false,
   };
 };
 
@@ -149,6 +150,9 @@ export const librarySlice = createSlice({
     },
     setFromCache(state: t.State, action: PayloadAction<boolean>) {
       state.fromCache = action.payload;
+    },
+    setTriggerSaveAll(state: t.State, action: PayloadAction<boolean>) {
+      state._triggerSaveAll = action.payload;
     },
     startRecording(state: t.State) {
       state.recording = true;

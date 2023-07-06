@@ -241,14 +241,14 @@ export default function EncryptionSidebar() {
     setSettings({ ...settings, encrypted: true });
     dispatch(librarySlice.actions.setSettingsSaved(false));
 
-    //dispatch(librarySlice.actions.setTriggerSaveAll(true));
+    dispatch(librarySlice.actions.setTriggerSaveAll(true));
   }
 
   async function confirmDecrypt() {
     setSettings({ ...settings, encrypted: false });
     dispatch(librarySlice.actions.setSettingsSaved(false));
 
-    //dispatch(librarySlice.actions.setTriggerSaveAll(true));
+    dispatch(librarySlice.actions.setTriggerSaveAll(true));
   }
 
   const items = [

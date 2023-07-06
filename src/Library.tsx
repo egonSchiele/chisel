@@ -146,6 +146,27 @@ export default function Library({ mobile = false }) {
   // TODO handle encryption before enabling
   // useSSEUpdates(setSettings);
 
+  async function saveAllBooks() {
+    setLoading(true);
+    const books = state.books;
+    console.log("Saving all books", { books });
+    books.map(async (book) => {
+      const promises = book.chapters.map(async (chapter) => {
+        await saveChapter(chapter);
+      });
+      await Promise.all([...promises, await saveBook(book)]);
+    });
+    await saveSettings();
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    if (state._triggerSaveAll) {
+      saveAllBooks();
+      dispatch(librarySlice.actions.setTriggerSaveAll(false));
+    }
+  }, [state._triggerSaveAll]);
+
   useKeyDown(async (event) => {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
       event.preventDefault();

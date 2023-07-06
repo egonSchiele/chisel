@@ -1,7 +1,7 @@
 import * as t from "../Types";
 import { getCookie, getCsrfToken, prettyDate, tryJson } from "../utils";
 
-const FUDGE_FACTOR = 1000 * 10; // 10 seconds
+const FUDGE_FACTOR = 1000 * 60;
 
 export const fetchSettings = async () => {
   const res = await fetch(`/api/settings`, { credentials: "include" });
