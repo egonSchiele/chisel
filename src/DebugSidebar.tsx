@@ -20,7 +20,7 @@ import { RootState } from "./store";
 import { text } from "express";
 import LibraryContext from "./LibraryContext";
 import Spinner from "./components/Spinner";
-import { useLocalStorage } from "./utils";
+import { prettyDate, useLocalStorage } from "./utils";
 import TextArea from "./components/TextArea";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useColors } from "./lib/hooks";
@@ -37,7 +37,7 @@ function Chat({ role, content, className = null }) {
   );
 }
 
-function Reveal({ label, toReveal }) {
+function Reveal({ label, children, showCopy = false }) {
   const [show, setShow] = React.useState(false);
   const buttonLabel = show ? `Hide ${label}` : `Show ${label}`;
   return (
@@ -49,16 +49,16 @@ function Reveal({ label, toReveal }) {
       >
         {buttonLabel}
       </Button>
-      {show && (
+      {show && showCopy && (
         <Button
           style="secondary"
-          onClick={() => navigator.clipboard.writeText(toReveal)}
+          onClick={() => navigator.clipboard.writeText(children)}
           className="mb-sm w-48"
         >
           Copy to Clipboard
         </Button>
       )}
-      {show && <pre>{toReveal}</pre>}
+      {show && <div>{children}</div>}
     </div>
   );
 }
@@ -130,6 +130,28 @@ function ViewportSize() {
   );
 }
 
+function Notifications({ notifications }: { notifications: t.Notification[] }) {
+  return (
+    <div className="text-sm mx-xs my-xs">
+      Notifications:
+      {notifications.map((notification, i) => {
+        const color =
+          notification.type === "error" ? "text-red-700" : "text-green-700";
+        return (
+          <div key={i} className="my-xs">
+            <p className={`text-md ${color}`}>
+              {i + 1}. {notification.message}
+            </p>
+            <p className="text-xs text-gray-500">
+              {prettyDate(notification.created_at)}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function DebugSidebar() {
   const state: t.State = useSelector((state: RootState) => state.library);
 
@@ -150,22 +172,40 @@ export default function DebugSidebar() {
     line(`From cache? ${state.fromCache}`),
     line(`Last edited raw: ${pretty(lastEditedResponse)}`),
     line(`Last edited as timestamp: ${pretty(lastEditedTimestamp)}`),
-    <ViewportSize />,
-    <Reveal label="Settings" toReveal={pretty(settings)} key="settings" />,
-    <Reveal label="State" toReveal={pretty(state)} key="state" />,
+    <ViewportSize key="viewportSize" />,
+    <Reveal label="Settings" showCopy={true} key="settings">
+      {pretty(settings)}
+    </Reveal>,
+    <Reveal label="State" showCopy={true} key="state">
+      {pretty(state)}
+    </Reveal>,
+    ,
     <Reveal
       label={`Data in Cache ${dataInCache ? "" : "(none)"}`}
-      toReveal={pretty(dataInCache)}
+      showCopy={true}
       key="cacheData"
-    />,
+    >
+      {pretty(dataInCache)}
+    </Reveal>,
     <Reveal
       label={`Backup Data in Cache ${backupDataInCache ? "" : "(none)"}`}
-      toReveal={pretty(backupDataInCache)}
+      showCopy={true}
       key="backupCacheData"
-    />,
-    <Button style="primary" onClick={() => clearCache()} key="clearCache">
+    >
+      {pretty(backupDataInCache)}
+    </Reveal>,
+    ,
+    <Button
+      style="primary"
+      onClick={() => clearCache()}
+      key="clearCache"
+      className="ml-xs mb-sm"
+    >
       Clear Cache
     </Button>,
+    <Reveal label="Notifications log" key="notifications">
+      <Notifications notifications={state.notifications} />
+    </Reveal>,
   ];
 
   return (
