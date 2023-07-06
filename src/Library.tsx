@@ -23,9 +23,12 @@ import {
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import {
+  encryptObject,
   getCsrfToken,
+  getEncryptionPassword,
   saveTextToHistory,
   setCookie,
+  setEncryptionPassword,
   today,
   useInterval,
   useLocalStorage,
@@ -140,7 +143,8 @@ export default function Library({ mobile = false }) {
     }
   }, [state.selectedBookId, chapterid]);
 
-  useSSEUpdates(setSettings);
+  // TODO handle encryption before enabling
+  // useSSEUpdates(setSettings);
 
   useKeyDown(async (event) => {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
@@ -266,6 +270,25 @@ export default function Library({ mobile = false }) {
       dispatch(librarySlice.actions.setError(result.message));
     }
   };
+
+  function maybeEncrypt(func) {
+    if (settings.encrypted) {
+      const password = getEncryptionPassword();
+      if (password) {
+        func(password);
+      } else {
+        const popupData: t.PopupData = {
+          title: `Please enter your password to encrypt your books. ${state.error}`,
+          inputValue: "",
+          onSubmit: (userEnteredPassword) => {
+            setEncryptionPassword(userEnteredPassword);
+            func(userEnteredPassword);
+          },
+        };
+        dispatch(librarySlice.actions.showPopup(popupData));
+      }
+    }
+  }
 
   const fetchBookTitles = async () => {
     if (!bookid && !chapterid) return;
@@ -416,6 +439,10 @@ export default function Library({ mobile = false }) {
       chapter.suggestions = suggestions;
     }
 
+    maybeEncrypt((password) => {
+      chapter = encryptObject(chapter, password);
+    });
+
     try {
       addToWritingStreak(chapter);
     } catch (e) {
@@ -449,7 +476,19 @@ export default function Library({ mobile = false }) {
       console.log("Error checking if stale", result.message);
       return false;
     } else if (result.payload.stale) {
-      dispatch(librarySlice.actions.setError(result.payload.message));
+      if (state.saved) {
+        // no changes, so just reload
+        dispatch(
+          librarySlice.actions.setInfo("Changes detected, reloading...")
+        );
+
+        setLoading(true);
+        await fetchBooks();
+        setLoading(false);
+        dispatch(librarySlice.actions.setInfo("You are up to date!"));
+      } else {
+        dispatch(librarySlice.actions.setError(result.payload.message));
+      }
       return true;
     }
     return false;
