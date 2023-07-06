@@ -4,14 +4,12 @@ import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
   decryptObject,
-  getEncryptionPassword,
   hasVersions,
   isObjectEncrypted,
   isString,
   localStorageOrDefault,
   parseText,
   restoreBlockFromHistory,
-  setEncryptionPassword,
   strSplice,
 } from "../utils";
 
@@ -90,6 +88,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     serviceWorkerRunning: false,
     fromCache: false,
     _triggerSaveAll: false,
+    encryptionPassword: null,
   };
 };
 
@@ -108,14 +107,38 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
         json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
 
-      const password = getEncryptionPassword();
-      dispatch(
-        librarySlice.actions.setBooks({
-          books,
-          password,
-          created_at: lastEdited,
-        })
-      );
+      const isEncrypted = isObjectEncrypted(books);
+      if (isEncrypted) {
+        const popupData: t.PopupData = {
+          title: `Please enter your password to decrypt your books.`,
+          inputValue: "",
+          cancelable: false,
+          opaqueBackground: true,
+          onSubmit: (userEnteredPassword) => {
+            dispatch(
+              librarySlice.actions.setEncryptionPassword(userEnteredPassword)
+            );
+
+            const decryptedBooks = decryptObject(books, userEnteredPassword);
+
+            dispatch(
+              librarySlice.actions.setBooks({
+                books: decryptedBooks,
+                created_at: lastEdited,
+              })
+            );
+          },
+        };
+
+        dispatch(librarySlice.actions.showPopup(popupData));
+      } else {
+        dispatch(
+          librarySlice.actions.setBooks({
+            books,
+            created_at: lastEdited,
+          })
+        );
+      }
 
       if (deepEqual === false) {
         dispatch(librarySlice.actions.setError("cache books out of date"));
@@ -138,11 +161,20 @@ export const librarySlice = createSlice({
       action: PayloadAction<{
         books: t.Book[];
         created_at: number;
-        password: string | null;
       }>
     ) {
-      const params = action.payload;
-      setBooks(state, params);
+      const { books, created_at } = action.payload;
+      const decryptedBooks = decryptObject(books, state.encryptionPassword);
+
+      decryptedBooks.forEach((book) => {
+        book.chapters.forEach((chapter) => {
+          chapter.created_at = created_at;
+        });
+        book.created_at = created_at;
+      });
+      state.books = decryptedBooks;
+      state.booksLoaded = true;
+      state.editor._pushTextToEditor = nanoid();
     },
 
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
@@ -153,6 +185,12 @@ export const librarySlice = createSlice({
     },
     setTriggerSaveAll(state: t.State, action: PayloadAction<boolean>) {
       state._triggerSaveAll = action.payload;
+    },
+    setEncryptionPassword(
+      state: t.State,
+      action: PayloadAction<string | null>
+    ) {
+      state.encryptionPassword = action.payload;
     },
     startRecording(state: t.State) {
       state.recording = true;
@@ -1352,7 +1390,7 @@ export const librarySlice = createSlice({
 
     builder.addCase(fetchBooksThunk.fulfilled, (state) => {
       state.loading = false;
-      state.booksLoaded = true;
+      //state.booksLoaded = true;
     });
 
     builder.addCase(fetchBooksThunk.rejected, (state) => {
@@ -1626,55 +1664,4 @@ function toggleRightSidebarBase(state, activePanel) {
     "rightSidebarOpen",
     String(state.panels.rightSidebar.open)
   );
-}
-
-function setBooks(
-  state: t.State,
-  {
-    books,
-    created_at,
-    password,
-  }: { books: t.Book[]; created_at: number; password: string | null }
-) {
-  const isEncrypted = isObjectEncrypted(books);
-
-  if (!isEncrypted) {
-    console.log("not encrypted");
-    _setBooks(state, { books, created_at });
-  } else {
-    console.log("encrypted");
-    if (password) {
-      console.log("password", password);
-      const decryptedBooks = decryptObject(books, password);
-      _setBooks(state, { books: decryptedBooks, created_at });
-    } else {
-      console.log("no password");
-      const popupData: t.PopupData = {
-        title: `Please enter your password to decrypt your books. ${state.error}`,
-        inputValue: "",
-        cancelable: false,
-        opaqueBackground: true,
-        onSubmit: (userEnteredPassword) => {
-          setEncryptionPassword(userEnteredPassword);
-          setBooks(state, { books, created_at, password: userEnteredPassword });
-        },
-      };
-      state.popupOpen = true;
-      state.popupData = popupData;
-    }
-  }
-}
-
-function _setBooks(
-  state: t.State,
-  { books, created_at }: { books: t.Book[]; created_at: number }
-) {
-  books.forEach((book) => {
-    book.chapters.forEach((chapter) => {
-      chapter.created_at = created_at;
-    });
-    book.created_at = created_at;
-  });
-  state.books = books;
-  state.editor._pushTextToEditor = nanoid();
 }

@@ -165,7 +165,6 @@ function TextEditor({
     // @ts-ignore
     const editor = quillRef.current.getEditor();
     // TODO
-
     editor.setText(currentText.text.trim());
     highlightForFocusMode();
     formatMarkdown();

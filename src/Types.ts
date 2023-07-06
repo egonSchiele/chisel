@@ -31,6 +31,7 @@ export type State = {
   serviceWorkerRunning: boolean;
   fromCache: boolean;
   _triggerSaveAll: boolean;
+  encryptionPassword: string | null;
 };
 
 export type Notification = {
@@ -442,6 +443,7 @@ export type UserSettings = {
   autocompleteCache?: { [key: string]: number };
   created_at?: number;
   encrypted?: boolean;
+  encryptionPasswordHint?: string;
 };
 
 export type DesignPreferences = {

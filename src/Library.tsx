@@ -25,10 +25,8 @@ import { AppDispatch, RootState } from "./store";
 import {
   encryptObject,
   getCsrfToken,
-  getEncryptionPassword,
   saveTextToHistory,
   setCookie,
-  setEncryptionPassword,
   today,
   useInterval,
   useLocalStorage,
@@ -294,15 +292,16 @@ export default function Library({ mobile = false }) {
 
   function maybeEncrypt(func) {
     if (settings.encrypted) {
-      const password = getEncryptionPassword();
-      if (password) {
-        func(password);
+      if (state.encryptionPassword) {
+        func(state.encryptionPassword);
       } else {
         const popupData: t.PopupData = {
           title: `Please enter your password to encrypt your books. ${state.error}`,
           inputValue: "",
           onSubmit: (userEnteredPassword) => {
-            setEncryptionPassword(userEnteredPassword);
+            dispatch(
+              librarySlice.actions.setEncryptionPassword(userEnteredPassword)
+            );
             func(userEnteredPassword);
           },
         };

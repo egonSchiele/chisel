@@ -439,11 +439,8 @@ export function _encryptMessage(message: string, password: string) {
 }
 
 export function _decryptMessage(message: string, password: string) {
-  console.log("decrypting", { message, password });
-
   var bytes = CryptoJS.AES.decrypt(message, password);
   const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-  console.log({ decrypted });
   return decrypted;
 }
 
@@ -465,11 +462,21 @@ export function decryptMessage(
   message: string,
   password: string
 ): t.DecryptedMessage {
-  if (!isEncrypted(message))
+  if (!isEncrypted(message)) {
     return {
       message,
       created_at: null,
     };
+  }
+  if (password === null) {
+    console.warn(
+      "message is encrypted but password was null. Function will throw an error."
+    );
+    return {
+      message,
+      created_at: null,
+    };
+  }
   const components = message.split(ENCRYPTION_SEPARATOR);
   const encrypted = components.slice(3).join(ENCRYPTION_SEPARATOR);
   const created_at = parseInt(components[1]);
@@ -494,7 +501,6 @@ export function traverse(someVal, func, someKey = null) {
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         const value = obj[key];
-        console.log(`traverse:${key}`);
         obj[key] = traverse(value, func, key);
       }
     }
@@ -528,19 +534,8 @@ export function isObjectEncrypted(obj) {
   traverse(obj, (key, value) => {
     if (typeof value !== "string") return false;
     if (isEncrypted(value)) {
-      console.warn("found encrypted", { key, value });
       _isEncrypted = true;
     }
   });
   return _isEncrypted;
-}
-
-export function getEncryptionPassword() {
-  const stored = JSON.parse(localStorage.getItem("encryptionPassword"));
-  const password = stored?.password || null;
-  return password;
-}
-
-export function setEncryptionPassword(password) {
-  localStorage.setItem("encryptionPassword", JSON.stringify({ password }));
 }
