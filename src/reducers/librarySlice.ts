@@ -114,6 +114,7 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
           inputValue: "",
           cancelable: false,
           opaqueBackground: true,
+          type: "password",
           onSubmit: (userEnteredPassword) => {
             dispatch(
               librarySlice.actions.setEncryptionPassword(userEnteredPassword)

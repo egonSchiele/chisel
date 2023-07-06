@@ -188,12 +188,7 @@ export default function LibraryDesktop() {
       <div className="relative h-full w-full">
         {state.popupOpen && state.popupData && (
           <LibErrorBoundary component="popup">
-            <Popup
-              title={state.popupData.title}
-              inputValue={state.popupData.inputValue}
-              options={state.popupData.options}
-              onSubmit={state.popupData.onSubmit}
-            />
+            <Popup {...state.popupData} />
           </LibErrorBoundary>
         )}
         {state.helpOpen && (

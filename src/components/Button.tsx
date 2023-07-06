@@ -29,6 +29,10 @@ export default function Button({
     colors = `${globalColors.buttonBackgroundColor} ${globalColors.buttonTextColor}`;
   }
 
+  if (disabled) {
+    colors = `bg-gray-500 ${globalColors.buttonTextColor}`;
+  }
+
   const sizes = {
     small: " py-1 px-2 text-sm",
     medium: " py-2 px-3 text-sm",

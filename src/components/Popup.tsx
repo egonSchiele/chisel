@@ -13,6 +13,7 @@ function Popup({
   options = null,
   cancelable = true,
   opaqueBackground = false,
+  type = "text",
 }: {
   title: string;
   inputValue: string;
@@ -20,6 +21,7 @@ function Popup({
   options?: t.SelectOption[] | null;
   cancelable?: boolean;
   opaqueBackground?: boolean;
+  type?: "text" | "password";
 }) {
   const [inputValueState, setInputValueState] = useState(inputValue);
   const dispatch = useDispatch();
@@ -68,6 +70,7 @@ function Popup({
           {!options && (
             <Input
               name={title}
+              type={type}
               value={inputValueState}
               onChange={(e) => setInputValueState(e.target.value)}
               ref={inputRef}

@@ -109,6 +109,7 @@ export type PopupData = {
   options?: SelectOption[];
   cancelable?: boolean;
   opaqueBackground?: boolean;
+  type?: "text" | "password";
   onSubmit: (value: string) => void;
 };
 

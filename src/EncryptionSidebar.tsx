@@ -34,6 +34,7 @@ import VersionsSidebar from "./VersionsSidebar";
 import Button from "./components/Button";
 import TextArea from "./components/TextArea";
 import { use } from "chai";
+import PasswordConfirmation from "./components/PasswordConfirmation";
 
 function ManuallyEncrypt({ password }) {
   const colors = useColors();
@@ -212,6 +213,9 @@ export default function EncryptionSidebar() {
   const editHistory: t.EditHistory[] = useSelector(
     (state: RootState) => state.library.editHistory
   );
+  const encryptionPasswordFromState: string | null = useSelector(
+    (state: RootState) => state.library.encryptionPassword
+  );
   const currentBook = useSelector(getSelectedBook);
   const currentChapter = useSelector(getSelectedChapter);
   const dispatch = useDispatch();
@@ -221,10 +225,8 @@ export default function EncryptionSidebar() {
   const books: t.Book[] = useSelector(
     (state: RootState) => state.library.books
   );
-  const [encryptionPassword, setEncryptionPassword] = useLocalStorage(
-    "encryptionPassword",
-    { password: "" }
-  );
+  const [encryptionPassword, setEncryptionPassword] = useState("");
+
   const { settings, setSettings } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
@@ -240,14 +242,14 @@ export default function EncryptionSidebar() {
   async function confirmEncrypt() {
     setSettings({ ...settings, encrypted: true });
     dispatch(librarySlice.actions.setSettingsSaved(false));
-
+    dispatch(librarySlice.actions.setEncryptionPassword(encryptionPassword));
     dispatch(librarySlice.actions.setTriggerSaveAll(true));
   }
 
   async function confirmDecrypt() {
     setSettings({ ...settings, encrypted: false });
     dispatch(librarySlice.actions.setSettingsSaved(false));
-
+    dispatch(librarySlice.actions.setEncryptionPassword(null));
     dispatch(librarySlice.actions.setTriggerSaveAll(true));
   }
 
@@ -266,27 +268,25 @@ export default function EncryptionSidebar() {
     if (isEncrypted) {
       if (editPassword) {
         items.push(
-          <Input
-            title="Password"
-            name="encryptionPassword"
-            type="password"
-            value={encryptionPassword?.password || ""}
-            onChange={(e) =>
-              setEncryptionPassword({ password: e.target.value })
-            }
-            className="my-0"
+          <PasswordConfirmation
+            value={encryptionPassword}
+            onChange={(e) => setEncryptionPassword(e.target.value)}
+            onSubmit={() => {
+              setEditPassword(false);
+              confirmEncrypt();
+            }}
           />,
           <Button
             size="medium"
             onClick={() => {
               setEditPassword(false);
             }}
-            style="secondary"
+            style="primary"
             rounded
-            className="mt-0 w-full"
-            selector={`editPasswordDoneButton`}
+            className="my-sm w-full"
+            selector={`cancelEditPasswordButton`}
           >
-            Done
+            Cancel
           </Button>
         );
       } else {
@@ -310,33 +310,22 @@ export default function EncryptionSidebar() {
     if (isEncrypted) {
       items.push(
         <p className="text-md text-gray-500 mb-xs mt-md">
-          1. Enter a password below. Remember, if you lose the password, we will
-          not be able to help you recover your data!
+          1. Enter a password below. We do not store this password anywhere. If
+          you lose the password, we will not be able to help you recover your
+          data!
         </p>,
-        <Input
-          title="Password"
-          name="encryptionPassword"
-          type="password"
-          value={encryptionPassword?.password || ""}
-          onChange={(e) => setEncryptionPassword({ password: e.target.value })}
-          className="my-0"
-        />,
         <p className="text-md text-gray-500 mb-xs mt-md">
-          2. Click confirm encryption to encrypt all of your books.
+          2. Then click confirm encryption to encrypt all of your books.
         </p>,
-        <Button
-          size="medium"
-          onClick={() => {
+        <PasswordConfirmation
+          value={encryptionPassword}
+          onChange={(e) => setEncryptionPassword(e.target.value)}
+          onSubmit={() => {
             confirmEncrypt();
             setEncryptionChanged(false);
           }}
-          style="secondary"
-          rounded
-          className="w-full"
-          selector={`confirmEncryptButton`}
-        >
-          Confirm Encryption
-        </Button>
+          onSubmitLabel="Confirm Encryption"
+        />
       );
     } else {
       items.push(
@@ -360,8 +349,9 @@ export default function EncryptionSidebar() {
     }
   }
 
-  items.push(<ManualMode password={encryptionPassword?.password || ""} />);
-
+  if (settings.admin) {
+    items.push(<ManualMode password={encryptionPasswordFromState} />);
+  }
   return (
     <List
       title="Encryption"
