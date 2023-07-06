@@ -17,6 +17,7 @@ const Input = forwardRef<any, any>(function Input(
     onKeyDown = null,
     selector = "",
     icon = null,
+    type = "text",
   },
   ref
 ) {
@@ -33,20 +34,38 @@ const Input = forwardRef<any, any>(function Input(
           {icon}
         </div>
       )}
+
       <div className="mt-xs mb-sm">
-        <input
-          type="input"
-          ref={ref}
-          name={name}
-          id={name}
-          value={value || ""}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          onKeyDown={onKeyDown}
-          className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
-          data-selector={selector}
-        />
+        {type === "text" && (
+          <input
+            type="input"
+            ref={ref}
+            name={name}
+            id={name}
+            value={value || ""}
+            onChange={onChange}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            onKeyDown={onKeyDown}
+            className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+            data-selector={selector}
+          />
+        )}
+        {type === "password" && (
+          <input
+            type="password"
+            ref={ref}
+            name={name}
+            id={name}
+            value={value || ""}
+            onChange={onChange}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            onKeyDown={onKeyDown}
+            className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+            data-selector={selector}
+          />
+        )}
       </div>
     </div>
   );
