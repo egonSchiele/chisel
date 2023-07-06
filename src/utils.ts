@@ -12,6 +12,7 @@ import { nanoid } from "nanoid";
 
 const ENCRYPTION_PREFIX = "^Encrypted!__";
 const ENCRYPTION_SEPARATOR = "||";
+const ENCRYPTION_VERSION = "v1";
 
 export function useInterval(fn: any, delay: any) {
   const saved = useRef();
@@ -448,7 +449,12 @@ export function _decryptMessage(message: string, password: string) {
 
 export function encryptMessage(message: string, password: string) {
   const encrypted = _encryptMessage(message, password);
-  const components = [ENCRYPTION_PREFIX, Date.now(), encrypted];
+  const components = [
+    ENCRYPTION_PREFIX,
+    Date.now(),
+    ENCRYPTION_VERSION,
+    encrypted,
+  ];
   return components.join(ENCRYPTION_SEPARATOR);
 }
 export function isEncrypted(message: string) {
@@ -465,7 +471,7 @@ export function decryptMessage(
       created_at: null,
     };
   const components = message.split(ENCRYPTION_SEPARATOR);
-  const encrypted = components.slice(2).join(ENCRYPTION_SEPARATOR);
+  const encrypted = components.slice(3).join(ENCRYPTION_SEPARATOR);
   const created_at = parseInt(components[1]);
   return {
     message: _decryptMessage(encrypted, password),
