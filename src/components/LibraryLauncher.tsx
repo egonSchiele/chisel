@@ -102,6 +102,12 @@ export default function LibraryLauncher({ onLauncherClose }) {
     return text;
   }
 
+  function clearCache() {
+    caches.keys().then(function (names) {
+      for (let name of names) caches.delete(name);
+    });
+  }
+
   const launchItems: MenuItem[] = [
     {
       label: "New Chapter",
@@ -768,6 +774,22 @@ export default function LibraryLauncher({ onLauncherClose }) {
     onClick: () => {
       dispatch(librarySlice.actions.closeAllTabs());
       navigate("/");
+    },
+    icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  launchItems.push({
+    label: "Close All Other Tabs",
+    onClick: () => {
+      dispatch(librarySlice.actions.closeAllOtherTabs());
+    },
+    icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+  });
+
+  launchItems.push({
+    label: "Clear Cache",
+    onClick: () => {
+      clearCache();
     },
     icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
   });

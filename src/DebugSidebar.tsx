@@ -111,7 +111,6 @@ async function backupCacheData() {
 const backupDataInCache = await backupCacheData();
 
 function clearCache() {
-  console.log("clearing cache");
   caches.keys().then(function (names) {
     for (let name of names) caches.delete(name);
   });
@@ -157,7 +156,9 @@ export default function DebugSidebar() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { settings } = useContext(LibraryContext) as LibraryContextType;
+  const { settings, setLoading } = useContext(
+    LibraryContext
+  ) as LibraryContextType;
   const colors = useColors();
 
   const line = (str) => (
@@ -197,7 +198,11 @@ export default function DebugSidebar() {
     ,
     <Button
       style="primary"
-      onClick={() => clearCache()}
+      onClick={() => {
+        setLoading(true);
+        clearCache();
+        setLoading(false);
+      }}
       key="clearCache"
       className="ml-xs mb-sm"
     >
