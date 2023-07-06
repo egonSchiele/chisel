@@ -33,6 +33,7 @@ import {
   ArrowSmallRightIcon,
   ChatBubbleLeftIcon,
   QuestionMarkCircleIcon,
+  LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
@@ -161,6 +162,17 @@ export default function LibraryLauncher({ onLauncherClose }) {
         dispatch(librarySlice.actions.toggleChat());
       },
       tooltip: "Command+shift+c",
+    },
+    {
+      label:
+        state.panels.rightSidebar.open &&
+        state.panels.rightSidebar.activePanel === "encryption"
+          ? "Close Encryption Panel"
+          : "Open Encryption Panel",
+      icon: <LockClosedIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleEncryption());
+      },
     },
 
     {
