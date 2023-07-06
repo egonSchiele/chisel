@@ -598,6 +598,10 @@ export default function Library({ mobile = false }) {
 
     bookNoChapters.chapters = [];
 
+    maybeEncrypt((password) => {
+      bookNoChapters = encryptObject(bookNoChapters, password);
+    });
+
     const result = await makeApiCall(fd.saveBook, [bookNoChapters]);
 
     if (result.tag === "success") {
