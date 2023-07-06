@@ -14,10 +14,7 @@ import BlockInfoSidebar from "./BlockInfoSidebar";
 import OutlineSidebar from "./OutlineSidebar";
 import VersionsSidebar from "./VersionsSidebar";
 import { useColors } from "./lib/hooks";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "./utils";
 
 export default function BlockSidebar({}: {}) {
   //const [selectedIndex, setSelectedIndex] = useState(tabIndex);

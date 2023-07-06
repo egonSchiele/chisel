@@ -3,11 +3,15 @@ import * as toolkitRaw from "@reduxjs/toolkit";
 import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
+  decryptObject,
+  getEncryptionPassword,
   hasVersions,
+  isObjectEncrypted,
   isString,
   localStorageOrDefault,
   parseText,
   restoreBlockFromHistory,
+  setEncryptionPassword,
   strSplice,
 } from "../utils";
 
@@ -16,6 +20,7 @@ import { current } from "immer";
 
 import sortBy from "lodash/sortBy";
 import { nanoid } from "nanoid";
+import _, { set } from "cypress/types/lodash";
 // @ts-ignore
 const { createSlice, createAsyncThunk } = toolkitRaw.default ?? toolkitRaw;
 function tab(chapterid) {
@@ -68,6 +73,8 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     saved: true,
     settingsSaved: true,
     error: "",
+    info: "",
+    notifications: [],
     loading: true,
     booksLoaded: false,
     viewMode: "default",
@@ -100,8 +107,13 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
         json;
       console.log("got books", books, deepEqual, serviceWorkerRunning);
 
+      const password = getEncryptionPassword();
       dispatch(
-        librarySlice.actions.setBooks({ books, created_at: lastEdited })
+        librarySlice.actions.setBooks({
+          books,
+          password,
+          created_at: lastEdited,
+        })
       );
 
       if (deepEqual === false) {
@@ -122,18 +134,14 @@ export const librarySlice = createSlice({
   reducers: {
     setBooks(
       state: t.State,
-      action: PayloadAction<{ books: t.Book[]; created_at: number }>
+      action: PayloadAction<{
+        books: t.Book[];
+        created_at: number;
+        password: string | null;
+      }>
     ) {
-      const { books, created_at } = action.payload;
-
-      books.forEach((book) => {
-        book.chapters.forEach((chapter) => {
-          chapter.created_at = created_at;
-        });
-        book.created_at = created_at;
-      });
-      state.books = books;
-      state.editor._pushTextToEditor = nanoid();
+      const params = action.payload;
+      setBooks(state, params);
     },
 
     setServiceWorkerRunning(state: t.State, action: PayloadAction<boolean>) {
@@ -217,9 +225,17 @@ export const librarySlice = createSlice({
     },
     setError(state: t.State, action: PayloadAction<string>) {
       state.error = action.payload;
+      state.notifications.push(notification(action.payload, "error"));
     },
-    clearError(state) {
+    clearError(state: t.State) {
       state.error = "";
+    },
+    setInfo(state: t.State, action: PayloadAction<string>) {
+      state.info = action.payload;
+      state.notifications.push(notification(action.payload, "info"));
+    },
+    clearInfo(state: t.State) {
+      state.info = "";
     },
     loading(state) {
       state.loading = true;
@@ -691,38 +707,13 @@ export const librarySlice = createSlice({
       localStorage.setItem("activePanel", action.payload);
     },
     toggleChat(state: t.State) {
-      state.viewMode = "default";
-      if (
-        state.panels.rightSidebar.open &&
-        state.panels.rightSidebar.activePanel === "chat"
-      ) {
-        state.panels.rightSidebar.open = false;
-      } else {
-        state.panels.rightSidebar.activePanel = "chat";
-        state.panels.rightSidebar.open = true;
-        localStorage.setItem("activePanel", "chat");
-      }
-      localStorage.setItem(
-        "rightSidebarOpen",
-        String(state.panels.rightSidebar.open)
-      );
+      toggleRightSidebarBase(state, "chat");
     },
     toggleSpeech(state: t.State) {
-      state.viewMode = "default";
-      if (
-        state.panels.rightSidebar.open &&
-        state.panels.rightSidebar.activePanel === "speech"
-      ) {
-        state.panels.rightSidebar.open = false;
-      } else {
-        state.panels.rightSidebar.activePanel = "speech";
-        state.panels.rightSidebar.open = true;
-        localStorage.setItem("activePanel", "speech");
-      }
-      localStorage.setItem(
-        "rightSidebarOpen",
-        String(state.panels.rightSidebar.open)
-      );
+      toggleRightSidebarBase(state, "speech");
+    },
+    toggleEncryption(state: t.State) {
+      toggleRightSidebarBase(state, "encryption");
     },
     toggleLauncher(state: t.State) {
       state.launcherOpen = !state.launcherOpen;
@@ -1597,4 +1588,82 @@ function saveToEditHistory(state: t.State, label: string) {
     books: JSON.parse(JSON.stringify(books)),
     id: nanoid(),
   });
+}
+
+function notification(message, type) {
+  return {
+    type,
+    message,
+    created_at: Date.now(),
+    id: nanoid(),
+  };
+}
+
+function toggleRightSidebarBase(state, activePanel) {
+  state.viewMode = "default";
+  if (
+    state.panels.rightSidebar.open &&
+    state.panels.rightSidebar.activePanel === activePanel
+  ) {
+    state.panels.rightSidebar.open = false;
+  } else {
+    state.panels.rightSidebar.activePanel = activePanel;
+    state.panels.rightSidebar.open = true;
+    localStorage.setItem("activePanel", activePanel);
+  }
+  localStorage.setItem(
+    "rightSidebarOpen",
+    String(state.panels.rightSidebar.open)
+  );
+}
+
+function setBooks(
+  state: t.State,
+  {
+    books,
+    created_at,
+    password,
+  }: { books: t.Book[]; created_at: number; password: string | null }
+) {
+  const isEncrypted = isObjectEncrypted(books);
+
+  if (!isEncrypted) {
+    console.log("not encrypted");
+    _setBooks(state, { books, created_at });
+  } else {
+    console.log("encrypted");
+    if (password) {
+      console.log("password", password);
+      const decryptedBooks = decryptObject(books, password);
+      _setBooks(state, { books: decryptedBooks, created_at });
+    } else {
+      console.log("no password");
+      const popupData: t.PopupData = {
+        title: `Please enter your password to decrypt your books. ${state.error}`,
+        inputValue: "",
+        cancelable: false,
+        opaqueBackground: true,
+        onSubmit: (userEnteredPassword) => {
+          setEncryptionPassword(userEnteredPassword);
+          setBooks(state, { books, created_at, password: userEnteredPassword });
+        },
+      };
+      state.popupOpen = true;
+      state.popupData = popupData;
+    }
+  }
+}
+
+function _setBooks(
+  state: t.State,
+  { books, created_at }: { books: t.Book[]; created_at: number }
+) {
+  books.forEach((book) => {
+    book.chapters.forEach((chapter) => {
+      chapter.created_at = created_at;
+    });
+    book.created_at = created_at;
+  });
+  state.books = books;
+  state.editor._pushTextToEditor = nanoid();
 }

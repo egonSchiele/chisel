@@ -69,7 +69,7 @@ export default function ChatSidebar() {
   }
 
   async function sendChat() {
-    const contextSize = 10;
+    const contextSize = 3;
     const start = Math.max(0, chatHistory.length - contextSize);
     const end = chatHistory.length - 1;
     let prompt = chatInput;

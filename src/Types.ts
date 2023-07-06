@@ -3,6 +3,8 @@ import { nanoid } from "nanoid";
 export type State = {
   books: Book[];
   error: string;
+  info: string;
+  notifications: Notification[];
   loading: boolean;
   booksLoaded: boolean;
   selectedBookId: string | null;
@@ -30,6 +32,13 @@ export type State = {
   fromCache: boolean;
 };
 
+export type Notification = {
+  id: string;
+  message: string;
+  created_at: number;
+  type: "error" | "info";
+};
+
 export type EditHistory = {
   id: string;
   label: string;
@@ -55,7 +64,8 @@ export type ActivePanel =
   | "settings"
   | "history"
   | "chat"
-  | "speech";
+  | "speech"
+  | "encryption";
 
 export type LeftActivePanel =
   | "filenavigator"
@@ -95,6 +105,8 @@ export type PopupData = {
   title: string;
   inputValue: string;
   options?: SelectOption[];
+  cancelable?: boolean;
+  opaqueBackground?: boolean;
   onSubmit: (value: string) => void;
 };
 
@@ -428,6 +440,7 @@ export type UserSettings = {
   admin?: boolean;
   autocompleteCache?: { [key: string]: number };
   created_at?: number;
+  encrypted?: boolean;
 };
 
 export type DesignPreferences = {
@@ -532,4 +545,9 @@ export type LibraryContextType = {
 export type ChatHistory = {
   role: "user" | "system";
   content: string;
+};
+
+export type DecryptedMessage = {
+  message: string;
+  created_at: number;
 };

@@ -53,6 +53,7 @@ import DebugSidebar from "./DebugSidebar";
 import Help from "./Help";
 import SearchSidebar from "./SearchSidebar";
 import SpeechSidebar from "./SpeechSidebar";
+import EncryptionSidebar from "./EncryptionSidebar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -113,6 +114,8 @@ export default function LibraryDesktop() {
   const rightSidebarOpen = !!(
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel !== "chat" &&
+    state.panels.rightSidebar.activePanel !== "speech" &&
+    state.panels.rightSidebar.activePanel !== "encryption" &&
     state.viewMode !== "focus" &&
     currentChapter &&
     !mobile
@@ -121,6 +124,13 @@ export default function LibraryDesktop() {
   const chatOpen = !!(
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel === "chat" &&
+    state.viewMode !== "focus" &&
+    currentChapter
+  );
+
+  const encryptionOpen = !!(
+    state.panels.rightSidebar.open &&
+    state.panels.rightSidebar.activePanel === "encryption" &&
     state.viewMode !== "focus" &&
     currentChapter
   );
@@ -145,6 +155,17 @@ export default function LibraryDesktop() {
           <div
             className="cursor-pointer flex-none"
             onClick={() => dispatch(librarySlice.actions.clearError())}
+          >
+            <XMarkIcon className="w-5 h-5 my-auto" />
+          </div>
+        </div>
+      )}
+      {state.info && (
+        <div className="bg-green-700 p-2 text-white flex">
+          <p className="flex-grow">{state.info}</p>
+          <div
+            className="cursor-pointer flex-none"
+            onClick={() => dispatch(librarySlice.actions.clearInfo())}
           >
             <XMarkIcon className="w-5 h-5 my-auto" />
           </div>
@@ -406,6 +427,20 @@ export default function LibraryDesktop() {
             <SlideTransition show={chatOpen} direction="right">
               <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
                 <ChatSidebar />
+              </div>
+            </SlideTransition>
+          </PanelPlaceholder>
+        </LibErrorBoundary>
+
+        <LibErrorBoundary component="encryption">
+          <PanelPlaceholder
+            loaded={state.booksLoaded}
+            show={state.panels.rightSidebar.open}
+            className="top-0 right-0"
+          >
+            <SlideTransition show={encryptionOpen} direction="right">
+              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+                <EncryptionSidebar />
               </div>
             </SlideTransition>
           </PanelPlaceholder>

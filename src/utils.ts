@@ -1,3 +1,6 @@
+import cloneDeep from "lodash/cloneDeep";
+
+import CryptoJS from "crypto-js";
 import React, { useRef, useEffect, useState, SetStateAction } from "react";
 
 import * as fd from "./lib/fetchData";
@@ -6,6 +9,9 @@ import { librarySlice } from "./reducers/librarySlice";
 import * as t from "./Types";
 import { Dispatch, AnyAction } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
+
+const ENCRYPTION_PREFIX = "^Encrypted!__";
+const ENCRYPTION_SEPARATOR = "||";
 
 export function useInterval(fn: any, delay: any) {
   const saved = useRef();
@@ -424,4 +430,110 @@ export function prettySeconds(seconds: number) {
 
 export function prettyDate(timestamp: number) {
   return new Date(timestamp).toLocaleString();
+}
+
+export function _encryptMessage(message: string, password: string) {
+  console.log("encrypting", { message, password });
+  return CryptoJS.AES.encrypt(message, password).toString();
+}
+
+export function _decryptMessage(message: string, password: string) {
+  console.log("decrypting", { message, password });
+
+  var bytes = CryptoJS.AES.decrypt(message, password);
+  const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+  console.log({ decrypted });
+  return decrypted;
+}
+
+export function encryptMessage(message: string, password: string) {
+  const encrypted = _encryptMessage(message, password);
+  const components = [ENCRYPTION_PREFIX, Date.now(), encrypted];
+  return components.join(ENCRYPTION_SEPARATOR);
+}
+export function isEncrypted(message: string) {
+  return message.startsWith(ENCRYPTION_PREFIX);
+}
+
+export function decryptMessage(
+  message: string,
+  password: string
+): t.DecryptedMessage {
+  if (!isEncrypted(message))
+    return {
+      message,
+      created_at: null,
+    };
+  const components = message.split(ENCRYPTION_SEPARATOR);
+  const encrypted = components.slice(2).join(ENCRYPTION_SEPARATOR);
+  const created_at = parseInt(components[1]);
+  return {
+    message: _decryptMessage(encrypted, password),
+    created_at,
+  };
+}
+
+export function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
+export function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == "object" || type == "function");
+}
+
+export function traverse(someVal, func, someKey = null) {
+  if (isObject(someVal)) {
+    const obj = cloneDeep(someVal);
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        console.log(`traverse:${key}`);
+        obj[key] = traverse(value, func, key);
+      }
+    }
+    return obj;
+  } else if (Array.isArray(someVal)) {
+    return someVal.map((item, i) => traverse(item, func, i));
+  } else {
+    return func(someKey, someVal);
+  }
+}
+
+export function encryptObject(obj, password) {
+  const exclude = ["id", "chapterid", "bookid", "userid", "tag"];
+  return traverse(obj, (key, value) => {
+    if (exclude.includes(key)) return value;
+    if (typeof value !== "string") return value;
+    return encryptMessage(value, password);
+  });
+}
+
+export function decryptObject(obj, password) {
+  return traverse(obj, (key, value) => {
+    if (typeof value !== "string") return value;
+    return decryptMessage(value, password).message;
+  });
+}
+
+export function isObjectEncrypted(obj) {
+  let _isEncrypted = false;
+  traverse(obj, (key, value) => {
+    if (typeof value !== "string") return false;
+    if (isEncrypted(value)) {
+      console.warn("found encrypted", { key, value });
+      _isEncrypted = true;
+    }
+  });
+  return _isEncrypted;
+}
+
+export function getEncryptionPassword() {
+  const stored = JSON.parse(localStorage.getItem("encryptionPassword"));
+  const password = stored?.password || null;
+  return password;
+}
+
+export function setEncryptionPassword(password) {
+  localStorage.setItem("encryptionPassword", JSON.stringify({ password }));
 }
