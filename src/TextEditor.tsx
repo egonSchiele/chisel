@@ -480,10 +480,14 @@ function TextEditor({
       if (event.code === "ArrowDown" || event.code === "ArrowUp") {
         event.preventDefault();
         dispatch(librarySlice.actions.extractBlock());
+        // @ts-ignore
+        window.plausible("keyboard-shortcut-extract-block");
       }
     } else if (event.shiftKey && event.code === "Tab") {
       event.preventDefault();
       setOpen(false);
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-close-block");
     } else if (event.code === "ArrowDown") {
       if (quillRef && quillRef.current) {
         // @ts-ignore

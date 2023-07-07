@@ -41,6 +41,7 @@ export default function BlockActionsSidebar({}: {}) {
       dispatch(librarySlice.actions.newBlockBeforeCurrent());
     },
     icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+    plausibleEventName: "block-info-new-block-before-current",
   });
 
   items.push({
@@ -49,6 +50,7 @@ export default function BlockActionsSidebar({}: {}) {
       dispatch(librarySlice.actions.newBlockAfterCurrent());
     },
     icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
+    plausibleEventName: "block-info-new-block-after-current",
   });
 
   if (state.selectedText && state.selectedText.length > 0) {
@@ -59,6 +61,7 @@ export default function BlockActionsSidebar({}: {}) {
       },
       icon: <Bars3Icon className="h-4 w-4" aria-hidden="true" />,
       tooltip: "Alt+Shift+Down",
+      plausibleEventName: "block-info-extract-block",
     });
   }
   if (state.activeTextIndex !== 0) {
@@ -68,6 +71,7 @@ export default function BlockActionsSidebar({}: {}) {
         dispatch(librarySlice.actions.mergeBlockUp());
       },
       icon: <BarsArrowUpIcon className="h-4 w-4" aria-hidden="true" />,
+      plausibleEventName: "block-info-merge-block-up",
     });
   }
   if (state.activeTextIndex !== currentChapter!.text.length - 1) {
@@ -77,6 +81,7 @@ export default function BlockActionsSidebar({}: {}) {
         dispatch(librarySlice.actions.mergeBlockDown());
       },
       icon: <BarsArrowDownIcon className="h-4 w-4" aria-hidden="true" />,
+      plausibleEventName: "block-info-merge-block-down",
     });
   }
   if (
@@ -89,6 +94,7 @@ export default function BlockActionsSidebar({}: {}) {
         dispatch(librarySlice.actions.mergeBlockSurrounding());
       },
       icon: <ArrowsUpDownIcon className="h-4 w-4" aria-hidden="true" />,
+      plausibleEventName: "block-info-merge-block-surrounding",
     });
   }
 
@@ -98,6 +104,7 @@ export default function BlockActionsSidebar({}: {}) {
       dispatch(librarySlice.actions.setViewMode("diff"));
     },
     icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
+    plausibleEventName: "block-info-diff-with-block-below",
   });
 
   items.push({
@@ -106,6 +113,7 @@ export default function BlockActionsSidebar({}: {}) {
       dispatch(librarySlice.actions.deleteBlock(index));
     },
     icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+    plausibleEventName: "block-info-delete-block",
   });
 
   items.forEach((item) => {
@@ -117,6 +125,7 @@ export default function BlockActionsSidebar({}: {}) {
         onClick={item.onClick}
         key={item.label}
         className="w-full my-xs flex"
+        plausibleEventName={item.plausibleEventName || ""}
       >
         {/* <span className="mr-xs">{item.icon}</span>  */}
         <p className="mx-auto">{item.label}</p>

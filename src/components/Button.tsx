@@ -11,6 +11,7 @@ export default function Button({
   size = "medium",
   style = "primary",
   selector = "",
+  plausibleEventName = "",
 }: {
   size?: ButtonSize;
   children: any;
@@ -20,6 +21,7 @@ export default function Button({
   rounded?: boolean;
   style?: "primary" | "secondary";
   selector?: string;
+  plausibleEventName?: string;
 }) {
   const globalColors = useColors();
 
@@ -49,11 +51,21 @@ export default function Button({
 
   const roundedCss = rounded ? rounds[size] : "";
 
+  let _plausibleEventName = plausibleEventName;
+  if (_plausibleEventName === "" && selector !== "") {
+    _plausibleEventName = `button-click-${selector}`;
+  }
+
+  let plausibleEventCss = "";
+  if (_plausibleEventName !== "") {
+    plausibleEventCss = `plausible-event-name=${_plausibleEventName}`;
+  }
+
   return (
     <button
       type="button"
       disabled={disabled}
-      className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 plausible-event-name=button-click-${selector} ${colors} ${sizeCss} ${roundedCss} ${className}`}
+      className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${plausibleEventCss} ${colors} ${sizeCss} ${roundedCss} ${className}`}
       data-selector={selector}
       onClick={onClick}
     >

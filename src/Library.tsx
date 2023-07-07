@@ -172,19 +172,29 @@ export default function Library({ mobile = false }) {
     if (event.metaKey && event.shiftKey && event.code === "KeyS") {
       event.preventDefault();
       onTextEditorSave(state, true);
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-save-and-add-to-history");
     }
     if (event.metaKey && event.code === "KeyS") {
       event.preventDefault();
       onTextEditorSave(state, false);
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-save");
     } else if (event.metaKey && event.shiftKey && event.code === "KeyO") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleFileNavigator());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-file-navigator");
     } else if (event.metaKey && event.shiftKey && event.code === "KeyV") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleVersions());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-versions");
     } else if (event.metaKey && event.shiftKey && event.code === "KeyT") {
       event.preventDefault();
       newChapter();
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-new-chapter");
     } else if (event.metaKey && event.shiftKey && event.code === "KeyX") {
       if (!state.activeTab) return;
       const chapter = state.openTabs[state.activeTab];
@@ -217,11 +227,18 @@ export default function Library({ mobile = false }) {
       } else {
         dispatch(librarySlice.actions.openAllPanels());
       }
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-esc");
     } else if (event.metaKey && event.shiftKey && event.key === "p") {
       event.preventDefault();
       dispatch(librarySlice.actions.togglePrompts());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-prompts");
     } else if (event.metaKey && event.shiftKey && event.key === "d") {
       event.preventDefault();
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-diff");
+
       if (state.viewMode === "diff") {
         dispatch(librarySlice.actions.setViewMode("default"));
         return;
@@ -235,9 +252,13 @@ export default function Library({ mobile = false }) {
     } else if (event.shiftKey && event.metaKey && event.key === "c") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleChat());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-chat");
     } else if (event.shiftKey && event.metaKey && event.key === "m") {
       event.preventDefault();
       await newCompostNote();
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-new-compost-note");
     } else if (event.shiftKey && event.metaKey && event.key === "r") {
       event.preventDefault();
       if (state.viewMode === "readonly") {
@@ -246,9 +267,14 @@ export default function Library({ mobile = false }) {
         dispatch(librarySlice.actions.setViewMode("readonly"));
         dispatch(librarySlice.actions.closeAllPanels());
       }
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-readonly");
     } else if (event.shiftKey && event.metaKey && event.key === "f") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleSearch());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-find");
+
       /*   if (state.viewMode === "focus") {
         dispatch(librarySlice.actions.setViewMode("default"));
       } else {
@@ -257,12 +283,18 @@ export default function Library({ mobile = false }) {
     } else if (event.metaKey && event.key === "p") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleLauncher());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-launcher");
     } else if (event.shiftKey && event.metaKey && event.key === "b") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleOutline());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-outline");
     } else if (event.metaKey && event.key === "b") {
       event.preventDefault();
       dispatch(librarySlice.actions.toggleBlocks());
+      // @ts-ignore
+      window.plausible("keyboard-shortcut-blocks");
     }
   });
 

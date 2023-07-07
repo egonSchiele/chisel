@@ -516,6 +516,7 @@ export type MenuItem = {
   icon?: any;
   onClick: () => any;
   className?: string;
+  plausibleEventName?: string;
 };
 
 export type ReducerAction = {

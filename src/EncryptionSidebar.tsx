@@ -244,6 +244,8 @@ export default function EncryptionSidebar() {
     dispatch(librarySlice.actions.setSettingsSaved(false));
     dispatch(librarySlice.actions.setEncryptionPassword(encryptionPassword));
     dispatch(librarySlice.actions.setTriggerSaveAll(true));
+    // @ts-ignore
+    window.plausible("encryption-confirm-encrypt");
   }
 
   async function confirmDecrypt() {
@@ -251,6 +253,8 @@ export default function EncryptionSidebar() {
     dispatch(librarySlice.actions.setSettingsSaved(false));
     dispatch(librarySlice.actions.setEncryptionPassword(null));
     dispatch(librarySlice.actions.setTriggerSaveAll(true));
+    // @ts-ignore
+    window.plausible("encryption-confirm-decrypt");
   }
 
   const items = [
@@ -260,6 +264,8 @@ export default function EncryptionSidebar() {
       setEnabled={(enabled) => {
         setEncryptionChanged(true);
         setIsEncrypted(enabled);
+        // @ts-ignore
+        window.plausible("switch-encrypt", { props: { enabled } });
       }}
       divClassName="mt-sm"
     />,

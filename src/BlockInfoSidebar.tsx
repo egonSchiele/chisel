@@ -264,9 +264,11 @@ export default function BlockInfoSidebar({}: {}) {
       <Switch
         label="Pin"
         enabled={currentText.reference}
-        setEnabled={() =>
-          dispatch(librarySlice.actions.toggleReference(state.activeTextIndex))
-        }
+        setEnabled={(enabled) => {
+          dispatch(librarySlice.actions.toggleReference(state.activeTextIndex));
+          // @ts-ignore
+          window.plausible("block-info-pin", { props: { enabled } });
+        }}
         divClassName="mt-sm"
       />
     </li>
@@ -277,11 +279,13 @@ export default function BlockInfoSidebar({}: {}) {
       <Switch
         label="Hide in Export"
         enabled={currentText.hideInExport}
-        setEnabled={() =>
+        setEnabled={(enabled) => {
           dispatch(
             librarySlice.actions.toggleHideInExport(state.activeTextIndex)
-          )
-        }
+          );
+          // @ts-ignore
+          window.plausible("block-info-hide-in-export", { props: { enabled } });
+        }}
         divClassName="mt-sm"
       />
     </li>
@@ -292,14 +296,16 @@ export default function BlockInfoSidebar({}: {}) {
       <BlockCaption
         // @ts-ignore
         caption={currentText.caption}
-        setCaption={(newCaption) =>
+        setCaption={(newCaption) => {
           dispatch(
             librarySlice.actions.addCaption({
               index: state.activeTextIndex,
               caption: newCaption,
             })
-          )
-        }
+          );
+          // @ts-ignore
+          window.plausible("block-info-add-caption");
+        }}
       />
     </li>
   );

@@ -44,6 +44,11 @@ export default function ListItem({
   }
   _onClick = _onClick || (() => {});
   const selectedCss = selected ? "border-l-4 border-gray-500" : "";
+  let plausibleEventNameCss = "";
+  if (plausibleEventName) {
+    plausibleEventNameCss = `plausible-event-name=${plausibleEventName}`;
+    plausibleEventNameCss += ` plausible-event-title=${title}`;
+  }
   return (
     <div
       className={`flex  w-full ${colors.primaryTextColor} text-sm xl:text-md items-center ${colors.itemHover} ${selectedCss} `}
@@ -52,7 +57,7 @@ export default function ListItem({
         onClick={_onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer plausible-event-name=${plausibleEventName}`}
+        className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer ${plausibleEventNameCss}`}
         data-selector={`${selector}-list-item-link`}
       >
         {!content && (

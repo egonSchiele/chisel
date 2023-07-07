@@ -113,17 +113,20 @@ export default function LibraryLauncher({ onLauncherClose }) {
       label: "New Chapter",
       onClick: newChapter,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      plausibleEventName: "new-chapter",
     },
     {
       label: "New Book",
       onClick: newBook,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
+      plausibleEventName: "new-book",
     },
     {
       label: "New Compost Note",
       onClick: newCompostNote,
       icon: <PlusIcon className="h-4 w-4" aria-hidden="true" />,
       tooltip: "Command+Shift+m",
+      plausibleEventName: "new-compost-note",
     },
     /*  {
       label: "Grid",
@@ -792,6 +795,7 @@ export default function LibraryLauncher({ onLauncherClose }) {
       clearCache();
     },
     icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
+    plausibleEventName: "clear-cache",
   });
 
   function onChoose(item: t.MenuItem) {

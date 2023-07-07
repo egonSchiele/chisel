@@ -99,6 +99,10 @@ export default function Launcher({
                 onChange={(item: MenuItem) => {
                   item.onClick();
                   onChoose(item);
+                  if (item.plausibleEventName) {
+                    // @ts-ignore
+                    window.plausible("launcher-" + item.plausibleEventName);
+                  }
                   close();
                 }}
               >
