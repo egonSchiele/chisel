@@ -131,8 +131,7 @@ export default function LibraryDesktop() {
   const encryptionOpen = !!(
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel === "encryption" &&
-    state.viewMode !== "focus" &&
-    currentChapter
+    state.viewMode !== "focus"
   );
 
   const speechOpen = !!(
