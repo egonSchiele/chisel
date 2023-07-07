@@ -4,6 +4,7 @@ import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
   decryptObject,
+  encryptObject,
   hasVersions,
   isObjectEncrypted,
   isString,
@@ -203,7 +204,11 @@ export const librarySlice = createSlice({
       state.booksLoaded = action.payload;
     },
     newBook(state: t.State, action: PayloadAction<t.Book>) {
-      state.books.push(action.payload);
+      let books = action.payload;
+      if (state.encryptionPassword !== null) {
+        books = encryptObject(books, state.encryptionPassword);
+      }
+      state.books.push(books);
     },
     setBook(state: t.State, action: PayloadAction<string | null>) {
       state.selectedBookId = action.payload;
@@ -248,8 +253,15 @@ export const librarySlice = createSlice({
       const { chapter, bookid } = action.payload;
       const book = state.books.find((book) => book.bookid === bookid);
       if (!book) return;
-      book.chapters.push(chapter);
-      book.chapterOrder.push(chapter.chapterid);
+      let decryptedChapter = { ...chapter };
+      if (state.encryptionPassword !== null) {
+        decryptedChapter = decryptObject(
+          decryptedChapter,
+          state.encryptionPassword
+        );
+      }
+      book.chapters.push(decryptedChapter);
+      book.chapterOrder.push(decryptedChapter.chapterid);
     },
     setChapter(state: t.State, action: PayloadAction<string>) {
       const chapterId = action.payload;
