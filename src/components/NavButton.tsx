@@ -33,10 +33,12 @@ export default function NavButton({
       : `${colors.navBackgroundColor} ${colors.secondaryTextColor}`;
   }
 
+  const plausibleLabel = label.replace(" ", "-").toLowerCase();
+
   return (
     <button
       type="button"
-      className={`relative my-auto inline-flex items-center h-full px-xs py-1 rounded-none hover:bg-gray-50 ring-0 dark:hover:bg-dmsidebar ${animCss} ${className} ${selectedCss}`}
+      className={`relative my-auto inline-flex items-center h-full px-xs py-1 rounded-none hover:bg-gray-50 ring-0 dark:hover:bg-dmsidebar plausible-event-name=nav-button-click-${plausibleLabel} ${animCss} ${className} ${selectedCss}`}
       onClick={onClick}
       data-selector={selector}
       title={label}

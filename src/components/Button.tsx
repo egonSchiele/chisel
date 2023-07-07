@@ -53,7 +53,7 @@ export default function Button({
     <button
       type="button"
       disabled={disabled}
-      className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${colors} ${sizeCss} ${roundedCss} ${className}`}
+      className={`shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 plausible-event-name=button-click-${selector} ${colors} ${sizeCss} ${roundedCss} ${className}`}
       data-selector={selector}
       onClick={onClick}
     >

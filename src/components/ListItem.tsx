@@ -15,6 +15,7 @@ export default function ListItem({
   content = "",
   className = "",
   contentClassName = "",
+  plausibleEventName = "",
   onClick = null,
   onMouseEnter = () => {},
   onMouseLeave = () => {},
@@ -28,6 +29,7 @@ export default function ListItem({
   content?: string;
   className?: string;
   contentClassName?: string;
+  plausibleEventName?: string;
   onClick?: MouseEventHandler<HTMLDivElement> | undefined | null;
   onMouseEnter?: MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: MouseEventHandler<HTMLDivElement>;
@@ -50,7 +52,7 @@ export default function ListItem({
         onClick={_onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer`}
+        className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer plausible-event-name=${plausibleEventName}`}
         data-selector={`${selector}-list-item-link`}
       >
         {!content && (

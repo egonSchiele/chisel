@@ -71,6 +71,7 @@ export default function PromptsSidebar({
       <ListItem
         title={prompt.label}
         selected={false}
+        plausibleEventName="prompt-click"
         onClick={() =>
           fetchSuggestionsWrapper(
             settings,

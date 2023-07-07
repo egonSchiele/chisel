@@ -121,7 +121,13 @@ export default function ChatSidebar() {
       rows={6}
       inputClassName="!text-lg"
     />,
-    <Button style="secondary" key="send" onClick={sendChat} className="w-full">
+    <Button
+      style="secondary"
+      key="send"
+      onClick={sendChat}
+      className="w-full"
+      selector="chat-send"
+    >
       Send
     </Button>
   );
