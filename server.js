@@ -350,11 +350,11 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
       return;
     }
 
-    let oldPath = files.audioFile.filepath;
-    let newPath = "uploads/" + files.audioFile.originalFilename;
-    newPath = newPath.replaceAll(/[^a-zA-Z1-9_.-]/g, "_");
-    let rawData = fs.readFileSync(oldPath);
-    let audioBlob = new Blob([rawData]);
+    const oldPath = files.audioFile.filepath;
+    const ext = path.extname(files.audioFile.originalFilename);
+    const newPath = "uploads/" + nanoid() + ext;
+    console.log({ newPath, oldPath });
+    const rawData = fs.readFileSync(oldPath);
 
     run("mkdir -p uploads");
     fs.writeFileSync(newPath, rawData, function (err) {
@@ -375,8 +375,8 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
   --header 'Content-Type: multipart/form-data' \
   --form file=@${mp3Path} \
   --form model=whisper-1`);
-    // run(`mv ${mp3Path} _trash.${mp3Path}`);
-    // run(`mv ${newPath} _trash.${newPath}`);
+    run(`mv ${mp3Path} ${mp3Path}.trash`);
+    run(`mv ${newPath} ${newPath}.trash`);
     console.log({ response });
     const json = JSON.parse(response);
     if (json.error) {
@@ -455,7 +455,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
     book.chapters.push(newChapter);
   });
   await Promise.all(promises);
-  const promptText = chapters
+  /*const promptText = chapters
     .map((chapter) => chapter.text)
     .join("\n\n")
     .substring(0, 10000);
@@ -490,7 +490,7 @@ app.post("/api/uploadBook", requireLogin, async (req, res) => {
     }
   } else {
     book.synopsis = suggestions.message;
-  }
+  }*/
 
   const updateData = {
     eventName: "bookCreate",
@@ -832,7 +832,7 @@ app.get("/api/textToSpeech/:s3key", requireAdmin, async (req, res) => {
 app.post("/api/settings", requireLogin, async (req, res) => {
   const { settings } = req.body;
   const lastHeardFromServer = req.cookies.lastHeardFromServer;
-  console.log("saving settings", settings);
+  //console.log("saving settings", settings);
   if (!settings) {
     console.log("no settings");
     res.status(404).end();
@@ -1307,6 +1307,14 @@ async function getSuggestions(
 
   for (const index in instantBlocklist) {
     const term = instantBlocklist[index];
+    /*  console.log({
+      index,
+      term,
+      prompt,
+      promptLower: prompt.toLowerCase(),
+      termLower: term.toLowerCase(),
+      includes: prompt.toLowerCase().includes(term.toLowerCase()),
+    }); */
     if (prompt.toLowerCase().includes(term.toLowerCase())) {
       console.log("failing early, prompt:", prompt);
       return failure("fetch failed");
