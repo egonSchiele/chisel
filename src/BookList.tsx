@@ -12,6 +12,7 @@ import { librarySlice } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { LibraryContextType } from "./Types";
 import { useColors } from "./lib/hooks";
+import { encryptMessage } from "./utils";
 
 async function deleteBook(bookid: string, onDelete) {
   onDelete(bookid);
@@ -30,6 +31,10 @@ export default function BookList({ cachedBooks = null }) {
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
   const selectedBookId = useSelector(
     (state: RootState) => state.library.selectedBookId
+  );
+
+  const encryptionPassword: string | null = useSelector(
+    (state: RootState) => state.library.encryptionPassword
   );
 
   const dispatch = useDispatch();
@@ -167,7 +172,10 @@ export default function BookList({ cachedBooks = null }) {
     const chapters: { title: string; text: string }[] = [];
 
     const promises = [...files].map(async (file, i) => {
-      const text = await file.text();
+      let text = await file.text();
+      if (encryptionPassword !== null) {
+        text = encryptMessage(text, encryptionPassword);
+      }
       chapters.push({ title: file.name, text });
     });
 

@@ -19,7 +19,13 @@ import Button from "./components/Button";
 import ListMenu from "./components/ListMenu";
 import ListItem from "./components/ListItem";
 import Popup from "./components/Popup";
-import { getChapterText, getCsrfToken, useLocalStorage } from "./utils";
+import {
+  decryptMessage,
+  encryptMessage,
+  getChapterText,
+  getCsrfToken,
+  useLocalStorage,
+} from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 import Input from "./components/Input";
 import { RootState } from "./store";
@@ -43,7 +49,9 @@ export default function ChapterList({
   const dispatch = useDispatch();
 
   const chapters = useSelector(getSelectedBookChapters) || [];
-
+  const encryptionPassword: string | null = useSelector(
+    (state: RootState) => state.library.encryptionPassword
+  );
   const bookOptions = useSelector((state: RootState) =>
     sortBy(state.library.books, ["title"]).map((book) => ({
       label: book.title,
@@ -98,7 +106,10 @@ export default function ChapterList({
   function handleUpload(x) {
     const files = x.target.files;
     [...files].forEach(async (file, i) => {
-      const text = await file.text();
+      let text = await file.text();
+      if (encryptionPassword !== null) {
+        text = encryptMessage(text, encryptionPassword);
+      }
       await newChapter(file.name, text);
     });
   }

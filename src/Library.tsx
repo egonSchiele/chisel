@@ -23,6 +23,7 @@ import {
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import {
+  encryptMessage,
   encryptObject,
   getCsrfToken,
   saveTextToHistory,
@@ -46,7 +47,9 @@ export default function Library({ mobile = false }) {
   const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
   const [usage, setUsage] = useState<t.Usage | null>(null);
   const [triggerHistoryRerender, setTriggerHistoryRerender] = useState(0);
-
+  const encryptionPassword: string | null = useSelector(
+    (state: RootState) => state.library.encryptionPassword
+  );
   useEffect(() => {
     if (settings.theme === "dark" || settings.theme === "default") {
       document.documentElement.classList.add("dark");
@@ -403,10 +406,14 @@ export default function Library({ mobile = false }) {
 
   async function newChapter(
     title = "New Chapter",
-    text = "",
+    _text = "",
     _bookid: string | null = null
   ) {
     const theBookid = _bookid || bookid;
+    let text = _text;
+    if (encryptionPassword !== null) {
+      text = encryptMessage(text, encryptionPassword);
+    }
     const result = await makeApiCall(fd.newChapter, [theBookid, title, text]);
     if (result.tag === "success") {
       const chapter = result.payload;
