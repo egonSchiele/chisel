@@ -441,10 +441,15 @@ export function _encryptMessage(message: string, password: string) {
 export function _decryptMessage(message: string, password: string) {
   var bytes = CryptoJS.AES.decrypt(message, password);
   const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+  console.log("decrypted", { decrypted, message, password });
   return decrypted;
 }
 
 export function encryptMessage(message: string, password: string) {
+  if (isEncrypted(message)) {
+    console.warn("message is already encrypted", message);
+    return message;
+  }
   const encrypted = _encryptMessage(message, password);
   const components = [
     ENCRYPTION_PREFIX,
@@ -463,6 +468,7 @@ export function decryptMessage(
   password: string
 ): t.DecryptedMessage {
   if (!isEncrypted(message)) {
+    console.log("not encrypted", message);
     return {
       message,
       created_at: null,
@@ -501,19 +507,29 @@ export function traverse(someVal, func, someKey = null) {
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         const value = obj[key];
-        obj[key] = traverse(value, func, key);
+        const result = traverse(value, func, key);
+        obj[key] = result;
       }
     }
     return obj;
   } else if (Array.isArray(someVal)) {
-    return someVal.map((item, i) => traverse(item, func, i));
+    let arr = [...someVal];
+    arr = arr.map((item, i) => traverse(item, func, i));
+    return arr;
   } else {
     return func(someKey, someVal);
   }
 }
 
 export function encryptObject(obj, password) {
-  const exclude = ["id", "chapterid", "bookid", "userid", "tag"];
+  const exclude = [
+    "id",
+    "chapterid",
+    "bookid",
+    "userid",
+    "tag",
+    "encryptionPasswordHint",
+  ];
 
   return traverse(obj, (key, value) => {
     if (exclude.includes(key)) return value;
