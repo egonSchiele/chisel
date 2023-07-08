@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import React, { useContext } from "react";
 import {
+  getAllTags,
   getSelectedBook,
   getSelectedBookChapters,
   librarySlice,
@@ -14,7 +15,7 @@ import TextArea from "./components/TextArea";
 import { Book, Character } from "./Types";
 import Button from "./components/Button";
 import Input from "./components/Input";
-import { getChapterText, getFontSizeClass, isString } from "./utils";
+import { getChapterText, getFontSizeClass, getTags, isString } from "./utils";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { chapterToMarkdown } from "./serverUtils";
@@ -499,8 +500,21 @@ function Heading({ text, className = "", children = null }) {
   );
 }
 
+function Tag({ tag, className = "", onClick = null }) {
+  const colors = useColors();
+  return (
+    <div
+      className={`${colors.backgroundAlt} ${colors.primaryTextColor} border ${colors.selectedBorderColor} rounded-md text-sm px-2 py-1 mr-xs h-full ${className}`}
+      onClick={onClick}
+    >
+      {tag}
+    </div>
+  );
+}
+
 function Tags() {
   const book = useSelector(getSelectedBook);
+  const tags = useSelector(getAllTags);
   const [editing, setEditing] = React.useState(false);
   const dispatch = useDispatch();
   const colors = useColors();
@@ -508,35 +522,57 @@ function Tags() {
   if (editing) {
     return (
       <div className="flex w-full">
-        <div className="flex w-96 mx-auto">
-          <label
-            htmlFor={"tags"}
-            className={`settings_label flex-none mr-xs my-auto`}
-          >
-            Tags
-          </label>
-          <Input
-            name="tags"
-            className="flex-grow mr-sm"
-            divClassName=""
-            value={book.tags || ""}
-            onChange={(e) => {
-              dispatch(librarySlice.actions.setBookTags(e.target.value));
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setEditing(false);
-              }
-            }}
-          />
+        <div className="w-96 mx-auto grid grid-cols-1">
+          <div className="flex">
+            <label
+              htmlFor={"tags"}
+              className={`settings_label flex-none mr-xs my-auto`}
+            >
+              Tags
+            </label>
+            <Input
+              name="tags"
+              className="flex-grow mr-sm"
+              divClassName=""
+              value={book.tags || ""}
+              onChange={(e) => {
+                dispatch(librarySlice.actions.setBookTags(e.target.value));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setEditing(false);
+                }
+              }}
+            />
 
-          <Button
-            onClick={() => setEditing(false)}
-            size="small"
-            className="flex-none h-full"
-          >
-            Done
-          </Button>
+            <Button
+              onClick={() => setEditing(false)}
+              size="small"
+              className="flex-none h-full"
+            >
+              Done
+            </Button>
+          </div>
+          <div className="flex mt-sm">
+            {tags.map((tag) => (
+              <Tag
+                tag={tag}
+                key={tag}
+                className="cursor-pointer"
+                onClick={() => {
+                  console.log({ tag });
+                  const currentTags = getTags(book.tags);
+                  if (!currentTags.includes(tag)) {
+                    dispatch(
+                      librarySlice.actions.setBookTags(
+                        [...currentTags, tag].join(", ")
+                      )
+                    );
+                  }
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -546,15 +582,7 @@ function Tags() {
         <div className="flex mx-auto">
           <div className="flex flex-wrap">
             {book.tags &&
-              book.tags
-                .split(",")
-                .map((tag) => (
-                  <div
-                    className={`${colors.backgroundAlt} ${colors.primaryTextColor} border ${colors.selectedBorderColor} rounded-md text-sm px-2 py-1 mr-xs h-full`}
-                  >
-                    {tag}
-                  </div>
-                ))}
+              getTags(book.tags).map((tag) => <Tag tag={tag} key={tag} />)}
           </div>
           <Button size="small" onClick={() => setEditing(true)}>
             Edit Tags

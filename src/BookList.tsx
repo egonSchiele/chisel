@@ -1,4 +1,4 @@
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { MinusSmallIcon, PlusIcon } from "@heroicons/react/24/outline";
 import sortBy from "lodash/sortBy";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,12 +8,12 @@ import List from "./components/List";
 import ListItem from "./components/ListItem";
 import ListMenu from "./components/ListMenu";
 import * as fd from "./lib/fetchData";
-import { librarySlice } from "./reducers/librarySlice";
+import { getAllTags, librarySlice } from "./reducers/librarySlice";
 import { RootState } from "./store";
 import { LibraryContextType } from "./Types";
 import { useColors } from "./lib/hooks";
-import { encryptMessage } from "./utils";
-
+import { encryptMessage, getTags, uniq, useLocalStorage } from "./utils";
+import * as t from "./Types";
 async function deleteBook(bookid: string, onDelete) {
   onDelete(bookid);
   const res = await fd.deleteBook(bookid);
@@ -26,9 +26,32 @@ async function deleteBook(bookid: string, onDelete) {
 const buttonStyles = ""; //"bg-sidebar hover:bg-sidebarSecondary dark:bg-dmsidebar dark:hover:bg-dmsidebarSecondary";
 const buttonStylesDisabled = `${buttonStyles} disabled:opacity-50`;
 
+function Section({ title, children }) {
+  const colors = useColors();
+  const [open, setOpen] = useLocalStorage(`booklist-section-${title}`, true);
+  return (
+    <div className={`pb-xs mb-sm grid grid-cols-1`}>
+      <div
+        className={`settings_label cursor-pointer pl-xs py-1 ${colors.selectedBackground} flex`}
+        onClick={() => setOpen(!open)}
+      >
+        <p className="flex-grow">{title}</p>
+
+        {!open && (
+          <div className="flex-none mx-xs my-auto">
+            <PlusIcon className="w-4 h-4" />
+          </div>
+        )}
+      </div>
+      {open && children}
+    </div>
+  );
+}
+
 export default function BookList({ cachedBooks = null }) {
   const books = useSelector((state: RootState) => state.library.books);
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
+  const tags = useSelector(getAllTags);
   const selectedBookId = useSelector(
     (state: RootState) => state.library.selectedBookId
   );
@@ -76,7 +99,7 @@ export default function BookList({ cachedBooks = null }) {
         cachedBooks.filter((book) => book.tag !== "compost"),
         ["title"]
       );
-      const items = otherBooks.map((book) => (
+      const items = otherBooks.map((book: t.Book) => (
         <ListItem
           key={book.bookid}
           title={book.title}
@@ -110,12 +133,6 @@ export default function BookList({ cachedBooks = null }) {
     }
   }
 
-  const compostBook = books.find((book) => book.tag === "compost");
-  const otherBooks = sortBy(
-    books.filter((book) => book.tag !== "compost"),
-    ["title"]
-  );
-
   function bookListItem(book, tag: string | null = null) {
     const menuItems = [
       {
@@ -144,9 +161,45 @@ export default function BookList({ cachedBooks = null }) {
     );
   }
 
-  const items = otherBooks.map((book) => (
-    <li key={book.bookid}>{bookListItem(book)}</li>
-  ));
+  const items = [];
+
+  const compostBook = books.find((book) => book.tag === "compost");
+  const otherBooks = sortBy(
+    books.filter((book) => book.tag !== "compost"),
+    ["title"]
+  );
+
+  if (tags.length === 0) {
+    otherBooks.forEach((book) =>
+      items.push(<li key={book.bookid}>{bookListItem(book)}</li>)
+    );
+  } else {
+    // @ts-ignore
+    tags.toSorted().forEach((tag) => {
+      const booksWithTag = otherBooks.filter((book) =>
+        getTags(book.tags).includes(tag)
+      );
+      if (booksWithTag.length > 0) {
+        items.push(
+          <Section key={tag} title={tag}>
+            {booksWithTag.map((book) => (
+              <li key={book.bookid}>{bookListItem(book, tag)}</li>
+            ))}
+          </Section>
+        );
+      }
+    });
+    const untaggedBooks = otherBooks.filter((book) => !book.tags);
+    if (untaggedBooks.length > 0) {
+      items.push(
+        <Section key="untagged" title="untagged">
+          {untaggedBooks.map((book: t.Book) => (
+            <li key={book.bookid}>{bookListItem(book)}</li>
+          ))}
+        </Section>
+      );
+    }
+  }
 
   if (compostBook) {
     items.unshift(

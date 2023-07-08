@@ -5,6 +5,7 @@ import * as t from "../Types";
 import {
   decryptObject,
   encryptObject,
+  getTags,
   hasVersions,
   isObjectEncrypted,
   isString,
@@ -12,6 +13,7 @@ import {
   parseText,
   restoreBlockFromHistory,
   strSplice,
+  uniq,
 } from "../utils";
 
 import { RootState } from "../store";
@@ -1581,6 +1583,15 @@ export const getCharacters = (state: RootState): t.Character[] | null => {
   if (!book) return null;
   return book.characters || null;
 };
+
+export const getAllTags = (state: RootState): string[] => {
+  const books = state.library.books;
+  const tags = uniq(
+    books.map((book) => (book.tags ? getTags(book.tags) : [])).flat()
+  );
+  return tags;
+};
+
 export const getOpenTabs = (state: RootState): t.TabStateInfo[] => {
   const openTabs = state.library.openTabs;
   const tabs = openTabs.map((tab) => {

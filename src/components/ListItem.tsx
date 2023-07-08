@@ -43,7 +43,9 @@ export default function ListItem({
     };
   }
   _onClick = _onClick || (() => {});
-  const selectedCss = selected ? "border-l-4 border-gray-500" : "";
+  const selectedCss = selected
+    ? `border-l-4 ${colors.selectedBorderColor}`
+    : "";
   let plausibleEventNameCss = "";
   if (plausibleEventName) {
     plausibleEventNameCss = `plausible-event-name=${plausibleEventName}`;

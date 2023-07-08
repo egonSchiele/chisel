@@ -468,7 +468,6 @@ export function decryptMessage(
   password: string
 ): t.DecryptedMessage {
   if (!isEncrypted(message)) {
-    console.log("not encrypted", message);
     return {
       message,
       created_at: null,
@@ -554,4 +553,9 @@ export function isObjectEncrypted(obj) {
     }
   });
   return _isEncrypted;
+}
+
+export function getTags(str: string | null): string[] {
+  if (!str) return [];
+  return str.split(/,\s?/g).filter((x) => x !== "");
 }
