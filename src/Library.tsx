@@ -544,7 +544,11 @@ export default function Library({ mobile = false }) {
         setLoading(true);
         await fetchBooks();
         setLoading(false);
-        dispatch(librarySlice.actions.setInfo("You are up to date!"));
+        dispatch(
+          librarySlice.actions.setInfo(
+            "We detected changes and updated your data. You are now up to date!"
+          )
+        );
       } else {
         dispatch(librarySlice.actions.setError(result.payload.message));
       }

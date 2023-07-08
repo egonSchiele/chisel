@@ -288,12 +288,11 @@ export const getChapter = async (chapterid) => {
   return data;
 };
 
-// TODO lastHeardFromServer for delete actions?
 export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
   const docRef = db.collection("chapters").doc(chapterid);
   return await checkForStaleUpdate(
     "chapter",
-    chapter.created_at,
+    lastHeardFromServer,
     docRef,
     async () => {
       // soft delete
