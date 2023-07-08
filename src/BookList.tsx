@@ -30,7 +30,7 @@ function Section({ title, children }) {
   const colors = useColors();
   const [open, setOpen] = useLocalStorage(`booklist-section-${title}`, true);
   return (
-    <div className={`pb-xs mb-sm grid grid-cols-1`}>
+    <div className={`mb-sm grid grid-cols-1`}>
       <div
         className={`settings_label cursor-pointer pl-xs py-1 ${colors.selectedBackground} flex`}
         onClick={() => setOpen(!open)}

@@ -11,29 +11,29 @@ import Button from "./components/Button";
 function Todo({ text, checked, onClick, onDelete }) {
   const colors = useColors();
   function getStyle(checked) {
-    let styles = ` w-full p-xs my-1 rounded-md border border-gray-300 dark:border-gray-700 text-sm cursor-pointer flex flex-grow`;
+    let styles = ` w-full p-xs my-1 rounded-md text-sm cursor-pointer flex flex-grow `;
     if (checked) {
-      styles += colors.buttonBackgroundColor;
+      styles += colors.selectedBackground;
     } else {
-      styles += colors.buttonBackgroundColorSecondary;
+      styles += colors.backgroundAlt;
     }
     return styles;
   }
   return (
-    <div className="flex">
+    <div className="flex w-108 mx-auto">
       <div className={getStyle(checked)} onClick={onClick}>
-        <span className="flex-grow">{text}</span>
+        <span className="flex-grow my-1 mx-xs">{text}</span>
         {checked && (
           <div className="shrink-0 text-white">
-            <CheckIcon className="h-5 w-5" />
+            <CheckIcon className="h-5 w-5 mt-1" />
           </div>
         )}
       </div>
       <div
-        className="shrink-0 text-white rounded-sm ml-xs bg-blue-800 w-8 h-8 my-xs relative cursor-pointer"
+        className={`shrink-0 ${colors.secondaryTextColor} rounded-md ml-xs ${colors.backgroundAlt} w-10 h-10 my-xs mx-xs flex-none cursor-pointer`}
         onClick={onDelete}
       >
-        <XMarkIcon className="h-4 w-4 absolute top-2 left-2" />
+        <XMarkIcon className="h-6 w-6 my-xs mx-xs inline" />
       </div>
     </div>
   );
@@ -127,24 +127,29 @@ export default function TodoListBlock({
     <div className="mb-sm w-full grid grid-cols-1">
       {todos}
 
-      <Input
-        name="newTodo"
-        title="Add Todo"
-        className="mt-sm"
-        value={newTodoText}
-        onChange={(e) => setNewTodoText(e.target.value)}
-        onKeyDown={onKeyDown}
-      />
-      <Button
-        size="medium"
-        style="secondary"
-        onClick={() => {
-          addTodo(newTodoText);
-          setNewTodoText("");
-        }}
-      >
-        Add Todo
-      </Button>
+      <div className="w-108 mx-auto mt-md">
+        <Input
+          name="newTodo"
+          title="Add Todo"
+          className="mt-sm"
+          value={newTodoText}
+          onChange={(e) => setNewTodoText(e.target.value)}
+          onKeyDown={onKeyDown}
+        />
+        <Button
+          size="medium"
+          style="primary"
+          className="w-full"
+          onClick={() => {
+            addTodo(newTodoText);
+            setNewTodoText("");
+            // @ts-ignore
+            window.plausible("add-todo-button-click");
+          }}
+        >
+          Add Todo
+        </Button>
+      </div>
     </div>
   );
 }

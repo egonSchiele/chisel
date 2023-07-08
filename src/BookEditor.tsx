@@ -517,6 +517,9 @@ function Tags() {
   const tags = useSelector(getAllTags);
   const [editing, setEditing] = React.useState(false);
   const dispatch = useDispatch();
+  const { settings, saveBook } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
   const colors = useColors();
 
   if (editing) {
@@ -538,15 +541,19 @@ function Tags() {
               onChange={(e) => {
                 dispatch(librarySlice.actions.setBookTags(e.target.value));
               }}
-              onKeyDown={(e) => {
+              onKeyDown={async (e) => {
                 if (e.key === "Enter") {
                   setEditing(false);
+                  await saveBook(book);
                 }
               }}
             />
 
             <Button
-              onClick={() => setEditing(false)}
+              onClick={async () => {
+                setEditing(false);
+                await saveBook(book);
+              }}
               size="small"
               className="flex-none h-full"
             >
@@ -597,7 +604,9 @@ export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
-  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
+  const { settings, saveBook } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
 
   const colors = useColors();
   let referenceBlocks = [];
@@ -642,12 +651,13 @@ export default function BookEditor({ className = "" }) {
       className={`flex h-screen overflow-auto w-full mx-auto pt-lg ${className}`}
       id="bookeditor"
     >
-      <div className=" px-sm lg:px-md h-screen w-[60rem]">
+      <div className=" px-sm lg:px-md h-screen w-[40rem] xl:w-[50rem] 2xl:w-[60rem]">
         <ContentEditable
           value={book.title}
           className="text-6xl mb-sm tracking-wide w-full text-center font-semibold text-darkest dark:text-lightest"
-          onSubmit={(title) => {
+          onSubmit={async (title) => {
             dispatch(librarySlice.actions.setBookTitle(title));
+            await saveBook(book);
           }}
           nextFocus={() => {}}
           selector="book-editor-title"
