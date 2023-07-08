@@ -499,6 +499,72 @@ function Heading({ text, className = "", children = null }) {
   );
 }
 
+function Tags() {
+  const book = useSelector(getSelectedBook);
+  const [editing, setEditing] = React.useState(false);
+  const dispatch = useDispatch();
+  const colors = useColors();
+
+  if (editing) {
+    return (
+      <div className="flex w-full">
+        <div className="flex w-96 mx-auto">
+          <label
+            htmlFor={"tags"}
+            className={`settings_label flex-none mr-xs my-auto`}
+          >
+            Tags
+          </label>
+          <Input
+            name="tags"
+            className="flex-grow mr-sm"
+            divClassName=""
+            value={book.tags || ""}
+            onChange={(e) => {
+              dispatch(librarySlice.actions.setBookTags(e.target.value));
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setEditing(false);
+              }
+            }}
+          />
+
+          <Button
+            onClick={() => setEditing(false)}
+            size="small"
+            className="flex-none h-full"
+          >
+            Done
+          </Button>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex w-full">
+        <div className="flex mx-auto">
+          <div className="flex flex-wrap">
+            {book.tags &&
+              book.tags
+                .split(",")
+                .map((tag) => (
+                  <div
+                    className={`${colors.backgroundAlt} ${colors.primaryTextColor} border ${colors.selectedBorderColor} rounded-md text-sm px-2 py-1 mr-xs h-full`}
+                  >
+                    {tag}
+                  </div>
+                ))}
+          </div>
+          <Button size="small" onClick={() => setEditing(true)}>
+            Edit Tags
+          </Button>
+        </div>
+      </div>
+    );
+  }
+}
+
 export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
@@ -558,6 +624,8 @@ export default function BookEditor({ className = "" }) {
           nextFocus={() => {}}
           selector="book-editor-title"
         />
+
+        <Tags />
 
         <QuillTextArea
           bookid={book.bookid}

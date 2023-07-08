@@ -385,12 +385,21 @@ export const librarySlice = createSlice({
 
       state.saved = false;
     },
-    setBookSynopsis(state: t.State, action) {
+    setBookSynopsis(state: t.State, action: PayloadAction<string>) {
       const book = getSelectedBook({ library: state });
       if (!book) return;
       // guards against unnecessary save when bookeditor loads
       if (book.synopsis === action.payload) return;
       book.synopsis = action.payload;
+
+      state.saved = false;
+    },
+    setBookTags(state: t.State, action: PayloadAction<string>) {
+      const book = getSelectedBook({ library: state });
+      if (!book) return;
+      // guards against unnecessary save when bookeditor loads
+      if (book.tags === action.payload) return;
+      book.tags = action.payload;
 
       state.saved = false;
     },

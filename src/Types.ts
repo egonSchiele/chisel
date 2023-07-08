@@ -406,6 +406,7 @@ export type Book = {
   created_at?: number;
   lastTrainedAt?: number;
   coverImageUrl?: string;
+  tags?: string;
 };
 
 export type Character = {

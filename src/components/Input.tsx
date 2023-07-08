@@ -10,6 +10,7 @@ const Input = forwardRef<any, any>(function Input(
     rounded = true,
     title = null,
     className = "",
+    divClassName = "mt-xs mb-sm",
     inputClassName = "",
     labelClassName = "",
     placeholder = "",
@@ -35,7 +36,7 @@ const Input = forwardRef<any, any>(function Input(
         </div>
       )}
 
-      <div className="mt-xs mb-sm">
+      <div className={`${divClassName}`}>
         {type === "text" && (
           <input
             type="input"
