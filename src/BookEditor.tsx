@@ -57,6 +57,8 @@ function Character({
   const colors = useColors();
   async function handleUpload(x) {
     const files = x.target.files;
+    // @ts-ignore
+    window.plausible("bookeditor-character-image-upload");
     [...files].forEach(async (file, i) => {
       const res = await fd.upload(file);
       if (res.tag === "success") {
@@ -91,7 +93,12 @@ function Character({
         )}
         <p className="text-lg font-sans w-full">{character.description}</p>
         <Button
-          onClick={() => setEditing(true)}
+          onClick={() => {
+            setEditing(true);
+
+            // @ts-ignore
+            window.plausible("bookeditor-character-edit-button-click");
+          }}
           className="mt-sm"
           size="medium"
         >
@@ -175,6 +182,8 @@ function Chapter({ chapter, bookid, index }) {
     const chapterid = chapter.chapterid;
     dispatch(librarySlice.actions.loading());
     deleteChapter(chapterid);
+    // @ts-ignore
+    window.plausible("bookeditor-chapter-delete-button-click");
     fd.deleteChapter(bookid, chapterid).then((res) => {
       dispatch(librarySlice.actions.loaded());
       if (res.tag === "error") {
@@ -201,9 +210,11 @@ function Chapter({ chapter, bookid, index }) {
       </p>
       <div className="flex flex-row justify-end">
         <Button
-          onClick={() =>
-            navigate(`/book/${bookid}/chapter/${chapter.chapterid}`)
-          }
+          onClick={() => {
+            // @ts-ignore
+            window.plausible("bookeditor-chapter-edit-button-click");
+            navigate(`/book/${bookid}/chapter/${chapter.chapterid}`);
+          }}
           className="mt-sm w-20 mr-sm"
           style="secondary"
           size="small"
@@ -224,9 +235,11 @@ function Block({ block, chapter, bookid, index }) {
   return (
     <div
       className={`flex flex-col my-sm ${colors.selectedBackground} rounded-md p-sm pb-md cursor-pointer`}
-      onClick={() =>
-        navigate(`/book/${bookid}/chapter/${chapter.chapterid}/${index}`)
-      }
+      onClick={() => {
+        // @ts-ignore
+        window.plausible("bookeditor-block-click");
+        navigate(`/book/${bookid}/chapter/${chapter.chapterid}/${index}`);
+      }}
     >
       <h3 className="text-xl font-semibold mb-sm">
         {chapter.title}
@@ -391,6 +404,8 @@ function CoverImage({
 
   async function handleUpload(x) {
     const files = x.target.files;
+    // @ts-ignore
+    window.plausible("bookeditor-coverimage-upload");
     [...files].forEach(async (file, i) => {
       const res = await fd.upload(file);
       console.log({ res });
@@ -584,6 +599,8 @@ export default function BookEditor({ className = "" }) {
         >
           <Button
             onClick={() => {
+              // @ts-ignore
+              window.plausible("bookeditor-character-add-button-click");
               dispatch(librarySlice.actions.addCharacter());
             }}
             rounded={true}
