@@ -22,6 +22,7 @@ import ChatSidebar from "./ChatSidebar";
 import SlideTransition from "./components/SlideTransition";
 import SpeechSidebar from "./SpeechSidebar";
 import OutlineSidebar from "./OutlineSidebar";
+import Popup from "./components/Popup";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -73,6 +74,11 @@ export default function LibraryDesktop() {
       )}
 
       <div className="relative h-full w-full">
+        {state.popupOpen && state.popupData && (
+          <LibErrorBoundary component="popup">
+            <Popup {...state.popupData} />
+          </LibErrorBoundary>
+        )}
         <LibErrorBoundary component="nav">
           <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
         </LibErrorBoundary>

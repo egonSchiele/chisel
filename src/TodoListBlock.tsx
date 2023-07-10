@@ -20,7 +20,7 @@ function Todo({ text, checked, onClick, onDelete }) {
     return styles;
   }
   return (
-    <div className="flex w-108 mx-auto">
+    <div className="flex w-full xl:w-108 mx-auto">
       <div className={getStyle(checked)} onClick={onClick}>
         <span className="flex-grow my-1 mx-xs">{text}</span>
         {checked && (
@@ -127,7 +127,7 @@ export default function TodoListBlock({
     <div className="mb-sm w-full grid grid-cols-1">
       {todos}
 
-      <div className="w-108 mx-auto mt-md">
+      <div className="w-full xl:w-108 mx-auto mt-md">
         <Input
           name="newTodo"
           title="Add Todo"
