@@ -49,7 +49,9 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     (state: RootState) => state.library.activeTextIndex
   ); */
 
-  const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const viewMode: t.ViewMode = useSelector(
+    (state: RootState) => state.library.viewMode
+  );
 
   const readonlyDiv = useRef(null);
   const editDiv = useRef(null);
@@ -110,10 +112,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
         id="readonly"
       >
         <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full">
-          <h1 className="text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest">
+          <h1 className="text-2xl my-sm mx-auto text-center tracking-wide font-semibold text-darkest dark:text-lightest">
             {currentChapterTitle}
           </h1>
-          <div className="w-full">
+          <div className="w-full px-xl">
             <ReadOnlyView
               textBlocks={currentText.filter((t) => !t.hideInExport)}
               fontClass={fontClass}
@@ -124,7 +126,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
             <div className={`w-full flex mt-sm ${colors.secondaryTextColor}`}>
               {previousChapter && (
                 <div className="flex-none">
-                  {/* <ArrowSmallLeftIcon className="w-4 h-4 mr-sm" /> */}
                   <Link
                     to={`/book/${previousChapter.bookid}/chapter/${previousChapter.chapterid}`}
                   >
@@ -141,8 +142,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
                   >
                     Next: {nextChapter.title}
                   </Link>
-                  {/*                   <ArrowSmallRightIcon className="w-4 h-4 ml-sm" />
-                   */}{" "}
                 </div>
               )}
             </div>
@@ -153,6 +152,85 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       </div>
     );
   }
+
+  const renderedBlocks = [];
+  currentText.forEach((text, index) => {
+    const key = text.id || index;
+
+    /* if (activeTextIndex) {
+    isInView =
+      index > activeTextIndex - 5 || index < activeTextIndex + 5;
+  } else {
+    isInView = index < 10;
+  } */
+    if (text.type === "embeddedText") {
+      renderedBlocks.push(
+        <EmbeddedTextBlock
+          chapterid={currentChapterId}
+          text={text}
+          index={index}
+          key={key}
+        />
+      );
+      return;
+    } else if (text.type === "todoList") {
+      renderedBlocks.push(
+        <TodoListBlock
+          chapterid={currentChapterId}
+          text={text}
+          index={index}
+          key={key}
+        />
+      );
+      return;
+    }
+    /*   let diffWithText = "";
+    if (text.diffWith) {
+      const diffWith = text.versions.find(
+        (version) => version.id === text.diffWith
+      );
+      if (diffWith) {
+        diffWithText = diffWith.text;
+      }
+    } */
+
+    renderedBlocks.push(
+      <div key={key}>
+        {/*    {text.diffWith && (
+          <div className="flex overflow-auto w-full mx-[72px]">
+            <DiffViewer
+              originalText={text.text}
+              newText={diffWithText}
+              className="mx-0"
+              onClose={() => {
+                dispatch(
+                  librarySlice.actions.setDiffWith({
+                    index,
+                    diffWith: null,
+                  })
+                );
+              }}
+              onApply={() => {
+                dispatch(
+                  librarySlice.actions.switchVersion({
+                    index,
+                    versionid: text.diffWith,
+                  })
+                );
+              }}
+            />
+          </div>
+        )} */}
+        {/*   {!text.diffWith && ( */}
+        <TextEditor
+          chapterid={currentChapterId}
+          index={index}
+          settings={settings}
+        />
+        {/* )} */}
+      </div>
+    );
+  });
 
   return (
     <div
@@ -182,89 +260,8 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           selector="text-editor-title"
         />
 
-        {currentText.map((text, index) => {
-          const key = text.id || index;
-          let isInView = true;
-          /* if (activeTextIndex) {
-            isInView =
-              index > activeTextIndex - 5 || index < activeTextIndex + 5;
-          } else {
-            isInView = index < 10;
-          } */
-          if (text.type === "embeddedText") {
-            return (
-              <EmbeddedTextBlock
-                chapterid={currentChapterId}
-                text={text}
-                index={index}
-                key={key}
-              />
-            );
-          } else if (text.type === "todoList") {
-            return (
-              <TodoListBlock
-                chapterid={currentChapterId}
-                text={text}
-                index={index}
-                key={key}
-              />
-            );
-          }
-          let diffWithText = "";
-          if (text.diffWith) {
-            const diffWith = text.versions.find(
-              (version) => version.id === text.diffWith
-            );
-            if (diffWith) {
-              diffWithText = diffWith.text;
-            }
-          }
+        {renderedBlocks}
 
-          return (
-            <div key={key}>
-              {text.diffWith && (
-                <div className="flex overflow-auto w-full mx-[72px]">
-                  <DiffViewer
-                    originalText={text.text}
-                    newText={diffWithText}
-                    className="mx-0"
-                    onClose={() => {
-                      dispatch(
-                        librarySlice.actions.setDiffWith({
-                          index,
-                          diffWith: null,
-                        })
-                      );
-                    }}
-                    onApply={() => {
-                      dispatch(
-                        librarySlice.actions.switchVersion({
-                          index,
-                          versionid: text.diffWith,
-                        })
-                      );
-                    }}
-                  />
-                </div>
-              )}
-              {!text.diffWith && (
-                /*  <LazyLoad
-                    //@ts-ignore
-                    parentScroll={0}
-                    screenHeight={1080}
-                    key={text.id || index}
-                  > */
-                <TextEditor
-                  chapterid={currentChapterId}
-                  index={index}
-                  settings={settings}
-                  isInView={isInView}
-                />
-                /*  </LazyLoad> */
-              )}
-            </div>
-          );
-        })}
         {/* bottom padding */}
         <div className="h-24" />
       </div>

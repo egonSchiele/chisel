@@ -120,12 +120,10 @@ function TextEditor({
   chapterid,
   index,
   settings,
-  isInView = true,
 }: {
   chapterid: string;
   index: number;
   settings: t.UserSettings;
-  isInView?: boolean;
 }) {
   const _pushTextToEditor = useSelector(
     (state: RootState) => state.library.editor._pushTextToEditor
@@ -168,6 +166,10 @@ function TextEditor({
     editor.setText(currentText.text.trim());
     highlightForFocusMode();
     formatMarkdown();
+
+    /* if (viewMode === "readonly") {
+      editor.disable();
+    } */
   }, [quillRef.current, chapterid, _pushTextToEditor]);
 
   useEffect(() => {
@@ -602,7 +604,17 @@ function TextEditor({
 
   let fontSize = settings.design?.fontSize || 18;
   const fontSizeClass = getFontSizeClass(fontSize);
-  if (!isInView) return null;
+
+  /*  if (viewMode === "readonly") {
+    return (
+      <div className={`typography ${fontClass} ${fontSizeClass} mx-xl px-md`}>
+        <pre className={`typography ${fontClass}`}>
+          {currentText.text.trim()}
+        </pre>
+      </div>
+    );
+  } */
+
   return (
     <div className="">
       {/* h-full"> */}
@@ -630,35 +642,14 @@ function TextEditor({
                   }`}
                 />
               </div>
-              {/* {<BlockMenu currentText={currentText} index={index} />}
-              {hasVersions(currentText) && (
-                <VersionsMenu currentText={currentText} index={index} />
-              )}
-              {currentText.type === "code" && (
-                <CodeMenu currentText={currentText} index={index} />
-              )}
-              {currentText.reference && <Tag letter="R" />} */}
+
               {currentText.hideInExport && (
                 <EyeSlashIcon className="w-5 h-5 text-gray-500" />
               )}
-              {/* {currentText.type === "markdown" && <Tag letter="M" />}
-              {currentText.type === "plain" && <Tag letter="P" />} */}
-              {/* <div
-                className="h-5 cursor-pointer mr-xs mt-xs"
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                <Cog6ToothIcon
-                  className={`w-5 h-5 ${
-                    isActive ? "text-gray-300" : "text-gray-500"
-                  }`}
-                />
-              </div> */}
             </div>
 
             <div
-              className={`flex-grow border-l w-full pl-sm pr-md  ${borderColor}`}
+              className={`flex-grow w-full pl-sm pr-md `}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}
@@ -720,9 +711,7 @@ function TextEditor({
               )} */}
             </div>
             <div
-              className={`flex-grow ${
-                isActive ? "border" : "border-l"
-              } border-gray-500 pl-sm`}
+              className={`flex-grow pl-sm`}
               onClick={() => {
                 dispatch(librarySlice.actions.setActiveTextIndex(index));
               }}

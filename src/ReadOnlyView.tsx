@@ -45,12 +45,11 @@ export default function ReadOnlyView({ textBlocks, fontClass }) {
       }
     } else {
       return (
-        <pre
-          key={index}
-          className={`w-full typography ${fontClass} ${fontSizeClass}`}
-        >
-          {text.text}
-        </pre>
+        <div className={`w-full typography ${fontClass} ${fontSizeClass}`}>
+          <pre key={index} className={` ${fontClass}`}>
+            {text.text}
+          </pre>
+        </div>
       );
     }
   });
