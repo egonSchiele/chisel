@@ -1281,7 +1281,8 @@ async function getSuggestions(
   _messages = null,
   customKey
 ) {
-  if (!customKey) {
+  if (!customKey && !user.admin) {
+    return failure("Please provide your own key to use the AI features.");
     const check = checkUsage(user);
     if (!check.success) {
       return check;
@@ -1478,10 +1479,14 @@ function sanitize(str) {
 }
 
 async function getEmbeddings(user, _text) {
-  const check = checkUsage(user);
+  // TODO make other AI parts work with custom key.
+  if (!user.admin) {
+    return failure("Embeddings currently disabled.");
+  }
+  /* const check = checkUsage(user);
   if (!check.success) {
     return check;
-  }
+  } */
 
   const input = substringTokens(_text, settings.maxPromptLength);
 

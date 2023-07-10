@@ -1,5 +1,6 @@
 // @ts-ignore
 import React from "react";
+import Input from "./components/Input";
 export default function Auth({
   title,
   primary,
@@ -22,9 +23,7 @@ export default function Auth({
           {title}
         </h2>
         <p className="text-center text-gray-700 dark:text-gray-300 mt-sm">
-          Chisel is still in Beta! Please back up your work frequently,
-          functionality may break or change. Starting 7/10, you'll need your own
-          key to use Chisel.
+          Chisel is still in Beta! Functionality may change.
         </p>
       </div>
 
@@ -46,15 +45,10 @@ export default function Auth({
                 Email address
               </label>
               <div className="mt-2">
-                <input
-                  id="email"
+                <Input
                   name="email"
-                  type="email"
-                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-main sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -67,49 +61,19 @@ export default function Auth({
                 Password
               </label>
               <div className="mt-2">
-                <input
-                  id="password"
+                <Input
                   name="password"
                   type="password"
-                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-main sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
-            {/*  <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-main focus:ring-main"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
-                >
-                  Remember me
-                </label>
-              </div> */}
-
-            {/*    <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-main hover:text-main dark:text-gray-300"
-                >
-                  Forgot your password?
-                </a>
-              </div> 
-            </div> */}
-
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md dark:bg-black py-2 px-3 text-sm font-semibold text-black dark:text-white shadow-sm hover:bg-main dark:hover:bg-dmbuttonhover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main"
+                className="flex w-full justify-center rounded-md dark:bg-black py-xs px-3 text-sm font-semibold text-black dark:text-white shadow-sm hover:bg-main dark:hover:bg-dmbuttonhover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main"
               >
                 {primary}
               </button>
@@ -125,20 +89,6 @@ export default function Auth({
               </a>
             </div>
           </form>
-          <div className="bg-gray-200 dark:bg-gray-800 p-xs mt-lg">
-            <p className="text-center text-gray-700 dark:text-gray-300 my-sm">
-              Or login as a guest. Guest accounts will be deleted after 24
-              hours.
-            </p>
-            <form action="/loginGuestUser" method="POST">
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md dark:bg-black py-2 px-3 text-sm font-semibold text-black dark:text-white shadow-sm hover:bg-main dark:hover:bg-dmbuttonhover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main"
-              >
-                Sign in as guest
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     </div>
