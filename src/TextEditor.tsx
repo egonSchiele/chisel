@@ -624,11 +624,13 @@ function TextEditor({
       <div className="mb-sm h-full w-full scroll-mt-lg" ref={inputDiv}>
         {open && (
           <div className="flex">
-            <div className={`flex-none text-sm mr-xs w-4 lg:w-16 ${textColor}`}>
+            <div
+              className={`hidden lg:flex-none text-sm mr-xs w-4 lg:w-16 ${textColor}`}
+            >
               {currentText.caption}
             </div>
 
-            <div className="flex-grow">
+            <div className="hidden lg:flex-grow">
               <div
                 className="h-5 cursor-pointer mr-xs"
                 onClick={() => {
@@ -649,7 +651,7 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow w-full pl-sm pr-md `}
+              className={`flex-grow w-full px-0 xl:pl-sm xl:pr-md `}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}
@@ -687,11 +689,11 @@ function TextEditor({
             `}
           >
             <div
-              className={` text-sm mr-xs flex-none w-4 lg:w-16 ${textColor}`}
+              className={` text-sm mr-xs flex-none w-4 lg:w-16 ${textColor} hidden lg:visible`}
             >
               {currentText.caption}
             </div>
-            <div className="grid grid-cols-1">
+            <div className="lg:grid grid-cols-1 hidden">
               <div
                 className="flex-none cursor-pointer mr-xs"
                 onClick={() => {

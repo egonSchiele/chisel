@@ -114,11 +114,11 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       >
         <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-sm mb-sm h-full">
           <h1
-            className={`${fontClass} ${titleFontSize} mb-md mt-lg mx-auto text-center tracking-wide font-semibold text-darkest dark:text-lightest`}
+            className={`${fontClass} ${titleFontSize} mb-md mt-lg mx-auto text-center tracking-wide font-normal xl:font-semibold text-darkest dark:text-lightest`}
           >
             {currentChapterTitle}
           </h1>
-          <div className="w-full px-xl ml-sm">
+          <div className="w-full px-0 mx-0 lg:px-xl lg:ml-sm">
             <ReadOnlyView
               textBlocks={currentText.filter((t) => !t.hideInExport)}
               fontClass={fontClass}
@@ -244,7 +244,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-sm  mb-sm h-full ">
         <ContentEditable
           value={currentChapterTitle}
-          className={`${titleFontSize} mb-md tracking-wide font-semibold text-darkest dark:text-lightest mx-auto text-center w-full mt-lg ${fontClass}`}
+          className={`${titleFontSize} mb-md tracking-wide font-normal xl:font-semibold text-darkest dark:text-lightest mx-auto text-center w-full mt-lg ${fontClass}`}
           /* // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));

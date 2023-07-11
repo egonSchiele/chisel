@@ -60,9 +60,8 @@ export default function Nav({
 
   const navigate = useNavigate();
   const colors = useColors();
-  const { settings, newChapter, setLoading, fetchBooks } = useContext(
-    LibraryContext
-  ) as t.LibraryContextType;
+  const { settings, newChapter, setLoading, fetchBooks, onTextEditorSave } =
+    useContext(LibraryContext) as t.LibraryContextType;
 
   const addAudioElement = async (blobUrl, blob) => {
     setLoading(true);
@@ -121,7 +120,10 @@ export default function Nav({
                   state.panels.leftSidebar.activePanel === "filenavigator"
                 }
               >
-                <DocumentDuplicateIcon className="h-5 w-5" aria-hidden="true" />
+                <DocumentDuplicateIcon
+                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  aria-hidden="true"
+                />
               </NavButton>
               <NavButton
                 color="nav"
@@ -136,7 +138,10 @@ export default function Nav({
                   state.panels.leftSidebar.activePanel === "prompts"
                 }
               >
-                <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+                <SparklesIcon
+                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  aria-hidden="true"
+                />
               </NavButton>
 
               <NavButton
@@ -152,7 +157,10 @@ export default function Nav({
                   state.panels.leftSidebar.activePanel === "blocks"
                 }
               >
-                <TableCellsIcon className="h-5 w-5" aria-hidden="true" />
+                <TableCellsIcon
+                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  aria-hidden="true"
+                />
               </NavButton>
             </>
           )}
@@ -167,7 +175,10 @@ export default function Nav({
               className="p-0"
               selector="open-lists-button"
             >
-              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+              <ChevronLeftIcon
+                className="h-8 w-8 xl:h-5 xl:w-5"
+                aria-hidden="true"
+              />
             </NavButton>
           )}
 
@@ -181,7 +192,10 @@ export default function Nav({
               className="p-0"
               selector="open-lists-button"
             >
-              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+              <ChevronLeftIcon
+                className="h-8 w-8 xl:h-5 xl:w-5"
+                aria-hidden="true"
+              />
             </NavButton>
           )}
 
@@ -200,7 +214,10 @@ export default function Nav({
               className="p-0"
               selector="todoList"
             >
-              <ArchiveBoxIcon className="h-5 w-5 " aria-hidden="true" />
+              <ArchiveBoxIcon
+                className="h-8 w-8 xl:h-5 xl:w-5 "
+                aria-hidden="true"
+              />
             </NavButton>
           )}
 
@@ -220,7 +237,7 @@ export default function Nav({
               selector="todoList"
             >
               <ArchiveBoxIcon
-                className="h-5 w-5 text-blue-400"
+                className="h-8 w-8 xl:h-5 xl:w-5 text-blue-400"
                 aria-hidden="true"
               />
             </NavButton>
@@ -240,7 +257,7 @@ export default function Nav({
                 state.panels.leftSidebar.activePanel === "outline"
               }
             >
-              <Bars3Icon className="h-5 w-5" aria-hidden="true" />
+              <Bars3Icon className="h-8 w-8 xl:h-5 xl:w-5" aria-hidden="true" />
             </NavButton>
           )}
 
@@ -258,7 +275,10 @@ export default function Nav({
                 state.panels.leftSidebar.activePanel === "search"
               }
             >
-              <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
+              <MagnifyingGlassIcon
+                className="h-8 w-8 xl:h-5 xl:w-5"
+                aria-hidden="true"
+              />
             </NavButton>
           )}
         </div>
@@ -274,15 +294,24 @@ export default function Nav({
         {bookid && !chapterid && (
           <div className="mr-xs">
             {!state.saved && (
-              <NavButton color="nav" label="Unsaved" onClick={() => {}}>
-                <MinusIcon className="h-5 w-5" aria-hidden="true" />
+              <NavButton
+                color="nav"
+                label="Unsaved"
+                onClick={async () => {
+                  await onTextEditorSave();
+                }}
+              >
+                <MinusIcon
+                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  aria-hidden="true"
+                />
               </NavButton>
             )}
 
             {state.saved && !state.serviceWorkerRunning && (
               <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckCircleIcon
-                  className={`h-5 w-5 ${colors.highlightTextColor}`}
+                  className={`h-8 w-8 xl:h-5 xl:w-5 ${colors.highlightTextColor}`}
                   aria-hidden="true"
                 />
               </NavButton>
@@ -290,7 +319,7 @@ export default function Nav({
             {state.saved && state.serviceWorkerRunning && (
               <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckIcon
-                  className={`h-5 w-5  ${
+                  className={`h-8 w-8 xl:h-5 xl:w-5  ${
                     fromCache ? "text-green-500" : colors.highlightTextColor
                   }`}
                   aria-hidden="true"
@@ -324,30 +353,33 @@ export default function Nav({
                       dispatch(librarySlice.actions.extractBlock());
                     }}
                   >
-                    <ScissorsIcon className="h-5 w-5" aria-hidden="true" />
+                    <ScissorsIcon className="h-8 w-8 xl:h-5 xl:w-5" aria-hidden="true" />
                   </NavButton>
                 )} */}
 
-              {state.viewMode === "readonly" && (
+              {state.viewMode === "readonly" && !mobile && (
                 <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
                   read only
                 </span>
               )}
-              {state.viewMode === "focus" && (
+              {state.viewMode === "focus" && !mobile && (
                 <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
                   focus mode
                 </span>
               )}
               {!state.saved && (
                 <NavButton color="nav" label="Unsaved" onClick={() => {}}>
-                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                  <MinusIcon
+                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    aria-hidden="true"
+                  />
                 </NavButton>
               )}
 
               {state.saved && !state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckCircleIcon
-                    className={`h-5 w-5 ${colors.highlightTextColor}`}
+                    className={`h-8 w-8 xl:h-5 xl:w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -356,7 +388,7 @@ export default function Nav({
               {state.saved && state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckIcon
-                    className={`h-5 w-5  ${
+                    className={`h-8 w-8 xl:h-5 xl:w-5  ${
                       fromCache ? "text-green-500" : colors.highlightTextColor
                     }`}
                     aria-hidden="true"
@@ -364,7 +396,7 @@ export default function Nav({
                 </NavButton>
               )}
 
-              {state.viewMode !== "readonly" && (
+              {state.viewMode !== "readonly" && !mobile && (
                 <NavButton
                   color="nav"
                   label="Read only"
@@ -373,10 +405,13 @@ export default function Nav({
                   }
                   selector="readonly-open"
                 >
-                  <PencilIcon className="h-5 w-5" aria-hidden="true" />
+                  <PencilIcon
+                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    aria-hidden="true"
+                  />
                 </NavButton>
               )}
-              {state.viewMode === "readonly" && (
+              {state.viewMode === "readonly" && !mobile && (
                 <NavButton
                   color="nav"
                   label="Exit read only"
@@ -386,7 +421,7 @@ export default function Nav({
                   selector="readonly-close"
                 >
                   <PencilIcon
-                    className={`h-5 w-5 ${colors.highlightTextColor}`}
+                    className={`h-8 w-8 xl:h-5 xl:w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -401,7 +436,10 @@ export default function Nav({
                     startRecording();
                   }}
                 >
-                  <MicrophoneIcon className={`h-5 w-5`} aria-hidden="true" />
+                  <MicrophoneIcon
+                    className={`h-8 w-8 xl:h-5 xl:w-5`}
+                    aria-hidden="true"
+                  />
                 </NavButton>
               )}
 
@@ -416,7 +454,7 @@ export default function Nav({
                 >
                   {/* <p className="w-36 text-sm">{status}</p> */}
                   <MicrophoneIcon
-                    className={`h-5 w-5 text-red-700`}
+                    className={`h-8 w-8 xl:h-5 xl:w-5 text-red-700`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -432,7 +470,7 @@ export default function Nav({
                     }
                   >
                     <EyeIcon
-                      className={`h-5 w-5 ${
+                      className={`h-8 w-8 xl:h-5 xl:w-5 ${
                         state.viewMode === "focus" && colors.highlightTextColor
                       }`}
                       aria-hidden="true"
@@ -450,7 +488,7 @@ export default function Nav({
                     }}
                     selector="prompts-button"
                   >
-                    <SparklesIcon className="h-5 w-5" aria-hidden="true" />
+                    <SparklesIcon className="h-8 w-8 xl:h-5 xl:w-5" aria-hidden="true" />
                   </NavButton> */}
 
                   <NavButton
@@ -462,7 +500,7 @@ export default function Nav({
                     selector="sidebar-button"
                   >
                     <EllipsisHorizontalCircleIcon
-                      className="h-5 w-5"
+                      className="h-8 w-8 xl:h-5 xl:w-5"
                       aria-hidden="true"
                     />
                   </NavButton>
@@ -476,9 +514,12 @@ export default function Nav({
                 }}
                 selector="chat-button"
               >
-                <ChatBubbleLeftIcon className="h-5 w-5" aria-hidden="true" />
+                <ChatBubbleLeftIcon
+                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  aria-hidden="true"
+                />
               </NavButton>
-              {settings.encrypted && (
+              {settings.encrypted && !mobile && (
                 <NavButton
                   color="nav"
                   label="Encryption"
@@ -487,10 +528,13 @@ export default function Nav({
                   }}
                   selector="chat-button"
                 >
-                  <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
+                  <LockClosedIcon
+                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    aria-hidden="true"
+                  />
                 </NavButton>
               )}
-              {!settings.encrypted && (
+              {!settings.encrypted && !mobile && (
                 <NavButton
                   color="nav"
                   label="Encryption"
@@ -499,7 +543,10 @@ export default function Nav({
                   }}
                   selector="chat-button"
                 >
-                  <LockOpenIcon className="h-5 w-5" aria-hidden="true" />
+                  <LockOpenIcon
+                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    aria-hidden="true"
+                  />
                 </NavButton>
               )}
               {settings.admin && (
@@ -511,11 +558,14 @@ export default function Nav({
                   }}
                   selector="texttospeech-button"
                 >
-                  <PlayIcon className="h-5 w-5" aria-hidden="true" />
+                  <PlayIcon
+                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    aria-hidden="true"
+                  />
                 </NavButton>
               )}
 
-              {mobile && (
+              {/* {mobile && (
                 <NavButton
                   color="nav"
                   label="Reload"
@@ -525,9 +575,9 @@ export default function Nav({
                     setLoading(false);
                   }}
                 >
-                  <ArrowPathIcon className={`h-5 w-5 `} aria-hidden="true" />
+                  <ArrowPathIcon className={`h-8 w-8 xl:h-5 xl:w-5 `} aria-hidden="true" />
                 </NavButton>
-              )}
+              )} */}
             </div>
           </LibErrorBoundary>
         )}
