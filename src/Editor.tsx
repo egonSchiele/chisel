@@ -96,9 +96,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     }
   });
 
-  let font = settings.design ? settings.design.font : "sans-serif";
-  font = font || "sans-serif";
+  let font = settings.design ? settings.design.font : "serif";
+  font = font || "serif";
   const fontClass = font === "serif" ? "serif" : "sansSerif";
+  const titleFontSize = fontClass === "serif" ? "text-4xl" : "text-2xl";
 
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full"></div>;
@@ -111,8 +112,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
         className="flex h-screen overflow-auto dark:[color-scheme:dark] w-full mx-auto"
         id="readonly"
       >
-        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full">
-          <h1 className="text-2xl my-sm mx-auto text-center tracking-wide font-semibold text-darkest dark:text-lightest">
+        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-sm  mb-sm h-full">
+          <h1
+            className={`${fontClass} ${titleFontSize} my-sm mx-auto text-center tracking-wide font-semibold text-darkest dark:text-lightest`}
+          >
             {currentChapterTitle}
           </h1>
           <div className="w-full px-xl">
@@ -238,10 +241,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       className="flex h-screen dark:[color-scheme:dark] overflow-y-auto overflow-x-visible w-full"
       ref={editDiv}
     >
-      <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-4xl px-sm  mb-sm h-full ">
+      <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-sm  mb-sm h-full ">
         <ContentEditable
           value={currentChapterTitle}
-          className={`text-2xl mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mx-auto text-center w-full mt-sm md:mt-0 ${fontClass}`}
+          className={`${titleFontSize} mb-sm tracking-wide font-semibold text-darkest dark:text-lightest mx-auto text-center w-full mt-sm md:mt-0 ${fontClass}`}
           /* // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));

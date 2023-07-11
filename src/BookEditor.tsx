@@ -663,8 +663,6 @@ export default function BookEditor({ className = "" }) {
           selector="book-editor-title"
         />
 
-        <Tags />
-
         <QuillTextArea
           bookid={book.bookid}
           value={book.synopsis || ""}
@@ -817,6 +815,7 @@ export default function BookEditor({ className = "" }) {
             </div>
           </>
         )}
+        <Tags />
 
         <div className="text-xl font-semibold mt-md mb-xs">
           <span>Training</span>

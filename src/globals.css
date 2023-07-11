@@ -37,6 +37,25 @@
     line-height: 30px !important;
   }
 
+  .fontsize-16.serif * {
+    font-size: 22px !important;
+    line-height: 32px !important;
+  }
+
+  .fontsize-18.serif * {
+    font-size: 24px !important;
+    line-height: 36px !important;
+  }
+
+  .fontsize-20.serif * {
+    font-size: 26px !important;
+    line-height: 36px !important;
+  }
+
+  .fontsize-22.serif * {
+    font-size: 28px !important;
+    line-height: 38px !important;
+  }
   .fontsize-16 * {
     font-size: 16px !important;
     line-height: 32px !important;
@@ -64,7 +83,7 @@
   }
 
   .serif {
-    font-family: 'Minion', 'Georgia', serif;
+    font-family: 'Cormorant Garamond', 'Minion', 'Georgia', serif;
     
   }
 
