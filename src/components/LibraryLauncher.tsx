@@ -34,6 +34,7 @@ import {
   ChatBubbleLeftIcon,
   QuestionMarkCircleIcon,
   LockClosedIcon,
+  MicrophoneIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
@@ -50,6 +51,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { languages } from "../lib/languages";
 import LibraryContext from "../LibraryContext";
+import { useRecording } from "../lib/hooks";
 
 export default function LibraryLauncher({ onLauncherClose }) {
   const state: State = useSelector((state: RootState) => state.library);
@@ -77,6 +79,7 @@ export default function LibraryLauncher({ onLauncherClose }) {
     settings,
     setSettings,
   } = useContext(LibraryContext) as LibraryContextType;
+  const { startRecording, stopRecording } = useRecording();
 
   function toggleRightPanel(panel: string) {
     if (
@@ -797,6 +800,23 @@ export default function LibraryLauncher({ onLauncherClose }) {
     icon: <XMarkIcon className="h-4 w-4" aria-hidden="true" />,
     plausibleEventName: "clear-cache",
   });
+
+  /* if (settings.admin) {
+    launchItems.push({
+      label: state.recording ? "Stop Recording" : "Start Recording",
+      onClick: () => {
+        if (state.recording) {
+          dispatch(librarySlice.actions.stopRecording());
+          stopRecording();
+        } else {
+          dispatch(librarySlice.actions.startRecording());
+          startRecording();
+        }
+      },
+      icon: <MicrophoneIcon className="h-4 w-4" aria-hidden="true" />,
+      plausibleEventName: "record",
+    });
+  } */
 
   function onChoose(item: t.MenuItem) {
     const label = item.label;

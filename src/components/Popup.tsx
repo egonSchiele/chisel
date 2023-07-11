@@ -49,6 +49,7 @@ function Popup({
           {title}
         </h2>
         <form
+          autoComplete="off"
           onSubmit={(e) => {
             e.preventDefault();
             onSubmit(inputValueState);
@@ -71,7 +72,7 @@ function Popup({
           )}
           {!options && (
             <Input
-              name={title}
+              name={"popup-input"}
               type={type}
               value={inputValueState}
               onChange={(e) => setInputValueState(e.target.value)}

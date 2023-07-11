@@ -625,12 +625,12 @@ function TextEditor({
         {open && (
           <div className="flex">
             <div
-              className={`hidden lg:flex-none text-sm mr-xs w-4 lg:w-16 ${textColor}`}
+              className={`hidden lg:inline-block lg:flex-none text-sm mr-xs w-4 lg:w-16 ${textColor}`}
             >
               {currentText.caption}
             </div>
 
-            <div className="hidden lg:flex-grow">
+            <div className="hidden lg:inline-block lg:flex-grow">
               <div
                 className="h-5 cursor-pointer mr-xs"
                 onClick={() => {
@@ -689,7 +689,7 @@ function TextEditor({
             `}
           >
             <div
-              className={` text-sm mr-xs flex-none w-4 lg:w-16 ${textColor} hidden lg:visible`}
+              className={` text-sm mr-xs flex-none w-4 lg:w-16 ${textColor} hidden lg:inline-block`}
             >
               {currentText.caption}
             </div>

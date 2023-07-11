@@ -32,7 +32,7 @@ import * as t from "./Types";
 import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
 import * as fd from "./lib/fetchData";
-import { useColors } from "./lib/hooks";
+import { useColors, useRecording } from "./lib/hooks";
 import {
   getSelectedChapter,
   getText,
@@ -63,24 +63,7 @@ export default function Nav({
   const { settings, newChapter, setLoading, fetchBooks, onTextEditorSave } =
     useContext(LibraryContext) as t.LibraryContextType;
 
-  const addAudioElement = async (blobUrl, blob) => {
-    setLoading(true);
-    const file = new File([blob], "recording.wav");
-
-    const response = await fd.uploadAudio(file);
-    console.log(response);
-    if (response.tag === "success") {
-      const { text } = response.payload;
-      dispatch(librarySlice.actions.addToContents(text));
-    } else {
-      console.log(response);
-      dispatch(librarySlice.actions.setError(response.message));
-    }
-    setLoading(false);
-  };
-
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({ audio: true, onStop: addAudioElement });
+  const { startRecording, stopRecording } = useRecording();
 
   if (!loaded) {
     return (

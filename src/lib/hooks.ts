@@ -1,3 +1,4 @@
+import * as fd from "./fetchData";
 import { useContext, useEffect } from "react";
 import LibraryContext from "../LibraryContext";
 import * as t from "../Types";
@@ -6,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { useParams } from "react-router-dom";
 import { getCookie, setCookie } from "../utils";
+import { useReactMediaRecorder } from "react-media-recorder";
 
 export const useKeyboardScroll = (htmlRef, speed = 400, callback = null) => {
   const handleKeyDown = async (event) => {
@@ -252,4 +254,29 @@ export function useSSEUpdates(setSettings) {
       };
     }
   }, [clientid]);
+}
+
+export function useRecording() {
+  const { setLoading } = useContext(LibraryContext) as t.LibraryContextType;
+  const dispatch = useDispatch();
+
+  const addAudioElement = async (blobUrl, blob) => {
+    setLoading(true);
+    const file = new File([blob], "recording.wav");
+
+    const response = await fd.uploadAudio(file);
+    console.log(response);
+    if (response.tag === "success") {
+      const { text } = response.payload;
+      dispatch(librarySlice.actions.addToContents(text));
+    } else {
+      console.log(response);
+      dispatch(librarySlice.actions.setError(response.message));
+    }
+    setLoading(false);
+  };
+
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({ audio: true, onStop: addAudioElement });
+  return { status, startRecording, stopRecording, mediaBlobUrl };
 }
