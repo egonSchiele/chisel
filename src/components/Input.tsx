@@ -48,7 +48,7 @@ const Input = forwardRef<any, any>(function Input(
             onBlur={onBlur}
             placeholder={placeholder}
             onKeyDown={onKeyDown}
-            className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+            className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 focus:border-blue-800 ${roundedCss} ${inputClassName}`}
             data-selector={selector}
           />
         )}
@@ -63,7 +63,7 @@ const Input = forwardRef<any, any>(function Input(
             onBlur={onBlur}
             placeholder={placeholder}
             onKeyDown={onKeyDown}
-            className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 ${roundedCss} ${inputClassName}`}
+            className={`block w-full py-1 px-2 text-text shadow-sm border dark:border-gray-700 dark:bg-black dark:text-dmtext sm:text-sm sm:leading-6 focus:border-blue-800 ${roundedCss} ${inputClassName}`}
             data-selector={selector}
           />
         )}

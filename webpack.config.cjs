@@ -4,17 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const pages = fs.readdirSync(path.resolve(__dirname, "pages"));
 
-const templateParameters = {
-  googleAnalytics: `<!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF96D426XE"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-  
-    gtag('config', 'G-DF96D426XE');
-  </script>`,
-};
+const templateParameters = {};
 
 const htmlPages = pages.map((page) => {
   const name = page.split(".")[0];

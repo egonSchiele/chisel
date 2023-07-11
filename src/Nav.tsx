@@ -298,7 +298,7 @@ export default function Nav({
                 color="nav"
                 label="Unsaved"
                 onClick={async () => {
-                  await onTextEditorSave();
+                  //await onTextEditorSave();
                 }}
               >
                 <MinusIcon
