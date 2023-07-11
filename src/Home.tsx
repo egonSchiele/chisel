@@ -52,7 +52,7 @@ function Welcome() {
 
   return (
     <div className="fontsize-18">
-      <h1 className="text-2xl font-semibold">Welcome to Chisel!</h1>
+      <h1 className="!text-2xl font-semibold">Welcome to Chisel!</h1>
 
       <pre className="typography  mt-sm">
         Start by clicking the plus sign on the left to create a new book. If
@@ -71,6 +71,7 @@ function Welcome() {
       />
       <Button
         size="small"
+        className="!text-sm"
         onClick={() => {
           setMessage("Key added!");
         }}
