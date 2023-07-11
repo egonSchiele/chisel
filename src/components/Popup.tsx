@@ -38,11 +38,11 @@ function Popup({
 
   const close = () => dispatch(librarySlice.actions.hidePopup());
   const backgroundClass = opaqueBackground
-    ? "bg-black bg-opacity-100"
+    ? "fancy-background"
     : "bg-white bg-opacity-20";
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center ${backgroundClass}`}
+      className={`fixed inset-0 z-50 flex items-center justify-center ${backgroundClass} `}
     >
       <div className="bg-white border border-gray-300 dark:bg-black dark:border-gray-800 shadow-sm shadow-gray-800 p-4 md:p-6 lg:p-8 w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3 rounded-lg">
         <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">
