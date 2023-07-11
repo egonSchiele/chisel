@@ -11,6 +11,8 @@ import {
   DocumentDuplicateIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
+  LockClosedIcon,
+  LockOpenIcon,
   MagnifyingGlassIcon,
   MicrophoneIcon,
   MinusIcon,
@@ -475,6 +477,30 @@ export default function Nav({
               >
                 <ChatBubbleLeftIcon className="h-5 w-5" aria-hidden="true" />
               </NavButton>
+              {settings.encrypted && (
+                <NavButton
+                  color="nav"
+                  label="Encryption"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.toggleEncryption());
+                  }}
+                  selector="chat-button"
+                >
+                  <LockClosedIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
+              {!settings.encrypted && (
+                <NavButton
+                  color="nav"
+                  label="Encryption"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.toggleEncryption());
+                  }}
+                  selector="chat-button"
+                >
+                  <LockOpenIcon className="h-5 w-5" aria-hidden="true" />
+                </NavButton>
+              )}
               {settings.admin && (
                 <NavButton
                   color="nav"
