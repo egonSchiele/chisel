@@ -94,6 +94,7 @@ export const getChaptersForBook = async (bookid) => {
 };
 
 export const deleteBook = async (bookid, lastHeardFromServer) => {
+  console.log("deleting book >>", bookid);
   const docRef = db.collection("books").doc(bookid);
   return await checkForStaleUpdate(
     "book",
@@ -118,6 +119,18 @@ export const deleteBook = async (bookid, lastHeardFromServer) => {
               .collection("deletedChapters")
               .doc(data.chapterid);
             await deletedDocRef.set(data);
+            const historyDoc = db.collection("history").doc(data.chapterid);
+            if (historyDoc.exists) {
+              await historyDoc.delete();
+              console.log("deleted history for chapter", data.chapterid);
+            }
+            const embeddingsDocRef = db
+              .collection("embeddings")
+              .doc(data.chapterid);
+            if (embeddingsDocRef.exists) {
+              await embeddingsDocRef.delete();
+              console.log("deleted embeddings for chapter", data.chapterid);
+            }
           }
 
           batch.delete(chapterDocRef);
@@ -423,11 +436,15 @@ export const deleteBooks = async (userid) => {
   if (books.empty) {
     console.log("No books found to delete.");
   } else {
-    const batch = db.batch();
-    books.docs.forEach((doc) => {
-      batch.delete(doc.ref);
+    const allbooks = [];
+    books.forEach((book) => {
+      const bookData = book.data();
+      allbooks.push(bookData);
     });
-    await batch.commit();
+    console.log("deleting books", allbooks);
+    allbooks.forEach(async (book) => {
+      await deleteBook(book.bookid);
+    });
   }
 };
 

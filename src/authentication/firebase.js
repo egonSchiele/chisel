@@ -1,5 +1,5 @@
 import { checkForStaleUpdate } from "../serverUtils.js";
-import { success, failure } from "../storage/firebase.js";
+import { success, failure, deleteBooks } from "../storage/firebase.js";
 import { getFirestore } from "firebase-admin/firestore";
 import { nanoid } from "nanoid";
 
@@ -357,6 +357,44 @@ export const getUsers = async () => {
   /*   console.log(">>", userMap);
   console.log("2>>", userData);
  */ return withBooks;
+};
+export const getGuestUsers = async () => {
+  const db = getFirestore();
+  const users = await db.collection("users").where("guest", "==", true).get();
+
+  const batch = db.batch();
+  let count = 0;
+  users.docs.forEach((doc) => {
+    if (count >= 499) return;
+    batch.delete(doc.ref);
+    count++;
+  });
+  await batch.commit();
+
+  const userMap = {};
+
+  const userData = [];
+  const res = users.forEach(async (user) => {
+    const data = user.data();
+    userData.push(data);
+    //await deleteBooks(data.userid);
+    // await deleteBooks(data.userid);
+  });
+
+  /* const withBooks = await Promise.all(
+    userData.map(async (user) => {
+      const books = await getBooksForUser(user.userid);
+      return {
+        books,
+        email: user.email,
+        userid: user.userid,
+        usage: user.usage,
+      };
+    })
+  ); */
+  /*   console.log(">>", userMap);
+  console.log("2>>", userData);
+ */ return userData;
 };
 
 export const resetMonthlyTokenCounts = async () => {

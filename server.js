@@ -28,6 +28,7 @@ import {
   getUserId,
   getUser,
   getUsers,
+  getGuestUsers,
   saveUser,
   getBooksForUser,
   loginGuestUser,
