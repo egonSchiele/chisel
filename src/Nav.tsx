@@ -104,7 +104,7 @@ export default function Nav({
                 }
               >
                 <DocumentDuplicateIcon
-                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  className="h-8 w-8 md:h-5 md:w-5"
                   aria-hidden="true"
                 />
               </NavButton>
@@ -122,7 +122,7 @@ export default function Nav({
                 }
               >
                 <SparklesIcon
-                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  className="h-8 w-8 md:h-5 md:w-5"
                   aria-hidden="true"
                 />
               </NavButton>
@@ -141,7 +141,7 @@ export default function Nav({
                 }
               >
                 <TableCellsIcon
-                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  className="h-8 w-8 md:h-5 md:w-5"
                   aria-hidden="true"
                 />
               </NavButton>
@@ -159,7 +159,7 @@ export default function Nav({
               selector="open-lists-button"
             >
               <ChevronLeftIcon
-                className="h-8 w-8 xl:h-5 xl:w-5"
+                className="h-8 w-8 md:h-5 md:w-5"
                 aria-hidden="true"
               />
             </NavButton>
@@ -176,7 +176,7 @@ export default function Nav({
               selector="open-lists-button"
             >
               <ChevronLeftIcon
-                className="h-8 w-8 xl:h-5 xl:w-5"
+                className="h-8 w-8 md:h-5 md:w-5"
                 aria-hidden="true"
               />
             </NavButton>
@@ -198,7 +198,7 @@ export default function Nav({
               selector="todoList"
             >
               <ArchiveBoxIcon
-                className="h-8 w-8 xl:h-5 xl:w-5 "
+                className="h-8 w-8 md:h-5 md:w-5 "
                 aria-hidden="true"
               />
             </NavButton>
@@ -220,7 +220,7 @@ export default function Nav({
               selector="todoList"
             >
               <ArchiveBoxIcon
-                className="h-8 w-8 xl:h-5 xl:w-5 text-blue-400"
+                className="h-8 w-8 md:h-5 md:w-5 text-blue-400"
                 aria-hidden="true"
               />
             </NavButton>
@@ -240,7 +240,7 @@ export default function Nav({
                 state.panels.leftSidebar.activePanel === "outline"
               }
             >
-              <Bars3Icon className="h-8 w-8 xl:h-5 xl:w-5" aria-hidden="true" />
+              <Bars3Icon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
             </NavButton>
           )}
 
@@ -259,7 +259,7 @@ export default function Nav({
               }
             >
               <MagnifyingGlassIcon
-                className="h-8 w-8 xl:h-5 xl:w-5"
+                className="h-8 w-8 md:h-5 md:w-5"
                 aria-hidden="true"
               />
             </NavButton>
@@ -285,7 +285,7 @@ export default function Nav({
                 }}
               >
                 <MinusIcon
-                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  className="h-8 w-8 md:h-5 md:w-5"
                   aria-hidden="true"
                 />
               </NavButton>
@@ -294,7 +294,7 @@ export default function Nav({
             {state.saved && !state.serviceWorkerRunning && (
               <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckCircleIcon
-                  className={`h-8 w-8 xl:h-5 xl:w-5 ${colors.highlightTextColor}`}
+                  className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
                   aria-hidden="true"
                 />
               </NavButton>
@@ -302,7 +302,7 @@ export default function Nav({
             {state.saved && state.serviceWorkerRunning && (
               <NavButton color="nav" label="Saved" onClick={() => {}}>
                 <CheckIcon
-                  className={`h-8 w-8 xl:h-5 xl:w-5  ${
+                  className={`h-8 w-8 md:h-5 md:w-5  ${
                     fromCache ? "text-green-500" : colors.highlightTextColor
                   }`}
                   aria-hidden="true"
@@ -336,7 +336,7 @@ export default function Nav({
                       dispatch(librarySlice.actions.extractBlock());
                     }}
                   >
-                    <ScissorsIcon className="h-8 w-8 xl:h-5 xl:w-5" aria-hidden="true" />
+                    <ScissorsIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
                   </NavButton>
                 )} */}
 
@@ -353,7 +353,7 @@ export default function Nav({
               {!state.saved && (
                 <NavButton color="nav" label="Unsaved" onClick={() => {}}>
                   <MinusIcon
-                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    className="h-8 w-8 md:h-5 md:w-5"
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -362,7 +362,7 @@ export default function Nav({
               {state.saved && !state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckCircleIcon
-                    className={`h-8 w-8 xl:h-5 xl:w-5 ${colors.highlightTextColor}`}
+                    className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -371,7 +371,7 @@ export default function Nav({
               {state.saved && state.serviceWorkerRunning && (
                 <NavButton color="nav" label="Saved" onClick={() => {}}>
                   <CheckIcon
-                    className={`h-8 w-8 xl:h-5 xl:w-5  ${
+                    className={`h-8 w-8 md:h-5 md:w-5  ${
                       fromCache ? "text-green-500" : colors.highlightTextColor
                     }`}
                     aria-hidden="true"
@@ -389,7 +389,7 @@ export default function Nav({
                   selector="readonly-open"
                 >
                   <PencilIcon
-                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    className="h-8 w-8 md:h-5 md:w-5"
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -404,7 +404,7 @@ export default function Nav({
                   selector="readonly-close"
                 >
                   <PencilIcon
-                    className={`h-8 w-8 xl:h-5 xl:w-5 ${colors.highlightTextColor}`}
+                    className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -420,7 +420,7 @@ export default function Nav({
                   }}
                 >
                   <MicrophoneIcon
-                    className={`h-8 w-8 xl:h-5 xl:w-5`}
+                    className={`h-8 w-8 md:h-5 md:w-5`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -437,7 +437,7 @@ export default function Nav({
                 >
                   {/* <p className="w-36 text-sm">{status}</p> */}
                   <MicrophoneIcon
-                    className={`h-8 w-8 xl:h-5 xl:w-5 text-red-700`}
+                    className={`h-8 w-8 md:h-5 md:w-5 text-red-700`}
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -453,7 +453,7 @@ export default function Nav({
                     }
                   >
                     <EyeIcon
-                      className={`h-8 w-8 xl:h-5 xl:w-5 ${
+                      className={`h-8 w-8 md:h-5 md:w-5 ${
                         state.viewMode === "focus" && colors.highlightTextColor
                       }`}
                       aria-hidden="true"
@@ -471,7 +471,7 @@ export default function Nav({
                     }}
                     selector="prompts-button"
                   >
-                    <SparklesIcon className="h-8 w-8 xl:h-5 xl:w-5" aria-hidden="true" />
+                    <SparklesIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
                   </NavButton> */}
 
                   <NavButton
@@ -483,7 +483,7 @@ export default function Nav({
                     selector="sidebar-button"
                   >
                     <EllipsisHorizontalCircleIcon
-                      className="h-8 w-8 xl:h-5 xl:w-5"
+                      className="h-8 w-8 md:h-5 md:w-5"
                       aria-hidden="true"
                     />
                   </NavButton>
@@ -498,7 +498,7 @@ export default function Nav({
                 selector="chat-button"
               >
                 <ChatBubbleLeftIcon
-                  className="h-8 w-8 xl:h-5 xl:w-5"
+                  className="h-8 w-8 md:h-5 md:w-5"
                   aria-hidden="true"
                 />
               </NavButton>
@@ -512,7 +512,7 @@ export default function Nav({
                   selector="chat-button"
                 >
                   <LockClosedIcon
-                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    className="h-8 w-8 md:h-5 md:w-5"
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -527,7 +527,7 @@ export default function Nav({
                   selector="chat-button"
                 >
                   <LockOpenIcon
-                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    className="h-8 w-8 md:h-5 md:w-5"
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -542,7 +542,7 @@ export default function Nav({
                   selector="texttospeech-button"
                 >
                   <PlayIcon
-                    className="h-8 w-8 xl:h-5 xl:w-5"
+                    className="h-8 w-8 md:h-5 md:w-5"
                     aria-hidden="true"
                   />
                 </NavButton>
@@ -558,7 +558,7 @@ export default function Nav({
                     setLoading(false);
                   }}
                 >
-                  <ArrowPathIcon className={`h-8 w-8 xl:h-5 xl:w-5 `} aria-hidden="true" />
+                  <ArrowPathIcon className={`h-8 w-8 md:h-5 md:w-5 `} aria-hidden="true" />
                 </NavButton>
               )} */}
             </div>
